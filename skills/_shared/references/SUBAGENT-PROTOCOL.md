@@ -34,7 +34,7 @@ Do not ask a subagent to rediscover the whole project unless exploration is the 
 - Use subagents only when `auto-execute` selects the subagent route.
 - Enter this protocol from `auto-execute`; do not make framing, resume, or product review multi-agent by default.
 - The coordinator provides full task text for the current slice and relevant constraints. Do not make subagents rediscover the whole plan.
-- Dispatch implementers sequentially unless the plan explicitly proves independence and file conflicts are unlikely.
+- Dispatch implementers sequentially by default. Cross-slice parallel dispatch is allowed only when `PLAN.md` explicitly marks slices parallel-safe, dependencies are independent, and write sets are disjoint.
 - Review order is mandatory: spec compliance first, code quality second.
 - The coordinator does not implement directly while host-native subagent execution is viable.
 - If the host mapping is unclear, follow `HOST-TOOLS.md`. Do not invent a universal SDK or CLI.
@@ -89,5 +89,6 @@ Each artifact should include enough evidence for a fresh coordinator to continue
 - Implementer still reports `NEEDS_CONTEXT` after one targeted context correction.
 - A reviewer requests changes twice for the same unresolved issue.
 - Subagents would edit the same files concurrently.
+- Cross-slice parallelism would touch shared files, schemas, migrations, or stateful setup.
 - The work is trivial enough that subagent overhead exceeds value.
 - A subagent proposes broad plan changes instead of completing or reviewing the current slice.

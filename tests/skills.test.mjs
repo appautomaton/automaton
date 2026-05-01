@@ -221,23 +221,33 @@ test('subagent protocol defines dispatch packets and bounded review loops', () =
   assert.match(protocol, /## Dispatch Packet/)
   assert.match(protocol, /Subagents receive curated slice context/)
   assert.match(protocol, /`auto-execute` owns execute-stage orchestration across slices/)
+  assert.match(protocol, /Cross-slice parallel dispatch is allowed only when `PLAN\.md` explicitly marks slices parallel-safe/)
+  assert.match(protocol, /write sets are disjoint/)
   assert.match(protocol, /one targeted correction/)
   assert.match(protocol, /reviewer requests changes twice/)
   assert.match(protocol, /Do not invent a universal SDK or CLI/)
 })
 
-test('auto-plan requires explicit execution routing on material slices', () => {
+test('auto-plan requires explicit execution routing and topology on material slices', () => {
   const source = readFileSync(join(skillsRoot, 'auto-plan', 'SKILL.md'), 'utf8')
 
   assert.match(source, /\*\*Execution:\*\* direct \| subagent recommended \| subagent required/)
   assert.match(source, /Every material slice must state an execution route/)
+  assert.match(source, /Execution routing and topology/)
+  assert.match(source, /auto-continue chain/)
+  assert.match(source, /Parallel-safe means dependencies are independent and write sets are disjoint/)
+  assert.match(source, /`Auto-continue` defaults to `no`; use `yes` only when the next slice may start after this slice passes verification/)
   assert.match(source, /Use `direct` when the slice touches/)
 })
 
-test('auto-execute owns direct and subagent route selection', () => {
+test('auto-execute owns route selection and execution-window continuation', () => {
   const source = readFileSync(join(skillsRoot, 'auto-execute', 'SKILL.md'), 'utf8')
 
   assert.match(source, /Direct implementation and subagent implementation are two routes inside this skill/)
+  assert.match(source, /Select Execution Window/)
+  assert.match(source, /Always include the next uncompleted slice/)
+  assert.match(source, /Execute the window serially by default/)
+  assert.match(source, /Build an execution window, but execute and verify one slice at a time/)
   assert.match(source, /The route decision lives here/)
   assert.match(source, /Run the per-slice protocol/)
   assert.match(source, /Do not tell the user to invoke another execute skill/)

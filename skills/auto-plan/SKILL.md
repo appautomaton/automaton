@@ -15,7 +15,7 @@ First action: run `scripts/get-context.mjs` from this skill's installed director
 
 ## Preamble
 
-auto-plan builds the smallest plan that makes execution safe. It does not write code. It breaks work into ordered slices, each producing a testable outcome, and attaches explicit execution routing and verification commands to every material slice.
+auto-plan builds the smallest plan that makes execution safe. It does not write code. It breaks work into ordered slices, each producing a testable outcome, and attaches explicit execution routing, execution topology, and verification commands to every material slice.
 
 Context budget: PLAN.md itself must fit in ~10% of the context window. If it exceeds 300 lines, the change needs more framing or should be split into multiple changes.
 
@@ -24,6 +24,7 @@ Context budget: PLAN.md itself must fit in ~10% of the context window. If it exc
 Before finalizing `PLAN.md`:
 - Give every material slice a concrete output.
 - Attach a verification command to every material slice.
+- Name the execution topology: auto-continue chain, checkpoints, subagent routes, and any parallel-safe groups.
 - Remove vague tasks that do not define done.
 - Read `references/quality.md` if the plan leaves execution decisions to the implementer.
 
@@ -57,12 +58,15 @@ If `SPEC.md` contains content fields (Audience, Thesis, Voice, Content Anti-Goal
 
 ### 3. Design Slices
 
-Break work into ordered slices. Each slice must be:
+Break work into ordered execution units, not topic buckets. Each slice must be:
 - Testable: it produces an outcome that can be verified.
 - Bounded: it consumes a known fraction of the context window.
 - Independent: it can be executed without loading slices that come after it.
+- Checkpoint-aware: it ends where verification or a decision may change later work.
 
 For content slices, also name the artifact target, allowed sources, factual-risk gate, and format constraint so `auto-execute` does not invent missing context.
+
+Before writing slices, think ahead to execution topology: which slices must run serially, which may auto-continue after verification, which are checkpoint boundaries, which use subagents, and whether any parallel-safe groups exist. Parallel-safe means dependencies are independent and write sets are disjoint; default to none.
 
 <SLICE-DESIGN>
 
@@ -87,7 +91,8 @@ Rules:
 - Every material slice must have a verification command.
 - Every material slice must state an execution route: `direct`, `subagent recommended`, or `subagent required`.
 - Use `direct` when the slice touches ≤ 3 files in one subsystem. Use `subagent recommended` when the slice touches > 3 files, crosses subsystem boundaries, modifies shared interfaces or data schemas, or carries review risk. Use `subagent required` only when the user asked for multi-agent execution or the slice modifies security-critical paths, production data, or irreversible state.
-- `Auto-continue` defaults to `no`; use `yes` only when the slice is low-risk, independent, and has fast verification.
+- `Auto-continue` defaults to `no`; use `yes` only when the next slice may start after this slice passes verification without user input.
+- Use `Auto-continue: no` for checkpoints, compatibility reports, architecture decisions, external dependencies, broad cross-surface changes, or ambiguous blocker outcomes.
 - Slices should be small enough to complete in one session.
 - If a slice exceeds ~15% of context window, split it.
 </SLICE-DESIGN>
@@ -100,7 +105,7 @@ Required sections:
 - **Goal** — restate the bounded goal from SPEC.md
 - **Architecture approach** — the smallest correct design
 - **Ordered task sequence** — slices in dependency order
-- **Execution routing** — direct or subagent route for each material slice
+- **Execution routing and topology** — direct or subagent route for each material slice; auto-continue chain, checkpoints, and parallel-safe groups (or "none")
 - **Verification commands** — attached to every material slice
 - **Context budget for this change** — total estimated context consumption
 

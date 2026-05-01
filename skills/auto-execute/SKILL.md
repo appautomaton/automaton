@@ -15,9 +15,9 @@ First action: run `scripts/get-context.mjs` from this skill's installed director
 
 ## Preamble
 
-auto-execute is the execute-stage orchestrator. It owns route selection, state, and scope. Direct implementation and subagent implementation are two routes inside this skill; the user should not have to switch skills to get the subagent route.
+auto-execute is the execute-stage orchestrator. It owns route selection, state, and scope. It executes one verified slice at a time inside a selected execution window. Direct implementation and subagent implementation are two routes inside this skill; the user should not have to switch skills to get the subagent route.
 
-Context budget: hold only the current slice, acceptance criteria, route metadata, verification commands, and files you are actively editing or coordinating. Subagents receive curated slice context, not the whole plan.
+Context budget: hold only the active slice, execution-window metadata, acceptance criteria, route metadata, verification commands, and files you are actively editing or coordinating. Subagents receive curated slice context, not the whole plan.
 
 ## Quality Gate
 
@@ -31,7 +31,7 @@ Before marking a slice complete:
 
 Before using this skill:
 - `canonical_plan` in `.agent/.automaton/state/current.json` must point to an approved `PLAN.md`.
-- The current slice must have an objective, execution route, touched files or areas, acceptance criteria, and verification command.
+- The next executable slice must have an objective, execution route, touched files or areas, acceptance criteria, and verification command.
 - If `engineering_review` is `needs_correction`, stop and return to `auto-plan`.
 
 ## Do
@@ -44,9 +44,14 @@ If `engineering_review` is `approved_with_risks`, surface the review rationale b
 
 If the current slice drafts, rewrites, edits, outlines, audits, or verifies prose, read `references/content-execution.md` before changing the artifact. Content execution stays inside the same direct/subagent route selection; it is not a separate skill.
 
-### 2. Select Current Slice
+### 2. Select Execution Window
 
-Identify the next uncompleted slice from `PLAN.md`. Extract only:
+Identify the next uncompleted slice from `PLAN.md`. Then form the smallest safe execution window:
+- Always include the next uncompleted slice.
+- Add following slices only while the previous slice has `Auto-continue: yes`, dependencies are met, verification is explicit, and no checkpoint, risk, or context pressure appears.
+- Execute the window serially by default. Cross-slice parallel dispatch is allowed only when `PLAN.md` explicitly marks slices parallel-safe and write sets are disjoint.
+
+For each slice in the window, extract only:
 - objective
 - `Execution: direct | subagent recommended | subagent required`
 - dependencies or ordering constraints
@@ -86,6 +91,8 @@ For prose artifacts, follow `references/content-execution.md`: preserve source t
 
 Use this route when `Execution` is `subagent required`, when `subagent recommended` is justified, or when the user requested multi-agent execution.
 
+The subagent route remains per-slice even when the execution window contains multiple slices.
+
 Before dispatching, read `references/HOST-TOOLS.md`, `references/SUBAGENT-PROTOCOL.md`, and the prompt templates in `references/implementer-prompt.md`, `references/spec-reviewer-prompt.md`, and `references/code-quality-reviewer-prompt.md`.
 
 If host tools say subagents are unavailable:
@@ -112,7 +119,16 @@ Examples:
 - If you changed a route handler, curl that route, not every endpoint.
 - If you changed a migration, verify it applies and rolls back, then verify the schema.
 
-Record completion evidence in the plan or orchestration artifact. Update `.agent/.automaton/state/current.json` to the next slice or stage only after the slice has evidence. Continue to the next slice only when `Auto-continue: yes`, verification passed, dependencies are met, and context remains healthy; otherwise stop with the next action.
+Record completion evidence in the plan or orchestration artifact before moving to another slice. Update `.agent/.automaton/state/current.json` to the next slice or stage only after the slice has evidence.
+
+Continue within the selected execution window only when:
+- The completed slice has `Auto-continue: yes`.
+- Verification passed.
+- The next slice's dependencies are met.
+- The next slice still matches the approved plan.
+- Context remains healthy.
+
+Otherwise stop with the next action and the stop reason.
 
 ### 7. Record Corrections
 
@@ -160,21 +176,24 @@ Do NOT write code unless:
 
 ## Output
 
-- Slice executed and route used: direct or subagent
+- Slice(s) executed and route used: direct or subagent
 - Files changed with one-line rationale per file
 - Commands run and their results
 - Subagent statuses and review verdicts, when used
+- Execution window stop reason when continuation stops
 - Newly discovered risks or follow-ups
 - Recommended next skill: `auto-execute`, `auto-verify`, or `auto-plan`
 
 ## Rules
 
 - auto-execute owns execute-stage orchestration; subagent coordination is an internal per-slice route.
+- Build an execution window, but execute and verify one slice at a time.
+- Serial execution is the default; parallel cross-slice dispatch requires explicit plan approval and disjoint write sets.
 - Do not silently redefine the plan. Record corrections transparently.
 - Stop and reframe when the approved slice is no longer valid.
 - Prefer targeted checks over full-suite rituals until the slice is stable.
 - Warn on review state but do not block execution unless the risk is slice-blocking.
-- Hold only current slice, acceptance criteria, route metadata, and active files in context.
+- Hold only the active slice, execution-window metadata, acceptance criteria, route metadata, and active files in context.
 - Use host-native subagents; do not invent a universal SDK or CLI.
 - Review order is strict when subagents are used: spec compliance before code quality.
 - Before fixing, investigate. No fixes without root cause.
