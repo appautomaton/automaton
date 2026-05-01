@@ -1,0 +1,12 @@
+node_modules/
+coverage/
+dist/
+*.tgz
+npm-debug.log*
+.DS_Store
+
+# Generated/local host surfaces
+.agent/
+.claude/
+.codex/
+.opencode/
