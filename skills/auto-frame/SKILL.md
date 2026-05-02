@@ -17,7 +17,7 @@ First action: run `scripts/get-context.mjs` from this skill's installed director
 
 auto-frame produces exactly one artifact: `SPEC.md`. If you leave this skill without a valid SPEC.md written to disk, you have failed. This skill does not write code, does not create PLAN.md, and does not proceed to planning without a written spec.
 
-Context budget: the spec itself should fit in ~5% of the context window. A feature-sized spec typically lands under 200 lines. A capability-sized spec — one coherent behavioral goal that a plan decomposes into multiple slices — may reach 250–300 lines. Beyond 300 lines, the spec likely bundles independent work and should be split. The primary scope check is coherence, not line count: a spec is right-sized when all its acceptance criteria contribute to a single observable behavior change.
+Context budget: the spec itself should fit in ~5% of the context window. A feature-sized spec typically lands under 200 lines. A capability-sized spec — one coherent behavioral goal that touches multiple files or subsystems — may reach 250–300 lines. Beyond 300 lines, the spec likely bundles independent work and should be split. The primary scope check is coherence, not line count: a spec is right-sized when all its acceptance criteria contribute to a single observable behavior change.
 
 ## Quality Gate
 

@@ -39,7 +39,7 @@ Before presenting alternatives, recommending an approach, or writing the design 
    Scope:
    - **Bug-sized** — a defect or inconsistency in existing behavior. One file, one fix, no design decision.
    - **Feature-sized** — a single new behavior or enhancement. Clear boundary, ships in one plan.
-   - **Capability-sized** — a coherent behavioral goal that touches multiple files or subsystems but serves one outcome. Needs a spec that a plan can decompose into multiple slices.
+   - **Capability-sized** — a coherent behavioral goal that touches multiple files or subsystems but serves one outcome. Needs a spec; planning handles the breakdown into ordered work.
    - **Roadmap-sized** — multiple independent goals that happen to be mentioned together. Needs decomposition into separate specs via `ROADMAP.md`.
 
    State both in one confirmation: "This reads as Builder mode and capability-sized — does that match?" If the user disagrees on either, adjust.
