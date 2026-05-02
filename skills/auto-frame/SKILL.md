@@ -31,6 +31,8 @@ Before finalizing `SPEC.md`:
 
 ### 1. Restate
 
+If office-hours context is present in the conversation (design document, scope classification, broader intent), read it. Adopt the scope classification and broader intent to calibrate constraints and interview depth. Do not re-ask what office-hours already established.
+
 State the goal in one sentence. If you cannot, ask one clarifying question and stop.
 
 ### 2. Surface
@@ -51,9 +53,9 @@ Read `references/lens-selection.md` for the decision matrix if the choice is not
 
 If the goal is clear and lenses are obvious, skip this.
 
-If anything is ambiguous, ask ≤ 3 questions total. One per message. Prefer multiple-choice. No open-ended brainstorming.
+If anything is ambiguous, ask ≤ 3 questions total for feature-sized goals. For capability-sized goals that did not come through office-hours, up to 5. One per message. Prefer multiple-choice. No open-ended brainstorming.
 
-Questions must materially change the plan. Do not ask for preferences that don't affect scope.
+Questions must materially change the spec. Do not ask for preferences that don't affect scope.
 </INTERVIEW>
 
 ### 5. Write SPEC.md
@@ -68,6 +70,8 @@ The file must contain:
 - Bounded goal (1 sentence)
 - Selected lenses (list)
 - Constraints (typically ≤ 5; 6–8 for coherent capability-sized goals)
+- Required behavior (what must observably change)
+- Acceptance criteria (how we know it is done — auto-verify checks these)
 - Blocking questions or assumptions (list, or "none")
 - Anti-goals (what this change explicitly does not do)
 
@@ -91,7 +95,7 @@ Update `.agent/.automaton/state/current.json`:
 ## Rules
 
 - **SPEC.md is mandatory.** No file, no completion. Conversational framing without a written artifact is not auto-frame.
-- Ask ≤ 3 questions. If you need more, the user is not ready to frame.
+- Ask ≤ 3 questions (up to 5 for capability-sized goals without office-hours context). If you need more, the user is not ready to frame.
 - Do not start implementation. Do not write code. Do not create PLAN.md.
 - Keep notes operational. No essays.
 - Preserve review sections on refresh.

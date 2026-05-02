@@ -11,7 +11,7 @@ metadata:
 
 Turn a vague idea into a sharp objective through structured conversation. Use this skill when the user says "I have an idea," "help me think through this," "is this worth building," or any request that precedes a spec.
 
-First action: detect mode from the user's language. If they mention customers, revenue, market, or competition → Startup mode. If they mention side project, hackathon, learning, or open source → Builder mode. If the request is about content creation → Content mode. State the detected mode and confirm.
+First action: detect mode and classify scope from the user's language. If they mention customers, revenue, market, or competition → Startup mode. If they mention side project, hackathon, learning, or open source → Builder mode. If the request is about content creation → Content mode. Classify scope as bug-sized, feature-sized, capability-sized, or roadmap-sized. State the detected mode and scope, and confirm both.
 
 ## Preamble
 
@@ -73,6 +73,8 @@ If the user says "just do it" or expresses impatience:
 - Say: "I hear you. Let me ask two more critical questions, then we'll move."
 - Ask the 2 most critical remaining questions for their mode.
 - If they push back a second time, respect it and proceed to alternatives.
+
+If the conversation reveals the goal is larger or smaller than initially classified — e.g., a feature-sized goal turns out to need multiple independent specs, or a capability-sized goal turns out to be a single-file fix — reclassify scope and state the change: "This is actually roadmap-sized — let's decompose." Adjust question routing to match the new classification.
 </MODE-DETECTION>
 
 <HARD-GATE>
@@ -87,9 +89,17 @@ If the user asks to "just start coding" or "skip to the plan," reframe: "We can 
 <STOP>
 
 Halt and report when:
+- The user insists on a solution before describing the problem.
+
+Startup mode:
 - The user cannot articulate a problem that someone actually has (not hypothetical).
 - After three pushes, the answer remains at category level ("enterprises," "users") with no specific person named.
-- The user insists on a solution before describing the problem.
+
+Builder mode:
+- After three pushes, the user cannot describe the problem they are solving for themselves — what they currently do, why it is painful, or what "better" looks like.
+
+Content mode:
+- After three pushes, the user cannot identify the target audience or state a thesis — who reads this and what it argues.
 
 Do not guess. Do not proceed.
 </STOP>
@@ -163,6 +173,12 @@ Operating principles:
 2. Ship something you can show people. The best version of anything is the one that exists.
 3. The best side projects solve your own problem. Trust that instinct.
 4. Explore before you optimize. Try the weird idea first. Polish later.
+
+Smart routing based on scope classification:
+- Bug-sized → Q3 (fastest path) + Q4 (how is yours different?), then move to alternatives
+- Feature-sized → standard (all five questions)
+- Capability-sized → Q1 (coolest version), Q4 (how is yours different?), Q5 (10x version)
+- Roadmap-sized → Q1 (coolest version), Q2 (who would you show this to?), then decompose into the first spec candidate
 
 ## Output
 
