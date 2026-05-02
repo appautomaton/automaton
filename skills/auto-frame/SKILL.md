@@ -67,7 +67,7 @@ Do NOT proceed past this step without writing `SPEC.md` to `.agent/work/<change>
 The file must contain:
 - Bounded goal (1 sentence)
 - Selected lenses (list)
-- Constraints (≤ 5)
+- Constraints (typically ≤ 5; 6–8 for coherent capability-sized goals)
 - Blocking questions or assumptions (list, or "none")
 - Anti-goals (what this change explicitly does not do)
 

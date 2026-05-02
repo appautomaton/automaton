@@ -29,38 +29,39 @@ Before presenting alternatives, recommending an approach, or writing the design 
 
 ## Do
 
-1. **Detect mode.** From the user's initial message, determine:
+1. **Detect mode and classify scope.** From the user's initial message, determine both:
+
+   Mode:
    - **Startup mode** — mentions customers, revenue, market, competition, fundraising, or "building a company."
    - **Builder mode** — mentions side project, hackathon, learning, open source, personal use, or "just for fun."
    - **Content mode** — the deliverable is prose: article, brief, deck, blog post, newsletter, documentation, or any writing where audience and voice matter. Content mode activates when the user's goal is a content deliverable, not a product or feature.
-   - State the detected mode and ask for confirmation.
 
-   When Content mode is detected, read `references/content-intake.md` and use its diagnostic questions instead of the Startup or Builder question sets. Content mode still produces a design document on approval, with audience, thesis, voice, and content anti-goals as required fields.
-
-2. **Classify scope.** Before running diagnostics, assess the goal's natural size:
+   Scope:
    - **Bug-sized** — a defect or inconsistency in existing behavior. One file, one fix, no design decision.
    - **Feature-sized** — a single new behavior or enhancement. Clear boundary, ships in one plan.
    - **Capability-sized** — a coherent behavioral goal that touches multiple files or subsystems but serves one outcome. Needs a spec that a plan can decompose into multiple slices.
    - **Roadmap-sized** — multiple independent goals that happen to be mentioned together. Needs decomposition into separate specs via `ROADMAP.md`.
 
-   State the classification and confirm with the user. If they disagree, adjust — they know their intent better than a heuristic.
+   State both in one confirmation: "This reads as Builder mode and capability-sized — does that match?" If the user disagrees on either, adjust.
+
+   When Content mode is detected, read `references/content-intake.md` and use its diagnostic questions instead of the Startup or Builder question sets. Content mode still produces a design document on approval, with audience, thesis, voice, and content anti-goals as required fields.
 
    For bug-sized goals, consider whether office-hours is the right skill. A known bug with a known fix can go directly to `auto-frame`.
 
    For roadmap-sized goals, help the user identify the highest-leverage spec to frame first, and recommend the rest be captured in `ROADMAP.md`.
 
-3. **Run the diagnostic.** Ask questions one at a time. Wait for each answer before asking the next. Use the mode-specific question sets below.
+2. **Run the diagnostic.** Ask questions one at a time. Wait for each answer before asking the next. Use the mode-specific question sets below.
 
-4. **Push for specificity.** The first answer is usually polished. Push once, then push again. Read `references/pushback-patterns.md` for examples.
+3. **Push for specificity.** The first answer is usually polished. Push once, then push again. Read `references/pushback-patterns.md` for examples.
 
-5. **Challenge premises.** Before generating alternatives, ask:
+4. **Challenge premises.** Before generating alternatives, ask:
    - Is this the right problem? Could a different framing be simpler or more impactful?
    - What happens if we do nothing?
    - What existing code or patterns already partially solve this?
 
-6. **Generate alternatives.** Present 2–3 distinct approaches that match the user's scope classification. One must be the minimal viable — the smallest version of the user's goal, not a different smaller goal. One must be the ideal architecture (best long-term). One can be creative/lateral. For each: summary, effort estimate, risk level, 2–3 pros, 2–3 cons. Read `references/alternatives-format.md` for the exact format.
+5. **Generate alternatives.** Present 2–3 distinct approaches that match the user's scope classification. For bug-sized, feature-sized, and capability-sized goals: one must be the minimal viable — the smallest version of the user's goal, not a different smaller goal; one must be the ideal architecture (best long-term); one can be creative/lateral. For roadmap-sized goals: alternatives should be decomposition strategies or first-spec candidates, not roadmap-scale implementation plans. For each: summary, effort estimate, risk level, 2–3 pros, 2–3 cons. Read `references/alternatives-format.md` for the exact format.
 
-7. **Recommend and wait.** State which approach you recommend and why. Do NOT proceed until the user explicitly approves an approach or chooses a different one.
+6. **Recommend and wait.** State which approach you recommend and why. Do NOT proceed until the user explicitly approves an approach or chooses a different one.
 
 <MODE-DETECTION>
 
