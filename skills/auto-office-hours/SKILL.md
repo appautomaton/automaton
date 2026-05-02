@@ -37,18 +37,30 @@ Before presenting alternatives, recommending an approach, or writing the design 
 
    When Content mode is detected, read `references/content-intake.md` and use its diagnostic questions instead of the Startup or Builder question sets. Content mode still produces a design document on approval, with audience, thesis, voice, and content anti-goals as required fields.
 
-2. **Run the diagnostic.** Ask questions one at a time. Wait for each answer before asking the next. Use the mode-specific question sets below.
+2. **Classify scope.** Before running diagnostics, assess the goal's natural size:
+   - **Bug-sized** — a defect or inconsistency in existing behavior. One file, one fix, no design decision.
+   - **Feature-sized** — a single new behavior or enhancement. Clear boundary, ships in one plan.
+   - **Capability-sized** — a coherent behavioral goal that touches multiple files or subsystems but serves one outcome. Needs a spec that a plan can decompose into multiple slices.
+   - **Roadmap-sized** — multiple independent goals that happen to be mentioned together. Needs decomposition into separate specs via `ROADMAP.md`.
 
-3. **Push for specificity.** The first answer is usually polished. Push once, then push again. Read `references/pushback-patterns.md` for examples.
+   State the classification and confirm with the user. If they disagree, adjust — they know their intent better than a heuristic.
 
-4. **Challenge premises.** Before generating alternatives, ask:
+   For bug-sized goals, consider whether office-hours is the right skill. A known bug with a known fix can go directly to `auto-frame`.
+
+   For roadmap-sized goals, help the user identify the highest-leverage spec to frame first, and recommend the rest be captured in `ROADMAP.md`.
+
+3. **Run the diagnostic.** Ask questions one at a time. Wait for each answer before asking the next. Use the mode-specific question sets below.
+
+4. **Push for specificity.** The first answer is usually polished. Push once, then push again. Read `references/pushback-patterns.md` for examples.
+
+5. **Challenge premises.** Before generating alternatives, ask:
    - Is this the right problem? Could a different framing be simpler or more impactful?
    - What happens if we do nothing?
    - What existing code or patterns already partially solve this?
 
-5. **Generate alternatives.** Present 2–3 distinct approaches. One must be the minimal viable (ships fastest). One must be the ideal architecture (best long-term). One can be creative/lateral. For each: summary, effort estimate, risk level, 2–3 pros, 2–3 cons. Read `references/alternatives-format.md` for the exact format.
+6. **Generate alternatives.** Present 2–3 distinct approaches that match the user's scope classification. One must be the minimal viable — the smallest version of the user's goal, not a different smaller goal. One must be the ideal architecture (best long-term). One can be creative/lateral. For each: summary, effort estimate, risk level, 2–3 pros, 2–3 cons. Read `references/alternatives-format.md` for the exact format.
 
-6. **Recommend and wait.** State which approach you recommend and why. Do NOT proceed until the user explicitly approves an approach or chooses a different one.
+7. **Recommend and wait.** State which approach you recommend and why. Do NOT proceed until the user explicitly approves an approach or chooses a different one.
 
 <MODE-DETECTION>
 
@@ -109,6 +121,8 @@ Push until you hear: one feature, one workflow, something shippable in days.
 
 Red flags: "We need the full platform first." "Stripped down wouldn't be differentiated." These mean the founder is attached to architecture, not value.
 
+Scope note: This question tests shippability instinct, not scope. Use the answer to understand what the user considers the core value, then return to their stated goal. Do not replace a capability-sized goal with the narrowest wedge answer.
+
 **Q5: Observation & Surprise** — "Have you watched someone use this without helping them? What did they do that surprised you?"
 
 Push until you hear: a specific surprise that contradicted the founder's assumptions.
@@ -127,13 +141,19 @@ Smart routing based on product stage:
 - Has paying customers → Q4, Q5, Q6
 - Pure engineering/infra → Q2, Q4 only
 
+Smart routing based on scope classification:
+- Bug-sized → Q2 only (status quo / workaround cost), then move to alternatives
+- Feature-sized → standard routing by product stage
+- Capability-sized → Q1, Q2, Q5 (demand, status quo, observation). Use Q4 as a calibration probe to understand the core value, not to set scope.
+- Roadmap-sized → Q1, Q2, Q3, then help decompose into the first spec candidate
+
 ## Builder Mode: Design Partner
 
 Ask these one at a time. The goal is to brainstorm and sharpen, not interrogate.
 
 - **What's the coolest version of this?** What would make it genuinely delightful?
 - **Who would you show this to?** What would make them say "whoa"?
-- **What's the fastest path to something you can actually use or share?**
+- **What's the fastest path to something you can actually use or share?** Use the answer to understand what the user considers demonstrable progress, then return to their full goal. Do not redirect the conversation to the fast path if the user brought a larger vision.
 - **What existing thing is closest to this, and how is yours different?**
 - **What would you add if you had unlimited time?** What's the 10x version?
 
@@ -146,17 +166,21 @@ Operating principles:
 ## Output
 
 If the user approves an approach, produce a design document (not SPEC.md) with:
+- Scope classification (bug / feature / capability / roadmap)
 - Objective statement
+- Broader intent — the larger goal this spec serves, even if the spec only addresses part of it
 - Target user or stakeholder
 - Desired outcome
 - Scope boundary and anti-goals
 - Selected approach with rationale
 - Key assumptions and risks
+- Deferred scope — ideas surfaced during discussion that belong in `ROADMAP.md`, not this spec. Name them explicitly so they are captured, not lost.
 - Recommended next skill: `auto-frame`
 
 If the user does not approve an approach, output:
 - Summary of what was discussed
 - Why no approach was selected
+- Deferred scope — any ideas worth preserving in `ROADMAP.md`
 - Recommended next step (e.g., gather more evidence, talk to users, revisit in auto-office-hours)
 
 ## Rules

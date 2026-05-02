@@ -17,7 +17,7 @@ First action: run `scripts/get-context.mjs` from this skill's installed director
 
 auto-frame produces exactly one artifact: `SPEC.md`. If you leave this skill without a valid SPEC.md written to disk, you have failed. This skill does not write code, does not create PLAN.md, and does not proceed to planning without a written spec.
 
-Context budget: the spec itself must fit in ~5% of the context window. If it exceeds 200 lines, the scope is too broad.
+Context budget: the spec itself should fit in ~5% of the context window. A feature-sized spec typically lands under 200 lines. A capability-sized spec — one coherent behavioral goal that a plan decomposes into multiple slices — may reach 250–300 lines. Beyond 300 lines, the spec likely bundles independent work and should be split. The primary scope check is coherence, not line count: a spec is right-sized when all its acceptance criteria contribute to a single observable behavior change.
 
 ## Quality Gate
 
@@ -35,7 +35,7 @@ State the goal in one sentence. If you cannot, ask one clarifying question and s
 
 ### 2. Surface
 
-List only the constraints, unknowns, and risks that change implementation. Maximum 5 items. If more, the scope is too broad — ask the user to pick one.
+List only the constraints, unknowns, and risks that change implementation. For feature-sized goals, 5 items is the typical ceiling. Capability-sized goals with genuinely distinct constraints may surface 6–8. If the list exceeds 8, or if constraints address unrelated outcomes, the spec likely bundles independent work — ask the user which outcome to focus on.
 
 ### 3. Select Lenses
 
@@ -106,9 +106,11 @@ You: "I need 30 seconds to write this down so the next session doesn't start fro
 
 Then write SPEC.md immediately and ask for confirmation, not permission.
 
-### Edge Case: Multiple independent subsystems
+### Edge Case: Multiple subsystems
 
-If the request describes multiple independent systems ("build chat, billing, and analytics"), stop. Tell the user: "This is three changes. Which one should we frame first?" Do not write a mega-spec.
+Split genuinely independent work. If the request describes unrelated systems with separate outcomes ("build chat, billing, and analytics"), tell the user: "These are independent changes. Which one should we frame first?"
+
+Keep related work together. If multiple files or subsystems must change to achieve one coherent behavioral goal ("adjust two skills so they handle broader scope"), that is one spec — not three. The test: do the acceptance criteria point at one outcome or several unrelated ones? One outcome = one spec, regardless of how many files it touches.
 
 ### Lens Selection Matrix
 

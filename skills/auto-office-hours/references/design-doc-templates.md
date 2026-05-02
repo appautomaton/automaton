@@ -16,6 +16,9 @@ Supersedes: {prior filename — omit if first design on this branch}
 ## Problem Statement
 {from diagnostic}
 
+## Broader Intent
+{the larger goal this spec serves — what the user is ultimately trying to achieve, even if this spec addresses only part of it. Helps auto-frame calibrate scope.}
+
 ## Demand Evidence
 {from Q1 — specific quotes, numbers, behaviors demonstrating real demand}
 
@@ -54,6 +57,9 @@ Supersedes: {prior filename — omit if first design on this branch}
 ## Dependencies
 {blockers, prerequisites, related work}
 
+## Deferred Scope
+{ideas surfaced during discussion that exceed this spec's boundary — recommend capturing in ROADMAP.md. Omit if nothing was deferred.}
+
 ## The Assignment
 {one concrete real-world action — not "go build it"}
 ```
@@ -71,6 +77,9 @@ Supersedes: {prior filename — omit if first design on this branch}
 
 ## Problem Statement
 {from diagnostic}
+
+## Broader Intent
+{the larger goal this spec serves — what the user is ultimately trying to achieve, even if this spec addresses only part of it. Helps auto-frame calibrate scope.}
 
 ## What Makes This Cool
 {the core delight, novelty, or "whoa" factor}
@@ -99,6 +108,9 @@ Supersedes: {prior filename — omit if first design on this branch}
 ## Distribution Plan
 {how users get the deliverable}
 {CI/CD pipeline or existing deployment}
+
+## Deferred Scope
+{ideas surfaced during discussion that exceed this spec's boundary — recommend capturing in ROADMAP.md. Omit if nothing was deferred.}
 
 ## Next Steps
 {concrete build tasks — first, second, third}

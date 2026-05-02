@@ -9,6 +9,7 @@ Load this reference only before finalizing or refreshing `SPEC.md`.
 - Hidden assumptions: unresolved decisions smuggled into the goal.
 - Solution leakage: implementation details that belong in PLAN.md unless they constrain scope.
 - Missing anti-goals: no clear statement of what the change must not do.
+- Scope amputation: artificially reducing a coherent capability to hit a line-count target, producing a spec that solves part of the problem and leaves the rest unframed.
 
 ## Better Shape
 
@@ -16,6 +17,7 @@ Load this reference only before finalizing or refreshing `SPEC.md`.
 - Convert broad goals into acceptance criteria or risks.
 - Put uncertain claims under assumptions, not facts.
 - Use anti-goals to prevent scope creep.
+- For capability-sized goals, confirm that all acceptance criteria point at one behavioral outcome. If they test unrelated outcomes, the spec bundles independent work and should be split.
 
 ## Prose Hygiene
 
