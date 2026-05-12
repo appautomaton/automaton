@@ -197,7 +197,7 @@ test('Codex install scaffolds config, hooks, and skills', () => {
   assert.equal(result.id, 'codex')
   assert.equal(existsSync(join(root, '.codex', 'skills', 'auto-frame', 'SKILL.md')), true)
   assert.equal(existsSync(join(root, '.codex', 'skills', 'auto-execute', 'SKILL.md')), true)
-  assert.equal(readFileSync(join(root, '.codex', 'config.toml'), 'utf8'), '[features]\ncodex_hooks = true\nmulti_agent = true\n')
+  assert.equal(readFileSync(join(root, '.codex', 'config.toml'), 'utf8'), '[features]\nhooks = true\nmulti_agent = true\n')
   const hostTools = readFileSync(join(root, '.codex', 'skills', 'auto-execute', 'references', 'HOST-TOOLS.md'), 'utf8')
   assert.match(hostTools, /spawn_agent/)
   assert.match(hostTools, /custom agent defined as TOML/)
@@ -413,7 +413,7 @@ test('Codex install preserves existing config while ensuring codex hooks are ena
 
   installHost(getHost('codex'), { root, sourceRoot })
 
-  assert.equal(readFileSync(configTarget, 'utf8'), 'model = "gpt-5.4"\n\n[features]\ncodex_hooks = true\nmulti_agent = true\n')
+  assert.equal(readFileSync(configTarget, 'utf8'), 'model = "gpt-5.4"\n\n[features]\nhooks = true\nmulti_agent = true\n')
 })
 
 test('Codex install preserves existing multi_agent while adding missing hooks', () => {
@@ -424,7 +424,18 @@ test('Codex install preserves existing multi_agent while adding missing hooks', 
 
   installHost(getHost('codex'), { root, sourceRoot })
 
-  assert.equal(readFileSync(configTarget, 'utf8'), '[features]\ncodex_hooks = true\nmulti_agent = true\n')
+  assert.equal(readFileSync(configTarget, 'utf8'), '[features]\nhooks = true\nmulti_agent = true\n')
+})
+
+test('Codex install migrates deprecated codex_hooks feature flag', () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-install-codex-hooks-migrate-'))
+  const configTarget = join(root, '.codex', 'config.toml')
+  mkdirSync(join(root, '.codex'), { recursive: true })
+  writeFileSync(configTarget, '[features]\ncodex_hooks = true\nmulti_agent = true\n', 'utf8')
+
+  installHost(getHost('codex'), { root, sourceRoot })
+
+  assert.equal(readFileSync(configTarget, 'utf8'), '[features]\nhooks = true\nmulti_agent = true\n')
 })
 
 test('Codex uninstall removes Automaton hooks and skills while preserving .agent', () => {

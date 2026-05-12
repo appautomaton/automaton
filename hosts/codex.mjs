@@ -87,7 +87,7 @@ export const codexHost = {
   },
   installFiles() {
     return {
-      '.codex/config.toml': `[features]\ncodex_hooks = true\nmulti_agent = true\n`,
+      '.codex/config.toml': `[features]\nhooks = true\nmulti_agent = true\n`,
       '.codex/hooks.json': renderCodexHooksConfig(),
       '.codex/hooks/session-start.mjs': renderSessionStartHook(),
       '.codex/hooks/stop.mjs': renderStopHook()
