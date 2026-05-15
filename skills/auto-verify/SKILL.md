@@ -25,20 +25,23 @@ Before writing `VERIFY.md` or the final verification summary:
 - Tie every result to fresh command output or direct observation.
 - Name skipped checks explicitly.
 - Treat partial evidence as PARTIAL or FAIL, not completion.
-- Read `references/quality.md` if the summary sounds confident without proof.
+- Read `references/quality.md` when the summary sounds confident without proof.
 
 ## Do
 
 ### 1. Load State
 
-Read `.agent/steering/STATUS.md`. Read the canonical `PLAN.md`. Read `references/ARTIFACT-LIFECYCLE.md` for verify-stage handoff and state pointer boundaries.
+Read `.agent/steering/STATUS.md`. Read the canonical `PLAN.md`. Read `references/ARTIFACT-LIFECYCLE.md` for verify-stage handoff, progressive disclosure, and state pointer boundaries.
 
 If the slice creates, rewrites, edits, outlines, or audits prose, read `references/content-verification.md` and add its content checks to the verification loop.
+
+If the slice links a `slices/slice-NNN.md` detail file or verifies requirement IDs whose detail lives in `spec/*.md`, load only those linked files before evaluating. Do not verify from memory or from an unlinked supplemental file.
 
 ### 2. Re-read the Slice
 
 Identify the current slice from PLAN.md. Re-read:
 - The slice objective
+- Linked detail file and traceability IDs, if present
 - The acceptance criteria
 - The verification command specified in the plan
 
@@ -90,8 +93,9 @@ Report findings plainly:
 ### 6. Update State
 
 If the slice is fully verified (all criteria PASS):
-- Run this skill's installed `sync-status.mjs` from the same host skill root.
-- Update `.agent/.automaton/state/current.json` with the next slice or stage.
+- Run `sync-status.mjs` from this skill's installed directory.
+- Update `.agent/.automaton/state/current.json`:
+  - `stage` → next stage
 
 If the slice has gaps:
 - Do NOT update state.
@@ -131,7 +135,3 @@ Read `references/verification-template.md` for the exact markdown format.
 ### Common Verification Gaps
 
 Read `references/common-gaps.md` for a checklist of commonly missed verification scenarios.
-
-### Context Budget
-
-Read `references/CONTEXT-BUDGET.md` for progressive loading rules and degradation tiers.

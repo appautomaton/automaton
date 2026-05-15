@@ -11,7 +11,7 @@ metadata:
 
 Turn a vague idea into a sharp objective through structured conversation. Use this skill when the user says "I have an idea," "help me think through this," "is this worth building," or any request that precedes a spec.
 
-First action: detect mode and classify scope from the user's language. If they mention customers, revenue, market, or competition → Startup mode. If they mention side project, hackathon, learning, or open source → Builder mode. If the request is about content creation → Content mode. Classify scope as bug-sized, feature-sized, capability-sized, or roadmap-sized. State the detected mode and scope, and confirm both.
+First action: detect mode, work scale, and work shape from the user's language. If they mention customers, revenue, market, or competition → Startup mode. If they mention side project, hackathon, learning, or open source → Builder mode. If the request is about content creation → Content mode. Classify scale as bug-sized, feature-sized, capability-sized, or roadmap-sized. Classify shape as feature, refactor, parity, audit, migration, coverage, content, or mixed. State the detected mode, scale, and shape, and confirm them.
 
 ## Preamble
 
@@ -25,30 +25,42 @@ Before presenting alternatives, recommending an approach, or writing the design 
 - Replace praise with evidence-backed assessment.
 - Make alternatives differ by scope, risk, or learning value.
 - Ask for observed behavior when the answer stays abstract.
-- Read `references/quality.md` if the conversation starts sounding encouraging but non-decisive.
+- Read `references/quality.md` when the conversation sounds encouraging but non-decisive.
 
 ## Do
 
-1. **Detect mode and classify scope.** From the user's initial message, determine both:
+1. **Detect mode, scale, and shape.** From the user's initial message, determine all three:
 
    Mode:
    - **Startup mode** — mentions customers, revenue, market, competition, fundraising, or "building a company."
    - **Builder mode** — mentions side project, hackathon, learning, open source, personal use, or "just for fun."
    - **Content mode** — the deliverable is prose: article, brief, deck, blog post, newsletter, documentation, or any writing where audience and voice matter. Content mode activates when the user's goal is a content deliverable, not a product or feature.
 
-   Scope:
+   Scale:
    - **Bug-sized** — a defect or inconsistency in existing behavior. One file, one fix, no design decision.
    - **Feature-sized** — a single new behavior or enhancement. Clear boundary, ships in one plan.
-   - **Capability-sized** — a coherent behavioral goal that touches multiple files or subsystems but serves one outcome. Needs a spec; planning handles the breakdown into ordered work.
-   - **Roadmap-sized** — multiple independent goals that happen to be mentioned together. Needs decomposition into separate specs via `ROADMAP.md`.
+   - **Capability-sized** — one coherent outcome that may touch multiple files, subsystems, or internal structures. Needs a spec; planning handles the breakdown into ordered work.
+   - **Roadmap-sized** — multiple independent outcomes that happen to be mentioned together. Needs decomposition into separate specs via `ROADMAP.md`.
 
-   State both in one confirmation: "This reads as Builder mode and capability-sized — does that match?" If the user disagrees on either, adjust.
+   Shape:
+   - **Feature** — user-visible or workflow-visible behavior changes.
+   - **Refactor** — structural improvement where behavior should remain invariant.
+   - **Parity** — close gaps between this system and a reference system, spec, or benchmark.
+   - **Audit** — investigate and report findings before deciding implementation.
+   - **Migration** — move from a source state to a target state with compatibility constraints.
+   - **Coverage** — strengthen tests or verification without changing intended behavior.
+   - **Content** — prose, documentation, decks, briefs, or other narrative artifacts.
+   - **Mixed** — more than one shape is genuinely load-bearing.
+
+   State all three in one confirmation: "This reads as Builder mode, capability-sized, and parity-shaped — does that match?" If the user disagrees on any axis, adjust.
+
+   Do not equate "large" with roadmap-sized. Capability-sized work remains one spec when it serves one coherent outcome. Roadmap-sized means independent outcomes, not merely many files, many gaps, or many constraints.
 
    When Content mode is detected, read `references/content-intake.md` and use its diagnostic questions instead of the Startup or Builder question sets. Content mode still produces a design document on approval, with audience, thesis, voice, and content anti-goals as required fields.
 
    For bug-sized goals, consider whether office-hours is the right skill. A known bug with a known fix can go directly to `auto-frame`.
 
-   For roadmap-sized goals, help the user identify the highest-leverage spec to frame first, and recommend the rest be captured in `ROADMAP.md`.
+   For roadmap-sized goals, help the user identify the highest-leverage spec to frame first, and recommend the rest be captured in `ROADMAP.md`. If you narrow the user's stated goal for decomposition, name the narrowing explicitly and preserve the broader intent.
 
 2. **Run the diagnostic.** Ask questions one at a time. Wait for each answer before asking the next. Use the mode-specific question sets below.
 
@@ -59,7 +71,7 @@ Before presenting alternatives, recommending an approach, or writing the design 
    - What happens if we do nothing?
    - What existing code or patterns already partially solve this?
 
-5. **Generate alternatives.** Present 2–3 distinct approaches that match the user's scope classification. For bug-sized, feature-sized, and capability-sized goals: one must be the minimal viable — the smallest version of the user's goal, not a different smaller goal; one must be the ideal architecture (best long-term); one can be creative/lateral. For roadmap-sized goals: alternatives should be decomposition strategies or first-spec candidates, not roadmap-scale implementation plans. For each: summary, effort estimate, risk level, 2–3 pros, 2–3 cons. Read `references/alternatives-format.md` for the exact format.
+5. **Generate alternatives.** Present 2–3 distinct approaches that match the user's scale and shape. For bug-sized, feature-sized, and capability-sized goals: one must be the minimal viable — the smallest version of the user's stated goal, not a different smaller goal; one must be the ideal architecture (best long-term); one can be creative/lateral. For roadmap-sized goals: alternatives should be decomposition strategies or first-spec candidates, not roadmap-scale implementation plans. For refactor, parity, audit, migration, or coverage work, make the approaches differ by blast radius, traceability, evidence depth, rollout risk, or verification strength — not by pretending the work is a feature. For each: summary, effort estimate, risk level, 2–3 pros, 2–3 cons. Read `references/alternatives-format.md` for the exact format.
 
 6. **Recommend and wait.** State which approach you recommend and why. Do NOT proceed until the user explicitly approves an approach or chooses a different one.
 
@@ -74,7 +86,7 @@ If the user says "just do it" or expresses impatience:
 - Ask the 2 most critical remaining questions for their mode.
 - If they push back a second time, respect it and proceed to alternatives.
 
-If the conversation reveals the goal is larger or smaller than initially classified — e.g., a feature-sized goal turns out to need multiple independent specs, or a capability-sized goal turns out to be a single-file fix — reclassify scope and state the change: "This is actually roadmap-sized — let's decompose." Adjust question routing to match the new classification.
+If the conversation reveals the goal is larger or smaller than initially classified — e.g., a feature-sized goal turns out to need multiple independent specs, or a capability-sized goal turns out to be a single-file fix — reclassify scale and state the change: "This is actually roadmap-sized — let's decompose." If the shape changes — e.g., a feature request is really parity or refactor work — state that too. Adjust question routing to match the new classification.
 </MODE-DETECTION>
 
 <HARD-GATE>
@@ -183,12 +195,14 @@ Smart routing based on scope classification:
 ## Output
 
 If the user approves an approach, produce a design document (not SPEC.md) with:
-- Scope classification (bug / feature / capability / roadmap)
+- Work scale (bug / feature / capability / roadmap)
+- Work shape (feature / refactor / parity / audit / migration / coverage / content / mixed)
 - Objective statement
 - Broader intent — the larger goal this spec serves, even if the spec only addresses part of it
 - Target user or stakeholder
 - Desired outcome
 - Scope boundary and anti-goals
+- Scope preservation — whether this preserves the user's full stated intent or intentionally decomposes it
 - Selected approach with rationale
 - Key assumptions and risks
 - Deferred scope — ideas surfaced during discussion that belong in `ROADMAP.md`, not this spec. Name them explicitly so they are captured, not lost.
@@ -238,7 +252,3 @@ Read `references/landscape-awareness.md` for the three-layer synthesis, eureka c
 ### Design Doc Templates
 
 Read `references/design-doc-templates.md` for the Startup mode and Builder mode design document formats.
-
-### Context Budget
-
-Read `references/CONTEXT-BUDGET.md` for progressive loading rules and degradation tiers.

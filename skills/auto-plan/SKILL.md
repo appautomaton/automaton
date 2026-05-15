@@ -15,9 +15,9 @@ First action: run `scripts/get-context.mjs` from this skill's installed director
 
 ## Preamble
 
-auto-plan builds the smallest plan that makes execution safe. It does not write code. It breaks work into ordered slices, each producing a testable outcome, and attaches explicit execution routing, execution topology, and verification commands to every material slice.
+auto-plan builds the smallest plan that makes execution safe while preserving the approved scope. It does not write code. It breaks work into ordered slices, each producing a testable outcome, and attaches explicit execution routing, execution topology, and verification commands to every material slice.
 
-Context budget: PLAN.md itself must fit in ~10% of the context window. If it exceeds 300 lines, the change needs more framing or should be split into multiple changes.
+Context budget: `PLAN.md` is the reloadable execution index, not the whole implementation dossier. Keep PLAN.md compact enough to re-read. For large coherent work, summarize slices in PLAN.md and link optional detail files under `.agent/work/<change>/slices/`. Split only for independent outcomes, not because one coherent plan has many requirements.
 
 ## Quality Gate
 
@@ -26,7 +26,7 @@ Before finalizing `PLAN.md`:
 - Attach a verification command to every material slice.
 - Name the execution topology: auto-continue chain, checkpoints, subagent routes, and any parallel-safe groups.
 - Remove vague tasks that do not define done.
-- Read `references/quality.md` if the plan leaves execution decisions to the implementer.
+- Read `references/quality.md` when the plan leaves execution decisions to the implementer.
 
 ## Do
 
@@ -40,12 +40,13 @@ Load files in this order. Stop as soon as you have enough to proceed.
 1. .agent/.automaton/state/current.json (always — < 50 tokens)
 2. STATUS.md             (always — < 200 tokens)
 3. SPEC.md               (always — < 1000 tokens)
-4. DESIGN.md             (if exists and relevant — < 1000 tokens)
-5. Wiki pages            (only if referenced by spec or plan)
-6. Source files          (only the files the current slice touches)
+4. Linked spec detail    (only files named by SPEC.md and needed for planning)
+5. DESIGN.md             (if exists and relevant — < 1000 tokens)
+6. Wiki pages            (only if referenced by spec or plan)
+7. Source files          (only the files the current slice touches)
 ```
 
-Do not load source files unless the plan requires understanding existing code patterns.
+Do not load source files unless the plan requires understanding existing code patterns. Do not ignore linked `spec/*.md` files when they contain normative requirements, gap IDs, invariants, or acceptance detail.
 </CONTEXT-LOADING>
 
 ### 2. Assess Review State
@@ -55,6 +56,8 @@ If `product_review` exists in `current.json`, read the `## Review: Product` sect
 If the engineering approach is complex or risky, recommend `auto-eng-review` before execution.
 
 If `SPEC.md` contains content fields (Audience, Thesis, Voice, Content Anti-Goals) or the change is about writing, articles, briefs, decks, newsletters, documentation, proposals, or rewrite passes, read `references/content-planning.md`. Carry audience, thesis, voice, and content anti-goals from SPEC.md into the plan, and add channel, source policy, factual risk, and format where they affect slice execution or verification.
+
+If `SPEC.md` names requirement IDs, gap IDs, invariants, audit questions, migration checkpoints, or coverage targets, preserve those IDs in PLAN.md and attach them to the slices that satisfy them. Do not collapse traceable requirements into untraceable prose.
 
 ### 3. Design Slices
 
@@ -85,6 +88,7 @@ Frame each slice as:
 - [observable criterion]
 **Verification:** [command or check that proves the slice is done]
 **Auto-continue:** yes | no
+**Detail:** [linked `slices/slice-NNN.md` file or "none"]
 ```
 
 Rules:
@@ -94,7 +98,7 @@ Rules:
 - `Auto-continue` defaults to `no`; use `yes` only when the next slice may start after this slice passes verification without user input.
 - Use `Auto-continue: no` for checkpoints, compatibility reports, architecture decisions, external dependencies, broad cross-surface changes, or ambiguous blocker outcomes.
 - Slices should be small enough to complete in one session.
-- If a slice exceeds ~15% of context window, split it.
+- If a coherent slice exceeds ~15% of context window, move extended instructions to `slices/slice-NNN.md` and keep PLAN.md as the index. Split the slice only when it contains independent outcomes.
 </SLICE-DESIGN>
 
 ### 4. Write PLAN.md
@@ -104,7 +108,8 @@ Read `references/ARTIFACT-LIFECYCLE.md` for plan-stage handoff and state pointer
 Required sections:
 - **Goal** — restate the bounded goal from SPEC.md
 - **Architecture approach** — the smallest correct design
-- **Ordered task sequence** — slices in dependency order
+- **Requirement traceability** — gap IDs, invariant IDs, audit questions, migration checkpoints, or coverage targets mapped to slices when present
+- **Ordered task sequence** — slices in dependency order, with linked detail files when needed
 - **Execution routing and topology** — direct or subagent route for each material slice; auto-continue chain, checkpoints, and parallel-safe groups (or "none")
 - **Verification commands** — attached to every material slice
 - **Context budget for this change** — total estimated context consumption
@@ -125,8 +130,7 @@ If any of these are true, recommend `auto-frame` and stop.
 
 ### 6. Update State
 
-Run this skill's installed `sync-status.mjs` from the same host skill root to align `STATUS.md` with the current state.
-
+Run `sync-status.mjs` from this skill's installed directory.
 Update `.agent/.automaton/state/current.json`:
 - `canonical_design` → path to DESIGN.md (if written)
 - `canonical_plan` → path to PLAN.md

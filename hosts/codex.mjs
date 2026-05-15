@@ -11,7 +11,7 @@ function renderCodexHooksConfig() {
       hooks: {
         SessionStart: [
           {
-            matcher: 'startup|resume',
+            matcher: 'startup|resume|clear',
             hooks: [
               {
                 type: 'command',

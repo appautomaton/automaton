@@ -25,7 +25,7 @@ Before appending the engineering review:
 - Ground concerns in slices, file areas, commands, or missing artifacts.
 - Separate blockers from follow-up cleanup.
 - Avoid reopening product scope unless the plan is unbuildable.
-- Read `references/quality.md` if findings are generic or unactionable.
+- Read `references/quality.md` when findings are generic or unactionable.
 
 ## Do
 
@@ -64,7 +64,11 @@ Use strict vocabulary. No synonyms.
 
 5. **Append review.** Add a `## Review: Engineering` section to `PLAN.md` using the exact template in `references/review-template.md`.
 
-6. **Update state.** Run this skill's installed `sync-status.mjs` from the same host skill root. Update `.agent/.automaton/state/current.json` with `engineering_review: <verdict>`.
+6. **Update State.**
+
+   Run `sync-status.mjs` from this skill's installed directory.
+   Update `.agent/.automaton/state/current.json`:
+   - `engineering_review` → `<verdict>`
 
 7. **Recommend.** State the next skill based on the verdict.
 

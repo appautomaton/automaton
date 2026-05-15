@@ -23,7 +23,7 @@ Before writing steering artifacts:
 - Separate observed, inferred, and unknown facts.
 - Cite paths for repo-shape claims.
 - Stop scanning once the next action is clear.
-- Read `references/quality.md` if artifacts start turning into broad inventory.
+- Read `references/quality.md` when artifacts turn into broad inventory.
 
 ## Do
 
@@ -48,7 +48,9 @@ Before writing steering artifacts:
    - `.agent/steering/ROADMAP.md` — 3 to 6 plausible phases
    - `.agent/steering/STATUS.md` — current state and next step
 
-7. **Update state.** Run this skill's installed `sync-status.mjs` from the same host skill root to align `STATUS.md` with `current.json`.
+7. **Update State.**
+
+   Run `sync-status.mjs` from this skill's installed directory to align `.agent/steering/STATUS.md` with `.agent/.automaton/state/current.json`.
 
 8. **Report.** Summarize what you found, what you wrote, and what remains uncertain.
 
@@ -100,7 +102,3 @@ Read `references/artifact-contract.md` for the exact format and required section
 ### Question Patterns
 
 Read `references/question-patterns.md` for examples of good and bad follow-up questions.
-
-### Context Budget
-
-Read `references/CONTEXT-BUDGET.md` for progressive loading rules and degradation tiers.

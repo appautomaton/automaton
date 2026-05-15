@@ -10,6 +10,27 @@ This reference defines the artifact handoff contract for Automaton skills. It cl
 - Skills write artifacts only for the active change unless a skill explicitly documents a steering or wiki output.
 - Do not add archive behavior here. Do not add archive commands, runtime enforcement, daemons, dashboards, browser workflows, marketplace behavior, or vendor-source imports.
 
+## Progressive Disclosure
+
+`SPEC.md` and `PLAN.md` are canonical indexes, not forced compression targets. Large coherent work should keep the canonical files reloadable and link detail files instead of silently narrowing the goal.
+
+Allowed active-change layout:
+
+```text
+.agent/work/<change>/SPEC.md
+.agent/work/<change>/spec/*.md
+.agent/work/<change>/PLAN.md
+.agent/work/<change>/slices/*.md
+.agent/work/<change>/DESIGN.md
+```
+
+Rules:
+- `SPEC.md` must summarize and link every normative `spec/*.md` detail file. Unlinked supplemental files are notes, not contract.
+- `PLAN.md` must link any `slices/*.md` detail file and preserve requirement IDs, gap IDs, invariants, audit questions, migration checkpoints, or coverage targets from SPEC.md.
+- Execute and verify load only the detail files linked for the active slice or active requirement IDs.
+- Split a change only for independent outcomes. Do not split or narrow one coherent outcome solely because the spec or plan has many files, gaps, constraints, or scenarios.
+- If a skill narrows the user's stated scope, it must name the narrowing, explain why, and record the deferred scope in `ROADMAP.md` or ask for confirmation.
+
 ## Stage Handoffs
 
 | Stage | Required inputs | Produces | State pointer expectations | Next handoff |
@@ -19,6 +40,20 @@ This reference defines the artifact handoff contract for Automaton skills. It cl
 | `execute` | approved PLAN.md, current slice, acceptance criteria, verification commands | code, docs, tests, orchestration notes, and slice evidence required by PLAN.md | state advances only after evidence exists; do not change canonical pointers to missing files | `auto-execute` for remaining slices or `auto-verify` when implementation is ready to check |
 | `verify` | canonical PLAN.md, current slice or completed work, verification commands | verification report inline or `VERIFY.md` for important changes | state advances only when all criteria pass; failed verification keeps state unchanged | `auto-execute` for gaps, `auto-resume` for continuation, or completion status |
 | `resume` | current state, STATUS.md, canonical artifact pointers | concise recovery summary and next recommended skill | does not invent missing pointers; stale pointers are reported, not silently repaired | the skill matching recovered state |
+
+## Review Verdict Routing
+
+`auto-ceo-review` and `auto-eng-review` use different verdict vocabularies because they answer different questions. Product review may **descope or re-scope** (4 verdicts; "send back for clarification" is distinct from "kill"). Engineering review only blocks **execution safety** (3 verdicts; re-planning subsumes both unsafe-architecture and unsafe-routing).
+
+| Review | Verdict | Next skill |
+| --- | --- | --- |
+| `auto-ceo-review` | `approved` | `auto-plan` |
+| `auto-ceo-review` | `approved_with_risks` | `auto-plan` (risks must appear in plan) |
+| `auto-ceo-review` | `needs_clarification` | `auto-frame` or `auto-office-hours` |
+| `auto-ceo-review` | `descoped` | `auto-office-hours` or stop |
+| `auto-eng-review` | `approved` | `auto-execute` |
+| `auto-eng-review` | `approved_with_risks` | `auto-execute` (risks surfaced before each slice) |
+| `auto-eng-review` | `needs_correction` | `auto-plan` |
 
 ## STOP Conditions
 

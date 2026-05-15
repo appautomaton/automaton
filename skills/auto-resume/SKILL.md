@@ -25,7 +25,7 @@ Before producing the recovery summary:
 - Trust durable artifacts over memory.
 - Report stale pointers plainly.
 - Recommend one next skill with the reason.
-- Read `references/quality.md` if the summary becomes narrative recap.
+- Read `references/quality.md` when the summary becomes narrative recap.
 
 ## Do
 

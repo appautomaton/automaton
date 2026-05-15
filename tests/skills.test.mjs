@@ -207,6 +207,88 @@ test('artifact lifecycle reference defines stage handoffs and canonical pointers
   assert.match(lifecycle, /\.agent\/work\/<change>/)
 })
 
+test('artifact lifecycle supports progressive disclosure without scope narrowing', () => {
+  const lifecycle = readFileSync(join(skillsRoot, '_shared', 'references', 'ARTIFACT-LIFECYCLE.md'), 'utf8')
+
+  assert.match(lifecycle, /## Progressive Disclosure/)
+  assert.match(lifecycle, /SPEC\.md` and `PLAN\.md` are canonical indexes/)
+  assert.match(lifecycle, /\.agent\/work\/<change>\/spec\/\*\.md/)
+  assert.match(lifecycle, /\.agent\/work\/<change>\/slices\/\*\.md/)
+  assert.match(lifecycle, /Unlinked supplemental files are notes, not contract/)
+  assert.match(lifecycle, /Split a change only for independent outcomes/)
+  assert.match(lifecycle, /Do not split or narrow one coherent outcome/)
+})
+
+test('artifact lifecycle reference documents review verdict routing', () => {
+  const lifecycle = readFileSync(join(skillsRoot, '_shared', 'references', 'ARTIFACT-LIFECYCLE.md'), 'utf8')
+
+  assert.match(lifecycle, /## Review Verdict Routing/)
+  assert.match(lifecycle, /`auto-ceo-review`/)
+  assert.match(lifecycle, /`auto-eng-review`/)
+
+  for (const verdict of ['approved', 'approved_with_risks', 'needs_clarification', 'descoped', 'needs_correction']) {
+    assert.match(lifecycle, new RegExp(`\`${verdict}\``), `verdict ${verdict} must appear in lifecycle reference`)
+  }
+})
+
+test('office-hours separates work scale from work shape', () => {
+  const source = readFileSync(join(skillsRoot, 'auto-office-hours', 'SKILL.md'), 'utf8')
+
+  assert.match(source, /work scale/i)
+  assert.match(source, /work shape/i)
+  for (const shape of ['feature', 'refactor', 'parity', 'audit', 'migration', 'coverage', 'content', 'mixed']) {
+    assert.match(source, new RegExp(shape, 'i'), `office-hours must mention work shape: ${shape}`)
+  }
+  assert.match(source, /Do not equate "large" with roadmap-sized/)
+  assert.match(source, /Capability-sized work remains one spec/)
+  assert.match(source, /scope preservation/i)
+})
+
+test('auto-frame preserves scope and supports adaptive SPEC shapes', () => {
+  const source = readFileSync(join(skillsRoot, 'auto-frame', 'SKILL.md'), 'utf8')
+
+  assert.match(source, /SPEC\.md` is the reloadable contract/)
+  assert.match(source, /spec\/\*\.md/)
+  assert.match(source, /Silent narrowing is a framing failure/)
+  assert.match(source, /Broader intent/)
+  assert.match(source, /Work scale and work shape/)
+  for (const token of ['structural change', 'behavioral invariants', 'gap matrix', 'audit questions', 'migration target', 'coverage target']) {
+    assert.match(source, new RegExp(token, 'i'), `auto-frame must support adaptive spec token: ${token}`)
+  }
+})
+
+test('plan execute and verify preserve linked detail and traceability IDs', () => {
+  const plan = readFileSync(join(skillsRoot, 'auto-plan', 'SKILL.md'), 'utf8')
+  const execute = readFileSync(join(skillsRoot, 'auto-execute', 'SKILL.md'), 'utf8')
+  const verify = readFileSync(join(skillsRoot, 'auto-verify', 'SKILL.md'), 'utf8')
+
+  assert.match(plan, /slices\/slice-NNN\.md/)
+  assert.match(plan, /Requirement traceability/)
+  assert.match(plan, /gap IDs/)
+  assert.match(plan, /Do not collapse traceable requirements into untraceable prose/)
+  assert.match(execute, /linked detail files and traceability IDs/)
+  assert.match(execute, /Do not load every supplemental file/)
+  assert.match(verify, /Linked detail file and traceability IDs/)
+  assert.match(verify, /unlinked supplemental file/)
+})
+
+test('read-only skills do not include the state-write template', () => {
+  for (const skillName of ['auto-resume', 'auto-office-hours']) {
+    const source = readFileSync(join(skillsRoot, skillName, 'SKILL.md'), 'utf8')
+
+    assert.doesNotMatch(
+      source,
+      /Run `sync-status\.mjs` from this skill's installed directory/,
+      `${skillName} is read-only and must not include the state-write template`
+    )
+    assert.doesNotMatch(
+      source,
+      /Update `\.agent\/\.automaton\/state\/current\.json`:/,
+      `${skillName} must not include the canonical state-update list`
+    )
+  }
+})
+
 test('lifecycle controller skills load the artifact lifecycle contract', () => {
   for (const skillName of ['auto-frame', 'auto-plan', 'auto-execute', 'auto-verify', 'auto-resume']) {
     const source = readFileSync(join(skillsRoot, skillName, 'SKILL.md'), 'utf8')

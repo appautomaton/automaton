@@ -15,9 +15,9 @@ First action: run `scripts/get-context.mjs` from this skill's installed director
 
 ## Preamble
 
-auto-frame produces exactly one artifact: `SPEC.md`. If you leave this skill without a valid SPEC.md written to disk, you have failed. This skill does not write code, does not create PLAN.md, and does not proceed to planning without a written spec.
+auto-frame always produces the canonical artifact: `SPEC.md`. If you leave this skill without a valid SPEC.md written to disk, you have failed. This skill does not write code, does not create PLAN.md, and does not proceed to planning without a written spec.
 
-Context budget: the spec itself should fit in ~5% of the context window. A feature-sized spec typically lands under 200 lines. A capability-sized spec — one coherent behavioral goal that touches multiple files or subsystems — may reach 250–300 lines. Beyond 300 lines, the spec likely bundles independent work and should be split. The primary scope check is coherence, not line count: a spec is right-sized when all its acceptance criteria contribute to a single observable behavior change.
+Context budget: `SPEC.md` is the reloadable contract, not the entire body of detail. Keep it compact enough to re-read, but do not narrow a coherent goal just to keep the file short. For larger coherent work, summarize the contract in SPEC.md and link detail files under `spec/*.md`, such as `constraints.md`, `gap-matrix.md`, `risks.md`, or `acceptance-detail.md`. The primary scope check is coherence: one outcome = one spec, even when it needs progressive disclosure.
 
 ## Quality Gate
 
@@ -25,19 +25,21 @@ Before finalizing `SPEC.md`:
 - Make the objective observable.
 - Move implementation detail out unless it constrains scope.
 - Mark uncertain claims as assumptions.
-- Read `references/quality.md` if the spec feels broad, padded, or hard to verify.
+- Read `references/quality.md` when the spec feels broad, padded, or hard to verify.
 
 ## Do
 
 ### 1. Restate
 
-If office-hours context is present in the conversation (design document, scope classification, broader intent), read it. Adopt the scope classification and broader intent to calibrate constraints and interview depth. Do not re-ask what office-hours already established.
+If office-hours context is present in the conversation (design document, work scale, work shape, broader intent), read it. Adopt the scale, shape, and broader intent to calibrate constraints and interview depth. Do not re-ask what office-hours already established.
 
 State the goal in one sentence. If you cannot, ask one clarifying question and stop.
 
+If your SPEC would be narrower than the user's stated goal or office-hours broader intent, either widen the SPEC, explicitly record the narrowing as decomposition with deferred scope in `ROADMAP.md`, or ask for confirmation. Silent narrowing is a framing failure.
+
 ### 2. Surface
 
-List only the constraints, unknowns, and risks that change implementation. For feature-sized goals, 5 items is the typical ceiling. Capability-sized goals with genuinely distinct constraints may surface 6–8. If the list exceeds 8, or if constraints address unrelated outcomes, the spec likely bundles independent work — ask the user which outcome to focus on.
+List the constraints, unknowns, and risks that change implementation. Keep the decision-critical summary in `SPEC.md`. If the set is large but coherent, summarize it here and write `spec/constraints.md`, `spec/risks.md`, or another linked detail file instead of dropping requirements. If constraints address unrelated outcomes, ask which outcome to frame first.
 
 ### 3. Select Lenses
 
@@ -60,7 +62,7 @@ Questions must materially change the spec. Do not ask for preferences that don't
 
 ### 5. Write SPEC.md
 
-Read `references/ARTIFACT-LIFECYCLE.md` for frame-stage handoff and state pointer boundaries. If a `SPEC.md` already exists for this change, read it and preserve all `## Review:` sections.
+Read `references/ARTIFACT-LIFECYCLE.md` for frame-stage handoff, progressive disclosure, and state pointer boundaries. If a `SPEC.md` already exists for this change, read it and preserve all `## Review:` sections.
 
 <HARD-GATE>
 
@@ -68,10 +70,13 @@ Do NOT proceed past this step without writing `SPEC.md` to `.agent/work/<change>
 
 The file must contain:
 - Bounded goal (1 sentence)
+- Broader intent (the larger user goal this spec preserves or intentionally decomposes)
+- Work scale and work shape (or "not classified" with rationale)
 - Selected lenses (list)
-- Constraints (typically ≤ 5; 6–8 for coherent capability-sized goals)
-- Required behavior (what must observably change)
-- Acceptance criteria (how we know it is done — auto-verify checks these)
+- Constraints and risks that change implementation, summarized when detail is linked
+- Required outcome in the shape the work needs: behavior, structural change, invariants, parity target, audit questions, migration target, coverage target, or content target
+- Acceptance criteria or traceable requirement matrix (auto-verify checks these)
+- Linked detail files under `spec/` when the work needs progressive disclosure, or "none"
 - Blocking questions or assumptions (list, or "none")
 - Anti-goals (what this change explicitly does not do)
 
@@ -80,8 +85,7 @@ If a `SPEC.md` already exists, refresh it. Preserve all `## Review:` sections.
 
 ### 6. Update State
 
-Run this skill's installed `sync-status.mjs` from the same host skill root to align `STATUS.md` with the current state.
-
+Run `sync-status.mjs` from this skill's installed directory.
 Update `.agent/.automaton/state/current.json`:
 - `canonical_spec` → path to the SPEC.md you just wrote
 - `stage` → `frame` (or `plan` if user approved and no review needed)
@@ -115,6 +119,10 @@ Then write SPEC.md immediately and ask for confirmation, not permission.
 Split genuinely independent work. If the request describes unrelated systems with separate outcomes ("build chat, billing, and analytics"), tell the user: "These are independent changes. Which one should we frame first?"
 
 Keep related work together. If multiple files or subsystems must change to achieve one coherent behavioral goal ("adjust two skills so they handle broader scope"), that is one spec — not three. The test: do the acceptance criteria point at one outcome or several unrelated ones? One outcome = one spec, regardless of how many files it touches.
+
+### Work Shapes
+
+Choose sections that fit the work; do not force every SPEC into a feature template. Refactor work should name structural changes, behavioral invariants, blast radius, and regression proof. Parity work should name the reference source, gap matrix, requirement IDs, target conformance state, and verification by gap ID. Audit work should name questions, evidence sources, finding schema, and decision gate. Migration work should name source state, target state, compatibility constraints, rollout or rollback, and verification. Coverage work should name target risk areas, expected coverage improvement, and regression proof.
 
 ### Lens Selection Matrix
 

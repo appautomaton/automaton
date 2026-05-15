@@ -11,7 +11,7 @@ function renderClaudeSettings() {
       hooks: {
         SessionStart: [
           {
-            matcher: 'startup|resume',
+            matcher: 'startup|resume|clear|compact',
             hooks: [
               {
                 type: 'command',

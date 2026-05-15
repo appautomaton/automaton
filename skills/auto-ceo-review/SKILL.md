@@ -25,7 +25,7 @@ Before appending the product review:
 - Replace strategic filler with user, action, value, and risk.
 - Separate supported claims from assumptions.
 - Name the strongest risk even when approving.
-- Read `references/quality.md` if the review sounds like polite validation.
+- Read `references/quality.md` when the review sounds like polite validation.
 
 ## Do
 
@@ -55,7 +55,11 @@ Use strict vocabulary. No synonyms.
 
 5. **Append review.** Add a `## Review: Product` section to `SPEC.md` using the exact template in `references/review-template.md`.
 
-6. **Update state.** Run this skill's installed `sync-status.mjs` from the same host skill root. Update `.agent/.automaton/state/current.json` with `product_review: <verdict>`.
+6. **Update State.**
+
+   Run `sync-status.mjs` from this skill's installed directory.
+   Update `.agent/.automaton/state/current.json`:
+   - `product_review` → `<verdict>`
 
 7. **Recommend.** State the next skill based on the verdict.
 

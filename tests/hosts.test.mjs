@@ -602,3 +602,88 @@ test('OpenCode plugin syncs STATUS.md on session.idle', async () => {
   assert.match(readFileSync(statusTarget, 'utf8'), /active change: `deepen-skills`/)
   assert.match(readFileSync(statusTarget, 'utf8'), /current stage: `plan`/)
 })
+
+test('Claude SessionStart matcher fires on startup, resume, clear, and compact', () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-claude-matcher-'))
+
+  installHost(getHost('claude'), { root, sourceRoot })
+
+  const settings = JSON.parse(readFileSync(join(root, '.claude', 'settings.json'), 'utf8'))
+  assert.equal(settings.hooks.SessionStart[0].matcher, 'startup|resume|clear|compact')
+})
+
+test('Codex SessionStart matcher fires on startup, resume, clear (and not compact)', () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-codex-matcher-'))
+
+  installHost(getHost('codex'), { root, sourceRoot })
+
+  const hooks = JSON.parse(readFileSync(join(root, '.codex', 'hooks.json'), 'utf8'))
+  assert.equal(hooks.hooks.SessionStart[0].matcher, 'startup|resume|clear')
+  assert.doesNotMatch(hooks.hooks.SessionStart[0].matcher, /compact/)
+})
+
+test('OpenCode plugin injects session context, dedups, and re-injects after compaction', async () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-opencode-transform-'))
+  const pluginTarget = join(root, '.opencode', 'plugins', 'automaton.js')
+  const currentTarget = join(root, '.agent', '.automaton', 'state', 'current.json')
+
+  installHost(getHost('opencode'), { root, sourceRoot })
+  writeFileSync(
+    currentTarget,
+    '{\n  "active_change": "deepen-skills",\n  "stage": "plan"\n}\n',
+    'utf8'
+  )
+
+  const { AutomatonPlugin } = await import(pathToFileURL(pluginTarget).href)
+  const plugin = await AutomatonPlugin({
+    client: { session: { prompt() { return Promise.resolve() } } },
+    directory: root,
+    worktree: root
+  })
+
+  // Behavior 1: first transform prepends an "Automaton:" text part to the first user message.
+  const output1 = { messages: [{ info: { role: 'user' }, parts: [{ type: 'text', text: 'hi' }] }] }
+  await plugin['experimental.chat.messages.transform']({}, output1)
+  assert.equal(output1.messages[0].parts.length, 2)
+  assert.match(output1.messages[0].parts[0].text, /^Automaton: change=deepen-skills; stage=plan\./)
+  assert.equal(output1.messages[0].parts[1].text, 'hi')
+
+  // Behavior 2: re-running the transform on the same output does NOT double-inject.
+  await plugin['experimental.chat.messages.transform']({}, output1)
+  assert.equal(output1.messages[0].parts.length, 2)
+
+  // Behavior 3: session.compacted sets the flag; the next transform uses the compacted variant.
+  await plugin.event({ event: { type: 'session.compacted', properties: {} } })
+  const output2 = { messages: [{ info: { role: 'user' }, parts: [{ type: 'text', text: 'hi' }] }] }
+  await plugin['experimental.chat.messages.transform']({}, output2)
+  assert.match(output2.messages[0].parts[0].text, /Context compacted/)
+
+  // Behavior 4: the compacted flag is one-shot — subsequent transforms revert to the default variant.
+  const output3 = { messages: [{ info: { role: 'user' }, parts: [{ type: 'text', text: 'hi' }] }] }
+  await plugin['experimental.chat.messages.transform']({}, output3)
+  assert.match(output3.messages[0].parts[0].text, /^Automaton:/)
+  assert.doesNotMatch(output3.messages[0].parts[0].text, /Context compacted/)
+})
+
+test('OpenCode plugin transform is a no-op when no user message is present', async () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-opencode-transform-noop-'))
+  const pluginTarget = join(root, '.opencode', 'plugins', 'automaton.js')
+
+  installHost(getHost('opencode'), { root, sourceRoot })
+
+  const { AutomatonPlugin } = await import(pathToFileURL(pluginTarget).href)
+  const plugin = await AutomatonPlugin({
+    client: { session: { prompt() { return Promise.resolve() } } },
+    directory: root,
+    worktree: root
+  })
+
+  const emptyOutput = { messages: [] }
+  await plugin['experimental.chat.messages.transform']({}, emptyOutput)
+  assert.deepEqual(emptyOutput.messages, [])
+
+  const assistantOnly = { messages: [{ info: { role: 'assistant' }, parts: [{ type: 'text', text: 'reply' }] }] }
+  await plugin['experimental.chat.messages.transform']({}, assistantOnly)
+  assert.equal(assistantOnly.messages[0].parts.length, 1)
+  assert.equal(assistantOnly.messages[0].parts[0].text, 'reply')
+})

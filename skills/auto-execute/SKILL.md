@@ -38,11 +38,13 @@ Before using this skill:
 
 ### 1. Load State
 
-Read `.agent/steering/STATUS.md`. Read the canonical `PLAN.md`. Read `references/ARTIFACT-LIFECYCLE.md` for execute-stage handoff and state pointer boundaries.
+Read `.agent/steering/STATUS.md`. Read the canonical `PLAN.md`. Read `references/ARTIFACT-LIFECYCLE.md` for execute-stage handoff, progressive disclosure, and state pointer boundaries.
 
 If `engineering_review` is `approved_with_risks`, surface the review rationale before starting, but block only when the risk affects the current slice.
 
 If the current slice drafts, rewrites, edits, outlines, audits, or verifies prose, read `references/content-execution.md` before changing the artifact. Content execution stays inside the same direct/subagent route selection; it is not a separate skill.
+
+If the current slice links a `slices/slice-NNN.md` detail file or names requirement IDs whose detail lives in `spec/*.md`, load only those linked files for the active slice. Do not load every supplemental file for the change.
 
 ### 2. Select Execution Window
 
@@ -60,6 +62,7 @@ For each slice in the window, extract only:
 - acceptance criteria
 - verification commands
 - `Auto-continue: yes | no`
+- linked detail files and traceability IDs, if present
 
 If a material slice is missing acceptance criteria or verification, stop and recommend `auto-plan`. If `Execution` is missing, infer conservatively for this session and record a plan correction.
 
