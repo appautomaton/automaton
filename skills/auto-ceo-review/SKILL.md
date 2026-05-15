@@ -29,17 +29,21 @@ Before appending the product review:
 
 ## Do
 
-1. **Load state.** Read `.agent/steering/STATUS.md`. Read the canonical `SPEC.md`.
+### Load State
 
-2. **Restate the bet.** In one sentence: "We are betting that [specific user] will [specific action] because [specific reason], and the risk is [specific risk]."
+Read `.agent/steering/STATUS.md`. Read the canonical `SPEC.md`.
 
-3. **Evaluate.** Answer:
-   - What is differentiated or defensible here?
-   - What is the strongest user or business value?
-   - What is generic, low-leverage, or mis-scoped?
-   - Is the scope narrow enough to ship and learn from?
+### Restate the Bet
 
-4. **Render verdict.** Use exactly one of the four approved values.
+In one sentence: "We are betting that [specific user] will [specific action] because [specific reason], and the risk is [specific risk]."
+
+### Evaluate
+
+Assess differentiation, user value, generic or mis-scoped elements, and shippability. Ground each in evidence from the spec.
+
+### Render Verdict
+
+Use exactly one of the four approved values.
 
 <VERDICT>
 
@@ -53,15 +57,19 @@ Use strict vocabulary. No synonyms.
 | `descoped` | Direction is out of scope or low-leverage. Do not pursue. | `auto-office-hours` or stop |
 </VERDICT>
 
-5. **Append review.** Add a `## Review: Product` section to `SPEC.md` using the exact template in `references/review-template.md`.
+### Append Review
 
-6. **Update State.**
+Add a `## Review: Product` section to `SPEC.md` using the exact template in `references/review-template.md`.
 
-   Run `sync-status.mjs` from this skill's installed directory.
-   Update `.agent/.automaton/state/current.json`:
-   - `product_review` → `<verdict>`
+### Update State
 
-7. **Recommend.** State the next skill based on the verdict.
+Run `sync-status.mjs` from this skill's installed directory.
+Update `.agent/.automaton/state/current.json`:
+- `product_review` → `<verdict>`
+
+### Recommend
+
+State the next skill based on the verdict.
 
 ## Output
 

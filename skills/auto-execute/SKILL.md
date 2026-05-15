@@ -36,7 +36,7 @@ Before using this skill:
 
 ## Do
 
-### 1. Load State
+### Load State
 
 Read `.agent/steering/STATUS.md`. Read the canonical `PLAN.md`. Read `references/ARTIFACT-LIFECYCLE.md` for execute-stage handoff, progressive disclosure, and state pointer boundaries.
 
@@ -46,7 +46,7 @@ If the current slice drafts, rewrites, edits, outlines, audits, or verifies pros
 
 If the current slice links a `slices/slice-NNN.md` detail file or names requirement IDs whose detail lives in `spec/*.md`, load only those linked files for the active slice. Do not load every supplemental file for the change.
 
-### 2. Select Execution Window
+### Select Execution Window
 
 Identify the next uncompleted slice from `PLAN.md`. Then form the smallest safe execution window:
 - Always include the next uncompleted slice.
@@ -77,7 +77,7 @@ If a material slice is missing acceptance criteria or verification, stop and rec
 
 For content slices, also extract artifact target, audience, thesis, voice, content anti-goals, channel, source policy, factual risk, and format. If the slice requires a missing source or factual-risk decision, stop with `NEEDS_CONTEXT`.
 
-### 3. Choose Execution Route
+### Choose Execution Route
 
 <EXECUTION-ROUTING>
 
@@ -91,7 +91,7 @@ Override: use the subagent route when the user explicitly requests multi-agent e
 The route decision lives here. Do not tell the user to invoke another execute skill for the same slice.
 </EXECUTION-ROUTING>
 
-### 4. Direct Route
+### Direct Route (when route = direct)
 
 Use this route only when route selection permits direct execution.
 
@@ -99,7 +99,7 @@ Change code and project artifacts in the order the slice requires. Keep diffs sm
 
 For prose artifacts, follow `references/content-execution.md`: preserve source traceability, do not invent facts, and run the local anti-slop pass before marking the slice complete.
 
-### 5. Subagent Route
+### Subagent Route (when route = subagent)
 
 Use this route when `Execution` is `subagent required`, when `subagent recommended` is justified, or when the user requested multi-agent execution.
 
@@ -122,7 +122,7 @@ Run the per-slice protocol:
 
 Do not mark the slice complete unless implementer status is acceptable, spec review is `APPROVED`, quality review is `APPROVED`, and verification evidence exists or `auto-verify` is explicitly recommended.
 
-### 6. Verify And Advance
+### Verify And Advance
 
 Run the narrowest useful checks as soon as they can fail. Prefer targeted checks over full-suite rituals until the slice is stable.
 
@@ -150,7 +150,7 @@ Continue within the selected execution window only when:
 
 If the checkpoint is valid, pause with the next action and checkpoint reason. If a STOP condition appears, stop with the next action and stop reason.
 
-### 7. Record Corrections
+### Record Corrections (if mismatch found)
 
 If implementation reveals a real mismatch between plan and reality:
 - Record the correction in `PLAN.md` as a note on the current slice.
@@ -172,17 +172,7 @@ Do not guess. Do not proceed.
 </STOP>
 
 <DEBUG-PROTOCOL>
-
-Before fixing, investigate. No fixes without root cause.
-
-1. **Reproduce.** Confirm the bug is real and deterministic.
-2. **Isolate.** Find the smallest input or state that triggers it.
-3. **Hypothesize.** Form a theory about the root cause.
-4. **Verify.** Test the hypothesis with a targeted experiment.
-5. **Fix.** Only after the root cause is confirmed.
-6. **Regress.** Verify the fix and ensure no existing behavior broke.
-
-If you cannot isolate the root cause within 3 attempts, escalate with what you observed, what you tried, and what you need to proceed.
+Investigate root cause before fixing. Escalate after 3 failed attempts with observations, attempts, and what you need. Read `references/debug-protocol.md` for extended guidance.
 </DEBUG-PROTOCOL>
 
 <HARD-GATE>

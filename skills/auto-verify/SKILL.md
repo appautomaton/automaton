@@ -29,7 +29,7 @@ Before writing `VERIFY.md` or the final verification summary:
 
 ## Do
 
-### 1. Load State
+### Load State
 
 Read `.agent/steering/STATUS.md`. Read the canonical `PLAN.md`. Read `references/ARTIFACT-LIFECYCLE.md` for verify-stage handoff, progressive disclosure, and state pointer boundaries.
 
@@ -37,7 +37,7 @@ If the slice creates, rewrites, edits, outlines, or audits prose, read `referenc
 
 If the slice links a `slices/slice-NNN.md` detail file or verifies requirement IDs whose detail lives in `spec/*.md`, load only those linked files before evaluating. Do not verify from memory or from an unlinked supplemental file.
 
-### 2. Re-read the Slice
+### Re-read the Slice
 
 Identify the current slice from PLAN.md. Re-read:
 - The slice objective
@@ -47,31 +47,21 @@ Identify the current slice from PLAN.md. Re-read:
 
 Do not rely on memory from the execution session. Fresh verification beats intuition.
 
-### 3. Run Verification
+### Run Verification
 
 <VERIFICATION-LOOP>
-
-Run the verification commands specified in the plan. For each command:
-1. Run it.
-2. Capture the output.
-3. Compare to the expected outcome.
-4. Mark: PASS, FAIL, or PARTIAL.
-
-If the plan did not specify verification commands, derive them from the acceptance criteria and run them. Document what you ran and why.
+Run plan-specified verification commands. Mark each criterion: PASS, FAIL, or PARTIAL. If the plan omitted verification commands, derive them from acceptance criteria and document what you ran.
 
 For content slices, verify audience, thesis, voice, content anti-goals, channel, source policy, factual risk, format, and anti-slop scan with evidence.
 </VERIFICATION-LOOP>
 
-### 4. Evaluate
+### Evaluate
 
 <EVIDENCE-FIRST>
-
-Partial evidence is not completion. A test that passes 3 out of 4 assertions is FAIL, not "mostly done." A feature that works for the happy path but fails on edge cases is FAIL, not "functional."
-
-Evaluate each acceptance criterion as binary: met or not met. There is no "mostly met."
+Binary evaluation: each criterion is met or not met. Partial evidence is FAIL.
 </EVIDENCE-FIRST>
 
-### 5. Report
+### Report
 
 Report findings plainly:
 
@@ -90,7 +80,7 @@ Report findings plainly:
 **Recommended next skill:** [auto-execute | auto-resume | auto-plan]
 ```
 
-### 6. Update State
+### Update State
 
 If the slice is fully verified (all criteria PASS):
 - Run `sync-status.mjs` from this skill's installed directory.

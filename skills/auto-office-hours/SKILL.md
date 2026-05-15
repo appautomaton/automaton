@@ -11,7 +11,7 @@ metadata:
 
 Turn a vague idea into a sharp objective through structured conversation. Use this skill when the user says "I have an idea," "help me think through this," "is this worth building," or any request that precedes a spec.
 
-First action: detect mode, work scale, and work shape from the user's language. If they mention customers, revenue, market, or competition → Startup mode. If they mention side project, hackathon, learning, or open source → Builder mode. If the request is about content creation → Content mode. Classify scale as bug-sized, feature-sized, capability-sized, or roadmap-sized. Classify shape as feature, refactor, parity, audit, migration, coverage, content, or mixed. State the detected mode, scale, and shape, and confirm them.
+First action: run `scripts/get-context.mjs` from this skill's installed directory to load active change and stage, then detect mode, work scale, and work shape from the user's language.
 
 ## Preamble
 
@@ -29,7 +29,9 @@ Before presenting alternatives, recommending an approach, or writing the design 
 
 ## Do
 
-1. **Detect mode, scale, and shape.** From the user's initial message, determine all three:
+### Detect Mode, Scale, and Shape
+
+From the user's initial message, determine all three:
 
    Mode:
    - **Startup mode** — mentions customers, revenue, market, competition, fundraising, or "building a company."
@@ -62,24 +64,36 @@ Before presenting alternatives, recommending an approach, or writing the design 
 
    For roadmap-sized goals, help the user identify the highest-leverage spec to frame first, and recommend the rest be captured in `ROADMAP.md`. If you narrow the user's stated goal for decomposition, name the narrowing explicitly and preserve the broader intent.
 
-2. **Run the diagnostic.** Ask questions one at a time. Wait for each answer before asking the next. Use the mode-specific question sets below.
+### Run Diagnostic
 
-3. **Push for specificity.** The first answer is usually polished. Push once, then push again. Read `references/pushback-patterns.md` for examples.
+Ask questions one at a time. Wait for each answer before asking the next. Use the mode-specific question sets below.
 
-4. **Challenge premises.** Before generating alternatives, ask:
+### Push for Specificity
+
+The first answer is usually polished. Push once, then push again. Read `references/pushback-patterns.md` for examples.
+
+### Challenge Premises
+
+Before generating alternatives, ask:
    - Is this the right problem? Could a different framing be simpler or more impactful?
    - What happens if we do nothing?
    - What existing code or patterns already partially solve this?
 
-5. **Generate alternatives.** Present 2–3 distinct approaches that match the user's scale and shape. For bug-sized, feature-sized, and capability-sized goals: one must be the minimal viable — the smallest version of the user's stated goal, not a different smaller goal; one must be the ideal architecture (best long-term); one can be creative/lateral. For roadmap-sized goals: alternatives should be decomposition strategies or first-spec candidates, not roadmap-scale implementation plans. For refactor, parity, audit, migration, or coverage work, make the approaches differ by blast radius, traceability, evidence depth, rollout risk, or verification strength — not by pretending the work is a feature. For each: summary, effort estimate, risk level, 2–3 pros, 2–3 cons. Read `references/alternatives-format.md` for the exact format.
+### Generate Alternatives
 
-6. **Recommend and wait.** State which approach you recommend and why. Do NOT proceed until the user explicitly approves an approach or chooses a different one.
+Present 2–3 distinct approaches that match the user's scale and shape. For bug-sized, feature-sized, and capability-sized goals: one must be the minimal viable — the smallest version of the user's stated goal, not a different smaller goal; one must be the ideal architecture (best long-term); one can be creative/lateral. For roadmap-sized goals: alternatives should be decomposition strategies or first-spec candidates, not roadmap-scale implementation plans. For refactor, parity, audit, migration, or coverage work, make the approaches differ by blast radius, traceability, evidence depth, rollout risk, or verification strength — not by pretending the work is a feature. For each: summary, effort estimate, risk level, 2–3 pros, 2–3 cons. Read `references/alternatives-format.md` for the exact format.
 
-7. **Persist approved intake.** After approval, derive a concise kebab-case change slug from the objective, reusing `active_change` only when it already matches this discussion. Write the approved intake to `.agent/work/<change>/INTAKE.md`. Update `.agent/.automaton/state/current.json`:
+### Recommend and Wait
+
+State which approach you recommend and why. Do NOT proceed until the user explicitly approves an approach or chooses a different one.
+
+### Persist Approved Intake
+
+After approval, derive a concise kebab-case change slug from the objective, reusing `active_change` only when it already matches this discussion. Write the approved intake to `.agent/work/<change>/INTAKE.md`. Update `.agent/.automaton/state/current.json`:
    - `active_change` → `<change>`
    - `stage` → `frame`
 
-   Then run `.agent/.automaton/bin/sync-status.mjs` with `.agent/.automaton/state/current.json`, `.agent/steering/STATUS.md`, and a payload containing `active_change`, `stage: frame`, a short intake-saved progress note, `next_step: Run auto-frame using INTAKE.md`, and open risks.
+   Run `sync-status.mjs` from this skill's installed directory.
 
 <MODE-DETECTION>
 
@@ -122,81 +136,13 @@ Content mode:
 Do not guess. Do not proceed.
 </STOP>
 
-## Startup Mode: Six Forcing Questions
+## Startup Mode
 
-Ask these one at a time. Push until the answer names concrete evidence, a specific stakeholder, or an observable workaround. If the answer remains category-level after the allowed pushes, use the STOP conditions instead of continuing.
+Push until the answer names concrete evidence, a specific stakeholder, or an observable workaround. Read `references/startup-diagnostic.md` for the six forcing questions and smart routing by product stage and scope classification.
 
-**Q1: Demand Reality** — "What's the strongest evidence that someone actually wants this — not 'is interested,' but would be genuinely upset if it disappeared tomorrow?"
+## Builder Mode
 
-Push until you hear: specific behavior, someone paying, someone building their workflow around it.
-
-Red flags: "People say it's interesting." "We got 500 waitlist signups." Interest is not demand.
-
-**Q2: Status Quo** — "What are your users doing right now to solve this problem — even badly? What does that workaround cost them?"
-
-Push until you hear: a specific workflow, hours spent, tools duct-taped together.
-
-Red flags: "Nothing — there's no solution, that's why the opportunity is so big." If truly nothing exists, the problem probably isn't painful enough.
-
-**Q3: Desperate Specificity** — "Name the actual human who needs this most. What's their title? What gets them promoted? What gets them fired?"
-
-Push until you hear: a name, a role, a specific consequence they face if the problem isn't solved.
-
-Red flags: "Healthcare enterprises." "SMBs." "Marketing teams." You can't email a category.
-
-**Q4: Narrowest Wedge** — "What's the smallest possible version of this that someone would pay real money for — this week, not after you build the platform?"
-
-Push until you hear: one feature, one workflow, something shippable in days.
-
-Red flags: "We need the full platform first." "Stripped down wouldn't be differentiated." These mean the founder is attached to architecture, not value.
-
-Scope note: This question tests shippability instinct, not scope. Use the answer to understand what the user considers the core value, then return to their stated goal. Do not replace a capability-sized goal with the narrowest wedge answer.
-
-**Q5: Observation & Surprise** — "Have you watched someone use this without helping them? What did they do that surprised you?"
-
-Push until you hear: a specific surprise that contradicted the founder's assumptions.
-
-Red flags: "We sent a survey." "Nothing surprising, it's going as expected." Surveys lie. "As expected" means filtered through assumptions.
-
-**Q6: Future-Fit** — "If the world looks meaningfully different in 3 years, does your product become more essential or less?"
-
-Push until you hear: a specific claim about why the product becomes more valuable as the world changes.
-
-Red flags: "The market is growing 20% per year." Growth rate is not a vision. "AI will make everything better." That's not a product thesis.
-
-Smart routing based on product stage:
-- Pre-product → Q1, Q2, Q3
-- Has users → Q2, Q4, Q5
-- Has paying customers → Q4, Q5, Q6
-- Pure engineering/infra → Q2, Q4 only
-
-Smart routing based on scope classification:
-- Bug-sized → Q2 only (status quo / workaround cost), then move to alternatives
-- Feature-sized → standard routing by product stage
-- Capability-sized → Q1, Q2, Q5 (demand, status quo, observation). Use Q4 as a calibration probe to understand the core value, not to set scope.
-- Roadmap-sized → Q1, Q2, Q3, then help decompose into the first spec candidate
-
-## Builder Mode: Design Partner
-
-Ask these one at a time. The goal is to brainstorm and sharpen, not interrogate.
-
-- **What's the coolest version of this?** What would make it genuinely delightful?
-- **Who would you show this to?** What would make them say "whoa"?
-- **What's the fastest path to something you can actually use or share?** Use the answer to understand what the user considers demonstrable progress, then return to their full goal. Do not redirect the conversation to the fast path if the user brought a larger vision.
-- **What existing thing is closest to this, and how is yours different?**
-- **What would you add if you had unlimited time?** What's the 10x version?
-
-Operating principles:
-1. Delight is the currency — what makes someone say "whoa"?
-2. Ship something you can show people. The best version of anything is the one that exists.
-3. The best side projects solve your own problem. Trust that instinct.
-4. Explore before you optimize. Try the weird idea first. Polish later.
-
-Smart routing based on scope classification:
-- Bug-sized → Q3 (fastest path) + Q4 (how is yours different?), then move to alternatives
-- Feature-sized → standard (all five questions)
-- Capability-sized → Q1 (coolest version), Q4 (how is yours different?), Q5 (10x version)
-- Roadmap-sized → Q1 (coolest version), Q2 (who would you show this to?), then decompose into the first spec candidate
+Read `references/builder-diagnostic.md` for the five design-partner questions and smart routing by scope classification.
 
 ## Output
 
