@@ -213,6 +213,8 @@ test('artifact lifecycle reference defines stage handoffs and canonical pointers
   assert.match(lifecycle, /Do not duplicate canonical SPEC, DESIGN, PLAN/)
   assert.match(lifecycle, /Do not add archive behavior/)
   assert.match(lifecycle, /\.agent\/work\/<change>/)
+  assert.match(lifecycle, /\.agent\/work\/<change>\/INTAKE\.md/)
+  assert.match(lifecycle, /discovered by `active_change`, not by a canonical pointer/)
 })
 
 test('auto-resume treats STATUS prose paths as non-authoritative summary text', () => {
@@ -265,6 +267,7 @@ test('auto-frame preserves scope and supports adaptive SPEC shapes', () => {
 
   assert.match(source, /SPEC\.md` is the reloadable contract/)
   assert.match(source, /spec\/\*\.md/)
+  assert.match(source, /\.agent\/work\/<active_change>\/INTAKE\.md/)
   assert.match(source, /Silent narrowing is a framing failure/)
   assert.match(source, /Broader intent/)
   assert.match(source, /Work scale and work shape/)
@@ -289,7 +292,7 @@ test('plan execute and verify preserve linked detail and traceability IDs', () =
 })
 
 test('read-only skills do not include the state-write template', () => {
-  for (const skillName of ['auto-resume', 'auto-office-hours']) {
+  for (const skillName of ['auto-resume']) {
     const source = readFileSync(join(skillsRoot, skillName, 'SKILL.md'), 'utf8')
 
     assert.doesNotMatch(
@@ -303,6 +306,22 @@ test('read-only skills do not include the state-write template', () => {
       `${skillName} must not include the canonical state-update list`
     )
   }
+})
+
+test('auto-office-hours persists approved intake without pre-approval writes', () => {
+  const source = readFileSync(join(skillsRoot, 'auto-office-hours', 'SKILL.md'), 'utf8')
+  const template = readFileSync(join(skillsRoot, 'auto-office-hours', 'references', 'design-doc-templates.md'), 'utf8')
+
+  assert.match(source, /Before approval, it writes nothing/)
+  assert.match(source, /Persist approved intake/)
+  assert.match(source, /\.agent\/work\/<change>\/INTAKE\.md/)
+  assert.match(source, /Update `\.agent\/\.automaton\/state\/current\.json`:/)
+  assert.match(source, /`active_change` → `<change>`/)
+  assert.match(source, /`stage` → `frame`/)
+  assert.match(source, /\.agent\/\.automaton\/bin\/sync-status\.mjs/)
+  assert.match(source, /next_step: Run auto-frame using INTAKE\.md/)
+  assert.match(source, /no file writes before the user picks an approach/)
+  assert.match(template, /Write the approved intake document to `\.agent\/work\/<change-name>\/INTAKE\.md`/)
 })
 
 test('lifecycle controller skills load the artifact lifecycle contract', () => {
@@ -326,20 +345,24 @@ test('subagent protocol defines dispatch packets and bounded review loops', () =
   assert.match(protocol, /Do not invent a universal SDK or CLI/)
 })
 
-test('auto-plan requires explicit execution routing and topology on material slices', () => {
+test('auto-plan defines lean slice defaults without dropping execution safety', () => {
   const source = readFileSync(join(skillsRoot, 'auto-plan', 'SKILL.md'), 'utf8')
 
   assert.match(source, /\*\*Execution:\*\* direct \| subagent recommended \| subagent required/)
   assert.match(source, /\*\*Checkpoint after:\*\* none \| human-verify \| decision \| human-action/)
-  assert.match(source, /Every material slice must state an execution route/)
+  assert.match(source, /Required:/)
+  assert.match(source, /Defaults, state only when overriding:/)
+  assert.match(source, /Include when useful:/)
+  assert.match(source, /Every material slice must have acceptance criteria/)
+  assert.match(source, /Omitted `Execution` means `direct`/)
+  assert.match(source, /Omitted `Checkpoint after` means `none`/)
   assert.match(source, /Execution routing and topology/)
   assert.match(source, /default continuation path/)
   assert.match(source, /Parallel-safe means dependencies are independent and write sets are disjoint/)
-  assert.match(source, /Continuation is the default\. Use `Checkpoint after: none`/)
+  assert.match(source, /Continuation is the default/)
   assert.match(source, /Verification findings, implementation caveats, downstream consequences, and next-slice recommendations are not checkpoints/)
   assert.match(source, /concrete question and options/)
   assert.match(source, /Do not use `decision` for reversible engineering judgment/)
-  assert.match(source, /Use `direct` when the slice touches/)
 })
 
 test('auto-execute owns route selection and execution-window continuation', () => {
@@ -350,6 +373,9 @@ test('auto-execute owns route selection and execution-window continuation', () =
   assert.match(source, /Continuation is the default after a verified slice/)
   assert.match(source, /Always include the next uncompleted slice/)
   assert.match(source, /Checkpoint after: none/)
+  assert.match(source, /Missing `Execution` means `direct`/)
+  assert.match(source, /Missing `Checkpoint after` means `none`/)
+  assert.match(source, /missing acceptance criteria or verification/)
   assert.match(source, /validate that it actually requires human input/)
   assert.match(source, /Do not pause for checkpoint text that only records verification findings/)
   assert.match(source, /Record a plan correction, keep the evidence, and continue/)

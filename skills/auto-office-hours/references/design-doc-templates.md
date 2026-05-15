@@ -1,6 +1,6 @@
 # Design Doc Templates
 
-Write the design document to `.agent/work/<change-name>/design.md` or `.agent/wiki/design.md`.
+Write the approved intake document to `.agent/work/<change-name>/INTAKE.md`.
 
 ## Startup Mode Template
 
@@ -120,4 +120,4 @@ Supersedes: {prior filename — omit if first design on this branch}
 
 - Include `Supersedes:` only if a prior design doc exists for this change.
 - The Assignment section must be a specific action the user can do today — "interview 3 ops managers" not "think about your target market."
-- Save to `.agent/work/` or `.agent/wiki/` — never to host-specific paths like `~/.gstack/`.
+- Save to `.agent/work/<change-name>/INTAKE.md` — never to host-specific paths like `~/.gstack/`.

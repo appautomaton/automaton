@@ -15,7 +15,7 @@ First action: run `scripts/get-context.mjs` from this skill's installed director
 
 ## Preamble
 
-auto-plan builds the smallest plan that makes execution safe while preserving the approved scope. It does not write code. It breaks work into ordered slices, each producing a testable outcome, and attaches explicit execution routing, execution topology, and verification commands to every material slice.
+auto-plan builds the smallest plan that makes execution safe while preserving the approved scope. It does not write code. It breaks work into ordered slices, each producing a testable outcome. Small slices use defaults; material risk, dependency, or checkpoint differences are explicit.
 
 Context budget: `PLAN.md` is the reloadable execution index, not the whole implementation dossier. Keep PLAN.md compact enough to re-read. For large coherent work, summarize slices in PLAN.md and link optional detail files under `.agent/work/<change>/slices/`. Split only for independent outcomes, not because one coherent plan has many requirements.
 
@@ -73,30 +73,36 @@ Before writing slices, think ahead to execution topology: which slices must run 
 
 <SLICE-DESIGN>
 
-Frame each slice as:
+Frame each slice with required fields first, then only the overrides the slice needs:
 
 ```
 ### Slice N: [Name]
 
+Required:
 **Objective:** [one sentence]
-**Execution:** direct | subagent recommended | subagent required
-**Depends on:** [slice IDs or "none"]
-**Touches:** [files, directories, or subsystems]
-**Context budget:** [~X% of context window]
-**Produces:** [specific artifact or state change]
 **Acceptance criteria:**
 - [observable criterion]
 **Verification:** [command or check that proves the slice is done]
-**Checkpoint after:** none | human-verify | decision | human-action
-**Checkpoint reason:** none | [why automation must pause after this slice]
-**Detail:** [linked `slices/slice-NNN.md` file or "none"]
+
+Defaults, state only when overriding:
+**Execution:** direct | subagent recommended | subagent required — default: direct
+**Depends on:** none
+**Checkpoint after:** none | human-verify | decision | human-action — default: none
+**Checkpoint reason:** none
+
+Include when useful:
+**Touches:** [files, directories, or subsystems]
+**Context budget:** [~X% of context window]
+**Produces:** [specific artifact or state change]
+**Detail:** [linked `slices/slice-NNN.md` file]
 ```
 
 Rules:
 - Every material slice must have a verification command.
-- Every material slice must state an execution route: `direct`, `subagent recommended`, or `subagent required`.
-- Use `direct` when the slice touches ≤ 3 files in one subsystem. Use `subagent recommended` when the slice touches > 3 files, crosses subsystem boundaries, modifies shared interfaces or data schemas, or carries review risk. Use `subagent required` only when the user asked for multi-agent execution or the slice modifies security-critical paths, production data, or irreversible state.
-- Continuation is the default. Use `Checkpoint after: none` when the next slice may start after this slice passes verification.
+- Every material slice must have acceptance criteria; execution cannot verify vibes.
+- Omitted `Execution` means `direct`. State `subagent recommended` when the slice touches > 3 files, crosses subsystem boundaries, modifies shared interfaces or data schemas, or carries review risk. State `subagent required` only when the user asked for multi-agent execution or the slice modifies security-critical paths, production data, or irreversible state.
+- Omitted `Depends on` means `none`.
+- Continuation is the default. Omitted `Checkpoint after` means `none`, so the next slice may start after verification passes.
 - Verification findings, implementation caveats, downstream consequences, and next-slice recommendations are not checkpoints when the approved plan already names the next slice. Record them as slice evidence or risks and continue.
 - Use `human-verify` only when the result cannot be verified by available commands, tests, host tools, or local inspection.
 - Use `decision` only when the user must choose among named product, architecture, design, or scope options before the next slice can start. The checkpoint reason must include the concrete question and options. Do not use `decision` for reversible engineering judgment, known limitations, validation results, or "next slice should be..." notes.
@@ -114,7 +120,7 @@ Required sections:
 - **Architecture approach** — the smallest correct design
 - **Requirement traceability** — gap IDs, invariant IDs, audit questions, migration checkpoints, or coverage targets mapped to slices when present
 - **Ordered task sequence** — slices in dependency order, with linked detail files when needed
-- **Execution routing and topology** — direct or subagent route for each material slice; default continuation path, explicit checkpoints, and parallel-safe groups (or "none")
+- **Execution routing and topology** — default route/checkpoint policy plus explicit overrides, checkpoints, and parallel-safe groups (or "none")
 - **Verification commands** — attached to every material slice
 - **Context budget for this change** — total estimated context consumption
 
@@ -153,7 +159,7 @@ Update `.agent/.automaton/state/current.json`:
 - Remove placeholders instead of preserving them.
 - Do not broaden scope to cover hypothetical future work.
 - Preserve review sections on refresh unless the user explicitly requests consolidation.
-- Every material slice must have an explicit verification command.
+- Every material slice must have acceptance criteria and an explicit verification command.
 - Do not write code. Do not create implementation files.
 
 ## Deep

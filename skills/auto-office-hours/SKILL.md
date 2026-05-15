@@ -15,7 +15,7 @@ First action: detect mode, work scale, and work shape from the user's language. 
 
 ## Preamble
 
-auto-onboard produces steering artifacts; auto-office-hours produces clarity. This skill is conversational only until the user approves an approach. It never writes code, never scaffolds projects, and never creates SPEC.md without explicit approval.
+auto-onboard produces steering artifacts; auto-office-hours produces clarity. This skill is conversational only until the user approves an approach. Before approval, it writes nothing. After approval, it persists the approved intake to `.agent/work/<change>/INTAKE.md` and records the active change so `auto-frame` can resume without conversation memory. It never writes code, scaffolds projects, or creates SPEC.md.
 
 Context budget: this skill is a dialogue. No broad scans. No file reads unless the user references specific files.
 
@@ -75,6 +75,12 @@ Before presenting alternatives, recommending an approach, or writing the design 
 
 6. **Recommend and wait.** State which approach you recommend and why. Do NOT proceed until the user explicitly approves an approach or chooses a different one.
 
+7. **Persist approved intake.** After approval, derive a concise kebab-case change slug from the objective, reusing `active_change` only when it already matches this discussion. Write the approved intake to `.agent/work/<change>/INTAKE.md`. Update `.agent/.automaton/state/current.json`:
+   - `active_change` → `<change>`
+   - `stage` → `frame`
+
+   Then run `.agent/.automaton/bin/sync-status.mjs` with `.agent/.automaton/state/current.json`, `.agent/steering/STATUS.md`, and a payload containing `active_change`, `stage: frame`, a short intake-saved progress note, `next_step: Run auto-frame using INTAKE.md`, and open risks.
+
 <MODE-DETECTION>
 
 If the user's language shifts mid-session — e.g., starts in Builder mode but mentions revenue or customers — upgrade naturally: "Okay, now we're talking — let me ask you some harder questions." Switch to Startup mode diagnostic.
@@ -91,7 +97,7 @@ If the conversation reveals the goal is larger or smaller than initially classif
 
 <HARD-GATE>
 
-Do NOT create SPEC.md, DESIGN.md, or any implementation artifact until:
+Do NOT create INTAKE.md, SPEC.md, DESIGN.md, or any implementation artifact until:
 - The user has explicitly approved one of the presented approaches.
 - Blocking questions are resolved or explicitly accepted.
 
@@ -194,7 +200,7 @@ Smart routing based on scope classification:
 
 ## Output
 
-If the user approves an approach, produce a design document (not SPEC.md) with:
+If the user approves an approach, write `.agent/work/<change>/INTAKE.md` with:
 - Work scale (bug / feature / capability / roadmap)
 - Work shape (feature / refactor / parity / audit / migration / coverage / content / mixed)
 - Objective statement
@@ -213,10 +219,12 @@ If the user does not approve an approach, output:
 - Why no approach was selected
 - Deferred scope — any ideas worth preserving in `ROADMAP.md`
 - Recommended next step (e.g., gather more evidence, talk to users, revisit in auto-office-hours)
+- No file writes.
 
 ## Rules
 
 - **Conversational only until approval.** No code, no scaffolding, no file writes before the user picks an approach.
+- **INTAKE.md after approval.** Approved office-hours context must survive compaction and fresh sessions.
 - **One question at a time.** Wait for the answer before asking the next.
 - **State the decision basis.** Name what the current evidence supports, what it does not support, and what evidence would change the assessment.
 - **Evaluate evidence directly.** If a claim is unsupported, name the missing evidence. If it is supported, name the evidence and ask the next diagnostic question.

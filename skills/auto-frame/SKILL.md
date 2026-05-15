@@ -31,7 +31,7 @@ Before finalizing `SPEC.md`:
 
 ### 1. Restate
 
-If office-hours context is present in the conversation (design document, work scale, work shape, broader intent), read it. Adopt the scale, shape, and broader intent to calibrate constraints and interview depth. Do not re-ask what office-hours already established.
+If `.agent/work/<active_change>/INTAKE.md` exists, read it before interviewing. If no intake exists but office-hours context is present in the conversation (design document, work scale, work shape, broader intent), read that instead. Adopt the scale, shape, and broader intent to calibrate constraints and interview depth. Do not re-ask what office-hours already established.
 
 State the goal in one sentence. If you cannot, ask one clarifying question and stop.
 

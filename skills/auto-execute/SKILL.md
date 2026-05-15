@@ -31,7 +31,7 @@ Before marking a slice complete:
 
 Before using this skill:
 - `canonical_plan` in `.agent/.automaton/state/current.json` must point to an approved `PLAN.md`.
-- The next executable slice must have an objective, execution route, touched files or areas, acceptance criteria, verification command, `Checkpoint after`, and checkpoint reason.
+- The next executable slice must have an objective, acceptance criteria, and verification command. If `Execution`, `Depends on`, `Checkpoint after`, or checkpoint reason are omitted, use the documented defaults.
 - If `engineering_review` is `needs_correction`, stop and return to `auto-plan`.
 
 ## Do
@@ -50,10 +50,16 @@ If the current slice links a `slices/slice-NNN.md` detail file or names requirem
 
 Identify the next uncompleted slice from `PLAN.md`. Then form the smallest safe execution window:
 - Always include the next uncompleted slice.
-- Add following slices while the previous slice has `Checkpoint after: none`, dependencies are met, verification is explicit, and no STOP condition, slice-blocking review risk, or context pressure appears.
+- Add following slices while the previous slice has or defaults to `Checkpoint after: none`, dependencies are met, verification is explicit, and no STOP condition, slice-blocking review risk, or context pressure appears.
 - Execute the window serially by default. Cross-slice parallel dispatch is allowed only when `PLAN.md` explicitly marks slices parallel-safe and write sets are disjoint.
 
 Before treating a checkpoint as a window boundary, apply the checkpoint-validity rules in `Verify And Advance`. Invalid checkpoint text is a plan correction, not a pause; treat that slice as `Checkpoint after: none` for window construction.
+
+Slice defaults:
+- Missing `Execution` means `direct`.
+- Missing `Depends on` means `none`.
+- Missing `Checkpoint after` means `none`.
+- Missing checkpoint reason means `none`.
 
 For each slice in the window, extract only:
 - objective
@@ -67,7 +73,7 @@ For each slice in the window, extract only:
 - checkpoint reason
 - linked detail files and traceability IDs, if present
 
-If a material slice is missing acceptance criteria, verification, or checkpoint policy, stop and recommend `auto-plan`. If `Execution` is missing, infer conservatively for this session and record a plan correction.
+If a material slice is missing acceptance criteria or verification, stop and recommend `auto-plan`.
 
 For content slices, also extract artifact target, audience, thesis, voice, content anti-goals, channel, source policy, factual risk, and format. If the slice requires a missing source or factual-risk decision, stop with `NEEDS_CONTEXT`.
 
@@ -135,7 +141,7 @@ If the completed slice has a checkpoint, validate that it actually requires huma
 Do not pause for checkpoint text that only records verification findings, implementation caveats, downstream consequences, known limitations, or a recommendation for the next already-approved slice. Record a plan correction, keep the evidence, and continue when the normal continuation conditions pass.
 
 Continue within the selected execution window only when:
-- The completed slice has `Checkpoint after: none` or an invalid checkpoint was recorded as a plan correction.
+- The completed slice has or defaults to `Checkpoint after: none`, or an invalid checkpoint was recorded as a plan correction.
 - Verification passed.
 - The next slice's dependencies are met.
 - The next slice still matches the approved plan.

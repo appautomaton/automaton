@@ -19,6 +19,7 @@ This reference defines the artifact handoff contract for Automaton skills. It cl
 Allowed active-change layout:
 
 ```text
+.agent/work/<change>/INTAKE.md
 .agent/work/<change>/SPEC.md
 .agent/work/<change>/spec/*.md
 .agent/work/<change>/PLAN.md
@@ -27,6 +28,7 @@ Allowed active-change layout:
 ```
 
 Rules:
+- `INTAKE.md` preserves approved office-hours context for `auto-frame`. It is discovered by `active_change`, not by a canonical pointer.
 - `SPEC.md` must summarize and link every normative `spec/*.md` detail file. Unlinked supplemental files are notes, not contract.
 - `PLAN.md` must link any `slices/*.md` detail file and preserve requirement IDs, gap IDs, invariants, audit questions, migration checkpoints, or coverage targets from SPEC.md.
 - Execute and verify load only the detail files linked for the active slice or active requirement IDs.
@@ -37,7 +39,7 @@ Rules:
 
 | Stage | Required inputs | Produces | State pointer expectations | Next handoff |
 | --- | --- | --- | --- | --- |
-| `frame` | active change, steering status, framing context | `.agent/work/<change>/SPEC.md` | `canonical_spec` points to SPEC.md; `stage` remains `frame` unless the user explicitly approves plan handoff | `auto-ceo-review`, `auto-plan`, or `auto-office-hours` |
+| `frame` | active change, steering status, optional `INTAKE.md` or framing context | `.agent/work/<change>/INTAKE.md` from office-hours; `.agent/work/<change>/SPEC.md` from frame | office-hours sets `active_change` and `stage: frame`; frame sets `canonical_spec`; `stage` remains `frame` unless the user explicitly approves plan handoff | `auto-frame`, `auto-ceo-review`, `auto-plan`, or `auto-office-hours` |
 | `plan` | `canonical_spec`, steering status, optional review sections | `.agent/work/<change>/PLAN.md`; optional `DESIGN.md` | `canonical_plan` points to PLAN.md; `canonical_design` is set only when DESIGN.md exists; `stage` becomes `plan` | `auto-eng-review` or `auto-execute` |
 | `execute` | approved PLAN.md, current slice, acceptance criteria, verification commands | code, docs, tests, orchestration notes, and slice evidence required by PLAN.md | state advances only after evidence exists; do not change canonical pointers to missing files | `auto-execute` for remaining slices or `auto-verify` when implementation is ready to check |
 | `verify` | canonical PLAN.md, current slice or completed work, verification commands | verification report inline or `VERIFY.md` for important changes | state advances only when all criteria pass; failed verification keeps state unchanged | `auto-execute` for gaps, `auto-resume` for continuation, or completion status |
