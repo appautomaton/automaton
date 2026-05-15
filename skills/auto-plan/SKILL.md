@@ -30,7 +30,7 @@ Before finalizing `PLAN.md`:
 
 ## Do
 
-### 1. Context Loading
+### Context Loading
 
 Load files in this order. Stop as soon as you have enough to proceed.
 
@@ -49,7 +49,7 @@ Load files in this order. Stop as soon as you have enough to proceed.
 Do not load source files unless the plan requires understanding existing code patterns. Do not ignore linked `spec/*.md` files when they contain normative requirements, gap IDs, invariants, or acceptance detail.
 </CONTEXT-LOADING>
 
-### 2. Assess Review State
+### Assess Review State (if reviews exist)
 
 If `product_review` exists in `current.json`, read the `## Review: Product` section from `SPEC.md` and factor its conclusions into the plan. If `product_review: approved_with_risks`, ensure the plan explicitly addresses each risk. If `product_review: descoped` or `needs_clarification`, stop and recommend `auto-frame`.
 
@@ -59,7 +59,7 @@ If `SPEC.md` contains content fields (Audience, Thesis, Voice, Content Anti-Goal
 
 If `SPEC.md` names requirement IDs, gap IDs, invariants, audit questions, migration checkpoints, or coverage targets, preserve those IDs in PLAN.md and attach them to the slices that satisfy them. Do not collapse traceable requirements into untraceable prose.
 
-### 3. Design Slices
+### Design Slices
 
 Break work into ordered execution units, not topic buckets. Each slice must be:
 - Testable: it produces an outcome that can be verified.
@@ -111,7 +111,7 @@ Rules:
 - If a coherent slice exceeds ~15% of context window, move extended instructions to `slices/slice-NNN.md` and keep PLAN.md as the index. Split the slice only when it contains independent outcomes.
 </SLICE-DESIGN>
 
-### 4. Write PLAN.md
+### Write PLAN.md
 
 Read `references/ARTIFACT-LIFECYCLE.md` for plan-stage handoff and state pointer boundaries. Write the plan to `.agent/work/<change>/PLAN.md`.
 
@@ -124,7 +124,7 @@ Required sections:
 - **Verification commands** — attached to every material slice
 - **Context budget for this change** — total estimated context consumption
 
-### 5. Write DESIGN.md (if needed)
+### Write DESIGN.md (if non-trivial)
 
 If the architecture is non-trivial or new patterns are introduced, write `DESIGN.md` to `.agent/work/<change>/DESIGN.md`. Keep it under 200 lines. If the architecture is obvious from the spec, skip this file.
 
@@ -138,7 +138,7 @@ Do NOT write PLAN.md if:
 If any of these are true, recommend `auto-frame` and stop.
 </HARD-GATE>
 
-### 6. Update State
+### Update State
 
 Run `sync-status.mjs` from this skill's installed directory.
 Update `.agent/.automaton/state/current.json`:

@@ -29,7 +29,7 @@ Before finalizing `SPEC.md`:
 
 ## Do
 
-### 1. Restate
+### Restate
 
 If `.agent/work/<active_change>/INTAKE.md` exists, read it before interviewing. If no intake exists but office-hours context is present in the conversation (design document, work scale, work shape, broader intent), read that instead. Adopt the scale, shape, and broader intent to calibrate constraints and interview depth. Do not re-ask what office-hours already established.
 
@@ -37,11 +37,11 @@ State the goal in one sentence. If you cannot, ask one clarifying question and s
 
 If your SPEC would be narrower than the user's stated goal or office-hours broader intent, either widen the SPEC, explicitly record the narrowing as decomposition with deferred scope in `ROADMAP.md`, or ask for confirmation. Silent narrowing is a framing failure.
 
-### 2. Surface
+### Surface
 
 List the constraints, unknowns, and risks that change implementation. Keep the decision-critical summary in `SPEC.md`. If the set is large but coherent, summarize it here and write `spec/constraints.md`, `spec/risks.md`, or another linked detail file instead of dropping requirements. If constraints address unrelated outcomes, ask which outcome to frame first.
 
-### 3. Select Lenses
+### Select Lenses
 
 Choose the minimum from: `product`, `engineering`, `design`, `security`, `runtime`. Default is `product` + `engineering` unless the user says otherwise.
 
@@ -49,7 +49,7 @@ If the change involves content creation (writing, articles, briefs, decks, newsl
 
 Read `references/lens-selection.md` for the decision matrix if the choice is not obvious.
 
-### 4. Interview (if needed)
+### Interview (if ambiguous)
 
 <INTERVIEW>
 
@@ -60,7 +60,7 @@ If anything is ambiguous, ask ≤ 3 questions total for feature-sized goals. For
 Questions must materially change the spec. Do not ask for preferences that don't affect scope.
 </INTERVIEW>
 
-### 5. Write SPEC.md
+### Write SPEC.md
 
 Read `references/ARTIFACT-LIFECYCLE.md` for frame-stage handoff, progressive disclosure, and state pointer boundaries. If a `SPEC.md` already exists for this change, read it and preserve all `## Review:` sections.
 
@@ -83,7 +83,7 @@ The file must contain:
 If a `SPEC.md` already exists, refresh it. Preserve all `## Review:` sections.
 </HARD-GATE>
 
-### 6. Update State
+### Update State
 
 Run `sync-status.mjs` from this skill's installed directory.
 Update `.agent/.automaton/state/current.json`:

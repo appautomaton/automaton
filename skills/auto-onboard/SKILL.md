@@ -27,32 +27,46 @@ Before writing steering artifacts:
 
 ## Do
 
-1. **Detect state.** If `get-context.mjs` returned `"activeChange": "bootstrap"` or the file is missing, proceed. If it returned an active change and stage, read `.agent/steering/STATUS.md` and ask the user whether to refresh or resume.
+### Detect State
 
-2. **Scaffold if needed.** If `.agent/` does not exist, run this skill's installed `scaffold-agent.mjs` from the same host skill root.
+If `get-context.mjs` returned `"activeChange": "bootstrap"` or the file is missing, proceed. If it returned an active change and stage, read `.agent/steering/STATUS.md` and ask the user whether to refresh or resume.
 
-3. **Scan top-level files.** Read `README.md`, `package.json` or equivalent, and up to 3 config files (e.g., `.gitignore`, `tsconfig.json`, `Makefile`). Stop at 5 files.
+### Scaffold (if needed)
 
-4. **Map topology.** Read `references/topology-scan.md` for the scan protocol. Identify:
-   - Runtime surfaces (CLI, API, UI, worker)
-   - Package boundaries (apps, packages, modules)
-   - Stack (language, framework, build tool, test runner)
-   - Commands that work today (install, build, test, lint)
+If `.agent/` does not exist, run this skill's installed `scaffold-agent.mjs` from the same host skill root.
 
-5. **Ask only if necessary.** If ambiguity affects the steering output, ask ≤ 3 questions. Read `references/question-patterns.md` for how to ask. If the answer can be inferred from the repo with one more targeted read, do that instead.
+### Scan Top-Level Files
 
-6. **Write artifacts.** Use `templates/` as scaffolds:
-   - `.agent/wiki/REPO-MAP.md` — bounded import record
-   - `.agent/steering/PROJECT.md` — what this repo owns and why
-   - `.agent/steering/REQUIREMENTS.md` — observed, inferred, and unknown constraints
-   - `.agent/steering/ROADMAP.md` — 3 to 6 plausible phases
-   - `.agent/steering/STATUS.md` — current state and next step
+Read `README.md`, `package.json` or equivalent, and up to 3 config files (e.g., `.gitignore`, `tsconfig.json`, `Makefile`). Stop at 5 files.
 
-7. **Update State.**
+### Map Topology
 
-   Run `sync-status.mjs` from this skill's installed directory to align `.agent/steering/STATUS.md` with `.agent/.automaton/state/current.json`.
+Read `references/topology-scan.md` for the scan protocol. Identify:
+- Runtime surfaces (CLI, API, UI, worker)
+- Package boundaries (apps, packages, modules)
+- Stack (language, framework, build tool, test runner)
+- Commands that work today (install, build, test, lint)
 
-8. **Report.** Summarize what you found, what you wrote, and what remains uncertain.
+### Ask (if necessary)
+
+If ambiguity affects the steering output, ask ≤ 3 questions. Read `references/question-patterns.md` for how to ask. If the answer can be inferred from the repo with one more targeted read, do that instead.
+
+### Write Artifacts
+
+Use `templates/` as scaffolds:
+- `.agent/wiki/REPO-MAP.md` — bounded import record
+- `.agent/steering/PROJECT.md` — what this repo owns and why
+- `.agent/steering/REQUIREMENTS.md` — observed, inferred, and unknown constraints
+- `.agent/steering/ROADMAP.md` — 3 to 6 plausible phases
+- `.agent/steering/STATUS.md` — current state and next step
+
+### Update State
+
+Run `sync-status.mjs` from this skill's installed directory to align `.agent/steering/STATUS.md` with `.agent/.automaton/state/current.json`.
+
+### Report
+
+Summarize what you found, what you wrote, and what remains uncertain.
 
 <HARD-GATE>
 
@@ -61,6 +75,7 @@ Do NOT proceed past scanning if:
 - The user has not confirmed whether to overwrite existing steering artifacts.
 
 If the repo is empty or unrecognizable, report this and stop.
+</HARD-GATE>
 
 <STOP>
 
@@ -70,6 +85,7 @@ Halt and report when:
 - The scan reveals conflicting conventions (e.g., both npm and poetry in the same root) and the user cannot clarify.
 
 Do not guess. Do not proceed.
+</STOP>
 
 ## Output
 

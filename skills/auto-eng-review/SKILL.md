@@ -29,11 +29,17 @@ Before appending the engineering review:
 
 ## Do
 
-1. **Load state.** Read `.agent/steering/STATUS.md`. Read the canonical `PLAN.md`. If `canonical_design` is null, missing, or points to a missing file, continue without DESIGN.md and note that the plan intentionally has no design artifact.
+### Load State
 
-2. **Restate the slice.** In engineering terms: what is being built, what systems does it touch, and what is the critical path?
+Read `.agent/steering/STATUS.md`. Read the canonical `PLAN.md`. If `canonical_design` is null, missing, or points to a missing file, continue without DESIGN.md and note that the plan intentionally has no design artifact.
 
-3. **Evaluate risks.** For each dimension, rate 0–10 and explain what a 10 looks like.
+### Restate the Plan
+
+In engineering terms: what is being built, what systems does it touch, and what is the critical path?
+
+### Evaluate Risks
+
+For each dimension, rate 0–10 and explain what a 10 looks like.
 
 <RISK-MATRIX>
 
@@ -49,7 +55,9 @@ Before appending the engineering review:
 A score ≤ 3 in any dimension is a blocking concern. Surface it explicitly.
 </RISK-MATRIX>
 
-4. **Render verdict.** Use exactly one of the three approved values.
+### Render Verdict
+
+Use exactly one of the three approved values.
 
 <VERDICT>
 
@@ -62,15 +70,19 @@ Use strict vocabulary. No synonyms.
 | `needs_correction` | Plan is flawed or unsafe. Return to planning. | `auto-plan` |
 </VERDICT>
 
-5. **Append review.** Add a `## Review: Engineering` section to `PLAN.md` using the exact template in `references/review-template.md`.
+### Append Review
 
-6. **Update State.**
+Add a `## Review: Engineering` section to `PLAN.md` using the exact template in `references/review-template.md`.
 
-   Run `sync-status.mjs` from this skill's installed directory.
-   Update `.agent/.automaton/state/current.json`:
-   - `engineering_review` → `<verdict>`
+### Update State
 
-7. **Recommend.** State the next skill based on the verdict.
+Run `sync-status.mjs` from this skill's installed directory.
+Update `.agent/.automaton/state/current.json`:
+- `engineering_review` → `<verdict>`
+
+### Recommend
+
+State the next skill based on the verdict.
 
 ## Output
 

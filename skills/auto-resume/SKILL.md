@@ -29,13 +29,13 @@ Before producing the recovery summary:
 
 ## Do
 
-### 1. Load State
+### Load State
 
 Read `.agent/steering/STATUS.md`. Read `references/ARTIFACT-LIFECYCLE.md` for recovery order, stale-pointer handling, and stage handoffs.
 
 If `.agent/` does not exist or `current.json` is missing, recommend `auto-onboard` and stop.
 
-### 2. Verify Artifact Integrity
+### Verify Artifact Integrity
 
 <ARTIFACT-CHECK>
 
@@ -47,14 +47,14 @@ Check that canonical pointers in `current.json` resolve to actual files:
 If any pointer is stale (file missing or moved), report it plainly. Recommend `auto-onboard` if steering is missing, or `auto-frame` / `auto-plan` if the specific artifact is missing.
 </ARTIFACT-CHECK>
 
-### 3. Load Artifacts in Dependency Order
+### Load Artifacts in Dependency Order
 
 <STATE-RECOVERY>
 
 Load artifacts in this order. Stop at the current stage — do not load artifacts from future stages.
 
 ```
-Stage: frame    → Load SPEC.md
+Stage: frame    → Load INTAKE.md (if exists), SPEC.md
 Stage: plan     → Load SPEC.md, then DESIGN.md (if exists), then PLAN.md
 Stage: execute  → Load SPEC.md, DESIGN.md (if exists), PLAN.md, current slice
 Stage: verify   → Load SPEC.md, DESIGN.md (if exists), PLAN.md, VERIFY.md (if exists)
@@ -64,11 +64,11 @@ Stage: resume   → Load SPEC.md, STATUS.md
 If `current.json` and `STATUS.md` disagree on active change or stage, report the mismatch. Prefer `current.json` for recovery, but surface the discrepancy.
 </STATE-RECOVERY>
 
-### 4. Surface Review State
+### Surface Review State
 
 If `current.json` contains `product_review` or `engineering_review`, read the corresponding `## Review:` sections from canonical artifacts and include them in the resume summary.
 
-### 5. Summarize
+### Summarize
 
 <CONTEXT-REPLAY>
 
@@ -88,10 +88,11 @@ Produce a concise summary:
 Keep it under 200 tokens. The goal is orientation, not transcription.
 </CONTEXT-REPLAY>
 
-### 6. Recommend Next Skill
+### Recommend Next Skill
 
 Based on the recovered state:
-- Stage `frame` with no spec → `auto-frame`
+- Stage `frame` with intake but no spec → `auto-frame` (intake survives)
+- Stage `frame` with no spec and no intake → `auto-frame`
 - Stage `frame` with spec but no product review → `auto-ceo-review`
 - Stage `plan` with no plan → `auto-plan`
 - Stage `plan` with plan but no engineering review → `auto-eng-review`

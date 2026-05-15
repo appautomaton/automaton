@@ -313,13 +313,12 @@ test('auto-office-hours persists approved intake without pre-approval writes', (
   const template = readFileSync(join(skillsRoot, 'auto-office-hours', 'references', 'design-doc-templates.md'), 'utf8')
 
   assert.match(source, /Before approval, it writes nothing/)
-  assert.match(source, /Persist approved intake/)
+  assert.match(source, /Persist Approved Intake/)
   assert.match(source, /\.agent\/work\/<change>\/INTAKE\.md/)
   assert.match(source, /Update `\.agent\/\.automaton\/state\/current\.json`:/)
   assert.match(source, /`active_change` → `<change>`/)
   assert.match(source, /`stage` → `frame`/)
-  assert.match(source, /\.agent\/\.automaton\/bin\/sync-status\.mjs/)
-  assert.match(source, /next_step: Run auto-frame using INTAKE\.md/)
+  assert.match(source, /Run `sync-status\.mjs` from this skill's installed directory/)
   assert.match(source, /no file writes before the user picks an approach/)
   assert.match(template, /Write the approved intake document to `\.agent\/work\/<change-name>\/INTAKE\.md`/)
 })
@@ -414,7 +413,7 @@ test('auto-eng-review treats DESIGN.md as optional canonical context', () => {
 })
 
 test('prompt references define canonical tags and verification context exception', () => {
-  const xml = readFileSync(join(skillsRoot, '_shared', 'references', 'XML-CONVENTIONS.md'), 'utf8')
+  const xml = readFileSync(join(skillsRoot, '_shared', 'authoring', 'XML-CONVENTIONS.md'), 'utf8')
   const contextBudget = readFileSync(join(skillsRoot, '_shared', 'references', 'CONTEXT-BUDGET.md'), 'utf8')
   const execute = readFileSync(join(skillsRoot, 'auto-execute', 'SKILL.md'), 'utf8')
 
@@ -437,6 +436,20 @@ test('auto-office-hours ships content-intake reference with diagnostic questions
   assert.match(contentIntake, /Voice/)
   assert.match(skill, /Content mode/)
   assert.match(skill, /references\/content-intake\.md/)
+})
+
+test('auto-office-hours ships startup and builder diagnostic references', () => {
+  const skill = readFileSync(join(skillsRoot, 'auto-office-hours', 'SKILL.md'), 'utf8')
+  const startup = readFileSync(join(skillsRoot, 'auto-office-hours', 'references', 'startup-diagnostic.md'), 'utf8')
+  const builder = readFileSync(join(skillsRoot, 'auto-office-hours', 'references', 'builder-diagnostic.md'), 'utf8')
+
+  assert.match(skill, /references\/startup-diagnostic\.md/)
+  assert.match(skill, /references\/builder-diagnostic\.md/)
+  assert.match(startup, /Demand Reality/)
+  assert.match(startup, /Smart Routing by Product Stage/)
+  assert.match(startup, /Smart Routing by Scope Classification/)
+  assert.match(builder, /coolest version/)
+  assert.match(builder, /Smart Routing by Scope Classification/)
 })
 
 test('auto-frame ships content-framing reference with anti-slop checklist', () => {
