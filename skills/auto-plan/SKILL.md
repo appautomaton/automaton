@@ -24,7 +24,7 @@ Context budget: `PLAN.md` is the reloadable execution index, not the whole imple
 Before finalizing `PLAN.md`:
 - Give every material slice a concrete output.
 - Attach a verification command to every material slice.
-- Name the execution topology: auto-continue chain, checkpoints, subagent routes, and any parallel-safe groups.
+- Name the execution topology: default continuation path, explicit checkpoints, subagent routes, and any parallel-safe groups.
 - Remove vague tasks that do not define done.
 - Read `references/quality.md` when the plan leaves execution decisions to the implementer.
 
@@ -69,7 +69,7 @@ Break work into ordered execution units, not topic buckets. Each slice must be:
 
 For content slices, also name the artifact target, allowed sources, factual-risk gate, and format constraint so `auto-execute` does not invent missing context.
 
-Before writing slices, think ahead to execution topology: which slices must run serially, which may auto-continue after verification, which are checkpoint boundaries, which use subagents, and whether any parallel-safe groups exist. Parallel-safe means dependencies are independent and write sets are disjoint; default to none.
+Before writing slices, think ahead to execution topology: which slices must run serially, which checkpoints require human judgment, which use subagents, and whether any parallel-safe groups exist. Continuation is the default after a verified slice; mark a checkpoint only when the agent must pause for human verification, a human decision, or a human action. Parallel-safe means dependencies are independent and write sets are disjoint; default to none.
 
 <SLICE-DESIGN>
 
@@ -87,7 +87,8 @@ Frame each slice as:
 **Acceptance criteria:**
 - [observable criterion]
 **Verification:** [command or check that proves the slice is done]
-**Auto-continue:** yes | no
+**Checkpoint after:** none | human-verify | decision | human-action
+**Checkpoint reason:** none | [why automation must pause after this slice]
 **Detail:** [linked `slices/slice-NNN.md` file or "none"]
 ```
 
@@ -95,8 +96,10 @@ Rules:
 - Every material slice must have a verification command.
 - Every material slice must state an execution route: `direct`, `subagent recommended`, or `subagent required`.
 - Use `direct` when the slice touches ≤ 3 files in one subsystem. Use `subagent recommended` when the slice touches > 3 files, crosses subsystem boundaries, modifies shared interfaces or data schemas, or carries review risk. Use `subagent required` only when the user asked for multi-agent execution or the slice modifies security-critical paths, production data, or irreversible state.
-- `Auto-continue` defaults to `no`; use `yes` only when the next slice may start after this slice passes verification without user input.
-- Use `Auto-continue: no` for checkpoints, compatibility reports, architecture decisions, external dependencies, broad cross-surface changes, or ambiguous blocker outcomes.
+- Continuation is the default. Use `Checkpoint after: none` when the next slice may start after this slice passes verification.
+- Use `human-verify` only when the result cannot be verified by available commands, tests, or local inspection.
+- Use `decision` when the next step requires a product, architecture, design, or scope choice.
+- Use `human-action` when progress requires an external action the agent cannot perform, such as 2FA, account approval, or off-machine access.
 - Slices should be small enough to complete in one session.
 - If a coherent slice exceeds ~15% of context window, move extended instructions to `slices/slice-NNN.md` and keep PLAN.md as the index. Split the slice only when it contains independent outcomes.
 </SLICE-DESIGN>
@@ -110,7 +113,7 @@ Required sections:
 - **Architecture approach** — the smallest correct design
 - **Requirement traceability** — gap IDs, invariant IDs, audit questions, migration checkpoints, or coverage targets mapped to slices when present
 - **Ordered task sequence** — slices in dependency order, with linked detail files when needed
-- **Execution routing and topology** — direct or subagent route for each material slice; auto-continue chain, checkpoints, and parallel-safe groups (or "none")
+- **Execution routing and topology** — direct or subagent route for each material slice; default continuation path, explicit checkpoints, and parallel-safe groups (or "none")
 - **Verification commands** — attached to every material slice
 - **Context budget for this change** — total estimated context consumption
 

@@ -15,7 +15,7 @@ First action: run `scripts/get-context.mjs` from this skill's installed director
 
 ## Preamble
 
-auto-execute is the execute-stage orchestrator. It owns route selection, state, and scope. It executes one verified slice at a time inside a selected execution window. Direct implementation and subagent implementation are two routes inside this skill; the user should not have to switch skills to get the subagent route.
+auto-execute is the execute-stage orchestrator. It owns route selection, state, and scope. It executes one verified slice at a time inside a selected execution window. Continuation is the default after a verified slice; checkpoints and STOP conditions are the exceptions. Direct implementation and subagent implementation are two routes inside this skill; the user should not have to switch skills to get the subagent route.
 
 Context budget: hold only the active slice, execution-window metadata, acceptance criteria, route metadata, verification commands, and files you are actively editing or coordinating. Subagents receive curated slice context, not the whole plan.
 
@@ -31,7 +31,7 @@ Before marking a slice complete:
 
 Before using this skill:
 - `canonical_plan` in `.agent/.automaton/state/current.json` must point to an approved `PLAN.md`.
-- The next executable slice must have an objective, execution route, touched files or areas, acceptance criteria, and verification command.
+- The next executable slice must have an objective, execution route, touched files or areas, acceptance criteria, verification command, `Checkpoint after`, and checkpoint reason.
 - If `engineering_review` is `needs_correction`, stop and return to `auto-plan`.
 
 ## Do
@@ -50,7 +50,7 @@ If the current slice links a `slices/slice-NNN.md` detail file or names requirem
 
 Identify the next uncompleted slice from `PLAN.md`. Then form the smallest safe execution window:
 - Always include the next uncompleted slice.
-- Add following slices only while the previous slice has `Auto-continue: yes`, dependencies are met, verification is explicit, and no checkpoint, risk, or context pressure appears.
+- Add following slices while the previous slice has `Checkpoint after: none`, dependencies are met, verification is explicit, and no STOP condition, slice-blocking review risk, or context pressure appears.
 - Execute the window serially by default. Cross-slice parallel dispatch is allowed only when `PLAN.md` explicitly marks slices parallel-safe and write sets are disjoint.
 
 For each slice in the window, extract only:
@@ -61,10 +61,11 @@ For each slice in the window, extract only:
 - relevant constraints and anti-goals
 - acceptance criteria
 - verification commands
-- `Auto-continue: yes | no`
+- `Checkpoint after: none | human-verify | decision | human-action`
+- checkpoint reason
 - linked detail files and traceability IDs, if present
 
-If a material slice is missing acceptance criteria or verification, stop and recommend `auto-plan`. If `Execution` is missing, infer conservatively for this session and record a plan correction.
+If a material slice is missing acceptance criteria, verification, or checkpoint policy, stop and recommend `auto-plan`. If `Execution` is missing, infer conservatively for this session and record a plan correction.
 
 For content slices, also extract artifact target, audience, thesis, voice, content anti-goals, channel, source policy, factual risk, and format. If the slice requires a missing source or factual-risk decision, stop with `NEEDS_CONTEXT`.
 
@@ -125,13 +126,14 @@ Examples:
 Record completion evidence in the plan or orchestration artifact before moving to another slice. Update `.agent/.automaton/state/current.json` to the next slice or stage only after the slice has evidence.
 
 Continue within the selected execution window only when:
-- The completed slice has `Auto-continue: yes`.
+- The completed slice has `Checkpoint after: none`.
 - Verification passed.
 - The next slice's dependencies are met.
 - The next slice still matches the approved plan.
 - Context remains healthy.
+- No STOP condition applies.
 
-Otherwise stop with the next action and the stop reason.
+If the completed slice has a checkpoint, pause with the next action and checkpoint reason. If a STOP condition appears, stop with the next action and stop reason.
 
 ### 7. Record Corrections
 
@@ -183,7 +185,7 @@ Do NOT write code unless:
 - Files changed with one-line rationale per file
 - Commands run and their results
 - Subagent statuses and review verdicts, when used
-- Execution window stop reason when continuation stops
+- Execution window checkpoint or stop reason when continuation pauses
 - Newly discovered risks or follow-ups
 - Recommended next skill: `auto-execute`, `auto-verify`, or `auto-plan`
 

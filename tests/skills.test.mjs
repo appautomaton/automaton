@@ -314,11 +314,12 @@ test('auto-plan requires explicit execution routing and topology on material sli
   const source = readFileSync(join(skillsRoot, 'auto-plan', 'SKILL.md'), 'utf8')
 
   assert.match(source, /\*\*Execution:\*\* direct \| subagent recommended \| subagent required/)
+  assert.match(source, /\*\*Checkpoint after:\*\* none \| human-verify \| decision \| human-action/)
   assert.match(source, /Every material slice must state an execution route/)
   assert.match(source, /Execution routing and topology/)
-  assert.match(source, /auto-continue chain/)
+  assert.match(source, /default continuation path/)
   assert.match(source, /Parallel-safe means dependencies are independent and write sets are disjoint/)
-  assert.match(source, /`Auto-continue` defaults to `no`; use `yes` only when the next slice may start after this slice passes verification/)
+  assert.match(source, /Continuation is the default\. Use `Checkpoint after: none`/)
   assert.match(source, /Use `direct` when the slice touches/)
 })
 
@@ -327,12 +328,21 @@ test('auto-execute owns route selection and execution-window continuation', () =
 
   assert.match(source, /Direct implementation and subagent implementation are two routes inside this skill/)
   assert.match(source, /Select Execution Window/)
+  assert.match(source, /Continuation is the default after a verified slice/)
   assert.match(source, /Always include the next uncompleted slice/)
+  assert.match(source, /Checkpoint after: none/)
   assert.match(source, /Execute the window serially by default/)
   assert.match(source, /Build an execution window, but execute and verify one slice at a time/)
   assert.match(source, /The route decision lives here/)
   assert.match(source, /Run the per-slice protocol/)
   assert.match(source, /Do not tell the user to invoke another execute skill/)
+})
+
+test('auto-execute stop examples require bounded diagnostics before halting on uncertainty', () => {
+  const source = readFileSync(join(skillsRoot, 'auto-execute', 'references', 'stop-examples.md'), 'utf8')
+
+  assert.match(source, /run one bounded diagnostic/)
+  assert.doesNotMatch(source, /unsure after 30 seconds/)
 })
 
 test('controller prompts use canonical state path for direct state writes', () => {

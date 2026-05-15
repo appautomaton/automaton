@@ -26,4 +26,4 @@
 
 If the obstacle is **trivial** (typo, lint, known flaky test) → fix and continue.
 If the obstacle is **structural** (missing dependency, ambiguous instruction, stale plan) → halt and report.
-If you are unsure after 30 seconds of consideration → halt and report.
+If you are unsure, run one bounded diagnostic. If the obstacle is still structural or ambiguous, halt and report.
