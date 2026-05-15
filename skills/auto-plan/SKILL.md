@@ -65,7 +65,7 @@ Break work into ordered execution units, not topic buckets. Each slice must be:
 - Testable: it produces an outcome that can be verified.
 - Bounded: it consumes a known fraction of the context window.
 - Independent: it can be executed without loading slices that come after it.
-- Checkpoint-aware: it ends where verification or a decision may change later work.
+- Checkpointed only for human input: it marks a pause only when a human must act or choose before the next approved slice can start.
 
 For content slices, also name the artifact target, allowed sources, factual-risk gate, and format constraint so `auto-execute` does not invent missing context.
 
@@ -97,8 +97,9 @@ Rules:
 - Every material slice must state an execution route: `direct`, `subagent recommended`, or `subagent required`.
 - Use `direct` when the slice touches ≤ 3 files in one subsystem. Use `subagent recommended` when the slice touches > 3 files, crosses subsystem boundaries, modifies shared interfaces or data schemas, or carries review risk. Use `subagent required` only when the user asked for multi-agent execution or the slice modifies security-critical paths, production data, or irreversible state.
 - Continuation is the default. Use `Checkpoint after: none` when the next slice may start after this slice passes verification.
-- Use `human-verify` only when the result cannot be verified by available commands, tests, or local inspection.
-- Use `decision` when the next step requires a product, architecture, design, or scope choice.
+- Verification findings, implementation caveats, downstream consequences, and next-slice recommendations are not checkpoints when the approved plan already names the next slice. Record them as slice evidence or risks and continue.
+- Use `human-verify` only when the result cannot be verified by available commands, tests, host tools, or local inspection.
+- Use `decision` only when the user must choose among named product, architecture, design, or scope options before the next slice can start. The checkpoint reason must include the concrete question and options. Do not use `decision` for reversible engineering judgment, known limitations, validation results, or "next slice should be..." notes.
 - Use `human-action` when progress requires an external action the agent cannot perform, such as 2FA, account approval, or off-machine access.
 - Slices should be small enough to complete in one session.
 - If a coherent slice exceeds ~15% of context window, move extended instructions to `slices/slice-NNN.md` and keep PLAN.md as the index. Split the slice only when it contains independent outcomes.

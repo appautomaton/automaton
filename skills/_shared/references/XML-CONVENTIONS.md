@@ -141,15 +141,17 @@ Use this vocabulary when designing or describing validation checkpoints. Every g
 
 ## Checkpoint Types
 
-When a skill requires human interaction, use one of these three checkpoint types:
+When a skill requires human interaction, use one of these checkpoint types:
 
-| Type | Frequency | Use for |
-|------|-----------|---------|
-| `human-verify` | 90% | Claude completed work, human confirms it works (UI, flows, functional) |
-| `decision` | 9% | Human must choose implementation direction (tech, architecture, design) |
-| `human-action` | 1% | No CLI/API exists OR auth gate hit (email verification, 2FA, OAuth) |
+| Type | Use for |
+|------|---------|
+| `human-verify` | Human-only validation that available commands, tests, host tools, or local inspection cannot prove. |
+| `decision` | A human must choose among named product, architecture, design, or scope options. |
+| `human-action` | Progress requires an external action the agent cannot perform, such as 2FA, account approval, or off-machine access. |
 
 Golden rule: **If the agent can run it, the agent runs it.** The user only does what requires human judgment.
+
+Decision checkpoints require a concrete question and named options. Do not pause for implementation caveats, validation results, downstream consequences, or next-step recommendations when the approved plan already names the next slice.
 
 ## Token Efficiency Rules
 

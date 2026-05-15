@@ -53,6 +53,8 @@ Identify the next uncompleted slice from `PLAN.md`. Then form the smallest safe 
 - Add following slices while the previous slice has `Checkpoint after: none`, dependencies are met, verification is explicit, and no STOP condition, slice-blocking review risk, or context pressure appears.
 - Execute the window serially by default. Cross-slice parallel dispatch is allowed only when `PLAN.md` explicitly marks slices parallel-safe and write sets are disjoint.
 
+Before treating a checkpoint as a window boundary, apply the checkpoint-validity rules in `Verify And Advance`. Invalid checkpoint text is a plan correction, not a pause; treat that slice as `Checkpoint after: none` for window construction.
+
 For each slice in the window, extract only:
 - objective
 - `Execution: direct | subagent recommended | subagent required`
@@ -123,17 +125,24 @@ Examples:
 - If you changed a route handler, curl that route, not every endpoint.
 - If you changed a migration, verify it applies and rolls back, then verify the schema.
 
-Record completion evidence in the plan or orchestration artifact before moving to another slice. Update `.agent/.automaton/state/current.json` to the next slice or stage only after the slice has evidence.
+Record completion evidence in the plan or orchestration artifact before moving to another slice. The next slice is selected from `PLAN.md`; do not invent slice cursor or checkpoint fields in `.agent/.automaton/state/current.json`. Change `.agent/.automaton/state/current.json` only when the stage, active change, review state, or canonical artifact pointers change.
+
+If the completed slice has a checkpoint, validate that it actually requires human input:
+- `human-verify` is valid only when the result cannot be verified by available commands, tests, host tools, or local inspection.
+- `decision` is valid only when the checkpoint reason names a concrete question and options whose answer changes the next slice, architecture, design, product scope, or risk posture.
+- `human-action` is valid only when progress requires an external action the agent cannot perform.
+
+Do not pause for checkpoint text that only records verification findings, implementation caveats, downstream consequences, known limitations, or a recommendation for the next already-approved slice. Record a plan correction, keep the evidence, and continue when the normal continuation conditions pass.
 
 Continue within the selected execution window only when:
-- The completed slice has `Checkpoint after: none`.
+- The completed slice has `Checkpoint after: none` or an invalid checkpoint was recorded as a plan correction.
 - Verification passed.
 - The next slice's dependencies are met.
 - The next slice still matches the approved plan.
 - Context remains healthy.
 - No STOP condition applies.
 
-If the completed slice has a checkpoint, pause with the next action and checkpoint reason. If a STOP condition appears, stop with the next action and stop reason.
+If the checkpoint is valid, pause with the next action and checkpoint reason. If a STOP condition appears, stop with the next action and stop reason.
 
 ### 7. Record Corrections
 
