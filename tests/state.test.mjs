@@ -7,7 +7,7 @@ import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import { loadCurrentState, saveCurrentState } from '../lib/state.mjs'
-import { loadStatusSummary, saveStatusSummary } from '../lib/status.mjs'
+import { loadStatusSummary, readStatusPointer, saveStatusSummary } from '../lib/status.mjs'
 import { syncStatusPointerFromCurrentState } from '../runtime/bin/sync-status-pointer.mjs'
 
 test('current state round-trips through .agent/.automaton/state/current.json', () => {
@@ -54,6 +54,50 @@ test('status summary round-trips through .agent/steering/STATUS.md', () => {
     '# Status\n\n## Current Change\n\n- active change: `automaton-status-sync`\n- current stage: `plan`\n\n## What Is True Now\n\n- Automaton has a compact sync helper.\n\n## Next Step\n\nRun the targeted state and CLI checks.\n\n## Open Risks\n\n- Live host writeback still depends on controller discipline.\n'
   )
   assert.deepEqual(loadStatusSummary(target), summary)
+})
+
+test('status parser tolerates human annotations after cursor fields', () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-status-summary-annotated-'))
+  const target = join(root, '.agent', 'steering', 'STATUS.md')
+
+  mkdirSync(join(root, '.agent', 'steering'), { recursive: true })
+  writeFileSync(
+    target,
+    [
+      '# Status',
+      '',
+      '## Current Change',
+      '',
+      '- active change: `gap-closure`',
+      '- current stage: `verify` (complete)',
+      '',
+      '## What Is True Now',
+      '',
+      '- The active frame is summarized without relying on status prose as a path cursor.',
+      '',
+      '## Next Step',
+      '',
+      'Read current.json for canonical artifact paths.',
+      '',
+      '## Open Risks',
+      '',
+      '- none recorded',
+      ''
+    ].join('\n'),
+    'utf8'
+  )
+
+  assert.deepEqual(readStatusPointer(target), {
+    activeChange: 'gap-closure',
+    stage: 'verify'
+  })
+  assert.deepEqual(loadStatusSummary(target), {
+    activeChange: 'gap-closure',
+    stage: 'verify',
+    whatIsTrueNow: ['The active frame is summarized without relying on status prose as a path cursor.'],
+    nextStep: 'Read current.json for canonical artifact paths.',
+    openRisks: []
+  })
 })
 
 test('sync-status-pointer preserves summary when pointers already match current state', () => {

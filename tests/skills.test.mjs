@@ -115,6 +115,11 @@ test('auto-onboard ships progressive-disclosure support docs and templates', () 
   for (const relativePath of expectedFiles) {
     assert.equal(existsSync(join(onboardRoot, relativePath)), true)
   }
+
+  const artifactContract = readFileSync(join(onboardRoot, 'references', 'artifact-contract.md'), 'utf8')
+
+  assert.match(artifactContract, /do not duplicate canonical artifact paths/)
+  assert.match(artifactContract, /name artifact roles instead/)
 })
 
 test('auto-execute ships internal subagent prompt templates', () => {
@@ -203,8 +208,19 @@ test('artifact lifecycle reference defines stage handoffs and canonical pointers
   assert.match(lifecycle, /canonical_spec/)
   assert.match(lifecycle, /canonical_plan/)
   assert.match(lifecycle, /canonical_design/)
+  assert.match(lifecycle, /`current\.json` is the cursor/)
+  assert.match(lifecycle, /`STATUS\.md` is a compact human summary, not a pointer registry/)
+  assert.match(lifecycle, /Do not duplicate canonical SPEC, DESIGN, PLAN/)
   assert.match(lifecycle, /Do not add archive behavior/)
   assert.match(lifecycle, /\.agent\/work\/<change>/)
+})
+
+test('auto-resume treats STATUS prose paths as non-authoritative summary text', () => {
+  const recovery = readFileSync(join(skillsRoot, 'auto-resume', 'references', 'recovery-scenarios.md'), 'utf8')
+
+  assert.match(recovery, /STATUS\.md Mentions Old Artifact Paths/)
+  assert.match(recovery, /Prefer `current\.json` and the canonical artifacts/)
+  assert.match(recovery, /stale summary text/)
 })
 
 test('artifact lifecycle supports progressive disclosure without scope narrowing', () => {

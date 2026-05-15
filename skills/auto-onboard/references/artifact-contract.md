@@ -73,6 +73,7 @@ The sequence should read like `why -> what must stay true -> what to do next`.
 - summarize what is now true after onboarding
 - point to one concrete next skill
 - stay operational, not essay-like
+- do not duplicate canonical artifact paths from `current.json`, `SPEC.md`, or `PLAN.md`; name artifact roles instead
 
 ## Work Artifact Integrity
 

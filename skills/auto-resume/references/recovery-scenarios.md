@@ -34,3 +34,8 @@
 
 **State:** `.agent/work/` contains multiple change directories.
 **Action:** List them. Ask user which to resume. Do not guess.
+
+## Scenario 8: STATUS.md Mentions Old Artifact Paths
+
+**State:** `STATUS.md` prose names a `SPEC.md`, detail file, or slice path that differs from `current.json`.
+**Action:** Treat the prose as stale summary text. Prefer `current.json` and the canonical artifacts. Report the stale status note only if it could mislead the next operator.

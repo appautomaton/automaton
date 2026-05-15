@@ -62,8 +62,8 @@ function validateStatusSummary(summary) {
 
 function parseStatusSummary(source) {
   return validateStatusSummary({
-    activeChange: source.match(/^- active change: `([^`]+)`$/m)?.[1],
-    stage: source.match(/^- current stage: `([^`]+)`$/m)?.[1],
+    activeChange: source.match(/^- active change: `([^`]+)`(?:\s.*)?$/m)?.[1],
+    stage: source.match(/^- current stage: `([^`]+)`(?:\s.*)?$/m)?.[1],
     whatIsTrueNow: parseBulletList(extractSection(source, 'What Is True Now')),
     nextStep: extractSection(source, 'Next Step'),
     openRisks: parseBulletList(extractSection(source, 'Open Risks'))
@@ -108,8 +108,8 @@ export function loadStatusSummary(target) {
 export function readStatusPointer(target) {
   try {
     const source = readFileSync(target, 'utf8')
-    const activeChange = source.match(/^- active change: `([^`]+)`$/m)?.[1]
-    const stage = source.match(/^- current stage: `([^`]+)`$/m)?.[1]
+    const activeChange = source.match(/^- active change: `([^`]+)`(?:\s.*)?$/m)?.[1]
+    const stage = source.match(/^- current stage: `([^`]+)`(?:\s.*)?$/m)?.[1]
 
     if (activeChange === undefined || stage === undefined || !isValidStage(stage)) {
       return null

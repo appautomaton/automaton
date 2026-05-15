@@ -7,6 +7,8 @@ This reference defines the artifact handoff contract for Automaton skills. It cl
 - The only valid stages are `frame`, `plan`, `execute`, `verify`, and `resume`.
 - The artifact layout remains `.agent/steering/`, `.agent/wiki/`, `.agent/work/<change>/`, and `.agent/.automaton/state/current.json`.
 - Canonical pointers live in `.agent/.automaton/state/current.json`.
+- `current.json` is the cursor for active change, stage, and canonical artifact paths. `STATUS.md` is a compact human summary, not a pointer registry.
+- Do not duplicate canonical SPEC, DESIGN, PLAN, or linked detail-file paths in `STATUS.md`. Concrete paths belong in `current.json`, `SPEC.md`, and `PLAN.md`; status prose may name artifact roles such as "current spec" or "active slice."
 - Skills write artifacts only for the active change unless a skill explicitly documents a steering or wiki output.
 - Do not add archive behavior here. Do not add archive commands, runtime enforcement, daemons, dashboards, browser workflows, marketplace behavior, or vendor-source imports.
 
