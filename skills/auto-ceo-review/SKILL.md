@@ -1,7 +1,6 @@
 ---
 name: auto-ceo-review
-description: Evaluate whether a framed spec is worth building. Use after auto-frame when the product direction needs a go/no-go or scope correction before planning begins.
-compatibility: Portable across Claude Code, Codex, and OpenCode. Host-specific runtime hooks and plugins are installed separately by Automaton.
+description: Product go/no-go on a framed spec. Use after auto-frame, before planning.
 metadata:
   stage: frame
   role: product-review
@@ -9,9 +8,9 @@ metadata:
 
 # auto-ceo-review
 
-Evaluate whether a framed spec is worth building. Use after auto-frame when the product direction needs a go/no-go or scope correction before planning begins.
+Product-direction gate. Decides whether a spec is worth building before planning begins.
 
-First action: run `scripts/get-context.mjs` from this skill's installed directory to load active change and stage.
+First action: run `scripts/get-context.mjs` to load active change and stage.
 
 ## Preamble
 

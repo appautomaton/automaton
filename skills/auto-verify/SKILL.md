@@ -1,7 +1,6 @@
 ---
 name: auto-verify
-description: Verify the completed plan against acceptance criteria with fresh evidence. Use after all slices are executed — not per-slice.
-compatibility: Portable across Claude Code, Codex, and OpenCode. Host-specific runtime hooks and plugins are installed separately by Automaton.
+description: Verify completed plan against acceptance criteria. Use after all slices are executed.
 metadata:
   stage: verify
   role: controller
@@ -9,9 +8,9 @@ metadata:
 
 # auto-verify
 
-Independent audit of a completed plan. Runs once after all slices execute — not per-slice, not mid-execution.
+Verification gate. Independent audit of a completed plan — runs once, not per-slice.
 
-First action: run `scripts/get-context.mjs` from this skill's installed directory to load active change and stage.
+First action: run `scripts/get-context.mjs` to load active change and stage.
 
 ## Preamble
 

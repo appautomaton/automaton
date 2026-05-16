@@ -1,7 +1,6 @@
 ---
 name: auto-plan
-description: Turn approved framing into executable work artifacts and ordered slices. Use when scope is accepted and the next step is to write or refresh PLAN.md, DESIGN.md, or verification steps.
-compatibility: Portable across Claude Code, Codex, and OpenCode. Host-specific runtime hooks and plugins are installed separately by Automaton.
+description: Turn an approved spec into ordered slices. Use when framing is accepted and planning begins.
 metadata:
   stage: plan
   role: controller
@@ -9,9 +8,9 @@ metadata:
 
 # auto-plan
 
-Turn approved framing into executable work artifacts and ordered slices. Use when scope is accepted and the next step is to write or refresh PLAN.md, DESIGN.md, or verification steps.
+Planning controller. Turns approved framing into ordered slices with verification commands.
 
-First action: run `scripts/get-context.mjs` from this skill's installed directory to load active change, stage, and review status.
+First action: run `scripts/get-context.mjs` to load active change, stage, and review status.
 
 ## Preamble
 

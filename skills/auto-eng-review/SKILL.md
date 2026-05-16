@@ -1,7 +1,6 @@
 ---
 name: auto-eng-review
-description: Evaluate whether a plan is safe to execute. Use after auto-plan when the engineering approach needs validation before implementation begins.
-compatibility: Portable across Claude Code, Codex, and OpenCode. Host-specific runtime hooks and plugins are installed separately by Automaton.
+description: Engineering go/no-go on a plan. Use after auto-plan, before execution.
 metadata:
   stage: plan
   role: execution-review
@@ -9,9 +8,9 @@ metadata:
 
 # auto-eng-review
 
-Evaluate whether a plan is safe to execute. Use after auto-plan when the engineering approach needs validation before implementation begins.
+Engineering-safety gate. Validates that a plan is safe to execute before implementation begins.
 
-First action: run `scripts/get-context.mjs` from this skill's installed directory to load active change, stage, `canonical_plan`, and `canonical_design`. Read `PLAN.md`; read `DESIGN.md` only when `canonical_design` is set and resolves to a file.
+First action: run `scripts/get-context.mjs` to load active change, stage, `canonical_plan`, and `canonical_design`. Read `PLAN.md`; read `DESIGN.md` only when `canonical_design` is set and resolves to a file.
 
 ## Preamble
 

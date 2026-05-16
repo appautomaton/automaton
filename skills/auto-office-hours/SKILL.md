@@ -1,7 +1,6 @@
 ---
 name: auto-office-hours
-description: Turn a vague idea into a sharp objective through structured conversation. Use when the user says "I have an idea," "help me think through this," "is this worth building," or any request that precedes a spec.
-compatibility: Portable across Claude Code, Codex, and OpenCode. Host-specific runtime hooks and plugins are installed separately by Automaton.
+description: Sharpen a vague idea into a bounded objective. Use before framing when scope is undefined.
 metadata:
   stage: frame
   role: pre-frame
@@ -9,9 +8,9 @@ metadata:
 
 # auto-office-hours
 
-Turn a vague idea into a sharp objective through structured conversation. Use this skill when the user says "I have an idea," "help me think through this," "is this worth building," or any request that precedes a spec.
+Pre-frame conversation. Turns a vague idea into a sharp objective before framing begins.
 
-First action: run `scripts/get-context.mjs` from this skill's installed directory to load active change and stage, then detect mode, work scale, and work shape from the user's language.
+First action: run `scripts/get-context.mjs` to load active change and stage, then detect mode, work scale, and work shape from the user's language.
 
 ## Preamble
 
@@ -56,7 +55,7 @@ From the user's initial message, determine all three:
 
    State all three in one confirmation: "This reads as Builder mode, capability-sized, and parity-shaped — does that match?" If the user disagrees on any axis, adjust.
 
-   Do not equate "large" with roadmap-sized. Capability-sized work remains one spec when it serves one coherent outcome. Roadmap-sized means independent outcomes, not merely many files, many gaps, or many constraints.
+   Do not equate "large" with roadmap-sized. Capability-sized work remains one spec when it serves one coherent outcome. Roadmap-sized means independent outcomes, not merely many files, many gaps, or many constraints. Each roadmap phase is a separate session — decomposition costs shared context. Decompose only when phases are independently valuable: they could ship in any order, or one could be abandoned without invalidating the others. If phase B depends on decisions made in phase A, they belong in one spec.
 
    When Content mode is detected, read `references/content-intake.md` and use its diagnostic questions instead of the Startup or Builder question sets. Content mode still produces a design document on approval, with audience, thesis, voice, and content anti-goals as required fields.
 

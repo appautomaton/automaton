@@ -1,7 +1,6 @@
 ---
 name: auto-resume
-description: Recover the active change, stage, and next action from Automaton artifacts. Use when a fresh session must continue existing work without guessing.
-compatibility: Portable across Claude Code, Codex, and OpenCode. Host-specific runtime hooks and plugins are installed separately by Automaton.
+description: Recover active change and next action from artifacts. Use on fresh session with existing work.
 metadata:
   stage: resume
   role: controller
@@ -9,9 +8,9 @@ metadata:
 
 # auto-resume
 
-Recover the active change, stage, and next action from Automaton artifacts. Use when a fresh session must continue existing work without guessing.
+Session recovery. Rebuilds context from durable artifacts, not memory or guessing.
 
-First action: run `scripts/get-context.mjs` from this skill's installed directory to read the current state. This is the single source of truth for recovery.
+First action: run `scripts/get-context.mjs` to read the current state.
 
 ## Preamble
 

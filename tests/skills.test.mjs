@@ -60,7 +60,7 @@ test('authored skills use valid portable frontmatter and concise bodies', () => 
     assert.match(fields.name, namePattern)
     assert.ok(fields.description.length > 0)
     assert.ok(fields.description.length <= 1024)
-    assert.ok(fields.compatibility.includes('Claude Code'))
+    assert.ok(fields.description.length > 10, `${skillName} description too short`)
     assert.ok(source.includes('metadata:\n  stage:'))
     assert.match(body, /## Do\n/)
     assert.match(body, /## Output\n/)

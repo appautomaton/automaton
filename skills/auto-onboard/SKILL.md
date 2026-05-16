@@ -1,7 +1,6 @@
 ---
 name: auto-onboard
-description: Discover a repository and produce bounded project truth. Use when .agent/ is missing, stale, or the user asks "what is this repo?" or "how do I work on this?"
-compatibility: Portable across Claude Code, Codex, and OpenCode. Host-specific runtime hooks and plugins are installed separately by Automaton.
+description: Build project truth from repo evidence. Use when steering is missing or stale.
 metadata:
   stage: frame
   role: controller
@@ -9,9 +8,9 @@ metadata:
 
 # auto-onboard
 
-Discover a repository and produce bounded project truth. Use this skill when `.agent/` is missing, stale, or the user asks "what is this repo?" or "how do I work on this?"
+Repository discovery. Builds bounded project truth from evidence, not guessing.
 
-First action: run `scripts/get-context.mjs` from this skill's installed directory to detect existing state. If `.agent/` is absent, also run `scripts/scaffold-agent.mjs` before scanning.
+First action: run `scripts/get-context.mjs` to detect existing state.
 
 ## Preamble
 
@@ -30,17 +29,13 @@ Before writing steering artifacts:
 ### Detect State
 
 Three cases:
-1. **First-time** — `get-context.mjs` returned no state or the file is missing. Proceed to scaffold and scan.
-2. **Already-onboarded** — `.agent/steering/PROJECT.md` contains real project truth (not scaffold placeholder text). Report what exists and route by state — do NOT rescan unless the user explicitly requests a refresh:
+1. **First-time or scaffold-level** — `get-context.mjs` returned no state or steering files are scaffold placeholders (e.g., `"..."` or template prompts). Proceed to scan.
+2. **Already-onboarded, no update requested** — `.agent/steering/PROJECT.md` contains real project truth and the user did not ask for a refresh. Report what exists and route by state:
      - Active change with a stage → `auto-resume`
      - No active change or stage is `none` → `auto-office-hours`
-3. **Scaffold-level** — `.agent/` exists but steering files are scaffold placeholders (e.g., `"..."` or template prompts). Treat as first-time and proceed to scan.
+3. **Already-onboarded, targeted refresh** — steering exists and the user asks to update it (e.g., "update REQUIREMENTS because we added Postgres"). Do NOT rescan the full repo. Read only the evidence relevant to the update (at most 3 files), update only the affected steering file(s), run `sync-status.mjs`, and report what changed.
 
 When writing ROADMAP.md during first-time setup, use the format in `references/ROADMAP-CONTRACT.md`.
-
-### Scaffold (if needed)
-
-If `.agent/` does not exist, run this skill's installed `scaffold-agent.mjs` from the same host skill root.
 
 ### Scan Top-Level Files
 

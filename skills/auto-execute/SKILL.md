@@ -1,7 +1,6 @@
 ---
 name: auto-execute
-description: Execute approved PLAN.md slices directly or through host-native subagents without reopening product scope. Use as the execute-stage entry point after planning.
-compatibility: Portable across Claude Code, Codex, and OpenCode. Host-specific runtime hooks and plugins are installed separately by Automaton.
+description: Implement approved plan slices. Use as the execute-stage entry point.
 metadata:
   stage: execute
   role: controller
@@ -9,9 +8,9 @@ metadata:
 
 # auto-execute
 
-Execute approved `PLAN.md` slices directly or through host-native subagents without reopening product scope. Use this as the execute-stage entry point after planning.
+Implementation controller. Executes approved plan slices without reopening product scope.
 
-First action: run `scripts/get-context.mjs` from this skill's installed directory to load active change, stage, and review status.
+First action: run `scripts/get-context.mjs` to load active change, stage, and review status.
 
 ## Preamble
 
