@@ -37,13 +37,13 @@ Before using this skill:
 
 ### Load State
 
-Read `.agent/steering/STATUS.md`. Read the canonical `PLAN.md`. Read `references/ARTIFACT-LIFECYCLE.md` for execute-stage handoff, progressive disclosure, and state pointer boundaries.
+Read `.agent/steering/STATUS.md`. Read the canonical `PLAN.md`.
 
 If `PLAN.md` contains `VERIFY-GAP` annotations from a prior verification failure, treat the gap fix objectives as the current work before selecting the next uncompleted slice.
 
 If `engineering_review` is `approved_with_risks`, surface the review rationale before starting, but block only when the risk affects the current slice.
 
-If the current slice drafts, rewrites, edits, outlines, audits, or verifies prose, read `references/content-execution.md` before changing the artifact. Content execution stays inside the same direct/subagent route selection; it is not a separate skill.
+If the current slice involves prose, read `references/content-execution.md` before changing the artifact. Content execution stays inside the same direct/subagent route selection; it is not a separate skill.
 
 If the current slice links a `slices/slice-NNN.md` detail file or names requirement IDs whose detail lives in `spec/*.md`, load only those linked files for the active slice. Do not load every supplemental file for the change.
 
@@ -98,7 +98,7 @@ Use this route only when route selection permits direct execution.
 
 Change code and project artifacts in the order the slice requires. Keep diffs small, local, and easy to verify. Before fixing a bug, investigate the root cause.
 
-For prose artifacts, follow `references/content-execution.md`: preserve source traceability, do not invent facts, and run the local anti-slop pass before marking the slice complete.
+For prose artifacts, follow `references/content-execution.md`: preserve source traceability, do not invent facts, run anti-slop pass before completion.
 
 ### Subagent Route (when route = subagent)
 
@@ -213,32 +213,36 @@ Do NOT write code unless:
 
 ### Subagent Protocol
 
-Read `references/SUBAGENT-PROTOCOL.md` only when the subagent route is selected.
+Read `references/SUBAGENT-PROTOCOL.md` — only when subagent route is selected.
 
 ### Host Tools
 
-Read `references/HOST-TOOLS.md` only when dispatching host-native subagents.
+Read `references/HOST-TOOLS.md` — only when dispatching subagents.
 
 ### Implementer Prompt
 
-Read `references/implementer-prompt.md` when dispatching the implementer.
+Read `references/implementer-prompt.md` — dispatch the implementer.
 
 ### Spec Reviewer Prompt
 
-Read `references/spec-reviewer-prompt.md` after implementation status is acceptable.
+Read `references/spec-reviewer-prompt.md` — after implementation is acceptable.
 
 ### Quality Reviewer Prompt
 
-Read `references/code-quality-reviewer-prompt.md` only after spec compliance is approved.
+Read `references/code-quality-reviewer-prompt.md` — after spec compliance is approved.
 
 ### Stop Condition Examples
 
-Read `references/stop-examples.md` for concrete examples of when to halt vs. when to push through.
+Read `references/stop-examples.md` — when to halt vs. push through.
 
 ### Debug Protocol Details
 
-Read `references/debug-protocol.md` for extended debugging guidance, including common root cause patterns by technology stack.
+Read `references/debug-protocol.md` — root cause patterns by stack.
 
 ### Context Budget
 
-Read `references/CONTEXT-BUDGET.md` for progressive loading rules and degradation tiers.
+Read `references/CONTEXT-BUDGET.md` — progressive loading and degradation tiers.
+
+### Artifact Lifecycle
+
+Read `references/ARTIFACT-LIFECYCLE.md` when state pointer conflicts arise or progressive disclosure rules need clarification.

@@ -181,28 +181,28 @@ If the user does not approve an approach, output:
 
 ### Operating Principles
 
-Read `references/operating-principles.md` for the non-negotiable instincts that shape every response in Startup mode and Builder mode.
+Read `references/operating-principles.md` — non-negotiable instincts for Startup and Builder modes.
 
 ### Question Exemplars
 
-Read `references/question-exemplars.md` for SOFTENED vs FORCING comparisons and Builder mode WILD vs STRUCTURED examples.
+Read `references/question-exemplars.md` — SOFTENED vs FORCING and WILD vs STRUCTURED comparisons.
 
 ### Pushback Patterns
 
-Read `references/pushback-patterns.md` for the 5 pushback templates and push principles.
+Read `references/pushback-patterns.md` — 5 pushback templates.
 
 ### Alternatives Format
 
-Read `references/alternatives-format.md` for the exact markdown format for presenting 2–3 approaches.
+Read `references/alternatives-format.md` — exact format for 2–3 approaches.
 
 ### Anti-Sycophancy
 
-Read `references/anti-sycophancy.md` for forbidden phrases, required postures, calibrated acknowledgment, and anti-slop rules.
+Read `references/anti-sycophancy.md` — forbidden phrases and calibrated acknowledgment.
 
 ### Landscape Awareness
 
-Read `references/landscape-awareness.md` for the three-layer synthesis, eureka check, and search guidelines.
+Read `references/landscape-awareness.md` — three-layer synthesis and search guidelines.
 
 ### Design Doc Templates
 
-Read `references/design-doc-templates.md` for the Startup mode and Builder mode design document formats.
+Read `references/design-doc-templates.md` — Startup and Builder design document formats.

@@ -61,7 +61,7 @@ Questions must materially change the spec. Do not ask for preferences that don't
 
 ### Write SPEC.md
 
-Read `references/ARTIFACT-LIFECYCLE.md` for frame-stage handoff, progressive disclosure, and state pointer boundaries. If a `SPEC.md` already exists for this change, read it and preserve all `## Review:` sections.
+If a `SPEC.md` already exists for this change, read it and preserve all `## Review:` sections.
 
 <HARD-GATE>
 
@@ -99,7 +99,6 @@ Update `.agent/.automaton/state/current.json`:
 
 - **SPEC.md is mandatory.** No file, no completion. Conversational framing without a written artifact is not auto-frame.
 - Ask ≤ 3 questions (up to 5 for capability-sized goals without office-hours context). If you need more, the user is not ready to frame.
-- Do not start implementation. Do not write code. Do not create PLAN.md.
 - Keep notes operational. No essays.
 - Preserve review sections on refresh.
 
@@ -125,8 +124,12 @@ Choose sections that fit the work; do not force every SPEC into a feature templa
 
 ### Lens Selection Matrix
 
-Read `references/lens-selection.md` for the full decision matrix with examples.
+Read `references/lens-selection.md` — full decision matrix with examples.
 
 ### Content Framing
 
-Read `references/content-framing.md` for content-aware SPEC.md fields and the anti-slop checklist. Load only when the change involves content creation.
+Read `references/content-framing.md` — content-aware SPEC.md fields and anti-slop checklist.
+
+### Artifact Lifecycle
+
+Read `references/ARTIFACT-LIFECYCLE.md` when state pointers conflict or progressive disclosure layout is unclear.

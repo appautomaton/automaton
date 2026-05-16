@@ -14,9 +14,9 @@ First action: run `scripts/get-context.mjs` to load active change and stage.
 
 ## Preamble
 
-This skill is a product bet review. It restates the objective as one crisp bet, identifies what is differentiated and valuable, and calls out where the direction is generic or mis-scoped. It does not design implementation. It does not write code.
+Product bet review. Restates the objective as one crisp bet, identifies differentiation, calls out generic or mis-scoped direction. Does not design implementation or write code.
 
-Context budget: one read of SPEC.md, one review paragraph, one verdict.
+Context budget: one SPEC.md read, one review paragraph, one verdict.
 
 ## Quality Gate
 
@@ -87,20 +87,20 @@ State the next skill based on the verdict.
 
 ### Review Template
 
-Read `references/review-template.md` for the exact markdown format.
+Read `references/review-template.md` — exact markdown format.
 
 ### Product Bet Framing
 
-Read `references/bet-framing.md` for the 10x check, platonic ideal, dream state mapping, and expansion framing.
+Read `references/bet-framing.md` — 10x check, platonic ideal, dream state mapping.
 
 ### Review Modes
 
-Read `references/review-modes.md` for the four scope postures (EXPANSION, SELECTIVE EXPANSION, HOLD SCOPE, REDUCTION) and mode selection defaults.
+Read `references/review-modes.md` — four scope postures and mode selection defaults.
 
 ### Product Checklist
 
-Read `references/product-checklist.md` for the premise challenge, differentiation scan, scope calibration, leverage assessment, and anti-goal filter.
+Read `references/product-checklist.md` — premise challenge, differentiation, scope calibration.
 
 ### Cognitive Patterns
 
-Read `references/cognitive-patterns.md` for the 18 thinking instincts that shape product judgment.
+Read `references/cognitive-patterns.md` — 18 thinking instincts.

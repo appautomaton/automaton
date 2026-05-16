@@ -14,9 +14,9 @@ First action: run `scripts/get-context.mjs` to load active change and stage.
 
 ## Preamble
 
-auto-verify is the antifraud layer. It re-reads the plan, runs proof commands, and compares fresh results to acceptance criteria. It does not trust execute's self-assessment. It does not fix what it finds. Partial evidence is not completion.
+The antifraud layer. Re-reads the plan, runs proof commands, compares fresh results to acceptance criteria. Does not trust execute's self-assessment. Does not fix what it finds.
 
-Context budget: one read of PLAN.md + verification commands for each criterion. No broad scans, no source-file reads beyond what commands require.
+Context budget: one PLAN.md read + verification commands per criterion. No broad scans beyond what commands require.
 
 ## Quality Gate
 
@@ -30,11 +30,11 @@ Before writing the verification report:
 
 ### Load State
 
-Read `.agent/steering/STATUS.md`. Read the canonical `PLAN.md`. Read `references/ARTIFACT-LIFECYCLE.md` for verify-stage handoff and state pointer boundaries.
+Read `.agent/steering/STATUS.md`. Read the canonical `PLAN.md`.
 
 If slices link `slices/slice-NNN.md` detail files or reference requirement IDs in `spec/*.md`, load only those files. Linked detail file and traceability IDs are normative; do not verify from an unlinked supplemental file.
 
-If any slice creates, rewrites, edits, outlines, or audits prose, read `references/content-verification.md` and include its content checks in the verification pass.
+If any slice involves prose, read `references/content-verification.md` and include its content checks.
 
 ### Collect Acceptance Criteria
 
@@ -108,8 +108,12 @@ Recommend `auto-execute` — it reads these annotations on re-entry.
 
 ### Verification Report Template
 
-Read `references/verification-template.md` for extended format guidance.
+Read `references/verification-template.md` — extended format guidance.
 
 ### Common Verification Gaps
 
-Read `references/common-gaps.md` for a checklist of frequently missed scenarios.
+Read `references/common-gaps.md` — frequently missed scenarios.
+
+### Artifact Lifecycle
+
+Read `references/ARTIFACT-LIFECYCLE.md` when state pointer or handoff rules need clarification.

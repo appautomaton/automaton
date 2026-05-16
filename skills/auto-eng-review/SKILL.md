@@ -14,9 +14,9 @@ First action: run `scripts/get-context.mjs` to load active change, stage, `canon
 
 ## Preamble
 
-This skill is an execution safety review. It focuses on architecture, data flow, edge cases, and test strategy — not product vision. It identifies risks that could cause the implementation to fail, stall, or require rework.
+Execution safety review. Architecture, data flow, edge cases, test strategy — not product vision. Identifies risks that could cause failure, stalling, or rework.
 
-Context budget: one read of PLAN.md, one optional read of DESIGN.md when `canonical_design` exists, one risk matrix, one verdict.
+Context budget: one PLAN.md read, optional DESIGN.md when `canonical_design` exists, one risk matrix, one verdict.
 
 ## Quality Gate
 
@@ -102,20 +102,20 @@ State the next skill based on the verdict.
 
 ### Review Template
 
-Read `references/review-template.md` for the exact markdown format.
+Read `references/review-template.md` — exact markdown format.
 
 ### Risk Matrix Examples
 
-Read `references/risk-examples.md` for sample risk matrices from past reviews.
+Read `references/risk-examples.md` — sample risk matrices.
 
 ### Engineering Prime Directives
 
-Read `references/prime-directives.md` for the 9 non-negotiable standards and engineering preferences.
+Read `references/prime-directives.md` — 9 non-negotiable standards and preferences.
 
 ### Engineering Review Sections
 
-Read `references/engineering-sections.md` for the 11-section review methodology (architecture, error/rescue, security, data flow, code quality, test, performance, observability, deployment, long-term, design).
+Read `references/engineering-sections.md` — 11-section methodology.
 
 ### Implementation Alternatives
 
-Read `references/implementation-alternatives.md` for the mandatory 2-3 approach comparison format.
+Read `references/implementation-alternatives.md` — mandatory 2-3 approach comparison.

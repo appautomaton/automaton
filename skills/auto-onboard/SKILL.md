@@ -14,7 +14,7 @@ First action: run `scripts/get-context.mjs` to detect existing state.
 
 ## Preamble
 
-auto-onboard builds bounded project truth from repository evidence — not training data, not conversation, not guessing. It writes five steering artifacts into `.agent/steering/` and `.agent/wiki/` and never writes code. Context budget: produce a REPO-MAP.md under 150 lines; stop scanning once you have enough.
+auto-onboard builds bounded project truth from repository evidence — not training data, not conversation, not guessing. It writes five steering artifacts and never writes code. Context budget: REPO-MAP.md under 150 lines; stop scanning once you have enough.
 
 ## Quality Gate
 
@@ -101,22 +101,21 @@ Do not guess. Do not proceed.
 
 ## Rules
 
-- **No code changes.** This skill writes markdown only.
 - **Bounded scan.** Read no more than 10 files total. Summarize, do not transcribe.
 - **Evidence anchors.** Every claim in steering artifacts must cite a file path.
-- **Progressive loading.** Read files in this order: README → config → 1 source file per surface → stop.
+- **Progressive loading.** README → config → 1 source file per surface → stop.
 - **No-re-read.** If you read a file once, do not read it again in this session.
 
 ## Deep
 
 ### Scan Protocol
 
-Read `references/topology-scan.md` for detailed scanning rules: how to detect runtime surfaces, how to map package boundaries, and how to identify stack conventions.
+Read `references/topology-scan.md` — runtime surfaces, package boundaries, stack conventions.
 
 ### Artifact Contract
 
-Read `references/artifact-contract.md` for the exact format and required sections of each steering artifact.
+Read `references/artifact-contract.md` — exact format and required sections.
 
 ### Question Patterns
 
-Read `references/question-patterns.md` for examples of good and bad follow-up questions.
+Read `references/question-patterns.md` — good and bad follow-up questions.

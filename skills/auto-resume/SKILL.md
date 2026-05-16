@@ -122,12 +122,12 @@ Based on the recovered state:
 
 ### Recovery Scenarios
 
-Read `references/recovery-scenarios.md` for examples of common recovery situations and how to handle them.
+Read `references/recovery-scenarios.md` — common recovery situations.
 
 ### Artifact Dependency Order
 
-Read `references/artifact-order.md` for the full dependency graph of artifacts across stages.
+Read `references/artifact-order.md` — full artifact dependency graph.
 
 ### Context Budget
 
-Read `references/CONTEXT-BUDGET.md` for progressive loading rules and degradation tiers.
+Read `references/CONTEXT-BUDGET.md` — progressive loading and degradation tiers.

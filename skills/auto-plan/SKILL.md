@@ -54,7 +54,7 @@ If `product_review` exists in `current.json`, read the `## Review: Product` sect
 
 If the engineering approach is complex or risky, recommend `auto-eng-review` before execution.
 
-If `SPEC.md` contains content fields (Audience, Thesis, Voice, Content Anti-Goals) or the change is about writing, articles, briefs, decks, newsletters, documentation, proposals, or rewrite passes, read `references/content-planning.md`. Carry audience, thesis, voice, and content anti-goals from SPEC.md into the plan, and add channel, source policy, factual risk, and format where they affect slice execution or verification.
+If SPEC.md contains content fields (Audience, Thesis, Voice, Content Anti-Goals) or the change produces writing, articles, briefs, decks, newsletters, documentation, or proposals, read `references/content-planning.md`. Carry content fields into the plan; add channel, source policy, factual risk, and format where they affect execution or verification.
 
 If `SPEC.md` names requirement IDs, gap IDs, invariants, audit questions, migration checkpoints, or coverage targets, preserve those IDs in PLAN.md and attach them to the slices that satisfy them. Do not collapse traceable requirements into untraceable prose.
 
@@ -112,7 +112,7 @@ Rules:
 
 ### Write PLAN.md
 
-Read `references/ARTIFACT-LIFECYCLE.md` for plan-stage handoff and state pointer boundaries. Write the plan to `.agent/work/<change>/PLAN.md`.
+Write the plan to `.agent/work/<change>/PLAN.md`.
 
 Required sections:
 - **Goal** — restate the bounded goal from SPEC.md
@@ -159,18 +159,21 @@ Update `.agent/.automaton/state/current.json`:
 - Do not broaden scope to cover hypothetical future work.
 - Preserve review sections on refresh unless the user explicitly requests consolidation.
 - Every material slice must have acceptance criteria and an explicit verification command.
-- Do not write code. Do not create implementation files.
 
 ## Deep
 
 ### Slice Design Examples
 
-Read `references/slice-examples.md` for examples of well-designed and poorly-designed slices.
+Read `references/slice-examples.md` — well-designed vs. poorly-designed slices.
 
 ### Verification Patterns
 
-Read `references/verification-patterns.md` for common verification commands by technology stack.
+Read `references/verification-patterns.md` — common verification commands by stack.
 
 ### Context Budget
 
-Read `references/CONTEXT-BUDGET.md` for progressive loading rules and degradation tiers.
+Read `references/CONTEXT-BUDGET.md` — progressive loading and degradation tiers.
+
+### Artifact Lifecycle
+
+Read `references/ARTIFACT-LIFECYCLE.md` when handoff rules or state pointer boundaries need clarification.
