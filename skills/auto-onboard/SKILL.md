@@ -29,7 +29,14 @@ Before writing steering artifacts:
 
 ### Detect State
 
-If `get-context.mjs` returned `"activeChange": "bootstrap"` or the file is missing, proceed. If it returned an active change and stage, read `.agent/steering/STATUS.md` and ask the user whether to refresh or resume.
+Three cases:
+1. **First-time** — `get-context.mjs` returned no state or the file is missing. Proceed to scaffold and scan.
+2. **Already-onboarded** — `.agent/steering/PROJECT.md` contains real project truth (not scaffold placeholder text). Report what exists and route by state — do NOT rescan unless the user explicitly requests a refresh:
+     - Active change with a stage → `auto-resume`
+     - No active change or stage is `none` → `auto-office-hours`
+3. **Scaffold-level** — `.agent/` exists but steering files are scaffold placeholders (e.g., `"..."` or template prompts). Treat as first-time and proceed to scan.
+
+When writing ROADMAP.md during first-time setup, use the format in `references/ROADMAP-CONTRACT.md`.
 
 ### Scaffold (if needed)
 

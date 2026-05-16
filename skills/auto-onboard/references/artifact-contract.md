@@ -63,6 +63,7 @@ The sequence should read like `why -> what must stay true -> what to do next`.
 ### `ROADMAP.md`
 
 - 3 to 6 ordered phases
+- each phase must include `status: pending` and an empty `change:` field; see `references/ROADMAP-CONTRACT.md` for the full format
 - each phase should have an objective, why now, likely outputs, and an exit signal
 - phases should reflect the current repo, not generic best practices
 - phases should be sequenced so later skills can turn them into specific changes
@@ -79,7 +80,7 @@ The sequence should read like `why -> what must stay true -> what to do next`.
 
 Work artifacts under `.agent/work/<change>/` may carry review annotations. These sections are append-only and must survive refreshes.
 
-- Any heading matching `## Review: <Type>` in `SPEC.md`, `PLAN.md`, `DESIGN.md`, or `VERIFY.md` is a durable annotation.
+- Any heading matching `## Review: <Type>` in `SPEC.md`, `PLAN.md`, or `DESIGN.md` is a durable annotation.
 - Controllers that refresh a work artifact must preserve existing `## Review:` sections and place them after the main content.
 - A review section may be updated in place (e.g., a later review revises the verdict), but it must not be silently dropped.
 - Only the user may request consolidation or removal of a review section.

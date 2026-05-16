@@ -31,7 +31,7 @@ Before producing the recovery summary:
 
 ### Load State
 
-Read `.agent/steering/STATUS.md`. Read `references/ARTIFACT-LIFECYCLE.md` for recovery order, stale-pointer handling, and stage handoffs.
+Read `.agent/steering/STATUS.md`. Read `references/ARTIFACT-LIFECYCLE.md` for recovery order, stale-pointer handling, and stage handoffs. If the recovered state suggests the active change is complete or no active work exists, read `.agent/steering/ROADMAP.md` when it exists to check for pending phases.
 
 If `.agent/` does not exist or `current.json` is missing, recommend `auto-onboard` and stop.
 
@@ -57,7 +57,7 @@ Load artifacts in this order. Stop at the current stage — do not load artifact
 Stage: frame    → Load INTAKE.md (if exists), SPEC.md
 Stage: plan     → Load SPEC.md, then DESIGN.md (if exists), then PLAN.md
 Stage: execute  → Load SPEC.md, DESIGN.md (if exists), PLAN.md, current slice
-Stage: verify   → Load SPEC.md, DESIGN.md (if exists), PLAN.md, VERIFY.md (if exists)
+Stage: verify   → Change complete; load PLAN.md only if reporting what was verified
 Stage: resume   → Load SPEC.md, STATUS.md
 ```
 
@@ -83,6 +83,7 @@ Produce a concise summary:
 **What comes next:** [specific next action]
 **Review verdicts:** [product: X, engineering: Y, or "none"]
 **Missing state:** [list or "none"]
+**Roadmap:** [N pending / M total, or "not tracked"]
 ```
 
 Keep it under 200 tokens. The goal is orientation, not transcription.
@@ -97,8 +98,10 @@ Based on the recovered state:
 - Stage `plan` with no plan → `auto-plan`
 - Stage `plan` with plan but no engineering review → `auto-eng-review`
 - Stage `execute` → `auto-execute`
-- Stage `verify` → `auto-verify`
+- Stage `verify` → change complete; check ROADMAP.md for pending items → `auto-office-hours` for next phase or report completion
 - Stage `resume` with missing steering → `auto-onboard`
+- Change complete and ROADMAP.md has pending items → `auto-office-hours` for the next roadmap phase
+- Change complete and no pending roadmap items → report completion
 
 ## Output
 

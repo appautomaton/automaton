@@ -33,16 +33,16 @@ Rules:
 - `PLAN.md` must link any `slices/*.md` detail file and preserve requirement IDs, gap IDs, invariants, audit questions, migration checkpoints, or coverage targets from SPEC.md.
 - Execute and verify load only the detail files linked for the active slice or active requirement IDs.
 - Split a change only for independent outcomes. Do not split or narrow one coherent outcome solely because the spec or plan has many files, gaps, constraints, or scenarios.
-- If a skill narrows the user's stated scope, it must name the narrowing, explain why, and record the deferred scope in `ROADMAP.md` or ask for confirmation.
+- If a skill narrows the user's stated scope, it must name the narrowing, explain why, and record the deferred scope in `.agent/steering/ROADMAP.md` following the format in `ROADMAP-CONTRACT.md`, or ask for confirmation.
 
 ## Stage Handoffs
 
 | Stage | Required inputs | Produces | State pointer expectations | Next handoff |
 | --- | --- | --- | --- | --- |
-| `frame` | active change, steering status, optional `INTAKE.md` or framing context | `.agent/work/<change>/INTAKE.md` from office-hours; `.agent/work/<change>/SPEC.md` from frame | office-hours sets `active_change` and `stage: frame`; frame sets `canonical_spec`; `stage` remains `frame` unless the user explicitly approves plan handoff | `auto-frame`, `auto-ceo-review`, `auto-plan`, or `auto-office-hours` |
+| `frame` | active change, steering status, optional `INTAKE.md` or framing context | `.agent/work/<change>/INTAKE.md` from office-hours; `.agent/work/<change>/SPEC.md` from frame; `.agent/steering/ROADMAP.md` update from office-hours when scale is roadmap | office-hours sets `active_change` and `stage: frame`; frame sets `canonical_spec`; `stage` remains `frame` unless the user explicitly approves plan handoff | `auto-frame`, `auto-ceo-review`, `auto-plan`, or `auto-office-hours` |
 | `plan` | `canonical_spec`, steering status, optional review sections | `.agent/work/<change>/PLAN.md`; optional `DESIGN.md` | `canonical_plan` points to PLAN.md; `canonical_design` is set only when DESIGN.md exists; `stage` becomes `plan` | `auto-eng-review` or `auto-execute` |
 | `execute` | approved PLAN.md, current slice, acceptance criteria, verification commands | code, docs, tests, orchestration notes, and slice evidence required by PLAN.md | state advances only after evidence exists; do not change canonical pointers to missing files | `auto-execute` for remaining slices or `auto-verify` when implementation is ready to check |
-| `verify` | canonical PLAN.md, current slice or completed work, verification commands | verification report inline or `VERIFY.md` for important changes | state advances only when all criteria pass; failed verification keeps state unchanged | `auto-execute` for gaps, `auto-resume` for continuation, or completion status |
+| `verify` | canonical PLAN.md, all slices executed, verification commands | verification report; `VERIFY-GAP` annotations in PLAN.md on failure | `stage: verify` set only on full pass; failed verification keeps state unchanged | `auto-resume` on pass (change complete), `auto-execute` on fail (gap annotations in PLAN.md) |
 | `resume` | current state, STATUS.md, canonical artifact pointers | concise recovery summary and next recommended skill | does not invent missing pointers; stale pointers are reported, not silently repaired | the skill matching recovered state |
 
 ## Review Verdict Routing

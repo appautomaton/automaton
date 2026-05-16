@@ -127,6 +127,7 @@ export function buildSessionContext(projectRoot, options = {}) {
   }
 
   messages.push('Run auto-onboard only if steering is missing or still scaffold-level.')
+  messages.push('Vocabulary: change (not task/ticket), stage (not phase), slice (not subtask), artifact (SPEC/DESIGN/PLAN), steering (PROJECT/REQUIREMENTS/ROADMAP/STATUS).')
 
   if (compacted) {
     messages.push('Context compacted; reload only those artifacts before broad scans.')

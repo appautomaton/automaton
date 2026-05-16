@@ -40,6 +40,8 @@ Before using this skill:
 
 Read `.agent/steering/STATUS.md`. Read the canonical `PLAN.md`. Read `references/ARTIFACT-LIFECYCLE.md` for execute-stage handoff, progressive disclosure, and state pointer boundaries.
 
+If `PLAN.md` contains `VERIFY-GAP` annotations from a prior verification failure, treat the gap fix objectives as the current work before selecting the next uncompleted slice.
+
 If `engineering_review` is `approved_with_risks`, surface the review rationale before starting, but block only when the risk affects the current slice.
 
 If the current slice drafts, rewrites, edits, outlines, audits, or verifies prose, read `references/content-execution.md` before changing the artifact. Content execution stays inside the same direct/subagent route selection; it is not a separate skill.
@@ -192,7 +194,7 @@ Do NOT write code unless:
 - Subagent statuses and review verdicts, when used
 - Execution window checkpoint or stop reason when continuation pauses
 - Newly discovered risks or follow-ups
-- Recommended next skill: `auto-execute`, `auto-verify`, or `auto-plan`
+- Recommended next skill: `auto-execute` (slices remain), `auto-verify` (all slices complete), or `auto-plan` (structural failure)
 
 ## Rules
 

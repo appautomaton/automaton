@@ -35,7 +35,7 @@ If `.agent/work/<active_change>/INTAKE.md` exists, read it before interviewing. 
 
 State the goal in one sentence. If you cannot, ask one clarifying question and stop.
 
-If your SPEC would be narrower than the user's stated goal or office-hours broader intent, either widen the SPEC, explicitly record the narrowing as decomposition with deferred scope in `ROADMAP.md`, or ask for confirmation. Silent narrowing is a framing failure.
+If your SPEC would be narrower than the user's stated goal or office-hours broader intent, either widen the SPEC, explicitly record the narrowing as decomposition with deferred scope in `.agent/steering/ROADMAP.md` (using the format in `references/ROADMAP-CONTRACT.md`), or ask for confirmation. Silent narrowing is a framing failure.
 
 ### Surface
 

@@ -1,6 +1,6 @@
 # Verify Quality
 
-Load this reference only before writing `VERIFY.md` or the final verification summary.
+Load this reference only before writing the final verification report.
 
 ## VERIFY Anti-Patterns
 

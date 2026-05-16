@@ -1,6 +1,6 @@
 ---
 name: auto-plan
-description: Turn approved framing into executable work artifacts and ordered tasks. Use when scope is accepted and the next step is to write or refresh PLAN.md, DESIGN.md, or verification steps.
+description: Turn approved framing into executable work artifacts and ordered slices. Use when scope is accepted and the next step is to write or refresh PLAN.md, DESIGN.md, or verification steps.
 compatibility: Portable across Claude Code, Codex, and OpenCode. Host-specific runtime hooks and plugins are installed separately by Automaton.
 metadata:
   stage: plan
@@ -9,7 +9,7 @@ metadata:
 
 # auto-plan
 
-Turn approved framing into executable work artifacts and ordered tasks. Use when scope is accepted and the next step is to write or refresh PLAN.md, DESIGN.md, or verification steps.
+Turn approved framing into executable work artifacts and ordered slices. Use when scope is accepted and the next step is to write or refresh PLAN.md, DESIGN.md, or verification steps.
 
 First action: run `scripts/get-context.mjs` from this skill's installed directory to load active change, stage, and review status.
 
@@ -119,7 +119,7 @@ Required sections:
 - **Goal** — restate the bounded goal from SPEC.md
 - **Architecture approach** — the smallest correct design
 - **Requirement traceability** — gap IDs, invariant IDs, audit questions, migration checkpoints, or coverage targets mapped to slices when present
-- **Ordered task sequence** — slices in dependency order, with linked detail files when needed
+- **Ordered slice sequence** — slices in dependency order, with linked detail files when needed
 - **Execution routing and topology** — default route/checkpoint policy plus explicit overrides, checkpoints, and parallel-safe groups (or "none")
 - **Verification commands** — attached to every material slice
 - **Context budget for this change** — total estimated context consumption
