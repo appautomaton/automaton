@@ -25,7 +25,7 @@ Before marking a slice complete:
 - Keep edits inside the active slice.
 - Remove obvious comments, needless abstraction, and defensive boilerplate.
 - Record verification evidence before advancing state.
-- Read `references/quality.md` when the diff touches code, tests, docs, or project artifacts.
+- Read `references/quality.md` when the diff looks clever or defensive rather than inevitable from the plan.
 
 ## Prerequisites
 

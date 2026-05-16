@@ -15,7 +15,7 @@ First action: run `scripts/get-context.mjs` from this skill's installed director
 
 ## Preamble
 
-auto-onboard reads repository evidence and writes five steering artifacts into `.agent/steering/` and `.agent/wiki/`. It never writes code. It stops if the repository has no recognizable structure after reading 10 files. Context budget: produce a REPO-MAP.md under 150 lines; stop scanning once you have enough.
+auto-onboard builds bounded project truth from repository evidence — not training data, not conversation, not guessing. It writes five steering artifacts into `.agent/steering/` and `.agent/wiki/` and never writes code. Context budget: produce a REPO-MAP.md under 150 lines; stop scanning once you have enough.
 
 ## Quality Gate
 
