@@ -10,7 +10,7 @@ metadata:
 
 Framing controller. Bounds and de-risks a request into a single `SPEC.md`.
 
-First action: run `scripts/get-context.mjs` to load active change and stage. Read `STATUS.md` for open blockers.
+First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding. Read `STATUS.md` for open blockers.
 
 ## Preamble
 
@@ -24,7 +24,7 @@ Before finalizing `SPEC.md`:
 - Make the objective observable.
 - Move implementation detail out unless it constrains scope.
 - Mark uncertain claims as assumptions.
-- Read `references/quality.md` when the spec feels broad, padded, or hard to verify.
+- Read `references/quality.md` (~38 lines: anti-patterns, better shape, prose hygiene scan patterns) when the spec feels broad, padded, or hard to verify.
 
 ## Do
 
@@ -44,9 +44,9 @@ List the constraints, unknowns, and risks that change implementation. Keep the d
 
 Choose the minimum from: `product`, `engineering`, `design`, `security`, `runtime`. Default is `product` + `engineering` unless the user says otherwise.
 
-If the change involves content creation (writing, articles, briefs, decks, newsletters, documentation), add the content lens. Read `references/content-framing.md` for content-aware SPEC.md fields (audience, thesis, voice direction, content anti-goals) and the anti-slop checklist. Content lens supplements existing lenses — it does not replace `product` or `engineering`.
+If the change involves content creation (writing, articles, briefs, decks, newsletters, documentation), add the content lens. Read `references/content-framing.md` (~82 lines) for content-aware SPEC.md fields (audience, thesis, voice direction, content anti-goals) and the anti-slop checklist. Content lens supplements existing lenses — it does not replace `product` or `engineering`.
 
-Read `references/lens-selection.md` for the decision matrix if the choice is not obvious.
+Read `references/lens-selection.md` (~28 lines) for the decision matrix if the choice is not obvious.
 
 ### Interview (if ambiguous)
 
@@ -84,7 +84,7 @@ If a `SPEC.md` already exists, refresh it. Preserve all `## Review:` sections.
 
 ### Update State
 
-Run `sync-status.mjs` from this skill's installed directory.
+Run `sync-status.mjs` from this skill's installed directory → writes STATUS.md frontmatter from current.json, outputs `{synced, statusPath, active_change, stage}`.
 Update `.agent/.automaton/state/current.json`:
 - `canonical_spec` → path to the SPEC.md you just wrote
 - `stage` → `frame` (or `plan` if user approved and no review needed)
@@ -104,6 +104,18 @@ Update `.agent/.automaton/state/current.json`:
 
 ## Deep
 
+### Lens Selection Matrix
+
+Read `references/lens-selection.md` — full decision matrix with examples. (~28 lines: 5-question decision tree, 6 example mappings, 3 anti-patterns.)
+
+### Content Framing
+
+Read `references/content-framing.md` — content-aware SPEC.md fields and anti-slop checklist. (~82 lines: audience/thesis/voice/anti-goals field definitions with good/bad examples, 10-pattern anti-slop checklist, lens interaction rules, Pass 2 dimensions.)
+
+### Artifact Lifecycle
+
+Read `references/ARTIFACT-LIFECYCLE.md` when state pointers conflict or progressive disclosure layout is unclear. (~70 lines: stage handoffs table, progressive disclosure layout with allowed paths, review verdict routing, STOP conditions.)
+
 ### Edge Case: User tries to skip spec writing
 
 User: "Just plan it, I already told you what I want."
@@ -121,15 +133,3 @@ Keep related work together. If multiple files or subsystems must change to achie
 ### Work Shapes
 
 Choose sections that fit the work; do not force every SPEC into a feature template. Refactor work should name structural changes, behavioral invariants, blast radius, and regression proof. Parity work should name the reference source, gap matrix, requirement IDs, target conformance state, and verification by gap ID. Audit work should name questions, evidence sources, finding schema, and decision gate. Migration work should name source state, target state, compatibility constraints, rollout or rollback, and verification. Coverage work should name target risk areas, expected coverage improvement, and regression proof.
-
-### Lens Selection Matrix
-
-Read `references/lens-selection.md` — full decision matrix with examples.
-
-### Content Framing
-
-Read `references/content-framing.md` — content-aware SPEC.md fields and anti-slop checklist.
-
-### Artifact Lifecycle
-
-Read `references/ARTIFACT-LIFECYCLE.md` when state pointers conflict or progressive disclosure layout is unclear.

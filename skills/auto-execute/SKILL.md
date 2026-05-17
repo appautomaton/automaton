@@ -10,7 +10,7 @@ metadata:
 
 Implementation controller. Executes approved plan slices without reopening product scope.
 
-First action: run `scripts/get-context.mjs` to load active change, stage, and review status.
+First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding.
 
 ## Preamble
 
@@ -24,7 +24,7 @@ Before marking a slice complete:
 - Keep edits inside the active slice.
 - Remove obvious comments, needless abstraction, and defensive boilerplate.
 - Record verification evidence before advancing state.
-- Read `references/quality.md` when the diff looks clever or defensive rather than inevitable from the plan.
+- Read `references/quality.md` (~37 lines: anti-patterns, better shape, prose hygiene scan patterns) when the diff looks clever or defensive rather than inevitable from the plan.
 
 ## Prerequisites
 
@@ -43,7 +43,7 @@ If `PLAN.md` contains `VERIFY-GAP` annotations from a prior verification failure
 
 If `engineering_review` is `approved_with_risks`, surface the review rationale before starting, but block only when the risk affects the current slice.
 
-If the current slice involves prose, read `references/content-execution.md` before changing the artifact. Content execution stays inside the same direct/subagent route selection; it is not a separate skill.
+If the current slice involves prose, read `references/content-execution.md` (~62 lines: execution contract with required inputs, factual-risk gate, 5-step drafting loop, anti-slop pass patterns, output discipline) before changing the artifact. Content execution stays inside the same direct/subagent route selection; it is not a separate skill.
 
 If the current slice links a `slices/slice-NNN.md` detail file or names requirement IDs whose detail lives in `spec/*.md`, load only those linked files for the active slice. Do not load every supplemental file for the change.
 
@@ -106,7 +106,7 @@ Use this route when `Execution` is `subagent required`, when `subagent recommend
 
 The subagent route remains per-slice even when the execution window contains multiple slices.
 
-Before dispatching, read `references/HOST-TOOLS.md`, `references/SUBAGENT-PROTOCOL.md`, and the prompt templates in `references/implementer-prompt.md`, `references/spec-reviewer-prompt.md`, and `references/code-quality-reviewer-prompt.md`.
+Before dispatching, read `references/SUBAGENT-PROTOCOL.md` (roles, dispatch packet, status vocabulary, stop conditions) and the prompt templates in `references/implementer-prompt.md`, `references/spec-reviewer-prompt.md`, and `references/code-quality-reviewer-prompt.md`. Read `references/HOST-TOOLS.md` for host-specific subagent tool mappings.
 
 If host tools say subagents are unavailable:
 - For `subagent recommended`, fall back to direct execution only if the slice remains safe.
@@ -173,7 +173,7 @@ Do not guess. Do not proceed.
 </STOP>
 
 <DEBUG-PROTOCOL>
-Investigate root cause before fixing. Escalate after 3 failed attempts with observations, attempts, and what you need. Read `references/debug-protocol.md` for extended guidance.
+Investigate root cause before fixing. Escalate after 3 failed attempts with observations, attempts, and what you need. Read `references/debug-protocol.md` (~53 lines: root cause patterns by stack, investigation techniques, escalation template) for extended guidance.
 </DEBUG-PROTOCOL>
 
 <HARD-GATE>
@@ -213,36 +213,36 @@ Do NOT write code unless:
 
 ### Subagent Protocol
 
-Read `references/SUBAGENT-PROTOCOL.md` — only when subagent route is selected.
+Read `references/SUBAGENT-PROTOCOL.md` — only when subagent route is selected. (~95 lines: roles, dispatch packet schema, dispatch/review rules, status vocabulary with 4 implementer + 3 reviewer statuses, stop conditions.)
 
 ### Host Tools
 
-Read `references/HOST-TOOLS.md` — only when dispatching subagents.
+Read `references/HOST-TOOLS.md` — only when dispatching subagents. (Host-specific tool mappings for Claude/Codex/OpenCode subagent dispatch.)
 
 ### Implementer Prompt
 
-Read `references/implementer-prompt.md` — dispatch the implementer.
+Read `references/implementer-prompt.md` — dispatch the implementer. (~63 lines: complete prompt template with rules, self-review checklist, and `STATUS/SUMMARY/FILES_CHANGED/VERIFICATION/CONCERNS/NEEDS` return structure.)
 
 ### Spec Reviewer Prompt
 
-Read `references/spec-reviewer-prompt.md` — after implementation is acceptable.
+Read `references/spec-reviewer-prompt.md` — after implementation is acceptable. (~41 lines: prompt template with 6 spec-compliance checks and `STATUS/SUMMARY/ISSUES/EVIDENCE` return structure.)
 
 ### Quality Reviewer Prompt
 
-Read `references/code-quality-reviewer-prompt.md` — after spec compliance is approved.
+Read `references/code-quality-reviewer-prompt.md` — after spec compliance is approved. (~43 lines: prompt template with severity labels `critical/important/minor`, 7 quality checks, and return structure.)
 
 ### Stop Condition Examples
 
-Read `references/stop-examples.md` — when to halt vs. push through.
+Read `references/stop-examples.md` — when to halt vs. push through. (~29 lines: 5 halt scenarios, 4 push-through scenarios, one decision rule: trivial → fix; structural → halt.)
 
 ### Debug Protocol Details
 
-Read `references/debug-protocol.md` — root cause patterns by stack.
+Read `references/debug-protocol.md` — root cause patterns by stack. (~53 lines: common patterns for Node/Python/Rust/General, 4 investigation techniques, escalation template with Observed/Expected/Tried/Need structure.)
 
 ### Context Budget
 
-Read `references/CONTEXT-BUDGET.md` — progressive loading and degradation tiers.
+Read `references/CONTEXT-BUDGET.md` — progressive loading and degradation tiers. (~76 lines: 4 principles, 6-step loading order, 4 degradation tiers with behavioral rules, no-re-read rule with exceptions.)
 
 ### Artifact Lifecycle
 
-Read `references/ARTIFACT-LIFECYCLE.md` when state pointer conflicts arise or progressive disclosure rules need clarification.
+Read `references/ARTIFACT-LIFECYCLE.md` when state pointer conflicts arise or progressive disclosure rules need clarification. (~70 lines: stage handoffs table, progressive disclosure layout with allowed paths, review verdict routing, STOP conditions.)

@@ -10,7 +10,7 @@ metadata:
 
 Repository discovery. Builds bounded project truth from evidence, not guessing.
 
-First action: run `scripts/get-context.mjs` to detect existing state.
+First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding.
 
 ## Preamble
 
@@ -22,7 +22,7 @@ Before writing steering artifacts:
 - Separate observed, inferred, and unknown facts.
 - Cite paths for repo-shape claims.
 - Stop scanning once the next action is clear.
-- Read `references/quality.md` when artifacts turn into broad inventory.
+- Read `references/quality.md` (~36 lines: anti-patterns, better shape, prose hygiene scan patterns) when artifacts turn into broad inventory.
 
 ## Do
 
@@ -35,7 +35,7 @@ Three cases:
      - No active change or stage is `none` → `auto-office-hours`
 3. **Already-onboarded, targeted refresh** — steering exists and the user asks to update it (e.g., "update REQUIREMENTS because we added Postgres"). Do NOT rescan the full repo. Read only the evidence relevant to the update (at most 3 files), update only the affected steering file(s), run `sync-status.mjs`, and report what changed.
 
-When writing ROADMAP.md during first-time setup, use the format in `references/ROADMAP-CONTRACT.md`.
+When writing ROADMAP.md during first-time setup, use the format in `references/ROADMAP-CONTRACT.md` (~60 lines: canonical phase format, status values, update rules by skill, matching rule, invariants).
 
 ### Scan Top-Level Files
 
@@ -43,7 +43,7 @@ Read `README.md`, `package.json` or equivalent, and up to 3 config files (e.g., 
 
 ### Map Topology
 
-Read `references/topology-scan.md` for the scan protocol. Identify:
+Read `references/topology-scan.md` (~56 lines: 7-layer read order, budget rules, REPO-MAP.md output requirements) for the scan protocol. Identify:
 - Runtime surfaces (CLI, API, UI, worker)
 - Package boundaries (apps, packages, modules)
 - Stack (language, framework, build tool, test runner)
@@ -51,7 +51,7 @@ Read `references/topology-scan.md` for the scan protocol. Identify:
 
 ### Ask (if necessary)
 
-If ambiguity affects the steering output, ask ≤ 3 questions. Read `references/question-patterns.md` for how to ask. If the answer can be inferred from the repo with one more targeted read, do that instead.
+If ambiguity affects the steering output, ask ≤ 3 questions. Read `references/question-patterns.md` (~39 lines: 4 good evidence→assumption→decision patterns, 3 anti-patterns) for how to ask. If the answer can be inferred from the repo with one more targeted read, do that instead.
 
 ### Write Artifacts
 
@@ -110,12 +110,12 @@ Do not guess. Do not proceed.
 
 ### Scan Protocol
 
-Read `references/topology-scan.md` — runtime surfaces, package boundaries, stack conventions.
+Read `references/topology-scan.md` — runtime surfaces, package boundaries, stack conventions. (~56 lines: 7-layer read order from existing Automaton state through delivery surfaces, budget rules, REPO-MAP.md output requirements.)
 
 ### Artifact Contract
 
-Read `references/artifact-contract.md` — exact format and required sections.
+Read `references/artifact-contract.md` — exact format and required sections. (~92 lines: progressive disclosure structure for 5 artifacts, writing standard, confidence model with Observed/Inferred/Needs Confirmation, per-artifact expectations and required sections.)
 
 ### Question Patterns
 
-Read `references/question-patterns.md` — good and bad follow-up questions.
+Read `references/question-patterns.md` — good and bad follow-up questions. (~39 lines: 4 good patterns with evidence→assumption→decision structure, 3 bad open-ended anti-patterns, escalation rule.)

@@ -10,7 +10,7 @@ metadata:
 
 Verification gate. Independent audit of a completed plan — runs once, not per-slice.
 
-First action: run `scripts/get-context.mjs` to load active change and stage.
+First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding.
 
 ## Preamble
 
@@ -24,7 +24,7 @@ Before writing the verification report:
 - Tie every result to fresh command output or direct observation.
 - Name skipped checks explicitly — omission is not a pass.
 - Treat partial evidence as FAIL for the plan.
-- Read `references/quality.md` when the report sounds confident without proof.
+- Read `references/quality.md` (~36 lines: anti-patterns, better shape, prose hygiene scan patterns) when the report sounds confident without proof.
 
 ## Do
 
@@ -34,7 +34,7 @@ Read `.agent/steering/STATUS.md`. Read the canonical `PLAN.md`.
 
 If slices link `slices/slice-NNN.md` detail files or reference requirement IDs in `spec/*.md`, load only those files. Linked detail file and traceability IDs are normative; do not verify from an unlinked supplemental file.
 
-If any slice involves prose, read `references/content-verification.md` and include its content checks.
+If any slice involves prose, read `references/content-verification.md` (~54 lines: 8-check verification contract, anti-slop pattern scan, source/fact checks, report shape) and include its content checks.
 
 ### Collect Acceptance Criteria
 
@@ -108,12 +108,12 @@ Recommend `auto-execute` — it reads these annotations on re-entry.
 
 ### Verification Report Template
 
-Read `references/verification-template.md` — extended format guidance.
+Read `references/verification-template.md` — extended format guidance. (~33 lines: grouped-by-slice report format with Criterion/Result/Evidence/Gap per entry; rules on evidence requirements and PARTIAL counting as FAIL.)
 
 ### Common Verification Gaps
 
-Read `references/common-gaps.md` — frequently missed scenarios.
+Read `references/common-gaps.md` — frequently missed scenarios. (~51 lines: 6-category checklist — input validation, error handling, state/side-effects, security, observability, edge cases — with specific items per category.)
 
 ### Artifact Lifecycle
 
-Read `references/ARTIFACT-LIFECYCLE.md` when state pointer or handoff rules need clarification.
+Read `references/ARTIFACT-LIFECYCLE.md` when state pointer or handoff rules need clarification. (~70 lines: stage handoffs table, progressive disclosure layout with allowed paths, review verdict routing, STOP conditions.)

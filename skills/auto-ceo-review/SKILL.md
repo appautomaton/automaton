@@ -10,7 +10,7 @@ metadata:
 
 Product-direction gate. Decides whether a spec is worth building before planning begins.
 
-First action: run `scripts/get-context.mjs` to load active change and stage.
+First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding.
 
 ## Preamble
 
@@ -24,7 +24,7 @@ Before appending the product review:
 - Replace strategic filler with user, action, value, and risk.
 - Separate supported claims from assumptions.
 - Name the strongest risk even when approving.
-- Read `references/quality.md` when the review sounds like polite validation.
+- Read `references/quality.md` (~36 lines: anti-patterns, better shape, prose hygiene scan patterns) when the review sounds like polite validation.
 
 ## Do
 
@@ -87,20 +87,20 @@ State the next skill based on the verdict.
 
 ### Review Template
 
-Read `references/review-template.md` — exact markdown format.
+Read `references/review-template.md` — exact markdown format. (~21 lines: 5-field format — verdict/strength/concern/action/de-scoped — with rules on sentence limits and no extra commentary.)
 
 ### Product Bet Framing
 
-Read `references/bet-framing.md` — 10x check, platonic ideal, dream state mapping.
+Read `references/bet-framing.md` — 10x check, platonic ideal, dream state mapping. (~70 lines: crisp vs. vague bet examples, reframing structure, 10x check, platonic ideal exercise, dream state mapping diagram, temporal interrogation by implementation hour, expansion framing FLAT vs. EXPANSIVE pattern.)
 
 ### Review Modes
 
-Read `references/review-modes.md` — four scope postures and mode selection defaults.
+Read `references/review-modes.md` — four scope postures and mode selection defaults. (~48 lines: SCOPE EXPANSION, SELECTIVE EXPANSION, HOLD SCOPE, SCOPE REDUCTION — each with ceremony/protocol; mode selection table by context.)
 
 ### Product Checklist
 
-Read `references/product-checklist.md` — premise challenge, differentiation, scope calibration.
+Read `references/product-checklist.md` — premise challenge, differentiation, scope calibration. (~44 lines: 7 check categories — premise challenge, differentiation scan, scope calibration, leverage assessment, user sovereignty, anti-goal filter, temporal check.)
 
 ### Cognitive Patterns
 
-Read `references/cognitive-patterns.md` — 18 thinking instincts.
+Read `references/cognitive-patterns.md` — 18 thinking instincts. (~53 lines: 18 patterns from classification instinct to design-for-trust; application map linking patterns to review tasks.)

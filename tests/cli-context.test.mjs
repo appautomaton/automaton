@@ -44,6 +44,7 @@ test('install command creates bootstrap state and status reports it', () => {
   )
   assert.equal(existsSync(join(root, '.agent', '.automaton', 'bin', 'update-state.mjs')), true)
   assert.equal(existsSync(join(root, '.agent', '.automaton', 'lib', 'state.mjs')), true)
+  assert.equal(existsSync(join(root, '.agent', '.automaton', 'lib', 'contracts-data.json')), true)
 
   const statusResult = spawnSync(process.execPath, [cliPath, 'status', root], { encoding: 'utf8' })
 

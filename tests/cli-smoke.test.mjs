@@ -7,10 +7,10 @@ import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { buildCli } from '../bin/automaton.mjs'
 
-test('cli exposes install, context, and status commands', () => {
+test('cli exposes install, context, status, and validate commands', () => {
   const cli = buildCli()
 
-  assert.deepEqual(cli.commands, ['install', 'context', 'status'])
+  assert.deepEqual(cli.commands, ['install', 'context', 'status', 'validate'])
 })
 
 test('cli prints commands when executed from a path with spaces', () => {
@@ -25,7 +25,7 @@ test('cli prints commands when executed from a path with spaces', () => {
 
   assert.equal(result.status, 0)
   assert.equal(result.stderr, '')
-  assert.equal(result.stdout, 'install\ncontext\nstatus\n')
+  assert.equal(result.stdout, 'install\ncontext\nstatus\nvalidate\n')
 })
 
 test('cli prints commands when executed through a symlinked bin path', () => {
@@ -42,5 +42,5 @@ test('cli prints commands when executed through a symlinked bin path', () => {
 
   assert.equal(result.status, 0)
   assert.equal(result.stderr, '')
-  assert.equal(result.stdout, 'install\ncontext\nstatus\n')
+  assert.equal(result.stdout, 'install\ncontext\nstatus\nvalidate\n')
 })

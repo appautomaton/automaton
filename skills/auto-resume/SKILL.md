@@ -10,7 +10,7 @@ metadata:
 
 Session recovery. Rebuilds context from durable artifacts, not memory or guessing.
 
-First action: run `scripts/get-context.mjs` to read the current state.
+First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding.
 
 ## Preamble
 
@@ -24,7 +24,7 @@ Before producing the recovery summary:
 - Trust durable artifacts over memory.
 - Report stale pointers plainly.
 - Recommend one next skill with the reason.
-- Read `references/quality.md` when the summary becomes narrative recap.
+- Read `references/quality.md` (~36 lines: anti-patterns, better shape, prose hygiene scan patterns) when the summary becomes narrative recap.
 
 ## Do
 
@@ -122,12 +122,12 @@ Based on the recovered state:
 
 ### Recovery Scenarios
 
-Read `references/recovery-scenarios.md` — common recovery situations.
+Read `references/recovery-scenarios.md` — common recovery situations. (~41 lines: 8 state→action pairs covering fresh session, no active change, stale pointers, current.json/STATUS.md mismatch, review verdict blocks, scaffold-level steering, multiple changes, stale status prose.)
 
 ### Artifact Dependency Order
 
-Read `references/artifact-order.md` — full artifact dependency graph.
+Read `references/artifact-order.md` — full artifact dependency graph. (~48 lines: ASCII dependency graph from REPO-MAP through PLAN, loading rules by stage in table form, 3 anti-patterns.)
 
 ### Context Budget
 
-Read `references/CONTEXT-BUDGET.md` — progressive loading and degradation tiers.
+Read `references/CONTEXT-BUDGET.md` — progressive loading and degradation tiers. (~76 lines: 4 principles, 6-step loading order, 4 degradation tiers with behavioral rules, no-re-read rule with exceptions.)

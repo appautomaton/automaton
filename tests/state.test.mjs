@@ -335,7 +335,8 @@ test('shared get-context script returns deterministic camelCase JSON when state 
     canonicalDesign: null,
     canonicalPlan: null,
     productReview: null,
-    engineeringReview: null
+    engineeringReview: null,
+    diagnostics: []
   })
 })
 
@@ -352,6 +353,9 @@ test('shared get-context script normalizes durable state and preserves extra key
     engineeringReview: 'approved_with_risks',
     custom_flag: true
   })
+  mkdirSync(join(root, 'docs'), { recursive: true })
+  writeFileSync(join(root, 'docs', 'spec.md'), '# Spec\n', 'utf8')
+  writeFileSync(join(root, 'docs', 'plan.md'), '# Plan\n', 'utf8')
 
   const output = execFileSync(process.execPath, [script, target], { encoding: 'utf8' })
 
@@ -363,7 +367,8 @@ test('shared get-context script normalizes durable state and preserves extra key
     canonicalPlan: 'docs/plan.md',
     productReview: null,
     engineeringReview: 'approved_with_risks',
-    custom_flag: true
+    custom_flag: true,
+    diagnostics: []
   })
 })
 

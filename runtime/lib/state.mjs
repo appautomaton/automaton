@@ -3,7 +3,7 @@ import { dirname } from 'node:path'
 
 import { isValidStage } from './contracts.mjs'
 
-function normalizeCurrentState(state) {
+export function normalizeCurrentState(state) {
   const {
     active_change: activeChangeSnake,
     canonical_spec: canonicalSpecSnake,

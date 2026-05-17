@@ -10,7 +10,7 @@ metadata:
 
 Pre-frame conversation. Turns a vague idea into a sharp objective before framing begins.
 
-First action: run `scripts/get-context.mjs` to load active change and stage, then detect mode, work scale, and work shape from the user's language.
+First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding. Then detect mode, work scale, and work shape from the user's language.
 
 ## Preamble
 
@@ -24,7 +24,7 @@ Before presenting alternatives, recommending an approach, or writing the design 
 - Replace praise with evidence-backed assessment.
 - Make alternatives differ by scope, risk, or learning value.
 - Ask for observed behavior when the answer stays abstract.
-- Read `references/quality.md` when the conversation sounds encouraging but non-decisive.
+- Read `references/quality.md` (~36 lines: anti-patterns, better shape, prose hygiene scan patterns) when the conversation sounds encouraging but non-decisive.
 
 ## Do
 
@@ -57,11 +57,11 @@ From the user's initial message, determine all three:
 
    Do not equate "large" with roadmap-sized. Capability-sized work remains one spec when it serves one coherent outcome. Roadmap-sized means independent outcomes, not merely many files, many gaps, or many constraints. Each roadmap phase is a separate session — decomposition costs shared context. Decompose only when phases are independently valuable: they could ship in any order, or one could be abandoned without invalidating the others. If phase B depends on decisions made in phase A, they belong in one spec.
 
-   When Content mode is detected, read `references/content-intake.md` and use its diagnostic questions instead of the Startup or Builder question sets. Content mode still produces a design document on approval, with audience, thesis, voice, and content anti-goals as required fields.
+   When Content mode is detected, read `references/content-intake.md` (~61 lines: 5 content diagnostic questions — Audience, Thesis, Voice, Anti-Goals, Format — with push targets and red flags) and use its diagnostic questions instead of the Startup or Builder question sets. Content mode still produces a design document on approval, with audience, thesis, voice, and content anti-goals as required fields.
 
    For bug-sized goals, consider whether office-hours is the right skill. A known bug with a known fix can go directly to `auto-frame`.
 
-   For roadmap-sized goals, help the user identify the highest-leverage spec to frame first. Read `references/ROADMAP-CONTRACT.md` and write all decomposed items to `.agent/steering/ROADMAP.md` after approval — set the first spec's phase to `status: active` with its `change:` slug, remaining phases to `status: pending`. If you narrow the user's stated goal for decomposition, name the narrowing explicitly and preserve the broader intent.
+   For roadmap-sized goals, help the user identify the highest-leverage spec to frame first. Read `references/ROADMAP-CONTRACT.md` (~60 lines: canonical phase format, status values with progression rules, update rules by skill, matching rule, invariants) and write all decomposed items to `.agent/steering/ROADMAP.md` after approval — set the first spec's phase to `status: active` with its `change:` slug, remaining phases to `status: pending`. If you narrow the user's stated goal for decomposition, name the narrowing explicitly and preserve the broader intent.
 
 ### Run Diagnostic
 
@@ -69,7 +69,7 @@ Ask questions one at a time. Wait for each answer before asking the next. Use th
 
 ### Push for Specificity
 
-The first answer is usually polished. Push once, then push again. Read `references/pushback-patterns.md` for examples.
+The first answer is usually polished. Push once, then push again. Read `references/pushback-patterns.md` (~40 lines: 5 BAD/GOOD response pairs by pattern type) for examples.
 
 ### Challenge Premises
 
@@ -80,7 +80,7 @@ Before generating alternatives, ask:
 
 ### Generate Alternatives
 
-Present 2–3 distinct approaches that match the user's scale and shape. For bug-sized, feature-sized, and capability-sized goals: one must be the minimal viable — the smallest version of the user's stated goal, not a different smaller goal; one must be the ideal architecture (best long-term); one can be creative/lateral. For roadmap-sized goals: alternatives should be decomposition strategies or first-spec candidates, not roadmap-scale implementation plans. For refactor, parity, audit, migration, or coverage work, make the approaches differ by blast radius, traceability, evidence depth, rollout risk, or verification strength — not by pretending the work is a feature. For each: summary, effort estimate, risk level, 2–3 pros, 2–3 cons. Read `references/alternatives-format.md` for the exact format.
+Present 2–3 distinct approaches that match the user's scale and shape. For bug-sized, feature-sized, and capability-sized goals: one must be the minimal viable — the smallest version of the user's stated goal, not a different smaller goal; one must be the ideal architecture (best long-term); one can be creative/lateral. For roadmap-sized goals: alternatives should be decomposition strategies or first-spec candidates, not roadmap-scale implementation plans. For refactor, parity, audit, migration, or coverage work, make the approaches differ by blast radius, traceability, evidence depth, rollout risk, or verification strength — not by pretending the work is a feature. For each: summary, effort estimate, risk level, 2–3 pros, 2–3 cons. Read `references/alternatives-format.md` (~34 lines: markdown template and rules) for the exact format.
 
 ### Recommend and Wait
 
@@ -137,11 +137,11 @@ Do not guess. Do not proceed.
 
 ## Startup Mode
 
-Push until the answer names concrete evidence, a specific stakeholder, or an observable workaround. Read `references/startup-diagnostic.md` for the six forcing questions and smart routing by product stage and scope classification.
+Push until the answer names concrete evidence, a specific stakeholder, or an observable workaround. Read `references/startup-diagnostic.md` for the six forcing questions and smart routing by product stage and scope classification. (~45 lines: Q1 Demand Reality through Q6 Future-Fit with push targets; routing tables by product stage and scope.)
 
 ## Builder Mode
 
-Read `references/builder-diagnostic.md` for the five design-partner questions and smart routing by scope classification.
+Read `references/builder-diagnostic.md` for the five design-partner questions and smart routing by scope classification. (~18 lines: Q1 coolest version through Q5 unlimited time; routing table by scope.)
 
 ## Output
 
@@ -181,28 +181,28 @@ If the user does not approve an approach, output:
 
 ### Operating Principles
 
-Read `references/operating-principles.md` — non-negotiable instincts for Startup and Builder modes.
+Read `references/operating-principles.md` — non-negotiable instincts for Startup and Builder modes. (~43 lines: Startup's 6 core principles + 5 diagnostic checks; Builder's 4 principles + response posture.)
 
 ### Question Exemplars
 
-Read `references/question-exemplars.md` — SOFTENED vs FORCING and WILD vs STRUCTURED comparisons.
+Read `references/question-exemplars.md` — SOFTENED vs FORCING and WILD vs STRUCTURED comparisons. (~55 lines: Q3 desperate-specificity and Q5 observation exemplars with why-it-fails/why-it-works analysis; Builder wild-riffing exemplar; Q1 framing check.)
 
 ### Pushback Patterns
 
-Read `references/pushback-patterns.md` — 5 pushback templates.
+Read `references/pushback-patterns.md` — 5 pushback templates. (~40 lines: Vague Market, Social Proof, Platform Vision, Growth Stats, Undefined Terms — each with BAD/GOOD response pair and 4 push principles.)
 
 ### Alternatives Format
 
-Read `references/alternatives-format.md` — exact format for 2–3 approaches.
+Read `references/alternatives-format.md` — exact format for 2–3 approaches. (~34 lines: markdown template with Summary/Effort/Risk/Pros/Cons/Reuses fields; rules requiring minimal-viable + ideal-architecture variants.)
 
 ### Anti-Sycophancy
 
-Read `references/anti-sycophancy.md` — forbidden phrases and calibrated acknowledgment.
+Read `references/anti-sycophancy.md` — forbidden phrases and calibrated acknowledgment. (~36 lines: 6 forbidden phrases with replacements, 4 always-do rules, calibrated acknowledgment protocol, anti-slop rules with GOOD/BAD examples.)
 
 ### Landscape Awareness
 
-Read `references/landscape-awareness.md` — three-layer synthesis and search guidelines.
+Read `references/landscape-awareness.md` — three-layer synthesis and search guidelines. (~48 lines: 3-layer analysis framework, eureka check, search query templates by mode, privacy gate protocol.)
 
 ### Design Doc Templates
 
-Read `references/design-doc-templates.md` — Startup and Builder design document formats.
+Read `references/design-doc-templates.md` — Startup and Builder design document formats. (~123 lines: full INTAKE.md templates for both modes with all required sections.)

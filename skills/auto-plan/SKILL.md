@@ -10,7 +10,7 @@ metadata:
 
 Planning controller. Turns approved framing into ordered slices with verification commands.
 
-First action: run `scripts/get-context.mjs` to load active change, stage, and review status.
+First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding.
 
 ## Preamble
 
@@ -25,7 +25,7 @@ Before finalizing `PLAN.md`:
 - Attach a verification command to every material slice.
 - Name the execution topology: default continuation path, explicit checkpoints, subagent routes, and any parallel-safe groups.
 - Remove vague tasks that do not define done.
-- Read `references/quality.md` when the plan leaves execution decisions to the implementer.
+- Read `references/quality.md` (~36 lines: anti-patterns, better shape, prose hygiene scan patterns) when the plan leaves execution decisions to the implementer.
 
 ## Do
 
@@ -54,7 +54,7 @@ If `product_review` exists in `current.json`, read the `## Review: Product` sect
 
 If the engineering approach is complex or risky, recommend `auto-eng-review` before execution.
 
-If SPEC.md contains content fields (Audience, Thesis, Voice, Content Anti-Goals) or the change produces writing, articles, briefs, decks, newsletters, documentation, or proposals, read `references/content-planning.md`. Carry content fields into the plan; add channel, source policy, factual risk, and format where they affect execution or verification.
+If SPEC.md contains content fields (Audience, Thesis, Voice, Content Anti-Goals) or the change produces writing, articles, briefs, decks, newsletters, documentation, or proposals, read `references/content-planning.md` (~59 lines: Pass 1 field carry-forward table, Pass 2 dimensions for slice design, content slice template, verification dimensions). Carry content fields into the plan; add channel, source policy, factual risk, and format where they affect execution or verification.
 
 If `SPEC.md` names requirement IDs, gap IDs, invariants, audit questions, migration checkpoints, or coverage targets, preserve those IDs in PLAN.md and attach them to the slices that satisfy them. Do not collapse traceable requirements into untraceable prose.
 
@@ -139,7 +139,7 @@ If any of these are true, recommend `auto-frame` and stop.
 
 ### Update State
 
-Run `sync-status.mjs` from this skill's installed directory.
+Run `sync-status.mjs` from this skill's installed directory → writes STATUS.md frontmatter from current.json, outputs `{synced, statusPath, active_change, stage}`.
 Update `.agent/.automaton/state/current.json`:
 - `canonical_design` → path to DESIGN.md (if written)
 - `canonical_plan` → path to PLAN.md
@@ -164,16 +164,16 @@ Update `.agent/.automaton/state/current.json`:
 
 ### Slice Design Examples
 
-Read `references/slice-examples.md` — well-designed vs. poorly-designed slices.
+Read `references/slice-examples.md` — well-designed vs. poorly-designed slices. (~61 lines: 2 good and 2 bad examples with explanations; rule of thumb: if you can't write the verification command before starting, the slice isn't defined.)
 
 ### Verification Patterns
 
-Read `references/verification-patterns.md` — common verification commands by stack.
+Read `references/verification-patterns.md` — common verification commands by stack. (~47 lines: Node/Python/Rust/Go/General commands, 4 verification principles including "verify the exact behavior, not absence of errors.")
 
 ### Context Budget
 
-Read `references/CONTEXT-BUDGET.md` — progressive loading and degradation tiers.
+Read `references/CONTEXT-BUDGET.md` — progressive loading and degradation tiers. (~76 lines: 4 principles, 6-step loading order, 4 degradation tiers with behavioral rules, no-re-read rule with exceptions.)
 
 ### Artifact Lifecycle
 
-Read `references/ARTIFACT-LIFECYCLE.md` when handoff rules or state pointer boundaries need clarification.
+Read `references/ARTIFACT-LIFECYCLE.md` when handoff rules or state pointer boundaries need clarification. (~70 lines: stage handoffs table, progressive disclosure layout with allowed paths, review verdict routing, STOP conditions.)
