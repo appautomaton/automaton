@@ -3,7 +3,6 @@ name: auto-verify
 description: Verify completed plan against acceptance criteria. Use after all slices are executed.
 metadata:
   stage: verify
-  role: controller
 ---
 
 # auto-verify

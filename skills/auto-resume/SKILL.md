@@ -3,7 +3,6 @@ name: auto-resume
 description: Recover active change and next action from artifacts. Use on fresh session with existing work.
 metadata:
   stage: resume
-  role: controller
 ---
 
 # auto-resume

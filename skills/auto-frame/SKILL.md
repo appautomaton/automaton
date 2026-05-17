@@ -3,7 +3,6 @@ name: auto-frame
 description: Bound and de-risk a request into SPEC.md. Use when the objective is clear but scope needs constraining.
 metadata:
   stage: frame
-  role: controller
 ---
 
 # auto-frame

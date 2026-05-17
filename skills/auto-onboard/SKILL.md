@@ -3,7 +3,6 @@ name: auto-onboard
 description: Build project truth from repo evidence. Use when steering is missing or stale.
 metadata:
   stage: frame
-  role: controller
 ---
 
 # auto-onboard

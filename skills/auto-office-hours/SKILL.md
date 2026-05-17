@@ -3,7 +3,6 @@ name: auto-office-hours
 description: Sharpen a vague idea into a bounded objective. Use before framing when scope is undefined.
 metadata:
   stage: frame
-  role: pre-frame
 ---
 
 # auto-office-hours

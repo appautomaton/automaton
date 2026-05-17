@@ -3,7 +3,6 @@ name: auto-ceo-review
 description: Product go/no-go on a framed spec. Use after auto-frame, before planning.
 metadata:
   stage: frame
-  role: product-review
 ---
 
 # auto-ceo-review

@@ -3,7 +3,6 @@ name: auto-execute
 description: Implement approved plan slices. Use as the execute-stage entry point.
 metadata:
   stage: execute
-  role: controller
 ---
 
 # auto-execute
@@ -149,6 +148,8 @@ Continue within the selected execution window only when:
 - Context remains healthy.
 - No STOP condition applies.
 
+If all slices are complete and no STOP condition applies, invoke `auto-verify` directly via the Skill tool. Do not just recommend it — execute the transition. Report the execution summary first, then invoke.
+
 If the checkpoint is valid, pause with the next action and checkpoint reason. If a STOP condition appears, stop with the next action and stop reason.
 
 ### Record Corrections (if mismatch found)
@@ -193,7 +194,7 @@ Do NOT write code unless:
 - Subagent statuses and review verdicts, when used
 - Execution window checkpoint or stop reason when continuation pauses
 - Newly discovered risks or follow-ups
-- Recommended next skill: `auto-execute` (slices remain), `auto-verify` (all slices complete), or `auto-plan` (structural failure)
+- Next action: invoke `auto-verify` via Skill tool (all slices complete), continue to next slice (slices remain), or recommend `auto-plan` (structural failure)
 
 ## Rules
 

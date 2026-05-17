@@ -3,7 +3,6 @@ name: auto-plan
 description: Turn an approved spec into ordered slices. Use when framing is accepted and planning begins.
 metadata:
   stage: plan
-  role: controller
 ---
 
 # auto-plan

@@ -3,7 +3,6 @@ name: auto-eng-review
 description: Engineering go/no-go on a plan. Use after auto-plan, before execution.
 metadata:
   stage: plan
-  role: execution-review
 ---
 
 # auto-eng-review
