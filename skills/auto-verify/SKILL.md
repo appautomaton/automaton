@@ -91,9 +91,10 @@ Recommend `auto-execute`; it reads these annotations on re-entry.
 
 - Verification report (inline)
 - `PLAN.md` annotated with `VERIFY-GAP` blocks (on failure)
-- `.agent/.automaton/state/current.json` updated (on pass only)
+- `.agent/.automaton/state/current.json` updated to `stage: verify` (on pass only); state unchanged on fail
 - `.agent/steering/ROADMAP.md` phase marked done (on pass, if applicable)
-- Recommended next skill
+- Diagnostic handling: `error`-level diagnostics block the verification run; `warning`-level findings appear in the report
+- Recommended next skill: `auto-resume` (on pass), `auto-execute` (on fail). The user or host invokes the next skill; auto-verify does not require nested invocation.
 
 ## Rules
 

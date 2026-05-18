@@ -91,8 +91,9 @@ Update `.agent/.automaton/state/current.json`:
 ## Output
 
 - **SPEC.md**: written to `.agent/work/<change>/SPEC.md` (mandatory)
-- `.agent/.automaton/state/current.json` updated with `canonical_spec`
-- Recommended next skill: `auto-ceo-review`, `auto-plan`, or `auto-office-hours`
+- `.agent/.automaton/state/current.json` updated with `canonical_spec`; `stage` stays `frame` unless the user approves direct plan handoff
+- Diagnostic handling: `error`-level diagnostics block advancement; `warning`-level diagnostics surface to the next stage
+- Recommended next skill: `auto-ceo-review`, `auto-plan`, or `auto-office-hours`. The user or host invokes the next skill; auto-frame does not require nested invocation.
 
 ## Rules
 

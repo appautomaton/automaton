@@ -603,3 +603,56 @@ test('auto-office-hours uses observable diagnostic checks instead of posture lan
   assert.match(antiSycophancy, /evidence-backed assessment/)
   assert.doesNotMatch(antiSycophancy, /take a position|point of discomfort/)
 })
+
+test('lifecycle skills express handoff in durable-state vocabulary', () => {
+  const lifecycleSkills = ['auto-frame', 'auto-plan', 'auto-execute', 'auto-verify', 'auto-resume']
+
+  for (const skillName of lifecycleSkills) {
+    const skill = readFileSync(join(skillsRoot, skillName, 'SKILL.md'), 'utf8')
+
+    assert.match(skill, /current\.json|canonical_/, `${skillName} must reference durable state via current.json or canonical pointers`)
+    assert.match(skill, /diagnostic/i, `${skillName} must describe diagnostic handling`)
+    assert.match(skill, /[Rr]ecommended next skill|next skill/, `${skillName} must recommend a next skill`)
+    assert.match(skill, /\.agent\/(?:work|steering)\/|SPEC\.md|PLAN\.md|DESIGN\.md|STATUS\.md/, `${skillName} must name an artifact path`)
+  }
+})
+
+test('authored skills do not mandate nested skill invocation', () => {
+  // The Automaton handoff contract is durable: skills produce artifacts, update state, and
+  // recommend a next skill. Direct user/host invocation (e.g. /auto-plan) stays valid; only
+  // mandatory nested skill-to-skill invocation is forbidden. The deny-list is narrow on
+  // purpose — it only matches explicit must/mandatory/required modifiers around invocation,
+  // so legitimate uses of "mandatory" for artifacts or methodology are not affected.
+  const mandatoryInvocationPatterns = [
+    /must invoke/i,
+    /mandatory[^.\n]{0,40}Skill tool/i,
+    /required to invoke/i,
+    /Do not just recommend/i,
+    /invoke[^.\n]{0,60}directly via the Skill tool/i
+  ]
+
+  for (const skillName of authoredSkills) {
+    const skill = readFileSync(join(skillsRoot, skillName, 'SKILL.md'), 'utf8')
+    for (const pattern of mandatoryInvocationPatterns) {
+      assert.doesNotMatch(skill, pattern, `${skillName} contains mandatory nested-invocation phrasing matching ${pattern}`)
+    }
+  }
+})
+
+test('artifact lifecycle reference defines handoff contract and validation tiers', () => {
+  const lifecycle = readFileSync(join(skillsRoot, '_shared', 'references', 'ARTIFACT-LIFECYCLE.md'), 'utf8')
+
+  assert.match(lifecycle, /^## Handoff Contract$/m)
+  assert.match(lifecycle, /[Ee]xit gate/)
+  assert.match(lifecycle, /[Aa]rtifacts? produced/)
+  assert.match(lifecycle, /[Ss]tate mutation/)
+  assert.match(lifecycle, /[Dd]iagnostic handling/)
+  assert.match(lifecycle, /[Nn]ext-stage recommendation/)
+  assert.match(lifecycle, /recommend or prepare the next stage/)
+
+  assert.match(lifecycle, /^## Validation Tiers$/m)
+  assert.match(lifecycle, /L1 Coordination/)
+  assert.match(lifecycle, /L2 Artifact shape/)
+  assert.match(lifecycle, /L3 Norms/)
+  assert.match(lifecycle, /runtime\/lib\/validate\.mjs/)
+})

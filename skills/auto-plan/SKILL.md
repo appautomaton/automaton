@@ -148,8 +148,9 @@ Update `.agent/.automaton/state/current.json`:
 
 - `PLAN.md`: written to `.agent/work/<change>/PLAN.md`
 - `DESIGN.md`: written to `.agent/work/<change>/DESIGN.md` (if needed)
-- `.agent/.automaton/state/current.json` updated with `canonical_design` and `canonical_plan`
-- Recommended next skill: `auto-eng-review` or `auto-execute`
+- `.agent/.automaton/state/current.json` updated with `canonical_design` (when written), `canonical_plan`, and `stage: plan`
+- Diagnostic handling: `error`-level diagnostics block advancement; `warning`-level diagnostics surface to the next stage
+- Recommended next skill: `auto-eng-review` or `auto-execute`. The user or host invokes the next skill; auto-plan does not require nested invocation.
 
 ## Rules
 

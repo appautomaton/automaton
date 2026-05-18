@@ -85,8 +85,9 @@ State the next skill based on the verdict.
 ## Output
 
 - `PLAN.md` with appended `## Review: Engineering` section
-- `.agent/.automaton/state/current.json` updated with `engineering_review`
-- Recommended next skill
+- `.agent/.automaton/state/current.json` updated with `engineering_review`; `stage` is unchanged by this skill
+- Diagnostic handling: `error`-level diagnostics block the review; `warning`-level diagnostics surface to the next stage
+- Recommended next skill, mapped from verdict per the Review Verdict Routing table in `references/ARTIFACT-LIFECYCLE.md`: `approved` or `approved_with_risks` → `auto-execute`; `needs_correction` → `auto-plan`. The user or host invokes the next skill; auto-eng-review does not require nested invocation.
 
 ## Rules
 

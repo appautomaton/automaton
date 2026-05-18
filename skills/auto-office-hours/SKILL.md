@@ -156,8 +156,10 @@ If the user approves an approach, write `.agent/work/<change>/INTAKE.md` with:
 - Selected approach with rationale
 - Key assumptions and risks
 - Deferred scope: ideas surfaced during discussion that belong in `ROADMAP.md`, not this spec. Name them explicitly so they are captured, not lost.
+- `.agent/.automaton/state/current.json` updated with `active_change` and `stage: frame`
 - `.agent/steering/ROADMAP.md` updated (when scale is roadmap)
-- Recommended next skill: `auto-frame`
+- Diagnostic handling: `error`-level diagnostics block advancement; `warning`-level diagnostics surface to `auto-frame`
+- Recommended next skill: `auto-frame`. The user or host invokes it; auto-office-hours does not require nested invocation.
 
 If the user does not approve an approach, output:
 - Summary of what was discussed

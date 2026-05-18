@@ -106,8 +106,9 @@ Based on the recovered state:
 - Resume summary (under 200 tokens)
 - Artifacts loaded
 - Review verdicts (if present)
-- Missing or conflicting state
-- Recommended next skill
+- `.agent/.automaton/state/current.json` is read-only for auto-resume; stale pointers are reported, not silently repaired
+- Diagnostic handling: missing or conflicting state surfaces as a `warning` in the summary; `error`-level diagnostics block the resume
+- Recommended next skill, based on the recovered state. The user or host invokes it; auto-resume does not require nested invocation.
 
 ## Rules
 

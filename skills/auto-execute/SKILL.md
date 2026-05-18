@@ -148,7 +148,7 @@ Continue within the selected execution window only when:
 - Context remains healthy.
 - No STOP condition applies.
 
-If all slices are complete and no STOP condition applies, invoke `auto-verify` directly via the Skill tool. Do not just recommend it; execute the transition. Report the execution summary first, then invoke.
+If all slices are complete and no STOP condition applies, the change is ready for verification. Report the execution summary, ensure slice evidence is recorded, and recommend `auto-verify` as the next skill. The user or host may invoke `auto-verify` directly; auto-execute does not require nested skill invocation.
 
 If the checkpoint is valid, pause with the next action and checkpoint reason. If a STOP condition appears, stop with the next action and stop reason.
 
@@ -192,9 +192,11 @@ Do NOT write code unless:
 - Files changed with one-line rationale per file
 - Commands run and their results
 - Subagent statuses and review verdicts, when used
+- `.agent/.automaton/state/current.json` updated only when canonical pointers, active change, or review state change; auto-execute does not write a slice cursor field
 - Execution window checkpoint or stop reason when continuation pauses
 - Newly discovered risks or follow-ups
-- Next action: invoke `auto-verify` via Skill tool (all slices complete), continue to next slice (slices remain), or recommend `auto-plan` (structural failure)
+- Diagnostic handling: `error`-level diagnostics halt the slice; `warning`-level diagnostics surface to the user and the next stage
+- Recommended next skill: `auto-execute` (slices remain), `auto-verify` (all slices complete), or `auto-plan` (structural failure). The user or host invokes the next skill; auto-execute does not require nested invocation.
 
 ## Rules
 

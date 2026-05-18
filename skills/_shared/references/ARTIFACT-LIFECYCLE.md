@@ -45,6 +45,16 @@ Rules:
 | `verify` | canonical PLAN.md, all slices executed, verification commands | verification report; `VERIFY-GAP` annotations in PLAN.md on failure | `stage: verify` set only on full pass; failed verification keeps state unchanged | `auto-resume` on pass (change complete), `auto-execute` on fail (gap annotations in PLAN.md) |
 | `resume` | current state, STATUS.md, canonical artifact pointers | concise recovery summary and next recommended skill | does not invent missing pointers; stale pointers are reported, not silently repaired | the skill matching recovered state |
 
+## Handoff Contract
+
+Every lifecycle stage hands off through five durable elements. Skills recommend or prepare the next stage; they do not require nested skill invocation. Users or hosts may invoke the next skill directly.
+
+1. **Exit gate** — the condition that must be true to advance.
+2. **Artifacts produced or updated** — concrete files written or modified for the active change.
+3. **State mutation** — fields changed in `.agent/.automaton/state/current.json`, including `stage`, canonical pointers, and review verdicts.
+4. **Diagnostic handling** — `error`-level diagnostics block advancement; `warning`-level diagnostics surface to the next stage for handling.
+5. **Next-stage recommendation or blocker** — the next skill the user or host should invoke, or the condition preventing progress.
+
 ## Review Verdict Routing
 
 `auto-ceo-review` and `auto-eng-review` use different verdict vocabularies because they answer different questions. Product review may **descope or re-scope** (4 verdicts; "send back for clarification" is distinct from "kill"). Engineering review only blocks **execution safety** (3 verdicts; re-planning subsumes both unsafe-architecture and unsafe-routing).
@@ -69,3 +79,15 @@ Halt and report instead of continuing when:
 - `STATUS.md` and `.agent/.automaton/state/current.json` disagree on active change or stage.
 - A stage is asked to consume an artifact from a future stage.
 - The requested work would add archive behavior, runtime lifecycle enforcement, daemons, dashboards, browser workflows, marketplace behavior, or vendor-source imports without a new SPEC.
+
+## Validation Tiers
+
+Validation distributes across three tiers. Keep each check at the lowest tier that catches the failure; do not promote artifact-shape or norm checks into the runtime layer.
+
+| Tier | Scope | Enforced by | Example |
+| --- | --- | --- | --- |
+| **L1 Coordination** | Cross-skill state invariants | `runtime/lib/validate.mjs`; `error`-level diagnostic; hard stop | Stage enum, canonical pointer resolves to an existing file |
+| **L2 Artifact shape** | A single artifact's downstream consumability | Next skill reads upstream artifact and surfaces a `warning`-level diagnostic | SPEC.md has Acceptance Criteria; PLAN.md slices have verification commands |
+| **L3 Norms** | Wording, structure, prose quality | Prompt text + `tests/skills.test.mjs` regression coverage | Bounded goal is one sentence; lifecycle skills avoid mandatory nested invocation |
+
+The runtime layer stays portable across Claude, Codex, and OpenCode by holding only L1 coordination checks. L2 lives where artifacts are consumed. L3 lives in prompts and regression tests.

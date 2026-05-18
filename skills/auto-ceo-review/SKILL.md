@@ -72,8 +72,9 @@ State the next skill based on the verdict.
 ## Output
 
 - `SPEC.md` with appended `## Review: Product` section
-- `.agent/.automaton/state/current.json` updated with `product_review`
-- Recommended next skill
+- `.agent/.automaton/state/current.json` updated with `product_review`; `stage` is unchanged by this skill
+- Diagnostic handling: `error`-level diagnostics block the review; `warning`-level diagnostics surface to the next stage
+- Recommended next skill, mapped from verdict per the Review Verdict Routing table in `references/ARTIFACT-LIFECYCLE.md`: `approved` or `approved_with_risks` → `auto-plan`; `needs_clarification` → `auto-frame` or `auto-office-hours`; `descoped` → `auto-office-hours` or stop. The user or host invokes the next skill; auto-ceo-review does not require nested invocation.
 
 ## Rules
 

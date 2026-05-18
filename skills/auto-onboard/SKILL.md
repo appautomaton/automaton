@@ -98,6 +98,10 @@ Do not guess. Do not proceed.
 | ROADMAP.md | `.agent/steering/` | 3–6 phases sequenced by dependency and leverage |
 | STATUS.md | `.agent/steering/` | Current state, what is true now, next step |
 
+- `.agent/.automaton/state/current.json` initialized when missing; auto-onboard does not overwrite an existing `active_change` or `stage`
+- Diagnostic handling: `error`-level diagnostics (missing primary project, conflicting conventions) halt the onboard; `warning`-level findings appear in the steering artifacts
+- Recommended next skill: `auto-office-hours` (when scale or shape is undefined) or `auto-frame` (when the user already has a bounded goal). The user or host invokes the next skill; auto-onboard does not require nested invocation.
+
 ## Rules
 
 - **Bounded scan.** Read no more than 10 files total. Summarize, do not transcribe.
