@@ -91,3 +91,15 @@ Validation distributes across three tiers. Keep each check at the lowest tier th
 | **L3 Norms** | Wording, structure, prose quality | Prompt text + `tests/skills.test.mjs` regression coverage | Bounded goal is one sentence; lifecycle skills avoid mandatory nested invocation |
 
 The runtime layer stays portable across Claude, Codex, and OpenCode by holding only L1 coordination checks. L2 lives where artifacts are consumed. L3 lives in prompts and regression tests.
+
+## Artifact Signal Discipline
+
+Automaton artifacts (SPEC, PLAN, DESIGN, STATUS, review sections) are read by future skills and humans. Every section earns its place by changing a downstream decision. Apply these five rules when authoring or refreshing any artifact.
+
+1. **No mirror sections** — One concept per section. If two sections answer the same question, delete one or reframe so they answer different questions (e.g., Required Outcome describes shape; Acceptance Criteria lists testable checks).
+2. **Index over transcript** — Aggregate tables (traceability, verification rollups, slice summaries) earn their place only at ≥ 3 entries. For 1–2 entries, inline the information where it is used.
+3. **Core versus conditional sections** — Lifecycle SKILL.md required-section lists distinguish core (always present) from conditional (include only when the named trigger applies). Each conditional section names its trigger.
+4. **Append-replace, not stack** — Review sections on artifacts are replaced on re-run for the same change, not stacked. Do not accumulate multiple `## Review: Product` or `## Review: Engineering` blocks.
+5. **Inline default for transient reports** — Verification reports, status summaries, and intermediate audit output live in the conversation only. Write to disk only when a future skill or human will read it again.
+
+**Deletion test for any section:** if this section were removed, what downstream skill or human loses information? If nothing, drop it.

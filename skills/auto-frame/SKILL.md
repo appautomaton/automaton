@@ -66,19 +66,21 @@ If a `SPEC.md` already exists for this change, read it and preserve all `## Revi
 
 Do NOT proceed past this step without writing `SPEC.md` to `.agent/work/<change>/SPEC.md`.
 
-The file must contain:
+The file must contain these **core** fields (always present):
 - Bounded goal (1 sentence)
 - Broader intent (the larger user goal this spec preserves or intentionally decomposes)
 - Work scale and work shape (or "not classified" with rationale)
 - Selected lenses (list)
 - Constraints and risks that change implementation, summarized when detail is linked
-- Required outcome in the shape the work needs: behavior, structural change, invariants, parity target, audit questions, migration target, coverage target, or content target
-- Acceptance criteria or traceable requirement matrix (auto-verify checks these)
-- Linked detail files under `spec/` when the work needs progressive disclosure, or "none"
-- Blocking questions or assumptions (list, or "none")
+- Required outcome in the shape the work needs: behavior, structural change, invariants, parity target, audit questions, migration target, coverage target, or content target — describes the *shape* of the change
+- Acceptance criteria or traceable requirement matrix (auto-verify checks these) — describes the *testable checks*; must not mirror Required outcome
 - Anti-goals (what this change explicitly does not do)
 
-If a `SPEC.md` already exists, refresh it. Preserve all `## Review:` sections.
+These fields are **conditional** — include only when the named trigger applies, otherwise omit entirely:
+- Linked detail files under `spec/` — trigger: SPEC needs progressive disclosure (constraints, gap matrix, risks, or acceptance detail too large for inline)
+- Blocking questions or assumptions — trigger: present and material; omit when "none" rather than writing the literal word "none"
+
+Apply the Artifact Signal Discipline rules from `references/ARTIFACT-LIFECYCLE.md` while writing: no mirror sections, index over transcript, append-replace not stack. If a `SPEC.md` already exists, refresh it and replace prior `## Review:` sections on re-run for the same change — do not stack reviews.
 </HARD-GATE>
 
 ### Update State

@@ -113,14 +113,19 @@ Rules:
 
 Write the plan to `.agent/work/<change>/PLAN.md`.
 
-Required sections:
-- **Goal**: restate the bounded goal from SPEC.md
-- **Architecture approach**: the smallest correct design
-- **Requirement traceability**: gap IDs, invariant IDs, audit questions, migration checkpoints, or coverage targets mapped to slices when present
+**Core** sections (always present):
+- **Goal**: restate *or* reference the bounded goal from SPEC.md — a one-line pointer is sufficient; do not mirror the full SPEC text
 - **Ordered slice sequence**: slices in dependency order, with linked detail files when needed
 - **Execution routing and topology**: default route/checkpoint policy plus explicit overrides, checkpoints, and parallel-safe groups (or "none")
-- **Verification commands**: attached to every material slice
-- **Context budget for this change**: total estimated context consumption
+- **Per-slice verification**: a verification command inline on every material slice
+
+**Conditional** sections — include only when the named trigger applies, otherwise omit or mark "n/a":
+- **Architecture approach** — trigger: introduces a new pattern, non-obvious decision, or cross-system integration. Omit when the design is obvious from SPEC.
+- **Requirement traceability** — trigger: SPEC names gap IDs, invariant IDs, audit questions, migration checkpoints, or coverage targets. Omit when the SPEC has no traceable IDs.
+- **Aggregate verification commands table** — trigger: ≥ 3 slices or commands not captured per-slice. Per-slice inline suffices for smaller plans (index over transcript).
+- **Context budget for this change** — trigger: plan spans multiple sessions, expects context pressure, or warrants budget allocation. Omit for plans under one session.
+
+Apply the Artifact Signal Discipline rules from `references/ARTIFACT-LIFECYCLE.md` while writing: no mirror sections, index over transcript, append-replace not stack. Replace prior `## Review:` sections on re-run for the same change — do not stack reviews.
 
 ### Write DESIGN.md (if non-trivial)
 

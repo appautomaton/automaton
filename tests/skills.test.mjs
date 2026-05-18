@@ -656,3 +656,32 @@ test('artifact lifecycle reference defines handoff contract and validation tiers
   assert.match(lifecycle, /L3 Norms/)
   assert.match(lifecycle, /runtime\/lib\/validate\.mjs/)
 })
+
+test('artifact lifecycle reference defines artifact signal discipline', () => {
+  const lifecycle = readFileSync(join(skillsRoot, '_shared', 'references', 'ARTIFACT-LIFECYCLE.md'), 'utf8')
+
+  assert.match(lifecycle, /^## Artifact Signal Discipline$/m)
+  // Five rules — match the rule names rather than exact prose so wording can evolve.
+  assert.match(lifecycle, /[Mm]irror section/)
+  assert.match(lifecycle, /[Ii]ndex over transcript/)
+  assert.match(lifecycle, /[Cc]ore versus conditional/)
+  assert.match(lifecycle, /[Aa]ppend-replace/)
+  assert.match(lifecycle, /[Ii]nline default/)
+  // Deletion test framing so contributors can apply it section-by-section.
+  assert.match(lifecycle, /[Dd]eletion test/)
+  assert.match(lifecycle, /loses information/)
+})
+
+test('auto-frame and auto-plan distinguish core from conditional sections', () => {
+  // The doctrine requires lifecycle SKILL.md required-section lists to label every
+  // field as core (always present) or conditional (include only when a trigger applies).
+  // Match case-insensitively because individual skills may use Title Case for labels.
+  const frame = readFileSync(join(skillsRoot, 'auto-frame', 'SKILL.md'), 'utf8')
+  const plan = readFileSync(join(skillsRoot, 'auto-plan', 'SKILL.md'), 'utf8')
+
+  for (const [skillName, source] of [['auto-frame', frame], ['auto-plan', plan]]) {
+    assert.match(source, /\*\*core\*\*/i, `${skillName} must label core fields/sections`)
+    assert.match(source, /\*\*conditional\*\*/i, `${skillName} must label conditional fields/sections`)
+    assert.match(source, /trigger/i, `${skillName} must state a trigger for each conditional field/section`)
+  }
+})
