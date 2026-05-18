@@ -22,9 +22,9 @@ Load this reference only before writing or refreshing steering artifacts.
 Steering artifacts attract promotional language and uncited claims. Every statement should cite a file path or mark itself as inferred.
 
 Scan for:
-- "robust architecture", "well-structured codebase" — name the pattern and where it lives
-- "comprehensive test suite" — name the test runner and count
-- "modern technology stack" — name the runtime, framework, and version
+- "robust architecture", "well-structured codebase": name the pattern and where it lives
+- "comprehensive test suite": name the test runner and count
+- "modern technology stack": name the runtime, framework, and version
 - Promotional adjectives about the repo's quality
 - Any claim without a file path citation
 

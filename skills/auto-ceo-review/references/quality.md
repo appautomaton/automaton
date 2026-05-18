@@ -22,9 +22,9 @@ Load this reference only before appending the product review to `SPEC.md`.
 Product reviews attract strategic filler and rubber-stamp language. The review should make a call, not sound impressive.
 
 Scan for:
-- "strategically positioned", "well-positioned to capture" — name the specific bet
-- "aligns with broader trends" — name which trend and why it helps this change
-- "significant market opportunity" — name the user, the action, and the evidence
+- "strategically positioned", "well-positioned to capture": name the specific bet
+- "aligns with broader trends": name which trend and why it helps this change
+- "significant market opportunity": name the user, the action, and the evidence
 - Persuasive authority tropes ("at its core", "the real question is")
 - Generic positive conclusions that avoid the strongest risk
 

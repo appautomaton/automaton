@@ -1,6 +1,6 @@
 # Content Framing
 
-Load this reference when the change involves content creation — writing, articles, briefs, decks, newsletters, documentation, or any deliverable where prose quality matters.
+Load this reference when the change involves content creation: writing, articles, briefs, decks, newsletters, documentation, or any deliverable where prose quality matters.
 
 ## Content-Aware SPEC.md Fields
 
@@ -10,13 +10,13 @@ When framing a content-oriented change, add these fields to SPEC.md alongside th
 
 One sentence: who reads this, what they already know, and what belief or behavior the content should change.
 
-**Good:** "Senior engineers who know distributed systems but assume event sourcing is only for CQRS — this piece argues it's a general-purpose audit pattern."
+**Good:** "Senior engineers who know distributed systems but assume event sourcing is only for CQRS. This piece argues it's a general-purpose audit pattern."
 
 **Bad:** "Technical audience interested in event sourcing."
 
 ### Thesis
 
-One falsifiable or debatable claim the piece makes. Not a topic, not a summary — a position.
+One falsifiable or debatable claim the piece makes. Not a topic, not a summary. A position.
 
 **Good:** "Feature flags cost more in maintenance debt than they save in deployment safety, and most teams should delete theirs."
 
@@ -26,7 +26,7 @@ One falsifiable or debatable claim the piece makes. Not a topic, not a summary �
 
 Either a pointer to a voice sample (file path or inline excerpt) or a 2–3 sentence description of the target voice: sentence rhythm, formality level, use of first person, punctuation habits.
 
-**Good:** "Short sentences, contractions, first person. Reads like a senior engineer explaining to a peer, not lecturing. No hedging — state positions directly."
+**Good:** "Short sentences, contractions, first person. Reads like a senior engineer explaining to a peer, not lecturing. No hedging; state positions directly."
 
 **Bad:** "Professional but approachable."
 
@@ -38,7 +38,7 @@ Concrete examples of what the content must not sound like. Name specific pattern
 - No significance inflation ("pivotal moment," "stands as a testament")
 - No em-dash-heavy lists or rule-of-three conclusions
 - No sycophantic framing ("Great question!", "Let's dive in")
-- Not a press release — no promotional adjectives ("groundbreaking," "vibrant," "nestled")
+- Not a press release, no promotional adjectives ("groundbreaking," "vibrant," "nestled")
 
 **Bad:**
 - "High quality"
@@ -66,7 +66,7 @@ This checklist is adapted from the Wikipedia AI-writing-tell taxonomy. It covers
 
 ## Lens Interaction
 
-Content framing adds a content lens to the standard lens set. It does not replace `product` or `engineering` — it supplements them.
+Content framing adds a content lens to the standard lens set. It does not replace `product` or `engineering`; it supplements them.
 
 - If the change is content-only (article, blog post, newsletter), lenses are `product` + `design` + content.
 - If the change produces content as part of a feature (onboarding copy, error messages, docs), lenses are `product` + `engineering` + content.

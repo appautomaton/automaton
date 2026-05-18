@@ -48,4 +48,4 @@ A checklist of scenarios frequently missed during verification.
 
 ## Rule
 
-If the plan does not mention a scenario, assume it is out of scope for this slice — but surface it as a risk if it is obviously critical.
+If the plan does not mention a scenario, assume it is out of scope for this slice, but surface it as a risk if it is obviously critical.

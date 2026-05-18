@@ -1,12 +1,12 @@
 # Engineering Review Sections
 
-Run all sections after scope and mode are agreed. Never skip a section. If a section has zero findings, say "No issues found" and move on — but you must evaluate it.
+Run all sections after scope and mode are agreed. Never skip a section. If a section has zero findings, say "No issues found" and move on, but you must evaluate it.
 
 ## Section 1: Architecture Review
 
 Evaluate and diagram:
 - Overall system design and component boundaries. Dependency graph.
-- Data flow — all four paths (happy, nil, empty, error). ASCII diagram for each.
+- Data flow: all four paths (happy, nil, empty, error). ASCII diagram for each.
 - State machines. ASCII diagram for every new stateful object. Include impossible/invalid transitions.
 - Coupling concerns. Before/after dependency graph.
 - Scaling characteristics. What breaks first under 10x load? Under 100x?
@@ -131,7 +131,7 @@ Flakiness risk: Flag tests depending on time, randomness, external services, or 
 - Feature flags. Should any part be behind a flag?
 - Rollout order. Migrate first, deploy second?
 - Rollback plan. Explicit step-by-step.
-- Deploy-time risk window. Old code + new code simultaneously — what breaks?
+- Deploy-time risk window. Old code + new code simultaneously: what breaks?
 - Environment parity. Tested in staging?
 - Post-deploy verification. First 5 minutes? First hour?
 - Smoke tests. What automated checks immediately post-deploy?
@@ -143,18 +143,18 @@ Flakiness risk: Flag tests depending on time, randomness, external services, or 
 - Knowledge concentration. Documentation sufficient for a new engineer?
 - Reversibility. Rate 1-5: 1 = one-way door, 5 = easily reversible.
 - Ecosystem fit. Aligns with ecosystem direction?
-- The 1-year question. Read this plan as a new engineer in 12 months — obvious?
+- The 1-year question. Read this plan as a new engineer in 12 months: obvious?
 
 ## Section 11: Design & UX Review
 
 Skip only if no UI scope detected.
 
-- Information architecture — what does the user see first, second, third?
+- Information architecture: what does the user see first, second, third?
 - Interaction state coverage map: LOADING | EMPTY | ERROR | SUCCESS | PARTIAL
-- User journey coherence — storyboard the emotional arc
-- AI slop risk — does the plan describe generic UI patterns?
-- DESIGN.md alignment — does the plan match the stated design system?
-- Responsive intention — mobile mentioned or afterthought?
-- Accessibility basics — keyboard nav, screen readers, contrast, touch targets
+- User journey coherence: storyboard the emotional arc
+- AI slop risk: does the plan describe generic UI patterns?
+- DESIGN.md alignment: does the plan match the stated design system?
+- Responsive intention: mobile mentioned or afterthought?
+- Accessibility basics: keyboard nav, screen readers, contrast, touch targets
 
 Required ASCII diagram: user flow showing screens/states and transitions.

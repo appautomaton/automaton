@@ -7,7 +7,7 @@ metadata:
 
 # auto-verify
 
-Verification gate. Independent audit of a completed plan — runs once, not per-slice.
+Verification gate. Independent audit of a completed plan; runs once, not per-slice.
 
 First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding.
 
@@ -21,7 +21,7 @@ Context budget: one PLAN.md read + verification commands per criterion. No broad
 
 Before writing the verification report:
 - Tie every result to fresh command output or direct observation.
-- Name skipped checks explicitly — omission is not a pass.
+- Name skipped checks explicitly. Omission is not a pass.
 - Treat partial evidence as FAIL for the plan.
 - Read `references/quality.md` (~36 lines: anti-patterns, better shape, prose hygiene scan patterns) when the report sounds confident without proof.
 
@@ -85,7 +85,7 @@ Do NOT update state. Annotate failed slices in `PLAN.md` with structured gap blo
 > **Fix objective:** [what execute must address]
 ```
 
-Recommend `auto-execute` — it reads these annotations on re-entry.
+Recommend `auto-execute`; it reads these annotations on re-entry.
 
 ## Output
 
@@ -100,18 +100,18 @@ Recommend `auto-execute` — it reads these annotations on re-entry.
 - Fresh evidence only. Do not rely on execution-session memory or prior verification results.
 - Binary evaluation. Partial evidence is FAIL for the plan.
 - Do not fix during verification. Report gaps and return to execute.
-- Verify the plan holistically — all slices, all criteria.
+- Verify the plan in full: all slices, all criteria.
 - If verification commands are missing from the plan, derive and run them. Document what you ran.
 
 ## Deep
 
 ### Verification Report Template
 
-Read `references/verification-template.md` — extended format guidance. (~33 lines: grouped-by-slice report format with Criterion/Result/Evidence/Gap per entry; rules on evidence requirements and PARTIAL counting as FAIL.)
+Read `references/verification-template.md` for extended format guidance. (~33 lines: grouped-by-slice report format with Criterion/Result/Evidence/Gap per entry; rules on evidence requirements and PARTIAL counting as FAIL.)
 
 ### Common Verification Gaps
 
-Read `references/common-gaps.md` — frequently missed scenarios. (~51 lines: 6-category checklist — input validation, error handling, state/side-effects, security, observability, edge cases — with specific items per category.)
+Read `references/common-gaps.md` for frequently missed scenarios. (~51 lines: 6-category checklist covering input validation, error handling, state/side-effects, security, observability, edge cases, with specific items per category.)
 
 ### Artifact Lifecycle
 

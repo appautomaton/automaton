@@ -48,8 +48,8 @@ Why it works: Adjacent ideas, unexpected combinations, concrete effort estimates
 
 After the founder's first answer to Q1, check their framing before continuing:
 
-1. **Language precision:** Are key terms defined? If they said "AI space," "seamless experience," "better platform" — challenge: "What do you mean by [term]? Can you define it so I could measure it?"
+1. **Language precision:** Are key terms defined? If they said "AI space," "seamless experience," "better platform," challenge them: "What do you mean by [term]? Can you define it so I could measure it?"
 2. **Hidden assumptions:** What does their framing take for granted? "I need to raise money" assumes capital is required. "The market needs this" assumes verified pull. Name one assumption and ask if it's verified.
 3. **Real vs. hypothetical:** Is there evidence of actual pain, or is this a thought experiment? "I think developers would want..." is hypothetical. "Three developers at my last company spent 10 hours a week on this" is real.
 
-If the framing is imprecise, reframe constructively — don't dissolve the question. Say: "Let me try restating what I think you're actually building: [reframe]. Does that capture it better?" Then proceed with the corrected framing.
+If the framing is imprecise, reframe constructively. Don't dissolve the question. Say: "Let me try restating what I think you're actually building: [reframe]. Does that capture it better?" Then proceed with the corrected framing.

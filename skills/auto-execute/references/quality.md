@@ -24,8 +24,8 @@ Execution artifacts attract obvious comments and inflated summaries. Orchestrati
 
 Scan for:
 - Comments that restate what the next line does
-- "successfully" in completion notes — either it passed or it failed
-- "crucial fix", "important improvement" — name the bug or delta
+- "successfully" in completion notes: either it passed or it failed
+- "crucial fix", "important improvement": name the bug or delta
 - Sycophantic openers in subagent dispatch ("Great work on...")
 - -ing summaries ("highlighting the completion of...", "ensuring the stability of...")
 

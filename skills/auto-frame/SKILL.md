@@ -33,7 +33,7 @@ If `.agent/work/<active_change>/INTAKE.md` exists, read it before interviewing. 
 
 State the goal in one sentence. If you cannot, ask one clarifying question and stop.
 
-If your SPEC would be narrower than the user's stated goal or office-hours broader intent, either widen the SPEC, explicitly record the narrowing as decomposition with deferred scope in `.agent/steering/ROADMAP.md` (using the format in `references/ROADMAP-CONTRACT.md`), or ask for confirmation. Silent narrowing is a framing failure. A spec that covers a large coherent outcome is better than splitting into roadmap phases that lose shared context — let the plan carry complexity through ordered slices.
+If your SPEC would be narrower than the user's stated goal or office-hours broader intent, either widen the SPEC, explicitly record the narrowing as decomposition with deferred scope in `.agent/steering/ROADMAP.md` (using the format in `references/ROADMAP-CONTRACT.md`), or ask for confirmation. Silent narrowing is a framing failure. A spec that covers a large coherent outcome is better than splitting into roadmap phases that lose shared context. Let the plan carry complexity through ordered slices.
 
 ### Surface
 
@@ -43,7 +43,7 @@ List the constraints, unknowns, and risks that change implementation. Keep the d
 
 Choose the minimum from: `product`, `engineering`, `design`, `security`, `runtime`. Default is `product` + `engineering` unless the user says otherwise.
 
-If the change involves content creation (writing, articles, briefs, decks, newsletters, documentation), add the content lens. Read `references/content-framing.md` (~82 lines) for content-aware SPEC.md fields (audience, thesis, voice direction, content anti-goals) and the anti-slop checklist. Content lens supplements existing lenses — it does not replace `product` or `engineering`.
+If the change involves content creation (writing, articles, briefs, decks, newsletters, documentation), add the content lens. Read `references/content-framing.md` (~82 lines) for content-aware SPEC.md fields (audience, thesis, voice direction, content anti-goals) and the anti-slop checklist. Content lens supplements existing lenses; it does not replace `product` or `engineering`.
 
 Read `references/lens-selection.md` (~28 lines) for the decision matrix if the choice is not obvious.
 
@@ -90,7 +90,7 @@ Update `.agent/.automaton/state/current.json`:
 
 ## Output
 
-- **SPEC.md** — written to `.agent/work/<change>/SPEC.md` (mandatory)
+- **SPEC.md**: written to `.agent/work/<change>/SPEC.md` (mandatory)
 - `.agent/.automaton/state/current.json` updated with `canonical_spec`
 - Recommended next skill: `auto-ceo-review`, `auto-plan`, or `auto-office-hours`
 
@@ -105,11 +105,11 @@ Update `.agent/.automaton/state/current.json`:
 
 ### Lens Selection Matrix
 
-Read `references/lens-selection.md` — full decision matrix with examples. (~28 lines: 5-question decision tree, 6 example mappings, 3 anti-patterns.)
+Read `references/lens-selection.md` for the full decision matrix with examples. (~28 lines: 5-question decision tree, 6 example mappings, 3 anti-patterns.)
 
 ### Content Framing
 
-Read `references/content-framing.md` — content-aware SPEC.md fields and anti-slop checklist. (~82 lines: audience/thesis/voice/anti-goals field definitions with good/bad examples, 10-pattern anti-slop checklist, lens interaction rules, Pass 2 dimensions.)
+Read `references/content-framing.md` for content-aware SPEC.md fields and anti-slop checklist. (~82 lines: audience/thesis/voice/anti-goals field definitions with good/bad examples, 10-pattern anti-slop checklist, lens interaction rules, Pass 2 dimensions.)
 
 ### Artifact Lifecycle
 
@@ -119,7 +119,7 @@ Read `references/ARTIFACT-LIFECYCLE.md` when state pointers conflict or progress
 
 User: "Just plan it, I already told you what I want."
 
-You: "I need 30 seconds to write this down so the next session doesn't start from zero. Here's the spec — confirm or edit:"
+You: "I need 30 seconds to write this down so the next session doesn't start from zero. Here's the spec, confirm or edit:"
 
 Then write SPEC.md immediately and ask for confirmation, not permission.
 
@@ -127,7 +127,7 @@ Then write SPEC.md immediately and ask for confirmation, not permission.
 
 Split genuinely independent work. If the request describes unrelated systems with separate outcomes ("build chat, billing, and analytics"), tell the user: "These are independent changes. Which one should we frame first?"
 
-Keep related work together. If multiple files or subsystems must change to achieve one coherent behavioral goal ("adjust two skills so they handle broader scope"), that is one spec — not three. The test: do the acceptance criteria point at one outcome or several unrelated ones? One outcome = one spec, regardless of how many files it touches.
+Keep related work together. If multiple files or subsystems must change to achieve one coherent behavioral goal ("adjust two skills so they handle broader scope"), that is one spec, not three. The test: do the acceptance criteria point at one outcome or several unrelated ones? One outcome = one spec, regardless of how many files it touches.
 
 ### Work Shapes
 

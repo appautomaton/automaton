@@ -4,29 +4,29 @@ Ask one at a time. Push until the answer names concrete evidence, a specific sta
 
 ## Questions
 
-**Q1: Demand Reality** — "What's the strongest evidence that someone actually wants this — not 'is interested,' but would be genuinely upset if it disappeared tomorrow?"
+**Q1: Demand Reality.** "What's the strongest evidence that someone actually wants this, not 'is interested,' but would be genuinely upset if it disappeared tomorrow?"
 
 Push target: specific behavior, someone paying, someone building their workflow around it.
 
-**Q2: Status Quo** — "What are your users doing right now to solve this problem — even badly? What does that workaround cost them?"
+**Q2: Status Quo.** "What are your users doing right now to solve this problem, even badly? What does that workaround cost them?"
 
 Push target: a specific workflow, hours spent, tools duct-taped together.
 
-**Q3: Desperate Specificity** — "Name the actual human who needs this most. What's their title? What gets them promoted? What gets them fired?"
+**Q3: Desperate Specificity.** "Name the actual human who needs this most. What's their title? What gets them promoted? What gets them fired?"
 
 Push target: a name, a role, a specific consequence they face if the problem isn't solved.
 
-**Q4: Narrowest Wedge** — "What's the smallest possible version of this that someone would pay real money for — this week, not after you build the platform?"
+**Q4: Narrowest Wedge.** "What's the smallest possible version of this that someone would pay real money for, this week, not after you build the platform?"
 
 Push target: one feature, one workflow, something shippable in days.
 
 Scope note: This question tests shippability instinct, not scope. Use the answer to understand what the user considers the core value, then return to their stated goal. Do not replace a capability-sized goal with the narrowest wedge answer.
 
-**Q5: Observation & Surprise** — "Have you watched someone use this without helping them? What did they do that surprised you?"
+**Q5: Observation & Surprise.** "Have you watched someone use this without helping them? What did they do that surprised you?"
 
 Push target: a specific surprise that contradicted the founder's assumptions.
 
-**Q6: Future-Fit** — "If the world looks meaningfully different in 3 years, does your product become more essential or less?"
+**Q6: Future-Fit.** "If the world looks meaningfully different in 3 years, does your product become more essential or less?"
 
 Push target: a specific claim about why the product becomes more valuable as the world changes.
 

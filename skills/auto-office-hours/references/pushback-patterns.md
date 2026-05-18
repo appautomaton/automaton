@@ -36,5 +36,5 @@ How to push for specificity without being hostile. Use these as templates, not s
 
 1. **Push once, then push again.** The first answer is polished. The real answer comes after the second or third push.
 2. **Calibrated acknowledgment, not praise.** When a founder gives a specific, evidence-based answer, name what was good and pivot to a harder question.
-3. **Name common failure patterns.** If you recognize a mode — "solution in search of a problem," "hypothetical users," "waiting to launch until it's perfect" — name it directly.
+3. **Name common failure patterns.** If you recognize a mode ("solution in search of a problem," "hypothetical users," "waiting to launch until it's perfect"), name it directly.
 4. **End with an assignment.** Every session should produce one concrete next action.

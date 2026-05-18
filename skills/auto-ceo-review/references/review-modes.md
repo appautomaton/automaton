@@ -17,7 +17,7 @@ Hold the current scope as baseline. Then surface expansion opportunities individ
 
 - Run the HOLD SCOPE analysis first.
 - Then scan for: 10x check, delight opportunities, platform potential.
-- **Cherry-pick ceremony:** Present each expansion individually. Neutral posture — state effort and risk, let the user decide.
+- **Cherry-pick ceremony:** Present each expansion individually. Neutral posture: state effort and risk, let the user decide.
 
 ## HOLD SCOPE
 

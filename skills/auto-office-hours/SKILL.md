@@ -32,35 +32,35 @@ Before presenting alternatives, recommending an approach, or writing the design 
 From the user's initial message, determine all three:
 
    Mode:
-   - **Startup mode** — mentions customers, revenue, market, competition, fundraising, or "building a company."
-   - **Builder mode** — mentions side project, hackathon, learning, open source, personal use, or "just for fun."
-   - **Content mode** — the deliverable is prose: article, brief, deck, blog post, newsletter, documentation, or any writing where audience and voice matter. Content mode activates when the user's goal is a content deliverable, not a product or feature.
+   - **Startup mode** activates when the user mentions customers, revenue, market, competition, fundraising, or "building a company."
+   - **Builder mode** activates when the user mentions side project, hackathon, learning, open source, personal use, or "just for fun."
+   - **Content mode** activates when the deliverable is prose: article, brief, deck, blog post, newsletter, documentation, or any writing where audience and voice matter. Content mode activates when the user's goal is a content deliverable, not a product or feature.
 
    Scale:
-   - **Bug-sized** — a defect or inconsistency in existing behavior. One file, one fix, no design decision.
-   - **Feature-sized** — a single new behavior or enhancement. Clear boundary, ships in one plan.
-   - **Capability-sized** — one coherent outcome that may touch multiple files, subsystems, or internal structures. Needs a spec; planning handles the breakdown into ordered work.
-   - **Roadmap-sized** — multiple independent outcomes that happen to be mentioned together. Needs decomposition into separate specs via `ROADMAP.md`.
+   - **Bug-sized**: a defect or inconsistency in existing behavior. One file, one fix, no design decision.
+   - **Feature-sized**: a single new behavior or enhancement. Clear boundary, ships in one plan.
+   - **Capability-sized**: one coherent outcome that may touch multiple files, subsystems, or internal structures. Needs a spec; planning handles the breakdown into ordered work.
+   - **Roadmap-sized**: multiple independent outcomes that happen to be mentioned together. Needs decomposition into separate specs via `ROADMAP.md`.
 
    Shape:
-   - **Feature** — user-visible or workflow-visible behavior changes.
-   - **Refactor** — structural improvement where behavior should remain invariant.
-   - **Parity** — close gaps between this system and a reference system, spec, or benchmark.
-   - **Audit** — investigate and report findings before deciding implementation.
-   - **Migration** — move from a source state to a target state with compatibility constraints.
-   - **Coverage** — strengthen tests or verification without changing intended behavior.
-   - **Content** — prose, documentation, decks, briefs, or other narrative artifacts.
-   - **Mixed** — more than one shape is genuinely load-bearing.
+   - **Feature**: user-visible or workflow-visible behavior changes.
+   - **Refactor**: structural improvement where behavior should remain invariant.
+   - **Parity**: close gaps between this system and a reference system, spec, or benchmark.
+   - **Audit**: investigate and report findings before deciding implementation.
+   - **Migration**: move from a source state to a target state with compatibility constraints.
+   - **Coverage**: strengthen tests or verification without changing intended behavior.
+   - **Content**: prose, documentation, decks, briefs, or other narrative artifacts.
+   - **Mixed**: more than one shape is genuinely load-bearing.
 
-   State all three in one confirmation: "This reads as Builder mode, capability-sized, and parity-shaped — does that match?" If the user disagrees on any axis, adjust.
+   State all three in one confirmation: "This reads as Builder mode, capability-sized, and parity-shaped. Does that match?" If the user disagrees on any axis, adjust.
 
-   Do not equate "large" with roadmap-sized. Capability-sized work remains one spec when it serves one coherent outcome. Roadmap-sized means independent outcomes, not merely many files, many gaps, or many constraints. Each roadmap phase is a separate session — decomposition costs shared context. Decompose only when phases are independently valuable: they could ship in any order, or one could be abandoned without invalidating the others. If phase B depends on decisions made in phase A, they belong in one spec.
+   Do not equate "large" with roadmap-sized. Capability-sized work remains one spec when it serves one coherent outcome. Roadmap-sized means independent outcomes, not merely many files, many gaps, or many constraints. Each roadmap phase is a separate session; decomposition costs shared context. Decompose only when phases are independently valuable: they could ship in any order, or one could be abandoned without invalidating the others. If phase B depends on decisions made in phase A, they belong in one spec.
 
-   When Content mode is detected, read `references/content-intake.md` (~61 lines: 5 content diagnostic questions — Audience, Thesis, Voice, Anti-Goals, Format — with push targets and red flags) and use its diagnostic questions instead of the Startup or Builder question sets. Content mode still produces a design document on approval, with audience, thesis, voice, and content anti-goals as required fields.
+   When Content mode is detected, read `references/content-intake.md` (~61 lines: 5 content diagnostic questions with push targets and red flags) and use its diagnostic questions instead of the Startup or Builder question sets. Content mode still produces a design document on approval, with audience, thesis, voice, and content anti-goals as required fields.
 
    For bug-sized goals, consider whether office-hours is the right skill. A known bug with a known fix can go directly to `auto-frame`.
 
-   For roadmap-sized goals, help the user identify the highest-leverage spec to frame first. Read `references/ROADMAP-CONTRACT.md` (~60 lines: canonical phase format, status values with progression rules, update rules by skill, matching rule, invariants) and write all decomposed items to `.agent/steering/ROADMAP.md` after approval — set the first spec's phase to `status: active` with its `change:` slug, remaining phases to `status: pending`. If you narrow the user's stated goal for decomposition, name the narrowing explicitly and preserve the broader intent.
+   For roadmap-sized goals, help the user identify the highest-leverage spec to frame first. Read `references/ROADMAP-CONTRACT.md` (~60 lines: canonical phase format, status values with progression rules, update rules by skill, matching rule, invariants) and write all decomposed items to `.agent/steering/ROADMAP.md` after approval. Set the first spec's phase to `status: active` with its `change:` slug, remaining phases to `status: pending`. If you narrow the user's stated goal for decomposition, name the narrowing explicitly and preserve the broader intent.
 
 ### Run Diagnostic
 
@@ -79,7 +79,7 @@ Before generating alternatives, ask:
 
 ### Generate Alternatives
 
-Present 2–3 distinct approaches that match the user's scale and shape. For bug-sized, feature-sized, and capability-sized goals: one must be the minimal viable — the smallest version of the user's stated goal, not a different smaller goal; one must be the ideal architecture (best long-term); one can be creative/lateral. For roadmap-sized goals: alternatives should be decomposition strategies or first-spec candidates, not roadmap-scale implementation plans. For refactor, parity, audit, migration, or coverage work, make the approaches differ by blast radius, traceability, evidence depth, rollout risk, or verification strength — not by pretending the work is a feature. For each: summary, effort estimate, risk level, 2–3 pros, 2–3 cons. Read `references/alternatives-format.md` (~34 lines: markdown template and rules) for the exact format.
+Present 2–3 distinct approaches that match the user's scale and shape. For bug-sized, feature-sized, and capability-sized goals: one must be the minimal viable (the smallest version of the user's stated goal, not a different smaller goal); one must be the ideal architecture (best long-term); one can be creative/lateral. For roadmap-sized goals: alternatives should be decomposition strategies or first-spec candidates, not roadmap-scale implementation plans. For refactor, parity, audit, migration, or coverage work, make the approaches differ by blast radius, traceability, evidence depth, rollout risk, or verification strength, not by pretending the work is a feature. For each: summary, effort estimate, risk level, 2–3 pros, 2–3 cons. Read `references/alternatives-format.md` (~34 lines: markdown template and rules) for the exact format.
 
 ### Recommend and Wait
 
@@ -95,7 +95,7 @@ After approval, derive a concise kebab-case change slug from the objective, reus
 
 <MODE-DETECTION>
 
-If the user's language shifts mid-session — e.g., starts in Builder mode but mentions revenue or customers — upgrade naturally: "Okay, now we're talking — let me ask you some harder questions." Switch to Startup mode diagnostic.
+If the user's language shifts mid-session (e.g., starts in Builder mode but mentions revenue or customers), upgrade naturally: "Okay, now we're talking. Let me ask you some harder questions." Switch to Startup mode diagnostic.
 
 If the conversation reveals the deliverable is content (e.g., the user says "I need to write a post about this" or "help me draft the announcement"), switch to Content mode and load `references/content-intake.md`.
 
@@ -104,7 +104,7 @@ If the user says "just do it" or expresses impatience:
 - Ask the 2 most critical remaining questions for their mode.
 - If they push back a second time, respect it and proceed to alternatives.
 
-If the conversation reveals the goal is larger or smaller than initially classified — e.g., a feature-sized goal turns out to need multiple independent specs, or a capability-sized goal turns out to be a single-file fix — reclassify scale and state the change: "This is actually roadmap-sized — let's decompose." If the shape changes — e.g., a feature request is really parity or refactor work — state that too. Adjust question routing to match the new classification.
+If the conversation reveals the goal is larger or smaller than initially classified (e.g., a feature-sized goal turns out to need multiple independent specs, or a capability-sized goal turns out to be a single-file fix), reclassify scale and state the change: "This is actually roadmap-sized. Let's decompose." If the shape changes (e.g., a feature request is really parity or refactor work), state that too. Adjust question routing to match the new classification.
 </MODE-DETECTION>
 
 <HARD-GATE>
@@ -126,10 +126,10 @@ Startup mode:
 - After three pushes, the answer remains at category level ("enterprises," "users") with no specific person named.
 
 Builder mode:
-- After three pushes, the user cannot describe the problem they are solving for themselves — what they currently do, why it is painful, or what "better" looks like.
+- After three pushes, the user cannot describe the problem they are solving for themselves: what they currently do, why it is painful, or what "better" looks like.
 
 Content mode:
-- After three pushes, the user cannot identify the target audience or state a thesis — who reads this and what it argues.
+- After three pushes, the user cannot identify the target audience or state a thesis: who reads this and what it argues.
 
 Do not guess. Do not proceed.
 </STOP>
@@ -148,21 +148,21 @@ If the user approves an approach, write `.agent/work/<change>/INTAKE.md` with:
 - Work scale (bug / feature / capability / roadmap)
 - Work shape (feature / refactor / parity / audit / migration / coverage / content / mixed)
 - Objective statement
-- Broader intent — the larger goal this spec serves, even if the spec only addresses part of it
+- Broader intent: the larger goal this spec serves, even if the spec only addresses part of it
 - Target user or stakeholder
 - Desired outcome
 - Scope boundary and anti-goals
-- Scope preservation — whether this preserves the user's full stated intent or intentionally decomposes it
+- Scope preservation: whether this preserves the user's full stated intent or intentionally decomposes it
 - Selected approach with rationale
 - Key assumptions and risks
-- Deferred scope — ideas surfaced during discussion that belong in `ROADMAP.md`, not this spec. Name them explicitly so they are captured, not lost.
+- Deferred scope: ideas surfaced during discussion that belong in `ROADMAP.md`, not this spec. Name them explicitly so they are captured, not lost.
 - `.agent/steering/ROADMAP.md` updated (when scale is roadmap)
 - Recommended next skill: `auto-frame`
 
 If the user does not approve an approach, output:
 - Summary of what was discussed
 - Why no approach was selected
-- Deferred scope — any ideas worth preserving in `ROADMAP.md`
+- Deferred scope: any ideas worth preserving in `ROADMAP.md`
 - Recommended next step (e.g., gather more evidence, talk to users, revisit in auto-office-hours)
 - No file writes.
 
@@ -174,34 +174,34 @@ If the user does not approve an approach, output:
 - **State the decision basis.** Name what the current evidence supports, what it does not support, and what evidence would change the assessment.
 - **Evaluate evidence directly.** If a claim is unsupported, name the missing evidence. If it is supported, name the evidence and ask the next diagnostic question.
 - **Never say:** "That's an interesting approach," "There are many ways to think about this," "You might want to consider...," "That could work." Replace vague acknowledgment with a concrete evidence-backed assessment.
-- **End with an assignment.** Every session should produce one concrete next action — not a strategy, an action.
+- **End with an assignment.** Every session should produce one concrete next action, not a strategy, an action.
 
 ## Deep
 
 ### Operating Principles
 
-Read `references/operating-principles.md` — non-negotiable instincts for Startup and Builder modes. (~43 lines: Startup's 6 core principles + 5 diagnostic checks; Builder's 4 principles + response posture.)
+Read `references/operating-principles.md` for non-negotiable instincts in Startup and Builder modes. (~43 lines: Startup's 6 core principles + 5 diagnostic checks; Builder's 4 principles + response posture.)
 
 ### Question Exemplars
 
-Read `references/question-exemplars.md` — SOFTENED vs FORCING and WILD vs STRUCTURED comparisons. (~55 lines: Q3 desperate-specificity and Q5 observation exemplars with why-it-fails/why-it-works analysis; Builder wild-riffing exemplar; Q1 framing check.)
+Read `references/question-exemplars.md` for SOFTENED vs FORCING and WILD vs STRUCTURED comparisons. (~55 lines: Q3 desperate-specificity and Q5 observation exemplars with why-it-fails/why-it-works analysis; Builder wild-riffing exemplar; Q1 framing check.)
 
 ### Pushback Patterns
 
-Read `references/pushback-patterns.md` — 5 pushback templates. (~40 lines: Vague Market, Social Proof, Platform Vision, Growth Stats, Undefined Terms — each with BAD/GOOD response pair and 4 push principles.)
+Read `references/pushback-patterns.md` for 5 pushback templates. (~40 lines: Vague Market, Social Proof, Platform Vision, Growth Stats, Undefined Terms, each with BAD/GOOD response pair and 4 push principles.)
 
 ### Alternatives Format
 
-Read `references/alternatives-format.md` — exact format for 2–3 approaches. (~34 lines: markdown template with Summary/Effort/Risk/Pros/Cons/Reuses fields; rules requiring minimal-viable + ideal-architecture variants.)
+Read `references/alternatives-format.md` for the exact format for 2–3 approaches. (~34 lines: markdown template with Summary/Effort/Risk/Pros/Cons/Reuses fields; rules requiring minimal-viable + ideal-architecture variants.)
 
 ### Anti-Sycophancy
 
-Read `references/anti-sycophancy.md` — forbidden phrases and calibrated acknowledgment. (~36 lines: 6 forbidden phrases with replacements, 4 always-do rules, calibrated acknowledgment protocol, anti-slop rules with GOOD/BAD examples.)
+Read `references/anti-sycophancy.md` for forbidden phrases and calibrated acknowledgment. (~36 lines: 6 forbidden phrases with replacements, 4 always-do rules, calibrated acknowledgment protocol, anti-slop rules with GOOD/BAD examples.)
 
 ### Landscape Awareness
 
-Read `references/landscape-awareness.md` — three-layer synthesis and search guidelines. (~48 lines: 3-layer analysis framework, eureka check, search query templates by mode, privacy gate protocol.)
+Read `references/landscape-awareness.md` for three-layer synthesis and search guidelines. (~48 lines: 3-layer analysis framework, eureka check, search query templates by mode, privacy gate protocol.)
 
 ### Design Doc Templates
 
-Read `references/design-doc-templates.md` — Startup and Builder design document formats. (~123 lines: full INTAKE.md templates for both modes with all required sections.)
+Read `references/design-doc-templates.md` for Startup and Builder design document formats. (~123 lines: full INTAKE.md templates for both modes with all required sections.)

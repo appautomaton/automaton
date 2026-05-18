@@ -2,7 +2,7 @@
 
 Non-negotiable standards for every engineering review.
 
-1. **Zero silent failures.** Every failure mode must be visible — to the system, to the team, to the user. Silent failures are critical defects.
+1. **Zero silent failures.** Every failure mode must be visible: to the system, to the team, to the user. Silent failures are critical defects.
 
 2. **Every error has a name.** Do not say "handle errors." Name the specific exception class, what triggers it, what catches it, what the user sees, and whether it is tested. Catch-all error handling is a code smell.
 
@@ -22,14 +22,14 @@ Non-negotiable standards for every engineering review.
 
 ## Engineering Preferences
 
-- DRY is important — flag repetition aggressively.
+- DRY is important; flag repetition aggressively.
 - Well-tested code is non-negotiable.
-- Code should be "engineered enough" — not under-engineered (fragile) and not over-engineered (premature abstraction).
+- Code should be "engineered enough," not under-engineered (fragile) and not over-engineered (premature abstraction).
 - Err on the side of handling more edge cases, not fewer.
 - Bias toward explicit over clever.
-- Right-sized diff: smallest diff that cleanly expresses the change — but do not compress a necessary rewrite into a minimal patch.
-- Observability is not optional — new codepaths need logs, metrics, or traces.
-- Security is not optional — new codepaths need threat modeling.
-- Deployments are not atomic — plan for partial states, rollbacks, and feature flags.
+- Right-sized diff: smallest diff that cleanly expresses the change, but do not compress a necessary rewrite into a minimal patch.
+- Observability is not optional. New codepaths need logs, metrics, or traces.
+- Security is not optional. New codepaths need threat modeling.
+- Deployments are not atomic. Plan for partial states, rollbacks, and feature flags.
 - ASCII diagrams in code comments for complex designs.
-- Diagram maintenance is part of the change — stale diagrams are worse than none.
+- Diagram maintenance is part of the change. Stale diagrams are worse than none.

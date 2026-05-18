@@ -11,7 +11,7 @@
 | Rollback safety | 7 | Feature flag wrapped; database migration is backward-compatible |
 | Dependency risk | 9 | No new dependencies; uses existing HTTP client |
 
-**Verdict:** `approved_with_risks` — Edge case coverage and test strategy need attention before merge.
+**Verdict:** `approved_with_risks`. Edge case coverage and test strategy need attention before merge.
 
 ## Example 2: New Feature with External Service
 
@@ -24,7 +24,7 @@
 | Rollback safety | 6 | Feature flag present; but data written to external service cannot be reverted |
 | Dependency risk | 2 | New third-party service with no SLA; no fallback defined |
 
-**Verdict:** `needs_correction` — Dependency risk and edge case coverage are blocking.
+**Verdict:** `needs_correction`. Dependency risk and edge case coverage are blocking.
 
 ## Example 3: Refactoring with No Behavior Change
 
@@ -37,4 +37,4 @@
 | Rollback safety | 9 | Pure refactoring; trivial to revert |
 | Dependency risk | 10 | No dependency changes |
 
-**Verdict:** `approved` — Low risk, high confidence.
+**Verdict:** `approved`. Low risk, high confidence.

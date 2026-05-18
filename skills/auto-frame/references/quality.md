@@ -24,9 +24,9 @@ Load this reference only before finalizing or refreshing `SPEC.md`.
 Specs attract significance inflation and promotional language. The bounded goal should state what changes, not why it matters to the universe.
 
 Scan for:
-- "crucial", "vital", "pivotal", "key" — replace with the observable constraint or drop
-- "serves as", "stands as" — use "is"
-- "streamline", "enhance", "leverage" — name the specific operation
+- "crucial", "vital", "pivotal", "key": replace with the observable constraint or drop
+- "serves as", "stands as": use "is"
+- "streamline", "enhance", "leverage": name the specific operation
 - Forced rule-of-three in constraints or anti-goals
 - Em dashes where commas work
 

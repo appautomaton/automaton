@@ -35,11 +35,11 @@ Load files in this order. Stop as soon as you have enough to proceed.
 <CONTEXT-LOADING>
 
 ```
-1. .agent/.automaton/state/current.json (always — < 50 tokens)
-2. STATUS.md             (always — < 200 tokens)
-3. SPEC.md               (always — < 1000 tokens)
+1. .agent/.automaton/state/current.json (always, < 50 tokens)
+2. STATUS.md             (always, < 200 tokens)
+3. SPEC.md               (always, < 1000 tokens)
 4. Linked spec detail    (only files named by SPEC.md and needed for planning)
-5. DESIGN.md             (if exists and relevant — < 1000 tokens)
+5. DESIGN.md             (if exists and relevant, < 1000 tokens)
 6. Wiki pages            (only if referenced by spec or plan)
 7. Source files          (only the files the current slice touches)
 ```
@@ -83,9 +83,9 @@ Required:
 **Verification:** [command or check that proves the slice is done]
 
 Defaults, state only when overriding:
-**Execution:** direct | subagent recommended | subagent required — default: direct
+**Execution:** direct | subagent recommended | subagent required (default: direct)
 **Depends on:** none
-**Checkpoint after:** none | human-verify | decision | human-action — default: none
+**Checkpoint after:** none | human-verify | decision | human-action (default: none)
 **Checkpoint reason:** none
 
 Include when useful:
@@ -114,13 +114,13 @@ Rules:
 Write the plan to `.agent/work/<change>/PLAN.md`.
 
 Required sections:
-- **Goal** — restate the bounded goal from SPEC.md
-- **Architecture approach** — the smallest correct design
-- **Requirement traceability** — gap IDs, invariant IDs, audit questions, migration checkpoints, or coverage targets mapped to slices when present
-- **Ordered slice sequence** — slices in dependency order, with linked detail files when needed
-- **Execution routing and topology** — default route/checkpoint policy plus explicit overrides, checkpoints, and parallel-safe groups (or "none")
-- **Verification commands** — attached to every material slice
-- **Context budget for this change** — total estimated context consumption
+- **Goal**: restate the bounded goal from SPEC.md
+- **Architecture approach**: the smallest correct design
+- **Requirement traceability**: gap IDs, invariant IDs, audit questions, migration checkpoints, or coverage targets mapped to slices when present
+- **Ordered slice sequence**: slices in dependency order, with linked detail files when needed
+- **Execution routing and topology**: default route/checkpoint policy plus explicit overrides, checkpoints, and parallel-safe groups (or "none")
+- **Verification commands**: attached to every material slice
+- **Context budget for this change**: total estimated context consumption
 
 ### Write DESIGN.md (if non-trivial)
 
@@ -146,8 +146,8 @@ Update `.agent/.automaton/state/current.json`:
 
 ## Output
 
-- `PLAN.md` — written to `.agent/work/<change>/PLAN.md`
-- `DESIGN.md` — written to `.agent/work/<change>/DESIGN.md` (if needed)
+- `PLAN.md`: written to `.agent/work/<change>/PLAN.md`
+- `DESIGN.md`: written to `.agent/work/<change>/DESIGN.md` (if needed)
 - `.agent/.automaton/state/current.json` updated with `canonical_design` and `canonical_plan`
 - Recommended next skill: `auto-eng-review` or `auto-execute`
 
@@ -163,15 +163,15 @@ Update `.agent/.automaton/state/current.json`:
 
 ### Slice Design Examples
 
-Read `references/slice-examples.md` — well-designed vs. poorly-designed slices. (~61 lines: 2 good and 2 bad examples with explanations; rule of thumb: if you can't write the verification command before starting, the slice isn't defined.)
+Read `references/slice-examples.md` for well-designed vs. poorly-designed slices. (~61 lines: 2 good and 2 bad examples with explanations; rule of thumb: if you can't write the verification command before starting, the slice isn't defined.)
 
 ### Verification Patterns
 
-Read `references/verification-patterns.md` — common verification commands by stack. (~47 lines: Node/Python/Rust/Go/General commands, 4 verification principles including "verify the exact behavior, not absence of errors.")
+Read `references/verification-patterns.md` for common verification commands by stack. (~47 lines: Node/Python/Rust/Go/General commands, 4 verification principles including "verify the exact behavior, not absence of errors.")
 
 ### Context Budget
 
-Read `references/CONTEXT-BUDGET.md` — progressive loading and degradation tiers. (~76 lines: 4 principles, 6-step loading order, 4 degradation tiers with behavioral rules, no-re-read rule with exceptions.)
+Read `references/CONTEXT-BUDGET.md` for progressive loading and degradation tiers. (~76 lines: 4 principles, 6-step loading order, 4 degradation tiers with behavioral rules, no-re-read rule with exceptions.)
 
 ### Artifact Lifecycle
 

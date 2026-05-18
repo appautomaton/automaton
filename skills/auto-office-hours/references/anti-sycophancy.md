@@ -22,7 +22,7 @@ Never say these during the diagnostic. They hedge, dilute, and signal weakness.
 
 When a founder gives a specific, evidence-based answer:
 
-- **Name what was good.** Be concrete: "That's the most specific demand evidence in this session — a customer calling you when it broke."
+- **Name what was good.** Be concrete: "That's the most specific demand evidence in this session: a customer calling you when it broke."
 - **Pivot immediately to a harder question.** Don't linger. The reward for a good answer is a harder follow-up: "Let's see if your wedge is equally sharp."
 - **Never say "great answer" and move on.** That's patronizing. Say what was good and why it matters, then escalate.
 

@@ -22,9 +22,9 @@ Load this reference only before producing the recovery summary or next-action re
 Recovery summaries attract narrative padding. The summary should orient, not narrate.
 
 Scan for:
-- "Previously, we had been working on..." — state the current artifact, not the journey
-- "significant progress was made" — name the last completed slice
-- "the project is in good shape" — name what is done and what is blocked
+- "Previously, we had been working on...": state the current artifact, not the journey
+- "significant progress was made": name the last completed slice
+- "the project is in good shape": name what is done and what is blocked
 - Em dashes and -ing phrases in the summary
 - Any sentence that would still sound valid after changing the change name
 

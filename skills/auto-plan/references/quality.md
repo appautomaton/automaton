@@ -22,8 +22,8 @@ Load this reference only before finalizing or refreshing `PLAN.md`.
 Plans attract architecture theater and signposting. Slice objectives should name what gets built, not announce what will be explored.
 
 Scan for:
-- "Let's explore", "we'll dive into" — start with the verb
-- "robust", "comprehensive", "elegant" — name the specific property
+- "Let's explore", "we'll dive into": start with the verb
+- "robust", "comprehensive", "elegant": name the specific property
 - Vague attribution in architecture rationale ("best practice", "industry standard")
 - -ing padding ("ensuring consistency", "enabling scalability")
 - Generic positive framing of the approach

@@ -14,10 +14,10 @@ Guidelines for managing context windows across multi-session agentic work.
 When entering any stage, load files in this order. Stop as soon as you have enough context to proceed.
 
 ```
-1. .agent/.automaton/state/current.json (always — < 50 tokens)
-2. STATUS.md             (always — < 200 tokens)
-3. SPEC.md               (if canonical_spec exists — < 1000 tokens)
-4. PLAN.md               (if executing — < 1000 tokens)
+1. .agent/.automaton/state/current.json (always, < 50 tokens)
+2. STATUS.md             (always, < 200 tokens)
+3. SPEC.md               (if canonical_spec exists, < 1000 tokens)
+4. PLAN.md               (if executing, < 1000 tokens)
 5. Wiki pages            (only if referenced by spec or plan)
 6. Source files          (only the files the current slice touches)
 ```
@@ -50,9 +50,9 @@ Monitor context usage and adjust behavior accordingly. These are behavioral rule
 
 **Warning signs before panic thresholds fire:**
 
-- **Silent partial completion** — agent claims task is done but implementation is incomplete.
-- **Increasing vagueness** — phrases like "appropriate handling" or "standard patterns" replace specific code.
-- **Skipped steps** — agent omits protocol steps it would normally follow.
+- **Silent partial completion.** Agent claims task is done but implementation is incomplete.
+- **Increasing vagueness.** Phrases like "appropriate handling" or "standard patterns" replace specific code.
+- **Skipped steps.** Agent omits protocol steps it would normally follow.
 
 When you see these, assume context pressure and move to a higher tier of conservation.
 

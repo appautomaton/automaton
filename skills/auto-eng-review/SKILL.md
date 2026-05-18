@@ -13,7 +13,7 @@ First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, cano
 
 ## Preamble
 
-Execution safety review. Architecture, data flow, edge cases, test strategy — not product vision. Identifies risks that could cause failure, stalling, or rework.
+Execution safety review. Architecture, data flow, edge cases, test strategy, not product vision. Identifies risks that could cause failure, stalling, or rework.
 
 Context budget: one PLAN.md read, optional DESIGN.md when `canonical_design` exists, one risk matrix, one verdict.
 
@@ -94,27 +94,27 @@ State the next skill based on the verdict.
 - Prefer specific engineering objections over generic caution.
 - Do not broaden scope just to feel thorough.
 - Verdict vocabulary is strict. Use only the three approved values.
-- If the plan is missing or unreadable, verdict is `needs_correction` — do not guess.
+- If the plan is missing or unreadable, verdict is `needs_correction`. Do not guess.
 - Missing DESIGN.md is not a blocker when `canonical_design` is null, absent, or intentionally skipped by the plan.
 
 ## Deep
 
 ### Review Template
 
-Read `references/review-template.md` — exact markdown format. (~21 lines: 5-field format — verdict/strength/concern/action/verified — with rules on sentence limits and no extra commentary.)
+Read `references/review-template.md` for the exact markdown format. (~21 lines: 5-field format covering verdict/strength/concern/action/verified, with rules on sentence limits and no extra commentary.)
 
 ### Risk Matrix Examples
 
-Read `references/risk-examples.md` — sample risk matrices. (~40 lines: 3 scored examples — API migration → approved_with_risks, new external service → needs_correction, refactor → approved.)
+Read `references/risk-examples.md` for sample risk matrices. (~40 lines: 3 scored examples: API migration → approved_with_risks, new external service → needs_correction, refactor → approved.)
 
 ### Engineering Prime Directives
 
-Read `references/prime-directives.md` — 9 non-negotiable standards and preferences. (~35 lines: 9 standards from zero-silent-failures to scrap-it permission; engineering preferences section covering DRY, testing, observability, security, deployment.)
+Read `references/prime-directives.md` for 9 non-negotiable standards and preferences. (~35 lines: 9 standards from zero-silent-failures to scrap-it permission; engineering preferences section covering DRY, testing, observability, security, deployment.)
 
 ### Engineering Review Sections
 
-Read `references/engineering-sections.md` — 11-section methodology. (~160 lines: architecture, error/rescue map, security/threat model, data flow/interaction edge cases, code quality, test review, performance, observability, deployment/rollout, long-term trajectory, design/UX. Each section has specific checks and required ASCII diagrams.)
+Read `references/engineering-sections.md` for the 11-section methodology. (~160 lines: architecture, error/rescue map, security/threat model, data flow/interaction edge cases, code quality, test review, performance, observability, deployment/rollout, long-term trajectory, design/UX. Each section has specific checks and required ASCII diagrams.)
 
 ### Implementation Alternatives
 
-Read `references/implementation-alternatives.md` — mandatory 2-3 approach comparison. (~25 lines: APPROACH format template with Summary/Effort/Risk/Pros/Cons/Reuses; rules requiring minimal-viable + ideal-architecture variants.)
+Read `references/implementation-alternatives.md` for the mandatory 2-3 approach comparison. (~25 lines: APPROACH format template with Summary/Effort/Risk/Pros/Cons/Reuses; rules requiring minimal-viable + ideal-architecture variants.)

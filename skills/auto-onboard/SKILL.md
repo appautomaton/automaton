@@ -13,7 +13,7 @@ First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, cano
 
 ## Preamble
 
-auto-onboard builds bounded project truth from repository evidence — not training data, not conversation, not guessing. It writes five steering artifacts and never writes code. Context budget: REPO-MAP.md under 150 lines; stop scanning once you have enough.
+auto-onboard builds bounded project truth from repository evidence, not training data, not conversation, not guessing. It writes five steering artifacts and never writes code. Context budget: REPO-MAP.md under 150 lines; stop scanning once you have enough.
 
 ## Quality Gate
 
@@ -28,11 +28,11 @@ Before writing steering artifacts:
 ### Detect State
 
 Three cases:
-1. **First-time or scaffold-level** — `get-context.mjs` returned no state or steering files are scaffold placeholders (e.g., `"..."` or template prompts). Proceed to scan.
-2. **Already-onboarded, no update requested** — `.agent/steering/PROJECT.md` contains real project truth and the user did not ask for a refresh. Report what exists and route by state:
+1. **First-time or scaffold-level.** `get-context.mjs` returned no state or steering files are scaffold placeholders (e.g., `"..."` or template prompts). Proceed to scan.
+2. **Already-onboarded, no update requested.** `.agent/steering/PROJECT.md` contains real project truth and the user did not ask for a refresh. Report what exists and route by state:
      - Active change with a stage → `auto-resume`
      - No active change or stage is `none` → `auto-office-hours`
-3. **Already-onboarded, targeted refresh** — steering exists and the user asks to update it (e.g., "update REQUIREMENTS because we added Postgres"). Do NOT rescan the full repo. Read only the evidence relevant to the update (at most 3 files), update only the affected steering file(s), run `sync-status.mjs`, and report what changed.
+3. **Already-onboarded, targeted refresh.** Steering exists and the user asks to update it (e.g., "update REQUIREMENTS because we added Postgres"). Do NOT rescan the full repo. Read only the evidence relevant to the update (at most 3 files), update only the affected steering file(s), run `sync-status.mjs`, and report what changed.
 
 When writing ROADMAP.md during first-time setup, use the format in `references/ROADMAP-CONTRACT.md` (~60 lines: canonical phase format, status values, update rules by skill, matching rule, invariants).
 
@@ -55,11 +55,11 @@ If ambiguity affects the steering output, ask ≤ 3 questions. Read `references/
 ### Write Artifacts
 
 Use `templates/` as scaffolds:
-- `.agent/wiki/REPO-MAP.md` — bounded import record
-- `.agent/steering/PROJECT.md` — what this repo owns and why
-- `.agent/steering/REQUIREMENTS.md` — observed, inferred, and unknown constraints
-- `.agent/steering/ROADMAP.md` — 3 to 6 plausible phases
-- `.agent/steering/STATUS.md` — current state and next step
+- `.agent/wiki/REPO-MAP.md`: bounded import record
+- `.agent/steering/PROJECT.md`: what this repo owns and why
+- `.agent/steering/REQUIREMENTS.md`: observed, inferred, and unknown constraints
+- `.agent/steering/ROADMAP.md`: 3 to 6 plausible phases
+- `.agent/steering/STATUS.md`: current state and next step
 
 ### Update State
 
@@ -109,12 +109,12 @@ Do not guess. Do not proceed.
 
 ### Scan Protocol
 
-Read `references/topology-scan.md` — runtime surfaces, package boundaries, stack conventions. (~56 lines: 7-layer read order from existing Automaton state through delivery surfaces, budget rules, REPO-MAP.md output requirements.)
+Read `references/topology-scan.md` for runtime surfaces, package boundaries, stack conventions. (~56 lines: 7-layer read order from existing Automaton state through delivery surfaces, budget rules, REPO-MAP.md output requirements.)
 
 ### Artifact Contract
 
-Read `references/artifact-contract.md` — exact format and required sections. (~92 lines: progressive disclosure structure for 5 artifacts, writing standard, confidence model with Observed/Inferred/Needs Confirmation, per-artifact expectations and required sections.)
+Read `references/artifact-contract.md` for exact format and required sections. (~92 lines: progressive disclosure structure for 5 artifacts, writing standard, confidence model with Observed/Inferred/Needs Confirmation, per-artifact expectations and required sections.)
 
 ### Question Patterns
 
-Read `references/question-patterns.md` — good and bad follow-up questions. (~39 lines: 4 good patterns with evidence→assumption→decision structure, 3 bad open-ended anti-patterns, escalation rule.)
+Read `references/question-patterns.md` for good and bad follow-up questions. (~39 lines: 4 good patterns with evidence→assumption→decision structure, 3 bad open-ended anti-patterns, escalation rule.)

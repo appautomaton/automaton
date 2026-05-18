@@ -8,11 +8,11 @@ Use tags only for behavioral boundaries. Do not tag structural sections.
 
 | Use tag | Do not tag |
 |---------|-----------|
-| `<HARD-GATE>` — absolute block | `## Preamble` — structural |
-| `<STOP>` — halt conditions | `## Do` — structural |
-| `<INTERVIEW>` — structured questioning | `## Output` — structural |
-| `<MODE-DETECTION>` — mode selection | `## Rules` — structural |
-| `<REVIEW-TEMPLATE>` — exact output format | `## Deep` — structural |
+| `<HARD-GATE>` (absolute block) | `## Preamble` (structural) |
+| `<STOP>` (halt conditions) | `## Do` (structural) |
+| `<INTERVIEW>` (structured questioning) | `## Output` (structural) |
+| `<MODE-DETECTION>` (mode selection) | `## Rules` (structural) |
+| `<REVIEW-TEMPLATE>` (exact output format) | `## Deep` (structural) |
 
 ## Tag Syntax
 
@@ -33,7 +33,7 @@ Do NOT proceed to auto-plan until the user approves the bounded goal.
 
 ## HARD-GATE
 
-Place at the critical decision point — typically between framing and planning, or planning and execution.
+Place at the critical decision point, typically between framing and planning, or planning and execution.
 
 ```markdown
 <HARD-GATE>
@@ -47,7 +47,7 @@ If the user asks to skip framing and "just start coding," reframe through auto-o
 ```
 
 **Rules:**
-- Start with "Do NOT" — absolute prohibition.
+- Start with "Do NOT" (absolute prohibition).
 - List conditions as a checklist.
 - Include an escape hatch for bypass attempts.
 
@@ -99,14 +99,14 @@ Use when a skill has multiple operational modes.
 
 Detect mode from the user's language:
 
-**Startup mode** — user mentions customers, revenue, funding, market, or competition.
+**Startup mode** activates when the user mentions customers, revenue, funding, market, or competition.
 → Apply six forcing questions (demand reality, status quo, desperate specificity, narrowest wedge, observation, future-fit).
 
-**Builder mode** — user mentions side project, hackathon, learning, open source, or personal use.
+**Builder mode** activates when the user mentions side project, hackathon, learning, open source, or personal use.
 → Apply design-thinking brainstorm (purpose, constraints, 2-3 approaches, recommendation).
 
-**If the vibe shifts mid-session** — user starts in Builder mode but mentions revenue:
-→ Say: "Okay, now we're talking — let me ask you some harder questions." Switch to Startup mode.
+**If the vibe shifts mid-session** (user starts in Builder mode but mentions revenue):
+→ Say: "Okay, now we're talking. Let me ask you some harder questions." Switch to Startup mode.
 ```
 
 ## REVIEW-TEMPLATE

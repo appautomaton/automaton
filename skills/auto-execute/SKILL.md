@@ -83,7 +83,7 @@ For content slices, also extract artifact target, audience, thesis, voice, conte
 
 Route from the slice metadata and live conditions:
 - `direct`: the slice touches ≤ 3 files in one subsystem, has no review risks, and fits in the parent session.
-- `subagent recommended`: prefer the subagent route when any of these hold — the slice touches > 3 files, crosses subsystem boundaries, modifies shared interfaces or data schemas, or carries an `approved_with_risks` review verdict that affects this slice. Fall back to direct only when the host cannot dispatch subagents and the slice remains safe.
+- `subagent recommended`: prefer the subagent route when any of these hold: the slice touches > 3 files, crosses subsystem boundaries, modifies shared interfaces or data schemas, or carries an `approved_with_risks` review verdict that affects this slice. Fall back to direct only when the host cannot dispatch subagents and the slice remains safe.
 - `subagent required`: use the subagent route. Do not implement directly.
 
 Override: use the subagent route when the user explicitly requests multi-agent execution.
@@ -148,7 +148,7 @@ Continue within the selected execution window only when:
 - Context remains healthy.
 - No STOP condition applies.
 
-If all slices are complete and no STOP condition applies, invoke `auto-verify` directly via the Skill tool. Do not just recommend it — execute the transition. Report the execution summary first, then invoke.
+If all slices are complete and no STOP condition applies, invoke `auto-verify` directly via the Skill tool. Do not just recommend it; execute the transition. Report the execution summary first, then invoke.
 
 If the checkpoint is valid, pause with the next action and checkpoint reason. If a STOP condition appears, stop with the next action and stop reason.
 
@@ -214,35 +214,35 @@ Do NOT write code unless:
 
 ### Subagent Protocol
 
-Read `references/SUBAGENT-PROTOCOL.md` — only when subagent route is selected. (~95 lines: roles, dispatch packet schema, dispatch/review rules, status vocabulary with 4 implementer + 3 reviewer statuses, stop conditions.)
+Read `references/SUBAGENT-PROTOCOL.md` only when subagent route is selected. (~95 lines: roles, dispatch packet schema, dispatch/review rules, status vocabulary with 4 implementer + 3 reviewer statuses, stop conditions.)
 
 ### Host Tools
 
-Read `references/HOST-TOOLS.md` — only when dispatching subagents. (Host-specific tool mappings for Claude/Codex/OpenCode subagent dispatch.)
+Read `references/HOST-TOOLS.md` only when dispatching subagents. (Host-specific tool mappings for Claude/Codex/OpenCode subagent dispatch.)
 
 ### Implementer Prompt
 
-Read `references/implementer-prompt.md` — dispatch the implementer. (~63 lines: complete prompt template with rules, self-review checklist, and `STATUS/SUMMARY/FILES_CHANGED/VERIFICATION/CONCERNS/NEEDS` return structure.)
+Read `references/implementer-prompt.md` to dispatch the implementer. (~63 lines: complete prompt template with rules, self-review checklist, and `STATUS/SUMMARY/FILES_CHANGED/VERIFICATION/CONCERNS/NEEDS` return structure.)
 
 ### Spec Reviewer Prompt
 
-Read `references/spec-reviewer-prompt.md` — after implementation is acceptable. (~41 lines: prompt template with 6 spec-compliance checks and `STATUS/SUMMARY/ISSUES/EVIDENCE` return structure.)
+Read `references/spec-reviewer-prompt.md` after implementation is acceptable. (~41 lines: prompt template with 6 spec-compliance checks and `STATUS/SUMMARY/ISSUES/EVIDENCE` return structure.)
 
 ### Quality Reviewer Prompt
 
-Read `references/code-quality-reviewer-prompt.md` — after spec compliance is approved. (~43 lines: prompt template with severity labels `critical/important/minor`, 7 quality checks, and return structure.)
+Read `references/code-quality-reviewer-prompt.md` after spec compliance is approved. (~43 lines: prompt template with severity labels `critical/important/minor`, 7 quality checks, and return structure.)
 
 ### Stop Condition Examples
 
-Read `references/stop-examples.md` — when to halt vs. push through. (~29 lines: 5 halt scenarios, 4 push-through scenarios, one decision rule: trivial → fix; structural → halt.)
+Read `references/stop-examples.md` for when to halt vs. push through. (~29 lines: 5 halt scenarios, 4 push-through scenarios, one decision rule: trivial → fix; structural → halt.)
 
 ### Debug Protocol Details
 
-Read `references/debug-protocol.md` — root cause patterns by stack. (~53 lines: common patterns for Node/Python/Rust/General, 4 investigation techniques, escalation template with Observed/Expected/Tried/Need structure.)
+Read `references/debug-protocol.md` for root cause patterns by stack. (~53 lines: common patterns for Node/Python/Rust/General, 4 investigation techniques, escalation template with Observed/Expected/Tried/Need structure.)
 
 ### Context Budget
 
-Read `references/CONTEXT-BUDGET.md` — progressive loading and degradation tiers. (~76 lines: 4 principles, 6-step loading order, 4 degradation tiers with behavioral rules, no-re-read rule with exceptions.)
+Read `references/CONTEXT-BUDGET.md` for progressive loading and degradation tiers. (~76 lines: 4 principles, 6-step loading order, 4 degradation tiers with behavioral rules, no-re-read rule with exceptions.)
 
 ### Artifact Lifecycle
 

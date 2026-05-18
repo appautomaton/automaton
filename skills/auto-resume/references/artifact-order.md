@@ -38,11 +38,11 @@ current.json (state) ──┘
 | `frame` | SPEC.md | Do not load DESIGN.md or PLAN.md |
 | `plan` | SPEC.md, DESIGN.md (if exists), PLAN.md | Do not load source files |
 | `execute` | SPEC.md, DESIGN.md (if exists), PLAN.md, current slice | Do not load unrelated slices |
-| `verify` | PLAN.md (change complete — route to next work) | Do not reload the full artifact chain |
+| `verify` | PLAN.md (change complete, route to next work) | Do not reload the full artifact chain |
 | `resume` | SPEC.md, STATUS.md, current.json | Load only what is needed to orient |
 
 ## Anti-Patterns
 
 - **Loading PLAN.md before SPEC.md.** The plan assumes the spec is understood.
-- **Reloading the full chain at verify stage.** Verification passed — route to next work, don't re-read everything.
+- **Reloading the full chain at verify stage.** Verification passed; route to next work, don't re-read everything.
 - **Loading the full wiki during execution.** Wiki pages are reference material, not active context.

@@ -22,14 +22,14 @@ Load this reference only before appending the engineering review to `PLAN.md`.
 Engineering reviews attract generic risk language and vague concerns. Every finding should name a file, subsystem, or command.
 
 Scan for:
-- "could potentially cause issues" — name the issue and where it happens
-- "should be carefully considered" — state the specific risk and its severity
-- "robust error handling" — name the exception, what catches it, what the user sees
-- "comprehensive test coverage" — name the test file and what it asserts
+- "could potentially cause issues": name the issue and where it happens
+- "should be carefully considered": state the specific risk and its severity
+- "robust error handling": name the exception, what catches it, what the user sees
+- "comprehensive test coverage": name the test file and what it asserts
 - Generic approval language ("the architecture is sound") without naming what was checked
 
 Before: "The architecture is generally sound, though error handling should be carefully considered to ensure robust coverage of edge cases."
-After: "Architecture fit: 8/10. Risk: parseToken() in src/auth.js catches all exceptions and returns null — a malformed JWT is indistinguishable from an expired one. Add typed catches for JsonWebTokenError vs TokenExpiredError."
+After: "Architecture fit: 8/10. Risk: parseToken() in src/auth.js catches all exceptions and returns null, so a malformed JWT is indistinguishable from an expired one. Add typed catches for JsonWebTokenError vs TokenExpiredError."
 
 ## Final Check
 

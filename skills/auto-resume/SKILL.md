@@ -49,7 +49,7 @@ If any pointer is stale (file missing or moved), report it plainly. Recommend `a
 
 <STATE-RECOVERY>
 
-Load artifacts in this order. Stop at the current stage — do not load artifacts from future stages.
+Load artifacts in this order. Stop at the current stage; do not load artifacts from future stages.
 
 ```
 Stage: frame    → Load INTAKE.md (if exists), SPEC.md
@@ -121,12 +121,12 @@ Based on the recovered state:
 
 ### Recovery Scenarios
 
-Read `references/recovery-scenarios.md` — common recovery situations. (~41 lines: 8 state→action pairs covering fresh session, no active change, stale pointers, current.json/STATUS.md mismatch, review verdict blocks, scaffold-level steering, multiple changes, stale status prose.)
+Read `references/recovery-scenarios.md` for common recovery situations. (~41 lines: 8 state→action pairs covering fresh session, no active change, stale pointers, current.json/STATUS.md mismatch, review verdict blocks, scaffold-level steering, multiple changes, stale status prose.)
 
 ### Artifact Dependency Order
 
-Read `references/artifact-order.md` — full artifact dependency graph. (~48 lines: ASCII dependency graph from REPO-MAP through PLAN, loading rules by stage in table form, 3 anti-patterns.)
+Read `references/artifact-order.md` for the full artifact dependency graph. (~48 lines: ASCII dependency graph from REPO-MAP through PLAN, loading rules by stage in table form, 3 anti-patterns.)
 
 ### Context Budget
 
-Read `references/CONTEXT-BUDGET.md` — progressive loading and degradation tiers. (~76 lines: 4 principles, 6-step loading order, 4 degradation tiers with behavioral rules, no-re-read rule with exceptions.)
+Read `references/CONTEXT-BUDGET.md` for progressive loading and degradation tiers. (~76 lines: 4 principles, 6-step loading order, 4 degradation tiers with behavioral rules, no-re-read rule with exceptions.)

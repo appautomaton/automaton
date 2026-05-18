@@ -59,12 +59,12 @@ Surface these as questions for the user NOW, not as "figure it out later."
 
 ## Expansion Framing Pattern
 
-FLAT (avoid): "Add real-time notifications. Users would see workflow results faster — latency drops from ~30s polling to <500ms push. Effort: ~1 hour."
+FLAT (avoid): "Add real-time notifications. Users would see workflow results faster, latency drops from ~30s polling to <500ms push. Effort: ~1 hour."
 
-EXPANSIVE (aim for): "Imagine the moment a workflow finishes — the user sees the result instantly, no tab-switching, no polling, no 'did it actually work?' anxiety. Real-time feedback turns a tool they check into a tool that talks to them. Concrete shape: WebSocket channel + optimistic UI + desktop notification fallback. Effort: human ~2 days / CC ~1 hour. Makes the product feel 10x more alive."
+EXPANSIVE (aim for): "Imagine the moment a workflow finishes. The user sees the result instantly, no tab-switching, no polling, no 'did it actually work?' anxiety. Real-time feedback turns a tool they check into a tool that talks to them. Concrete shape: WebSocket channel + optimistic UI + desktop notification fallback. Effort: human ~2 days / CC ~1 hour. Makes the product feel 10x more alive."
 
 Both are outcome-framed. Only one makes the user feel the cathedral. Lead with the felt experience, close with concrete effort and impact.
 
 ## Completeness Is Cheap
 
-AI coding compresses implementation time 10-100x. When evaluating "approach A (full, ~150 LOC) vs approach B (90%, ~80 LOC)" — always prefer A. The 70-line delta costs seconds with AI assistance. "Ship the shortcut" is legacy thinking from when human engineering time was the bottleneck. Boil the lake.
+AI coding compresses implementation time 10-100x. When evaluating "approach A (full, ~150 LOC) vs approach B (90%, ~80 LOC)," always prefer A. The 70-line delta costs seconds with AI assistance. "Ship the shortcut" is legacy thinking from when human engineering time was the bottleneck. Boil the lake.
