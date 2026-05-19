@@ -3,47 +3,30 @@ import { dirname } from 'node:path'
 
 import { isValidStage } from './contracts.mjs'
 
+const FIELD_MAP = [
+  ['activeChange', 'active_change'],
+  ['canonicalSpec', 'canonical_spec'],
+  ['canonicalDesign', 'canonical_design'],
+  ['canonicalPlan', 'canonical_plan'],
+  ['productReview', 'product_review'],
+  ['engineeringReview', 'engineering_review']
+]
+
+const ALL_KNOWN_KEYS = new Set(FIELD_MAP.flatMap(([camel, snake]) => [camel, snake]))
+
 export function normalizeCurrentState(state) {
-  const {
-    active_change: activeChangeSnake,
-    canonical_spec: canonicalSpecSnake,
-    canonical_design: canonicalDesignSnake,
-    canonical_plan: canonicalPlanSnake,
-    product_review: productReviewSnake,
-    engineering_review: engineeringReviewSnake,
-    activeChange,
-    canonicalSpec,
-    canonicalDesign,
-    canonicalPlan,
-    productReview,
-    engineeringReview,
-    ...rest
-  } = state
+  const normalized = {}
 
-  const normalized = { ...rest }
-
-  if (activeChange !== undefined || activeChangeSnake !== undefined) {
-    normalized.activeChange = activeChange ?? activeChangeSnake
+  for (const [camel, snake] of FIELD_MAP) {
+    if (state[camel] !== undefined || state[snake] !== undefined) {
+      normalized[camel] = state[camel] ?? state[snake]
+    }
   }
 
-  if (canonicalSpec !== undefined || canonicalSpecSnake !== undefined) {
-    normalized.canonicalSpec = canonicalSpec ?? canonicalSpecSnake
-  }
-
-  if (canonicalDesign !== undefined || canonicalDesignSnake !== undefined) {
-    normalized.canonicalDesign = canonicalDesign ?? canonicalDesignSnake
-  }
-
-  if (canonicalPlan !== undefined || canonicalPlanSnake !== undefined) {
-    normalized.canonicalPlan = canonicalPlan ?? canonicalPlanSnake
-  }
-
-  if (productReview !== undefined || productReviewSnake !== undefined) {
-    normalized.productReview = productReview ?? productReviewSnake
-  }
-
-  if (engineeringReview !== undefined || engineeringReviewSnake !== undefined) {
-    normalized.engineeringReview = engineeringReview ?? engineeringReviewSnake
+  for (const [key, val] of Object.entries(state)) {
+    if (!ALL_KNOWN_KEYS.has(key)) {
+      normalized[key] = val
+    }
   }
 
   return normalized
@@ -67,36 +50,22 @@ function validateCurrentState(state) {
 
 function serializeCurrentState(state) {
   const normalized = validateCurrentState(normalizeCurrentState(state))
+  const out = {}
 
-  return {
-    ...(normalized.activeChange !== undefined ? { active_change: normalized.activeChange } : {}),
-    ...(normalized.stage !== undefined ? { stage: normalized.stage } : {}),
-    ...(normalized.canonicalSpec !== undefined ? { canonical_spec: normalized.canonicalSpec } : {}),
-    ...(normalized.canonicalDesign !== undefined ? { canonical_design: normalized.canonicalDesign } : {}),
-    ...(normalized.canonicalPlan !== undefined ? { canonical_plan: normalized.canonicalPlan } : {}),
-    ...(normalized.productReview !== undefined ? { product_review: normalized.productReview } : {}),
-    ...(normalized.engineeringReview !== undefined ? { engineering_review: normalized.engineeringReview } : {}),
-    ...Object.fromEntries(
-      Object.entries(normalized).filter(
-        ([key]) =>
-          ![
-            'activeChange',
-            'stage',
-            'canonicalSpec',
-            'canonicalDesign',
-            'canonicalPlan',
-            'productReview',
-            'engineeringReview',
-            'active_change',
-            'canonical_spec',
-            'canonical_design',
-            'canonical_plan',
-            'product_review',
-            'engineering_review'
-          ].includes(key)
-      )
-    )
+  if (normalized.activeChange !== undefined) out.active_change = normalized.activeChange
+  if (normalized.stage !== undefined) out.stage = normalized.stage
+
+  for (const [camel, snake] of FIELD_MAP) {
+    if (camel === 'activeChange') continue
+    if (normalized[camel] !== undefined) out[snake] = normalized[camel]
   }
+
+  for (const [key, val] of Object.entries(normalized)) {
+    if (key === 'stage' || ALL_KNOWN_KEYS.has(key)) continue
+    out[key] = val
+  }
+
+  return out
 }
 
 export function saveCurrentState(target, state) {

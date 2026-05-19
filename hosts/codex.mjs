@@ -1,6 +1,8 @@
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 
+import { renderSessionStartHook, renderStopHook } from './hooks.mjs'
+
 function renderHookCommand(scriptName) {
   return `sh -lc 'root=$(git rev-parse --show-toplevel 2>/dev/null || pwd); while [ ! -f "$root/.codex/hooks/${scriptName}.mjs" ] && [ "$root" != "/" ]; do root=$(dirname "$root"); done; node "$root/.codex/hooks/${scriptName}.mjs"'`
 }
@@ -35,41 +37,6 @@ function renderCodexHooksConfig() {
     null,
     2
   ) + '\n'
-}
-
-function renderSessionStartHook() {
-  return [
-    "import { dirname, join } from 'node:path'",
-    "import { fileURLToPath } from 'node:url'",
-    "import { buildSessionContext } from '../../.agent/.automaton/lib/context.mjs'",
-    '',
-    "const projectRoot = join(dirname(fileURLToPath(import.meta.url)), '..', '..')",
-    '',
-    'process.stdout.write(JSON.stringify({',
-    '  hookSpecificOutput: {',
-    "    hookEventName: 'SessionStart',",
-    '    additionalContext: buildSessionContext(projectRoot)',
-    '  }',
-    "}) + '\\n')",
-    ''
-  ].join('\n')
-}
-
-function renderStopHook() {
-  return [
-    "import { dirname, join } from 'node:path'",
-    "import { fileURLToPath } from 'node:url'",
-    "import { syncStatusPointerFromCurrentState } from '../../.agent/.automaton/bin/sync-status-pointer.mjs'",
-    '',
-    "const projectRoot = join(dirname(fileURLToPath(import.meta.url)), '..', '..')",
-    'syncStatusPointerFromCurrentState({',
-    "  currentTarget: join(projectRoot, '.agent', '.automaton', 'state', 'current.json'),",
-    "  statusTarget: join(projectRoot, '.agent', 'steering', 'STATUS.md')",
-    '})',
-    '',
-    "process.stdout.write('')",
-    ''
-  ].join('\n')
 }
 
 export const codexHost = {

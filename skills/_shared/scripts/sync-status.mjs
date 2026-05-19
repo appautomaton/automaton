@@ -134,22 +134,9 @@ active_change: ${activeChange}
 stage: ${stage}
 ---`
 
-let newContent
 const { body } = splitFrontmatter(statusContent)
 const nextBody = updateStatusBody(body, activeChange, stage)
-
-if (statusContent.startsWith('---')) {
-  // Replace existing frontmatter
-  const end = statusContent.indexOf('---', 3)
-  if (end !== -1) {
-    newContent = `${frontmatter}\n\n${nextBody.replace(/^\n+/, '')}`
-  } else {
-    newContent = `${frontmatter}\n\n${nextBody}`
-  }
-} else {
-  // Prepend frontmatter
-  newContent = `${frontmatter}\n\n${nextBody}`
-}
+const newContent = `${frontmatter}\n\n${nextBody.replace(/^\n+/, '')}`
 
 mkdirSync(dirname(statusPath), { recursive: true })
 writeFileSync(statusPath, newContent, 'utf8')
