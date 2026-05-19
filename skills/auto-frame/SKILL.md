@@ -29,11 +29,21 @@ Before finalizing `SPEC.md`:
 
 ### Restate
 
-If `.agent/work/<active_change>/INTAKE.md` exists, read it before interviewing. If no intake exists but office-hours context is present in the conversation (design document, work scale, work shape, broader intent), read that instead. Adopt the scale, shape, and broader intent to calibrate constraints and interview depth. Do not re-ask what office-hours already established.
+If `.agent/work/<active_change>/INTAKE.md` exists, read it before interviewing. If no intake exists but office-hours context is present in the conversation (design document, work scale, work shape, broader intent), read that instead. Adopt the scale, shape, broader intent, target user or stakeholder, and scope coverage to calibrate constraints and interview depth. Do not re-ask what office-hours already established.
 
 State the goal in one sentence. If you cannot, ask one clarifying question and stop.
 
 If your SPEC would be narrower than the user's stated goal or office-hours broader intent, either widen the SPEC, explicitly record the narrowing as decomposition with deferred scope in `.agent/steering/ROADMAP.md` (using the format in `references/ROADMAP-CONTRACT.md`), or ask for confirmation. Silent narrowing is a framing failure. A spec that covers a large coherent outcome is better than splitting into roadmap phases that lose shared context. Let the plan carry complexity through ordered slices.
+
+### Coverage Check
+
+If `INTAKE.md` or conversation context includes `Scope Coverage`, compare the intended SPEC scope against each item before writing:
+- Included items must appear in the bounded goal, required outcome, constraints, risks, or acceptance criteria.
+- Deferred items must stay deferred with a reason in ROADMAP.md or a SPEC deferred-scope note.
+- Anti-goals must appear in SPEC anti-goals.
+- Needs-decision items require one focused question or 2–3 concrete options before SPEC unless the user explicitly accepts an assumption.
+
+If no formal `Scope Coverage` exists but the request has multiple material asks, perspectives, constraints, or worries, build this lightweight check from the available context. Do not drop a material item silently just to make the SPEC shorter.
 
 ### Surface
 
@@ -66,6 +76,8 @@ If a `SPEC.md` already exists for this change, read it and preserve all `## Revi
 
 Do NOT proceed past this step without writing `SPEC.md` to `.agent/work/<change>/SPEC.md`.
 
+Do NOT write `SPEC.md` while a needs-decision item would change scope, approach, or verification unless the user answers it or explicitly accepts an assumption.
+
 The file must contain these **core** fields (always present):
 - Bounded goal (1 sentence)
 - Broader intent (the larger user goal this spec preserves or intentionally decomposes)
@@ -78,6 +90,8 @@ The file must contain these **core** fields (always present):
 
 These fields are **conditional** — include only when the named trigger applies, otherwise omit entirely:
 - Linked detail files under `spec/` — trigger: SPEC needs progressive disclosure (constraints, gap matrix, risks, or acceptance detail too large for inline)
+- Target user or stakeholder — trigger: product, design, or content lens is selected, or `INTAKE.md` names one
+- Scope coverage decisions — trigger: intake or request includes multiple material asks, perspectives, deferrals, anti-goals, or needs-decision items
 - Blocking questions or assumptions — trigger: present and material; omit when "none" rather than writing the literal word "none"
 
 Apply the Artifact Signal Discipline rules from `references/ARTIFACT-LIFECYCLE.md` while writing: no mirror sections, index over transcript, append-replace not stack. If a `SPEC.md` already exists, refresh it and replace prior `## Review:` sections on re-run for the same change — do not stack reviews.

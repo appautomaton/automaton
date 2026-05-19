@@ -31,6 +31,12 @@ Supersedes: {prior filename, omit if first design on this branch}
 ## Constraints
 {from diagnostic}
 
+## Scope Coverage
+- Included: {material request items covered by this change}
+- Deferred: {items outside this change and why; omit if none}
+- Anti-goals: {explicit exclusions for this change}
+- Needs decision: {questions or options that would change scope; omit if none}
+
 ## Premises
 {from premise challenge}
 
@@ -86,6 +92,12 @@ Supersedes: {prior filename, omit if first design on this branch}
 
 ## Constraints
 {from diagnostic}
+
+## Scope Coverage
+- Included: {material request items covered by this change}
+- Deferred: {items outside this change and why; omit if none}
+- Anti-goals: {explicit exclusions for this change}
+- Needs decision: {questions or options that would change scope; omit if none}
 
 ## Premises
 {from premise challenge}

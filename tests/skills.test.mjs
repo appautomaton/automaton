@@ -262,6 +262,28 @@ test('office-hours separates work scale from work shape', () => {
   assert.match(source, /scope preservation/i)
 })
 
+test('office-hours captures request coverage before narrowing scope', () => {
+  const source = readFileSync(join(skillsRoot, 'auto-office-hours', 'SKILL.md'), 'utf8')
+  const template = readFileSync(join(skillsRoot, 'auto-office-hours', 'references', 'design-doc-templates.md'), 'utf8')
+
+  assert.match(source, /### Request Coverage/)
+  assert.match(source, /perspectives or audiences/)
+  assert.match(source, /explicit asks/)
+  assert.match(source, /implied asks/)
+  for (const bucket of ['Included', 'Deferred', 'Anti-goal', 'Needs decision']) {
+    assert.match(source, new RegExp(bucket), `office-hours must classify coverage bucket: ${bucket}`)
+  }
+  assert.match(source, /ask one focused question or offer 2–3 concrete options/)
+  assert.match(source, /Do not drop request context silently/)
+  assert.match(source, /Scope coverage: included, deferred, anti-goals, and needs-decision items/)
+
+  assert.match(template, /## Scope Coverage/)
+  assert.match(template, /Included:/)
+  assert.match(template, /Deferred:/)
+  assert.match(template, /Anti-goals:/)
+  assert.match(template, /Needs decision:/)
+})
+
 test('auto-frame preserves scope and supports adaptive SPEC shapes', () => {
   const source = readFileSync(join(skillsRoot, 'auto-frame', 'SKILL.md'), 'utf8')
 
@@ -274,6 +296,21 @@ test('auto-frame preserves scope and supports adaptive SPEC shapes', () => {
   for (const token of ['structural change', 'behavioral invariants', 'gap matrix', 'audit questions', 'migration target', 'coverage target']) {
     assert.match(source, new RegExp(token, 'i'), `auto-frame must support adaptive spec token: ${token}`)
   }
+})
+
+test('auto-frame checks request coverage before writing SPEC', () => {
+  const source = readFileSync(join(skillsRoot, 'auto-frame', 'SKILL.md'), 'utf8')
+
+  assert.match(source, /### Coverage Check/)
+  assert.match(source, /scope coverage/)
+  assert.match(source, /target user or stakeholder/)
+  assert.match(source, /Included items must appear/)
+  assert.match(source, /Deferred items must stay deferred/)
+  assert.match(source, /Anti-goals must appear/)
+  assert.match(source, /Needs-decision items require one focused question or 2–3 concrete options/)
+  assert.match(source, /Do not drop a material item silently/)
+  assert.match(source, /Target user or stakeholder/)
+  assert.match(source, /Scope coverage decisions/)
 })
 
 test('plan execute and verify preserve linked detail and traceability IDs', () => {

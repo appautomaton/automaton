@@ -23,6 +23,7 @@ Before presenting alternatives, recommending an approach, or writing the design 
 - Replace praise with evidence-backed assessment.
 - Make alternatives differ by scope, risk, or learning value.
 - Ask for observed behavior when the answer stays abstract.
+- Confirm request coverage before narrowing scope or deferring work.
 - Read `references/quality.md` (~36 lines: anti-patterns, better shape, prose hygiene scan patterns) when the conversation sounds encouraging but non-decisive.
 
 ## Do
@@ -76,6 +77,18 @@ Before generating alternatives, ask:
    - Is this the right problem? Could a different framing be simpler or more impactful?
    - What happens if we do nothing?
    - What existing code or patterns already partially solve this?
+
+### Request Coverage
+
+Before generating alternatives, build a compact coverage map from the user's request and answers. Capture the goal, context/background, perspectives or audiences, constraints, worries/risks, explicit asks, and implied asks.
+
+Classify each material item as:
+- **Included** in the current change.
+- **Deferred** to `ROADMAP.md` or later work, with the reason.
+- **Anti-goal** for this change.
+- **Needs decision** because the answer would change scope, approach, or verification.
+
+If any item would be narrowed or dropped, name the reason. If a decision is needed, ask one focused question or offer 2–3 concrete options before recommending an approach. Keep this as a decision map, not a transcript.
 
 ### Generate Alternatives
 
@@ -153,6 +166,7 @@ If the user approves an approach, write `.agent/work/<change>/INTAKE.md` with:
 - Desired outcome
 - Scope boundary and anti-goals
 - Scope preservation: whether this preserves the user's full stated intent or intentionally decomposes it
+- Scope coverage: included, deferred, anti-goals, and needs-decision items; omit empty groups
 - Selected approach with rationale
 - Key assumptions and risks
 - Deferred scope: ideas surfaced during discussion that belong in `ROADMAP.md`, not this spec. Name them explicitly so they are captured, not lost.
@@ -175,6 +189,7 @@ If the user does not approve an approach, output:
 - **One question at a time.** Wait for the answer before asking the next.
 - **State the decision basis.** Name what the current evidence supports, what it does not support, and what evidence would change the assessment.
 - **Evaluate evidence directly.** If a claim is unsupported, name the missing evidence. If it is supported, name the evidence and ask the next diagnostic question.
+- **Do not drop request context silently.** Every material ask, context detail, perspective, or worry is included, deferred with reason, marked as an anti-goal, or turned into a focused question.
 - **Never say:** "That's an interesting approach," "There are many ways to think about this," "You might want to consider...," "That could work." Replace vague acknowledgment with a concrete evidence-backed assessment.
 - **End with an assignment.** Every session should produce one concrete next action, not a strategy, an action.
 
