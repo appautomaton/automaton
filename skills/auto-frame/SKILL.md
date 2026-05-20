@@ -31,7 +31,7 @@ Before finalizing `SPEC.md`:
 
 ### Restate
 
-If `.agent/work/<active_change>/INTAKE.md` exists, read it before interviewing. If no intake exists but office-hours context is present in the conversation (design document, work scale, work shape, broader intent), read that instead. Adopt the scale, shape, broader intent, target user or stakeholder, scope coverage, and rejected framings to calibrate constraints and interview depth. Do not re-ask what office-hours already established. Do not reintroduce directions the user explicitly rejected — if INTAKE.md includes rejected framings, treat them as hard constraints on the spec.
+If `.agent/work/<active_change>/INTAKE.md` exists, read it before interviewing. If no intake exists but approved office-hours context is present in the conversation (work scale, work shape, broader intent, scope coverage, or rejected framings), read that instead. Adopt the scale, shape, broader intent, target user or stakeholder, scope coverage, and rejected framings to calibrate constraints and interview depth. Do not re-ask what office-hours already established. Do not reintroduce directions the user explicitly rejected — if INTAKE.md includes rejected framings, treat them as hard constraints on the spec.
 
 State the goal in one sentence. If you cannot, ask one clarifying question and stop.
 
@@ -135,7 +135,7 @@ Read `references/content-framing.md` for content-aware SPEC.md fields and anti-s
 
 ### Artifact Lifecycle
 
-Read `references/ARTIFACT-LIFECYCLE.md` when state pointers conflict or progressive disclosure layout is unclear. (~70 lines: stage handoffs table, progressive disclosure layout with allowed paths, review verdict routing, STOP conditions.)
+Read `references/ARTIFACT-LIFECYCLE.md` when state pointers conflict or progressive disclosure layout is unclear. (~105 lines: stage handoffs table, progressive disclosure layout with allowed paths, review verdict routing, STOP conditions.)
 
 ### Edge Case: User tries to skip spec writing
 

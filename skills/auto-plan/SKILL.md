@@ -181,4 +181,4 @@ Read `references/CONTEXT-BUDGET.md` for progressive loading and degradation tier
 
 ### Artifact Lifecycle
 
-Read `references/ARTIFACT-LIFECYCLE.md` when handoff rules or state pointer boundaries need clarification. (~70 lines: stage handoffs table, progressive disclosure layout with allowed paths, review verdict routing, STOP conditions.)
+Read `references/ARTIFACT-LIFECYCLE.md` when handoff rules or state pointer boundaries need clarification. (~105 lines: stage handoffs table, progressive disclosure layout with allowed paths, review verdict routing, STOP conditions.)

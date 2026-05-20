@@ -117,9 +117,14 @@ test('auto-onboard ships progressive-disclosure support docs and templates', () 
   }
 
   const artifactContract = readFileSync(join(onboardRoot, 'references', 'artifact-contract.md'), 'utf8')
+  const roadmapTemplate = readFileSync(join(onboardRoot, 'templates', 'ROADMAP.md'), 'utf8')
 
   assert.match(artifactContract, /do not duplicate canonical artifact paths/)
   assert.match(artifactContract, /name artifact roles instead/)
+  assert.match(roadmapTemplate, /No roadmap phases yet/)
+  assert.match(roadmapTemplate, /user-approved roadmap decomposition/)
+  assert.doesNotMatch(roadmapTemplate, /Phase 1: \.\.\./)
+  assert.doesNotMatch(roadmapTemplate, /Keep this to 3 to 6 phases/)
 })
 
 test('auto-execute ships internal subagent prompt templates', () => {
@@ -425,6 +430,9 @@ test('auto-execute owns route selection and execution-window continuation', () =
   assert.match(source, /The route decision lives here/)
   assert.match(source, /Run the per-slice protocol/)
   assert.match(source, /Do not tell the user to invoke another execute skill/)
+  assert.match(source, /continue directly into the `auto-verify` verification gate/)
+  assert.match(source, /Do not make the user run `auto-verify` manually/)
+  assert.match(source, /Do not trust execute's own slice evidence as final verification/)
 })
 
 test('auto-execute stop examples require bounded diagnostics before halting on uncertainty', () => {
@@ -432,6 +440,49 @@ test('auto-execute stop examples require bounded diagnostics before halting on u
 
   assert.match(source, /run one bounded diagnostic/)
   assert.doesNotMatch(source, /unsure after 30 seconds/)
+})
+
+test('auto-verify treats pass as completed change, not resume handoff', () => {
+  const skill = readFileSync(join(skillsRoot, 'auto-verify', 'SKILL.md'), 'utf8')
+  const template = readFileSync(join(skillsRoot, 'auto-verify', 'references', 'verification-template.md'), 'utf8')
+  const lifecycle = readFileSync(join(skillsRoot, '_shared', 'references', 'ARTIFACT-LIFECYCLE.md'), 'utf8')
+  const roadmap = readFileSync(join(skillsRoot, '_shared', 'references', 'ROADMAP-CONTRACT.md'), 'utf8')
+
+  assert.match(skill, /Do not print a `Recommended next skill` line on PASS/)
+  assert.match(skill, /New objective.*`auto-office-hours`/)
+  assert.match(skill, /Use `auto-resume` only for later re-entry or recovery/)
+  assert.match(skill, /PASS closeout: report `Change status: complete` and `New objective: use auto-office-hours`; do not emit `Recommended next skill`/)
+  assert.match(template, /PASS summary:/)
+  assert.match(template, /New objective.*`auto-office-hours`/)
+  assert.match(template, /use the `New objective` line for future work instead/)
+  assert.match(lifecycle, /no next lifecycle skill on pass/)
+  assert.match(lifecycle, /`auto-office-hours` mention is for a new objective, not a same-change handoff/)
+  assert.match(roadmap, /during re-entry or recovery/)
+  assert.doesNotMatch(skill, /Recommended next skill: `auto-resume`/)
+  assert.doesNotMatch(template, /Recommended next skill:\*\* \[none/)
+  assert.doesNotMatch(lifecycle, /`auto-resume` on pass/)
+})
+
+test('auto-resume treats verified completion as no automatic next skill', () => {
+  const skill = readFileSync(join(skillsRoot, 'auto-resume', 'SKILL.md'), 'utf8')
+  const artifactOrder = readFileSync(join(skillsRoot, 'auto-resume', 'references', 'artifact-order.md'), 'utf8')
+
+  assert.match(skill, /For verified completion, report no next lifecycle skill/)
+  assert.match(skill, /Stage `verify` → change complete; report completion/)
+  assert.match(skill, /surface them as optional future work/)
+  assert.match(skill, /none - change complete/)
+  assert.match(skill, /Do not turn a completed verified change into an automatic `auto-office-hours` handoff/)
+  assert.match(artifactOrder, /surface pending roadmap items only as context/)
+  assert.doesNotMatch(skill, /Change complete and ROADMAP\.md has pending items → `auto-office-hours`/)
+  assert.doesNotMatch(skill, /Stage `verify`[^.\n]*`auto-office-hours`/)
+})
+
+test('artifact lifecycle allows clean execute-to-verify continuation', () => {
+  const lifecycle = readFileSync(join(skillsRoot, '_shared', 'references', 'ARTIFACT-LIFECYCLE.md'), 'utf8')
+
+  assert.match(lifecycle, /continue directly into `auto-verify`/)
+  assert.match(lifecycle, /same session can safely do so/)
+  assert.match(lifecycle, /should not force the user to manually invoke the next lifecycle skill/)
 })
 
 test('controller prompts use canonical state path for direct state writes', () => {
@@ -652,15 +703,16 @@ test('lifecycle skills express handoff in durable-state vocabulary', () => {
 
     assert.match(skill, /current\.json|canonical_/, `${skillName} must reference durable state via current.json or canonical pointers`)
     assert.match(skill, /diagnostic/i, `${skillName} must describe diagnostic handling`)
-    assert.match(skill, /[Rr]ecommended next skill|next skill/, `${skillName} must recommend a next skill`)
+    assert.match(skill, /[Rr]ecommended next skill|next skill|New objective|Change status/, `${skillName} must describe next action, completion, or future objective`)
     assert.match(skill, /\.agent\/(?:work|steering)\/|SPEC\.md|PLAN\.md|DESIGN\.md|STATUS\.md/, `${skillName} must name an artifact path`)
   }
 })
 
 test('authored skills do not mandate nested skill invocation', () => {
   // The Automaton handoff contract is durable: skills produce artifacts, update state, and
-  // recommend a next skill. Direct user/host invocation (e.g. /auto-plan) stays valid; only
-  // mandatory nested skill-to-skill invocation is forbidden. The deny-list is narrow on
+  // either recommend, continue, or report completion. Direct user/host invocation
+  // (e.g. /auto-plan) stays valid; only mandatory nested skill-to-skill invocation is forbidden.
+  // The deny-list is narrow on
   // purpose — it only matches explicit must/mandatory/required modifiers around invocation,
   // so legitimate uses of "mandatory" for artifacts or methodology are not affected.
   const mandatoryInvocationPatterns = [
@@ -688,7 +740,7 @@ test('artifact lifecycle reference defines handoff contract and validation tiers
   assert.match(lifecycle, /[Ss]tate mutation/)
   assert.match(lifecycle, /[Dd]iagnostic handling/)
   assert.match(lifecycle, /[Nn]ext-stage recommendation/)
-  assert.match(lifecycle, /recommend or prepare the next stage/)
+  assert.match(lifecycle, /recommend, prepare, or continue into the next stage/)
 
   assert.match(lifecycle, /^## Validation Tiers$/m)
   assert.match(lifecycle, /L1 Coordination/)

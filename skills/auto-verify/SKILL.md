@@ -62,10 +62,19 @@ Binary: the plan passes only when every criterion across all slices passes. One 
 
 [Repeat for each criterion in each slice]
 
-**Overall:** PASS / FAIL
+PASS summary:
+**Overall:** PASS
+**Passed:** [M] of [M] criteria
+**Gaps:** none
+**Change status:** complete
+**New objective:** use `auto-office-hours` to shape the next objective when you are ready.
+
+FAIL summary:
+**Overall:** FAIL
 **Passed:** [N] of [M] criteria
-**Gaps:** [structured list or "none"]
-**Recommended next skill:** [auto-resume | auto-execute]
+**Gaps:** [structured list]
+**Change status:** incomplete
+**Recommended next skill:** auto-execute
 ```
 
 ### On Pass
@@ -73,7 +82,7 @@ Binary: the plan passes only when every criterion across all slices passes. One 
 - Update `.agent/.automaton/state/current.json`: `stage` → `verify`
 - Run `sync-status.mjs` from this skill's installed directory.
 - If `.agent/steering/ROADMAP.md` exists, update the matching phase to `status: done` per `references/ROADMAP-CONTRACT.md`. Match by the phase's `change:` field against `active_change`; skip if empty or no match.
-- Recommend `auto-resume`.
+- End the report with `Change status: complete` and a separate `New objective` line pointing to `auto-office-hours` for future work. Do not print a `Recommended next skill` line on PASS. Use `auto-resume` only for later re-entry or recovery.
 
 ### On Fail
 
@@ -94,7 +103,8 @@ Recommend `auto-execute`; it reads these annotations on re-entry.
 - `.agent/.automaton/state/current.json` updated to `stage: verify` (on pass only); state unchanged on fail
 - `.agent/steering/ROADMAP.md` phase marked done (on pass, if applicable)
 - Diagnostic handling: `error`-level diagnostics block the verification run; `warning`-level findings appear in the report
-- Recommended next skill: `auto-resume` (on pass), `auto-execute` (on fail). The user or host invokes the next skill; auto-verify does not require nested invocation.
+- PASS closeout: report `Change status: complete` and `New objective: use auto-office-hours`; do not emit `Recommended next skill`
+- FAIL closeout: recommend `auto-execute`. The user or host invokes any next skill; auto-verify does not require nested invocation.
 
 ## Rules
 
@@ -108,7 +118,7 @@ Recommend `auto-execute`; it reads these annotations on re-entry.
 
 ### Verification Report Template
 
-Read `references/verification-template.md` for extended format guidance. (~33 lines: grouped-by-slice report format with Criterion/Result/Evidence/Gap per entry; rules on evidence requirements and PARTIAL counting as FAIL.)
+Read `references/verification-template.md` for extended format guidance. (~43 lines: grouped-by-slice report format with Criterion/Result/Evidence/Gap per entry; PASS/FAIL summary shapes; rules on evidence requirements and PARTIAL counting as FAIL.)
 
 ### Common Verification Gaps
 
@@ -116,4 +126,4 @@ Read `references/common-gaps.md` for frequently missed scenarios. (~51 lines: 6-
 
 ### Artifact Lifecycle
 
-Read `references/ARTIFACT-LIFECYCLE.md` when state pointer or handoff rules need clarification. (~70 lines: stage handoffs table, progressive disclosure layout with allowed paths, review verdict routing, STOP conditions.)
+Read `references/ARTIFACT-LIFECYCLE.md` when state pointer or handoff rules need clarification. (~105 lines: stage handoffs table, progressive disclosure layout with allowed paths, review verdict routing, STOP conditions.)

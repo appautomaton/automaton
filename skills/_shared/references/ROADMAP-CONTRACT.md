@@ -36,7 +36,7 @@ Status progression is one-directional: `pending` → `active` → `done`. Do not
 | `auto-office-hours` | Replaces ROADMAP.md content with the approved decomposition; sets the first spec to `status: active` with its `change:` slug | Scale is roadmap-sized and user approves an approach |
 | `auto-frame` | Appends deferred scope as new `status: pending` phases | Spec is narrower than the user's stated goal |
 | `auto-verify` | Sets matching phase to `status: done` | Final slice of the plan passes all criteria |
-| `auto-resume` | Reads ROADMAP.md to surface pending items | Active change is complete or no active work exists |
+| `auto-resume` | Reads ROADMAP.md to surface pending items during re-entry or recovery | User or host invokes resume after interruption, compaction, stale state, or an explicit recovery request |
 
 ## Matching Rule
 

@@ -22,14 +22,14 @@ Context budget: start with artifacts needed for the current stage. Read project 
 Before producing the recovery summary:
 - Trust durable artifacts over memory.
 - Report stale pointers plainly.
-- Recommend one next skill with the reason.
+- Recommend a next skill only when recovered state has incomplete or blocked work. For verified completion, report no next lifecycle skill.
 - Read `references/quality.md` (~36 lines: anti-patterns, better shape, prose hygiene scan patterns) when the summary becomes narrative recap.
 
 ## Do
 
 ### Load State
 
-Read `.agent/steering/STATUS.md`. Read `references/ARTIFACT-LIFECYCLE.md` for recovery order, stale-pointer handling, and stage handoffs. If the recovered state suggests the active change is complete or no active work exists, read `.agent/steering/ROADMAP.md` when it exists to check for pending phases.
+Read `.agent/steering/STATUS.md`. Read `references/ARTIFACT-LIFECYCLE.md` for recovery order, stale-pointer handling, and stage handoffs. If the recovered state suggests the active change is complete or no active work exists, read `.agent/steering/ROADMAP.md` when it exists to surface pending phases as context, not to auto-start them.
 
 If `.agent/` does not exist or `current.json` is missing, recommend `auto-onboard` and stop.
 
@@ -78,7 +78,7 @@ Produce a concise summary:
 **Artifacts loaded:** [list]
 **What was done:** [1-2 sentences]
 **What was blocked:** [1-2 sentences, or "nothing"]
-**What comes next:** [specific next action]
+**What comes next:** [specific next action, or "none - change complete"]
 **Review verdicts:** [product: X, engineering: Y, or "none"]
 **Missing state:** [list or "none"]
 **Roadmap:** [N pending / M total, or "not tracked"]
@@ -96,9 +96,9 @@ Based on the recovered state:
 - Stage `plan` with no plan → `auto-plan`
 - Stage `plan` with plan but no engineering review → `auto-eng-review`
 - Stage `execute` → `auto-execute`
-- Stage `verify` → change complete; check ROADMAP.md for pending items → `auto-office-hours` for next phase or report completion
+- Stage `verify` → change complete; report completion. If ROADMAP.md has pending items, surface them as optional future work, but do not recommend `auto-office-hours` unless the user explicitly asks to start the next phase.
 - Stage `resume` with missing steering → `auto-onboard`
-- Change complete and ROADMAP.md has pending items → `auto-office-hours` for the next roadmap phase
+- Change complete and ROADMAP.md has pending items → report completion and name pending phases as optional future work; no next lifecycle skill by default
 - Change complete and no pending roadmap items → report completion
 
 ## Output
@@ -108,7 +108,7 @@ Based on the recovered state:
 - Review verdicts (if present)
 - `.agent/.automaton/state/current.json` is read-only for auto-resume; stale pointers are reported, not silently repaired
 - Diagnostic handling: missing or conflicting state surfaces as a `warning` in the summary; `error`-level diagnostics block the resume
-- Recommended next skill, based on the recovered state. The user or host invokes it; auto-resume does not require nested invocation.
+- Recommended next skill when recovered state is incomplete or blocked; none when the active change is verified complete. The user or host invokes any next skill; auto-resume does not require nested invocation.
 
 ## Rules
 
@@ -117,6 +117,7 @@ Based on the recovered state:
 - Escalate contradictions instead of guessing.
 - Load artifacts in dependency order: spec first, not plan first.
 - If steering is scaffold-only, report it plainly and recommend `auto-onboard`.
+- Do not turn a completed verified change into an automatic `auto-office-hours` handoff.
 
 ## Deep
 

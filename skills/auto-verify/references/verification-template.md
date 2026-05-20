@@ -18,10 +18,19 @@ Plan-level format. Group results by slice; verdict applies to the entire plan.
 
 ### Summary
 
-**Overall:** PASS / FAIL
+PASS summary:
+**Overall:** PASS
+**Passed:** [M] of [M] criteria
+**Remaining gaps:** none
+**Change status:** complete
+**New objective:** use `auto-office-hours` to shape the next objective when you are ready.
+
+FAIL summary:
+**Overall:** FAIL
 **Passed:** [N] of [M] criteria
-**Remaining gaps:** [list or "none"]
-**Recommended next skill:** [auto-resume | auto-execute]
+**Remaining gaps:** [list]
+**Change status:** incomplete
+**Recommended next skill:** auto-execute
 ```
 
 ## Rules
@@ -31,3 +40,4 @@ Plan-level format. Group results by slice; verdict applies to the entire plan.
 - PARTIAL means some sub-conditions pass and some fail. Still counts as FAIL for the plan.
 - If overall is FAIL, list every gap across all slices, not just the first found.
 - Write `VERIFY-GAP` annotations into PLAN.md for each failed criterion so auto-execute finds them on re-entry.
+- If overall is PASS, do not print a `Recommended next skill` line; use the `New objective` line for future work instead.

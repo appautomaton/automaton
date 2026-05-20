@@ -1,6 +1,6 @@
 # Office-Hours Quality
 
-Load this reference only before presenting alternatives, recommending an approach, or writing the approved design document.
+Load this reference only before presenting alternatives, recommending an approach, or writing the approved `INTAKE.md`.
 
 ## Anti-Patterns
 

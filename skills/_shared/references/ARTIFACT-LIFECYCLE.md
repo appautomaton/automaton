@@ -41,19 +41,19 @@ Rules:
 | --- | --- | --- | --- | --- |
 | `frame` | active change, steering status, optional `INTAKE.md` or framing context | `.agent/work/<change>/INTAKE.md` from office-hours; `.agent/work/<change>/SPEC.md` from frame; `.agent/steering/ROADMAP.md` update from office-hours when scale is roadmap | office-hours sets `active_change` and `stage: frame`; frame sets `canonical_spec`; `stage` remains `frame` unless the user explicitly approves plan handoff | `auto-frame`, `auto-ceo-review`, `auto-plan`, or `auto-office-hours` |
 | `plan` | `canonical_spec`, steering status, optional review sections | `.agent/work/<change>/PLAN.md`; optional `DESIGN.md` | `canonical_plan` points to PLAN.md; `canonical_design` is set only when DESIGN.md exists; `stage` becomes `plan` | `auto-eng-review` or `auto-execute` |
-| `execute` | approved PLAN.md, current slice, acceptance criteria, verification commands | code, docs, tests, orchestration notes, and slice evidence required by PLAN.md | state advances only after evidence exists; do not change canonical pointers to missing files | `auto-execute` for remaining slices or `auto-verify` when implementation is ready to check |
-| `verify` | canonical PLAN.md, all slices executed, verification commands | verification report; `VERIFY-GAP` annotations in PLAN.md on failure | `stage: verify` set only on full pass; failed verification keeps state unchanged | `auto-resume` on pass (change complete), `auto-execute` on fail (gap annotations in PLAN.md) |
+| `execute` | approved PLAN.md, current slice, acceptance criteria, verification commands | code, docs, tests, orchestration notes, and slice evidence required by PLAN.md | state advances only after evidence exists; do not change canonical pointers to missing files | `auto-execute` for remaining slices; continue directly into `auto-verify` when all slices complete and no checkpoint, STOP condition, context pressure, or host limitation blocks continuation |
+| `verify` | canonical PLAN.md, all slices executed, verification commands | verification report; `VERIFY-GAP` annotations in PLAN.md on failure | `stage: verify` set only on full pass; failed verification keeps state unchanged | no next lifecycle skill on pass because the change is complete; may mention `auto-office-hours` only as a new-objective entry point; `auto-execute` on fail (gap annotations in PLAN.md) |
 | `resume` | current state, STATUS.md, canonical artifact pointers | concise recovery summary and next recommended skill | does not invent missing pointers; stale pointers are reported, not silently repaired | the skill matching recovered state |
 
 ## Handoff Contract
 
-Every lifecycle stage hands off through five durable elements. Skills recommend or prepare the next stage; they do not require nested skill invocation. Users or hosts may invoke the next skill directly.
+Lifecycle stages hand off through five durable elements. Skills recommend, prepare, or continue into the next stage when the same session can safely do so. A verified PASS is terminal for the active change; any `auto-office-hours` mention is for a new objective, not a same-change handoff. Direct user/host invocation of the next skill remains valid, but a clean continuation should not force the user to manually invoke the next lifecycle skill.
 
 1. **Exit gate** — the condition that must be true to advance.
 2. **Artifacts produced or updated** — concrete files written or modified for the active change.
 3. **State mutation** — fields changed in `.agent/.automaton/state/current.json`, including `stage`, canonical pointers, and review verdicts.
 4. **Diagnostic handling** — `error`-level diagnostics block advancement; `warning`-level diagnostics surface to the next stage for handling.
-5. **Next-stage recommendation or blocker** — the next skill the user or host should invoke, or the condition preventing progress.
+5. **Next-stage recommendation, blocker, or completion note** — the next skill the user or host should invoke, the condition preventing progress, or the fact that the active change is complete.
 
 ## Review Verdict Routing
 

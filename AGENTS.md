@@ -8,7 +8,7 @@ Portable, stage-gated agentic-AI harness for Claude Code, Codex, and OpenCode.
 - **Skills are pure markdown.** `SKILL.md` + `references/` + `scripts/`. No compiled binaries.
 - **Three hosts.** Claude, Codex, OpenCode — each wires hooks and maps subagent tools.
 - **Five stages.** `frame → plan → execute → verify → resume`. Prerequisites enforced in `runtime/lib/contracts-data.json`.
-- **No nested invocation.** Skills recommend the next skill; they never call each other.
+- **No mandatory nested invocation.** Skills hand off through durable artifacts; clean same-session continuation is allowed when the lifecycle contract says it is safe.
 
 ## Layout
 
@@ -41,7 +41,7 @@ node bin/automaton.mjs context frame
 
 - Edit skills in `skills/` only. Never edit installed copies.
 - Shared references and scripts go in `skills/_shared/`. Install copies them to every skill.
-- Skill entry points: ≤ 500 lines (enforced by test). Detail goes in `references/` via `## Deep` triggers.
+- Skill entry points should stay clear, concise, high-signal, and platform-agnostic. Detail belongs in `references/` via `## Deep` triggers when progressive disclosure keeps the entry point easier to use.
 - `current.json` is the machine cursor. `STATUS.md` is the human summary. Don't duplicate pointers.
 - Runtime enforces only L1 validation (stage enum, pointer resolution). L2/L3 live in prompts and tests.
 

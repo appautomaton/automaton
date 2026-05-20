@@ -15,6 +15,7 @@ test('scaffold creates steering, work, and nested runtime directories', () => {
   assert.equal(existsSync(join(paths.steeringRoot, 'PROJECT.md')), true)
   assert.equal(existsSync(join(paths.steeringRoot, 'REQUIREMENTS.md')), true)
   assert.equal(existsSync(join(paths.steeringRoot, 'ROADMAP.md')), true)
+  assert.match(readFileSync(join(paths.steeringRoot, 'ROADMAP.md'), 'utf8'), /No roadmap phases yet/)
   assert.equal(existsSync(join(paths.steeringRoot, 'STATUS.md')), true)
   assert.equal(existsSync(paths.wikiRoot), true)
   assert.equal(existsSync(join(paths.agentRoot, 'work')), true)
