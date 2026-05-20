@@ -41,10 +41,10 @@ Load files in this order. Stop as soon as you have enough to proceed.
 4. Linked spec detail    (only files named by SPEC.md and needed for planning)
 5. DESIGN.md             (if exists and relevant, < 1000 tokens)
 6. Wiki pages            (only if referenced by spec or plan)
-7. Source files          (only the files the current slice touches)
+7. Source files          (read as needed to produce accurate slices)
 ```
 
-Do not load source files unless the plan requires understanding existing code patterns. Do not ignore linked `spec/*.md` files when they contain normative requirements, gap IDs, invariants, or acceptance detail.
+Read and explore source files when understanding existing code helps produce accurate slices — module structure, current implementations, test patterns, and integration points all inform slice boundaries, verification commands, and dependency ordering. Do not ignore linked `spec/*.md` files when they contain normative requirements, gap IDs, invariants, or acceptance detail.
 </CONTEXT-LOADING>
 
 ### Assess Review State (if reviews exist)

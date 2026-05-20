@@ -15,7 +15,7 @@ First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, cano
 
 auto-onboard produces steering artifacts; auto-office-hours produces clarity. This skill is conversational only until the user approves an approach. Before approval, it writes nothing. After approval, it persists the approved intake to `.agent/work/<change>/INTAKE.md` and records the active change so `auto-frame` can resume without conversation memory. It never writes code, scaffolds projects, or creates SPEC.md.
 
-Context budget: this skill is a dialogue. No broad scans. No file reads unless the user references specific files.
+Context budget: this skill is a dialogue, not an implementation pass. Read and explore project files when understanding the codebase helps sharpen the objective — especially for parity, audit, or mixed shapes where the evidence is in the code. Avoid exhaustive tree walks; read what you need to form a grounded picture of the request and the project.
 
 ## Quality Gate
 
@@ -24,6 +24,7 @@ Before presenting alternatives, recommending an approach, or writing the design 
 - Make alternatives differ by scope, risk, or learning value.
 - Ask for observed behavior when the answer stays abstract.
 - Confirm request coverage before narrowing scope or deferring work.
+- Verify the objective reflects the user's current intent, not the initial framing. If the objective evolved during conversation, the coverage map and alternatives must track the refined version.
 - Read `references/quality.md` (~36 lines: anti-patterns, better shape, prose hygiene scan patterns) when the conversation sounds encouraging but non-decisive.
 
 ## Do
@@ -65,11 +66,21 @@ From the user's initial message, determine all three:
 
 ### Run Diagnostic
 
-Ask questions one at a time. Wait for each answer before asking the next. Use the mode-specific question sets below.
+Use the mode-specific question sets below, then apply shape-aware routing from the same reference. When the shape is not feature, shape-specific questions take priority over mode questions — parity work needs gap-closure questions, not "coolest version" questions. Do not bank questions — ask them when relevant, with context. Prefer multiple-choice when offering options. The agent decides how to present questions based on what produces the highest-quality diagnostic.
+
+### Follow Up on Answers
+
+After each answer, before moving to the next scripted question:
+
+1. **Identify what's new.** Did the answer reveal something unexpected, a constraint, a priority, a correction? If so, follow up immediately — do not bank it for later.
+2. **Provide context when asking.** Explain what you observed and why the follow-up matters: "You said gaps should be closed, not reported. That changes the shape from audit to parity-closure. Does that match your intent?" Not just "Can you clarify?"
+3. **Connect across answers.** If an answer contradicts or refines something from earlier, name it: "Earlier you said X, but now you're describing Y. Which is closer to what you want?"
+4. **Do not bank questions.** Ask probe questions when they are relevant — do not hold them for a later turn. If the user's answer raises multiple threads that need clarification, ask them now with adequate context for each. The goal is to get context through probing, not to ration questions.
+5. **Return to the scripted questions** once the follow-ups are resolved. The diagnostic questions are a backbone, not a rigid script — follow-ups take priority when the conversation needs them.
 
 ### Push for Specificity
 
-The first answer is usually polished. Push once, then push again. Read `references/pushback-patterns.md` (~40 lines: 5 BAD/GOOD response pairs by pattern type) for examples.
+The first answer is usually polished. Push once, then push again. Push on the substance of what the user said, not with generic prompts. Read `references/pushback-patterns.md` (~40 lines: 5 BAD/GOOD response pairs by pattern type) for examples.
 
 ### Challenge Premises
 
@@ -160,11 +171,12 @@ Read `references/builder-diagnostic.md` for the five design-partner questions an
 If the user approves an approach, write `.agent/work/<change>/INTAKE.md` with:
 - Work scale (bug / feature / capability / roadmap)
 - Work shape (feature / refactor / parity / audit / migration / coverage / content / mixed)
-- Objective statement
+- Objective statement — must reflect the user's final refined wording, not the initial framing or the agent's reinterpretation
 - Broader intent: the larger goal this spec serves, even if the spec only addresses part of it
 - Target user or stakeholder
 - Desired outcome
 - Scope boundary and anti-goals
+- Rejected framings: directions the user explicitly ruled out during conversation, with their reasoning. These prevent downstream skills from reintroducing what the user rejected.
 - Scope preservation: whether this preserves the user's full stated intent or intentionally decomposes it
 - Scope coverage: included, deferred, anti-goals, and needs-decision items; omit empty groups
 - Selected approach with rationale
@@ -174,6 +186,8 @@ If the user approves an approach, write `.agent/work/<change>/INTAKE.md` with:
 - `.agent/steering/ROADMAP.md` updated (when scale is roadmap)
 - Diagnostic handling: `error`-level diagnostics block advancement; `warning`-level diagnostics surface to `auto-frame`
 - Recommended next skill: `auto-frame`. The user or host invokes it; auto-office-hours does not require nested invocation.
+
+The INTAKE is a faithful record of what the user approved, not the agent's editorial rewrite. Use the user's language where possible. When the agent reframed something and the user accepted the reframe, capture the accepted version and note it was a reframe.
 
 If the user does not approve an approach, output:
 - Summary of what was discussed
@@ -186,7 +200,7 @@ If the user does not approve an approach, output:
 
 - **Conversational only until approval.** No code, no scaffolding, no file writes before the user picks an approach.
 - **INTAKE.md after approval.** Approved office-hours context must survive compaction and fresh sessions.
-- **One question at a time.** Wait for the answer before asking the next.
+- **Do not bank questions.** Ask probe questions when they're relevant, not later. If the user's answer raises threads that need clarification, ask them now with context. Scripted diagnostic questions are a backbone — follow-ups and probes take priority when the conversation needs them.
 - **State the decision basis.** Name what the current evidence supports, what it does not support, and what evidence would change the assessment.
 - **Evaluate evidence directly.** If a claim is unsupported, name the missing evidence. If it is supported, name the evidence and ask the next diagnostic question.
 - **Do not drop request context silently.** Every material ask, context detail, perspective, or worry is included, deferred with reason, marked as an anti-goal, or turned into a focused question.

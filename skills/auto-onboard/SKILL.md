@@ -32,7 +32,7 @@ Three cases:
 2. **Already-onboarded, no update requested.** `.agent/steering/PROJECT.md` contains real project truth and the user did not ask for a refresh. Report what exists and route by state:
      - Active change with a stage → `auto-resume`
      - No active change or stage is `none` → `auto-office-hours`
-3. **Already-onboarded, targeted refresh.** Steering exists and the user asks to update it (e.g., "update REQUIREMENTS because we added Postgres"). Do NOT rescan the full repo. Read only the evidence relevant to the update (at most 3 files), update only the affected steering file(s), run `sync-status.mjs`, and report what changed.
+3. **Already-onboarded, targeted refresh.** Steering exists and the user asks to update it (e.g., "update REQUIREMENTS because we added Postgres"). Focus on the evidence relevant to the update, update only the affected steering file(s), run `sync-status.mjs`, and report what changed. Read additional files when needed to produce an accurate update.
 
 When writing ROADMAP.md during first-time setup, use the format in `references/ROADMAP-CONTRACT.md` (~60 lines: canonical phase format, status values, update rules by skill, matching rule, invariants).
 

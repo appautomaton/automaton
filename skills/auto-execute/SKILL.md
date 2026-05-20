@@ -15,7 +15,7 @@ First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, cano
 
 auto-execute is the execute-stage orchestrator. It owns route selection, state, and scope. It executes one verified slice at a time inside a selected execution window. Continuation is the default after a verified slice; checkpoints and STOP conditions are the exceptions. Direct implementation and subagent implementation are two routes inside this skill; the user should not have to switch skills to get the subagent route.
 
-Context budget: hold only the active slice, execution-window metadata, acceptance criteria, route metadata, verification commands, and files you are actively editing or coordinating. Subagents receive curated slice context, not the whole plan.
+Context budget: focus on the active slice, execution-window metadata, acceptance criteria, route metadata, verification commands, and files you are actively editing or coordinating. Read additional project files when understanding the codebase helps produce correct implementation. Subagents receive curated slice context, not the whole plan.
 
 ## Quality Gate
 
@@ -44,7 +44,7 @@ If `engineering_review` is `approved_with_risks`, surface the review rationale b
 
 If the current slice involves prose, read `references/content-execution.md` (~62 lines: execution contract with required inputs, factual-risk gate, 5-step drafting loop, anti-slop pass patterns, output discipline) before changing the artifact. Content execution stays inside the same direct/subagent route selection; it is not a separate skill.
 
-If the current slice links a `slices/slice-NNN.md` detail file or names requirement IDs whose detail lives in `spec/*.md`, load only those linked files for the active slice. Do not load every supplemental file for the change.
+If the current slice links a `slices/slice-NNN.md` detail file or names requirement IDs whose detail lives in `spec/*.md`, load those linked files for the active slice. Read additional files when the implementation requires understanding existing code, patterns, or integration points.
 
 ### Select Execution Window
 

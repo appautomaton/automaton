@@ -19,7 +19,7 @@ When entering any stage, load files in this order. Stop as soon as you have enou
 3. SPEC.md               (if canonical_spec exists, < 1000 tokens)
 4. PLAN.md               (if executing, < 1000 tokens)
 5. Wiki pages            (only if referenced by spec or plan)
-6. Source files          (only the files the current slice touches)
+6. Source files          (read as needed to understand the project and produce accurate work)
 ```
 
 ## Context Budget Language

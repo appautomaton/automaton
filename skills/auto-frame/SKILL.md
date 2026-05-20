@@ -17,6 +17,8 @@ auto-frame always produces the canonical artifact: `SPEC.md`. If you leave this 
 
 Context budget: `SPEC.md` is the reloadable contract, not the entire body of detail. Keep it compact enough to re-read, but do not narrow a coherent goal just to keep the file short. For larger coherent work, summarize the contract in SPEC.md and link detail files under `spec/*.md`, such as `constraints.md`, `gap-matrix.md`, `risks.md`, or `acceptance-detail.md`. The primary scope check is coherence: one outcome = one spec, even when it needs progressive disclosure.
 
+Read and explore project files when understanding the codebase helps produce an accurate spec — existing implementations, patterns, module boundaries, and current state all inform constraints, risks, and acceptance criteria. Avoid exhaustive tree walks; read what you need to ground the spec in reality.
+
 ## Quality Gate
 
 Before finalizing `SPEC.md`:
@@ -29,7 +31,7 @@ Before finalizing `SPEC.md`:
 
 ### Restate
 
-If `.agent/work/<active_change>/INTAKE.md` exists, read it before interviewing. If no intake exists but office-hours context is present in the conversation (design document, work scale, work shape, broader intent), read that instead. Adopt the scale, shape, broader intent, target user or stakeholder, and scope coverage to calibrate constraints and interview depth. Do not re-ask what office-hours already established.
+If `.agent/work/<active_change>/INTAKE.md` exists, read it before interviewing. If no intake exists but office-hours context is present in the conversation (design document, work scale, work shape, broader intent), read that instead. Adopt the scale, shape, broader intent, target user or stakeholder, scope coverage, and rejected framings to calibrate constraints and interview depth. Do not re-ask what office-hours already established. Do not reintroduce directions the user explicitly rejected — if INTAKE.md includes rejected framings, treat them as hard constraints on the spec.
 
 State the goal in one sentence. If you cannot, ask one clarifying question and stop.
 
@@ -63,9 +65,9 @@ Read `references/lens-selection.md` (~28 lines) for the decision matrix if the c
 
 If the goal is clear and lenses are obvious, skip this.
 
-If anything is ambiguous, ask ≤ 3 questions total for feature-sized goals. For capability-sized goals that did not come through office-hours, up to 5. One per message. Prefer multiple-choice. No open-ended brainstorming.
+If anything is ambiguous, ask questions that materially change the spec. Do not ask for preferences that don't affect scope. Prefer multiple-choice when offering options. Do not bank questions — ask them when they're relevant, with context for why the answer matters to the spec. The agent decides how many questions to ask and how to present them based on what produces the highest-quality spec.
 
-Questions must materially change the spec. Do not ask for preferences that don't affect scope.
+If INTAKE.md includes needs-decision items or unresolved assumptions, address those first. Do not re-ask what office-hours already established, but do follow up on things office-hours didn't resolve.
 </INTERVIEW>
 
 ### Write SPEC.md

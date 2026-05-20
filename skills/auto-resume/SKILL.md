@@ -15,7 +15,7 @@ First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, cano
 
 auto-resume rebuilds context from durable artifacts, not from the user's description or the agent's training data. It loads canonical artifacts in dependency order (spec first, then design, then plan) and reports what it found, what was blocked, and what comes next.
 
-Context budget: load only the artifacts needed for the current stage. Do not load the full wiki.
+Context budget: start with artifacts needed for the current stage. Read project files when understanding the codebase helps rebuild accurate context for the next action.
 
 ## Quality Gate
 
