@@ -62,7 +62,7 @@ From the user's initial message, determine all three:
 
    For bug-sized goals, consider whether office-hours is the right skill. A known bug with a known fix can go directly to `auto-frame`.
 
-   For roadmap-sized goals, help the user identify the highest-leverage spec to frame first. Read `references/ROADMAP-CONTRACT.md` (~60 lines: canonical phase format, status values with progression rules, update rules by skill, matching rule, invariants) and write all decomposed items to `.agent/steering/ROADMAP.md` after approval. Set the first spec's phase to `status: active` with its `change:` slug, remaining phases to `status: pending`. If you narrow the user's stated goal for decomposition, name the narrowing explicitly and preserve the broader intent.
+   For roadmap-sized goals, help the user identify the highest-leverage spec to frame first. Read `references/ROADMAP-CONTRACT.md` (~63 lines: canonical phase format, status values with progression rules, update rules by skill, matching rule, single-file invariant) and write the approved decomposition to `.agent/steering/ROADMAP.md`, replacing any existing content. Set the first spec's phase to `status: active` with its `change:` slug, remaining phases to `status: pending`. If you narrow the user's stated goal for decomposition, name the narrowing explicitly and preserve the broader intent.
 
 ### Run Diagnostic
 
@@ -111,7 +111,7 @@ State which approach you recommend and why. Do NOT proceed until the user explic
 
 ### Persist Approved Intake
 
-After approval, derive a concise kebab-case change slug from the objective, reusing `active_change` only when it already matches this discussion. Write the approved intake to `.agent/work/<change>/INTAKE.md`. When scale is roadmap, write or update `.agent/steering/ROADMAP.md` per `references/ROADMAP-CONTRACT.md`. Update `.agent/.automaton/state/current.json`:
+After approval, derive a concise kebab-case change slug from the objective, reusing `active_change` only when it already matches this discussion. Write the approved intake to `.agent/work/<change>/INTAKE.md`. When scale is roadmap, replace `.agent/steering/ROADMAP.md` with the approved decomposition per `references/ROADMAP-CONTRACT.md`. Update `.agent/.automaton/state/current.json`:
    - `active_change` → `<change>`
    - `stage` → `frame`
 

@@ -32,8 +32,8 @@ Status progression is one-directional: `pending` → `active` → `done`. Do not
 
 | Skill | Action | When |
 |-------|--------|------|
-| `auto-onboard` | Creates ROADMAP.md with all phases set to `status: pending` and empty `change:` | First-time project setup |
-| `auto-office-hours` | Writes or updates ROADMAP.md with decomposed items; sets the first spec to `status: active` with its `change:` slug | Scale is roadmap-sized and user approves an approach |
+| `auto-onboard` | Fills ROADMAP.md with phases when repo evidence supports them; leaves scaffold placeholder otherwise | First-time project setup |
+| `auto-office-hours` | Replaces ROADMAP.md content with the approved decomposition; sets the first spec to `status: active` with its `change:` slug | Scale is roadmap-sized and user approves an approach |
 | `auto-frame` | Appends deferred scope as new `status: pending` phases | Spec is narrower than the user's stated goal |
 | `auto-verify` | Sets matching phase to `status: done` | Final slice of the plan passes all criteria |
 | `auto-resume` | Reads ROADMAP.md to surface pending items | Active change is complete or no active work exists |
@@ -44,15 +44,18 @@ Status progression is one-directional: `pending` → `active` → `done`. Do not
 
 ## Invariants
 
+- There is exactly one roadmap file: `.agent/steering/ROADMAP.md`. Do not create parallel roadmap files.
 - ROADMAP.md is a steering artifact. It is NOT a canonical pointer in `current.json`.
+- ROADMAP.md is forward-looking. Work evidence lives in `.agent/work/<change>/`; the roadmap does not need to preserve completed-work history beyond `status: done` markers.
+- When `auto-office-hours` produces a user-approved decomposition, it replaces existing roadmap content. A user-approved roadmap supersedes a speculative onboard roadmap.
 - At most one phase has `status: active` at any time.
 - A phase with `status: active` must have a non-empty `change:` field.
 - Deferred scope appended by `auto-frame` starts as `status: pending` with empty `change:`.
-- Existing phases from `auto-onboard` and user-requested phases from `auto-office-hours` use the same format.
 - The `## Deferred or Not Now` section at the bottom holds items explicitly excluded from the roadmap.
 
 ## Anti-Patterns
 
+- Creating parallel roadmap files (e.g., `ROADMAP-<name>.md`) instead of updating `ROADMAP.md`.
 - Adding ROADMAP.md as a canonical pointer in `current.json`.
 - Setting multiple phases to `status: active` simultaneously.
 - Skipping `pending` and writing phases directly as `active` without user approval.

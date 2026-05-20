@@ -34,7 +34,7 @@ Three cases:
      - No active change or stage is `none` → `auto-office-hours`
 3. **Already-onboarded, targeted refresh.** Steering exists and the user asks to update it (e.g., "update REQUIREMENTS because we added Postgres"). Focus on the evidence relevant to the update, update only the affected steering file(s), run `sync-status.mjs`, and report what changed. Read additional files when needed to produce an accurate update.
 
-When writing ROADMAP.md during first-time setup, use the format in `references/ROADMAP-CONTRACT.md` (~60 lines: canonical phase format, status values, update rules by skill, matching rule, invariants).
+When writing ROADMAP.md during first-time setup, use the format in `references/ROADMAP-CONTRACT.md` (~63 lines: canonical phase format, status values, update rules by skill, matching rule, single-file invariant).
 
 ### Scan Top-Level Files
 
@@ -58,7 +58,7 @@ Use `templates/` as scaffolds:
 - `.agent/wiki/REPO-MAP.md`: bounded import record
 - `.agent/steering/PROJECT.md`: what this repo owns and why
 - `.agent/steering/REQUIREMENTS.md`: observed, inferred, and unknown constraints
-- `.agent/steering/ROADMAP.md`: 3 to 6 plausible phases
+- `.agent/steering/ROADMAP.md`: 3 to 6 plausible phases when repo evidence supports multiple independent phases; otherwise leave the scaffold placeholder for `auto-office-hours` to fill on demand
 - `.agent/steering/STATUS.md`: current state and next step
 
 ### Update State
@@ -95,7 +95,7 @@ Do not guess. Do not proceed.
 | REPO-MAP.md | `.agent/wiki/` | Bounded import record: surfaces, stack, boundaries, hotspots |
 | PROJECT.md | `.agent/steering/` | What this repo owns, why it exists, major surfaces |
 | REQUIREMENTS.md | `.agent/steering/` | Constraints, non-goals, risks, evidence anchors |
-| ROADMAP.md | `.agent/steering/` | 3–6 phases sequenced by dependency and leverage |
+| ROADMAP.md | `.agent/steering/` | 3–6 phases when evidence supports them; scaffold placeholder otherwise |
 | STATUS.md | `.agent/steering/` | Current state, what is true now, next step |
 
 - `.agent/.automaton/state/current.json` initialized when missing; auto-onboard does not overwrite an existing `active_change` or `stage`

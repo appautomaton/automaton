@@ -62,7 +62,7 @@ The sequence should read like `why -> what must stay true -> what to do next`.
 
 ### `ROADMAP.md`
 
-- 3 to 6 ordered phases
+- 3 to 6 ordered phases when repo evidence supports multiple independent phases; leave the scaffold placeholder otherwise
 - each phase must include `status: pending` and an empty `change:` field; see `references/ROADMAP-CONTRACT.md` for the full format
 - each phase should have an objective, why now, likely outputs, and an exit signal
 - phases should reflect the current repo, not generic best practices
