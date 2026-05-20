@@ -50,7 +50,7 @@ if (!existsSync(currentPath)) {
 const steeringFiles = {
   'PROJECT.md': '# Project\n\nDescribe the repo and why it exists.\n',
   'REQUIREMENTS.md': '# Requirements\n\nList the accepted product and technical constraints.\n',
-  'ROADMAP.md': '# Roadmap\n\nNo roadmap phases yet.\n\nAdd phases only for user-approved roadmap decomposition, deferred SPEC scope, or repo-evident independent outcomes.\n\n## Deferred or Not Now\n\n- None recorded.\n',
+  'ROADMAP.md': '# Roadmap\n\nNo roadmap phases yet.\n\nFirst-time onboarding does not create roadmap phases. On refresh, update phases only after strong roadmap evidence and user confirmation in chat.\n\n## Deferred or Not Now\n\n- None recorded.\n',
   'STATUS.md': [
     '# Status',
     '',

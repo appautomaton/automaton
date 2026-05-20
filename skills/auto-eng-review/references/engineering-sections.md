@@ -1,13 +1,15 @@
 # Engineering Review Sections
 
-Run all sections after scope and mode are agreed. Never skip a section. If a section has zero findings, say "No issues found" and move on, but you must evaluate it.
+Use this as a trigger-based risk checklist. Do not run every section by default, and do not write "No issues found" filler. Evaluate only sections whose trigger appears in PLAN.md, DESIGN.md, or the changed surface. Summarize clean sections in one line at most; expand only verdict-driving risks.
 
 ## Section 1: Architecture Review
 
-Evaluate and diagram:
+Trigger: new pattern, cross-module integration, state machine, pipeline, external service, or unclear component boundary.
+
+Evaluate when triggered:
 - Overall system design and component boundaries. Dependency graph.
-- Data flow: all four paths (happy, nil, empty, error). ASCII diagram for each.
-- State machines. ASCII diagram for every new stateful object. Include impossible/invalid transitions.
+- Data flow: happy path and material shadow paths. Add one diagram only when prose would be ambiguous.
+- State machines. Diagram only non-trivial stateful objects. Include impossible/invalid transitions when they affect risk.
 - Coupling concerns. Before/after dependency graph.
 - Scaling characteristics. What breaks first under 10x load? Under 100x?
 - Single points of failure. Map them.
@@ -17,7 +19,9 @@ Evaluate and diagram:
 
 ## Section 2: Error & Rescue Map
 
-For every new method/service that can fail, fill in:
+Trigger: new error handling, external calls, persistence, retries, parsing, async jobs, or user-visible failure states.
+
+For risk-bearing methods/services, fill in only rows that can change the verdict:
 
 ```
   METHOD/CODEPATH          | WHAT CAN GO WRONG           | EXCEPTION CLASS
@@ -39,7 +43,9 @@ Rules:
 
 ## Section 3: Security & Threat Model
 
-Evaluate:
+Trigger: new user input, auth/permission boundary, secrets, file paths, network calls, dependencies, sensitive data, or injection surface.
+
+Evaluate when triggered:
 - Attack surface expansion. New endpoints, params, file paths, background jobs?
 - Input validation. For every new user input: nil, empty, wrong type, max length, injection attempts.
 - Authorization. Scoped to right user/role? Direct object reference vulnerabilities?
@@ -53,7 +59,9 @@ For each finding: threat, likelihood (High/Med/Low), impact (High/Med/Low), miti
 
 ## Section 4: Data Flow & Interaction Edge Cases
 
-**Data Flow Tracing:** For every new data flow, ASCII diagram showing:
+Trigger: new data transform, persistence, UI interaction, workflow state, or user-visible async behavior.
+
+**Data Flow Tracing:** For complex new data flow, one diagram may help:
 ```
   INPUT ──▶ VALIDATION ──▶ TRANSFORM ──▶ PERSIST ──▶ OUTPUT
     │            │              │            │           │
@@ -64,11 +72,13 @@ For each finding: threat, likelihood (High/Med/Low), impact (High/Med/Low), miti
    type?]                                                     ]
 ```
 
-**Interaction Edge Cases:** For every new user-visible interaction, evaluate double-click, stale state, navigate-away, slow connection, zero results, 10,000 results, retry-while-in-flight.
+**Interaction Edge Cases:** For new user-visible interactions, evaluate only applicable edge cases: double-click, stale state, navigate-away, slow connection, zero results, 10,000 results, retry-while-in-flight.
 
 Flag any unhandled edge case as a gap. For each gap, specify the fix.
 
 ## Section 5: Code Quality Review
+
+Trigger: always, but keep it bounded to the files and patterns touched by the plan.
 
 - Code organization and module structure. Fits existing patterns?
 - DRY violations. Be aggressive. Reference file and line.
@@ -81,7 +91,9 @@ Flag any unhandled edge case as a gap. For each gap, specify the fix.
 
 ## Section 6: Test Review
 
-Diagram every new thing:
+Trigger: always. Use a compact coverage map, not a diagram dump.
+
+Map new things when present:
 - NEW UX FLOWS
 - NEW DATA FLOWS
 - NEW CODEPATHS
@@ -106,6 +118,8 @@ Flakiness risk: Flag tests depending on time, randomness, external services, or 
 
 ## Section 7: Performance Review
 
+Trigger: new queries, loops over unbounded data, background jobs, large files, caching, concurrency, or external calls.
+
 - N+1 queries. Every new association traversal: includes/preload?
 - Memory usage. Maximum size in production for every new data structure.
 - Database indexes. Every new query: is there an index?
@@ -115,6 +129,8 @@ Flakiness risk: Flag tests depending on time, randomness, external services, or 
 - Connection pool pressure. New DB, Redis, HTTP connections?
 
 ## Section 8: Observability & Debuggability
+
+Trigger: operated service behavior, production workflows, async jobs, external dependencies, sensitive flows, or hard-to-debug state.
 
 - Logging. Structured log lines at entry, exit, and each significant branch?
 - Metrics. What metric tells you it is working? What tells you it is broken?
@@ -127,6 +143,8 @@ Flakiness risk: Flag tests depending on time, randomness, external services, or 
 
 ## Section 9: Deployment & Rollout
 
+Trigger: deployment risk, migrations, feature flags, config/env changes, data compatibility, or irreversible state.
+
 - Migration safety. Backward-compatible? Zero-downtime? Table locks?
 - Feature flags. Should any part be behind a flag?
 - Rollout order. Migrate first, deploy second?
@@ -137,6 +155,8 @@ Flakiness risk: Flag tests depending on time, randomness, external services, or 
 - Smoke tests. What automated checks immediately post-deploy?
 
 ## Section 10: Long-Term Trajectory
+
+Trigger: architectural commitment, new dependency, durable schema/API, framework choice, or path-dependent abstraction.
 
 - Technical debt introduced. Code, operational, testing, documentation debt.
 - Path dependency. Does this make future changes harder?
@@ -157,4 +177,4 @@ Skip only if no UI scope detected.
 - Responsive intention: mobile mentioned or afterthought?
 - Accessibility basics: keyboard nav, screen readers, contrast, touch targets
 
-Required ASCII diagram: user flow showing screens/states and transitions.
+Add a user-flow diagram only when screens or states are complex enough that prose would be ambiguous.

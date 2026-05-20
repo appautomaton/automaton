@@ -1,6 +1,6 @@
 # Startup Intake Template
 
-Write the approved intake to `.agent/work/<change-name>/INTAKE.md`.
+Write the approved intake to `.agent/work/<change-name>/INTAKE.md`. Keep it as a compact decision record, not a transcript.
 
 The INTAKE is a faithful record of what the user approved. Use the user's language where possible. When the agent reframed something and the user accepted the reframe, capture the accepted version and note it was a reframe.
 
@@ -18,19 +18,15 @@ Work shape: {feature / refactor / parity / audit / migration / coverage / conten
 {the user's final refined objective — not the initial framing, not the agent's rewrite}
 
 ## Broader Intent
-{the larger goal this spec serves, even if this spec addresses only part of it}
+{larger goal this spec serves; omit if identical to Objective}
 
-## Demand Evidence
-{specific quotes, numbers, or observed behaviors demonstrating real demand — not hypothetical interest}
-
-## Status Quo
-{concrete current workflow users live with today, including workarounds}
-
-## Target User & Narrowest Wedge
-{the specific human and the smallest version worth paying for}
+## Startup Evidence
+- Demand: {specific quote, number, or observed behavior; omit if not established}
+- Status quo: {current workflow or workaround; omit if not established}
+- Target user/wedge: {specific human and smallest useful wedge; omit if not established}
 
 ## Shape Context
-{include the section that matches the work shape — omit for plain feature shape:}
+{include only the section that changes framing or verification; omit for plain feature shape:}
 {- Parity: "Closure Target" — reference system, gap landscape, what "closed" means}
 {- Audit: "Key Questions" — what the audit must answer, what decision depends on findings}
 {- Refactor: "Structural Goal" — what invariant holds, what structural problem is solved}
@@ -39,7 +35,7 @@ Work shape: {feature / refactor / parity / audit / migration / coverage / conten
 {- Mixed: combine the relevant sections above}
 
 ## Constraints
-{hard limits that narrow the solution space: technical, regulatory, timeline, resource, or compatibility}
+{hard limits that narrow the solution space; omit if none}
 
 ## Scope Coverage
 - Included: {material request items covered by this change}
@@ -47,29 +43,17 @@ Work shape: {feature / refactor / parity / audit / migration / coverage / conten
 - Anti-goals: {explicit exclusions for this change}
 - Needs decision: {questions or options that would change scope; omit if none}
 
-## Rejected Framings
-{directions the user explicitly ruled out during conversation, with their reasoning. Omit if none.}
-
 ## Scope Preservation
 {whether this preserves the user's full stated intent or intentionally decomposes it}
 
-## Premises
-{assumptions challenged during conversation — what was tested, what held, what changed}
-
-## Approaches Considered
-### Approach A: {name}
-{summary, effort, risk, pros, cons}
-### Approach B: {name}
-{summary, effort, risk, pros, cons}
-
 ## Recommended Approach
-{chosen approach with rationale}
+{chosen approach and one-line rationale}
 
 ## Key Assumptions and Risks
-{assumptions that would change the approach if wrong; risks that affect execution}
+{only assumptions or risks that change execution; omit if none}
 
-## Deferred Scope
-{ideas surfaced during discussion that exceed this spec's boundary. Capture in ROADMAP.md. Omit if nothing was deferred.}
+## Rejected or Deferred
+{ruled-out framings and deferred scope with reasons; omit if none}
 
 ## The Assignment
 {one concrete real-world action the user can do today, not "go build it"}
@@ -81,4 +65,5 @@ Work shape: {feature / refactor / parity / audit / migration / coverage / conten
 - The Assignment must be a specific action: "interview 3 ops managers" not "think about your target market."
 - The Objective must use the user's final refined language, not the initial framing.
 - Shape Context uses the section matching the work shape. Omit entirely for plain feature work where Demand Evidence and Target User already carry the shape signal.
+- Omit empty sections and do not preserve the full alternatives analysis; keep only the approved approach and material rejected/deferred items.
 - Save to `.agent/work/<change-name>/INTAKE.md`, never to host-specific paths.

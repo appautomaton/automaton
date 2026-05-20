@@ -52,7 +52,7 @@
 
 - ...
 
-## Likely Hotspots for the First Changes
+## Change-Relevant Hotspots
 
 - ...
 
@@ -60,11 +60,6 @@
 
 - `...` - why it mattered
 
-## Open Questions
+## Blocking Ambiguities
 
-- ...
-
-## Import Verdict
-
-- steering confidence: high | medium | low
-- recommended next skill: `auto-frame` | `auto-plan` | `auto-resume`
+- None. Omit this section when there are no steering-blocking ambiguities.

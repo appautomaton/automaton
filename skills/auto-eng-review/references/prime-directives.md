@@ -10,11 +10,11 @@ Non-negotiable standards for every engineering review.
 
 4. **Interactions have edge cases.** Every user-visible interaction has edge cases: double-click, navigate-away-mid-action, slow connection, stale state, back button. Map them.
 
-5. **Observability is scope, not afterthought.** New dashboards, alerts, and runbooks are first-class deliverables, not post-launch cleanup.
+5. **Observability is proportional scope.** New codepaths need a way to diagnose failure. Dashboards, alerts, and runbooks are first-class only when the plan changes operated production behavior.
 
-6. **Diagrams are mandatory.** No non-trivial flow goes undiagrammed. ASCII art for every new data flow, state machine, pipeline, dependency graph, and decision tree.
+6. **Diagrams earn their space.** Add an ASCII diagram only when it clarifies a non-trivial flow, state transition, dependency graph, or rollout path that would be ambiguous in prose.
 
-7. **Everything deferred must be written down.** Vague intentions are lies. TODOS.md or it does not exist.
+7. **Deferred work needs an owner surface.** Record deferred work only in the approved plan, roadmap, or review action when someone downstream will act on it. Do not create TODO files by default.
 
 8. **Optimize for the 6-month future, not just today.** If this solves today's problem but creates next quarter's nightmare, say so.
 
@@ -28,8 +28,8 @@ Non-negotiable standards for every engineering review.
 - Err on the side of handling more edge cases, not fewer.
 - Bias toward explicit over clever.
 - Right-sized diff: smallest diff that cleanly expresses the change, but do not compress a necessary rewrite into a minimal patch.
-- Observability is not optional. New codepaths need logs, metrics, or traces.
-- Security is not optional. New codepaths need threat modeling.
+- Observability is not optional, but the artifact should name the minimal signal needed for the change.
+- Security is not optional when new inputs, privileges, secrets, network calls, or data classes are touched.
 - Deployments are not atomic. Plan for partial states, rollbacks, and feature flags.
-- ASCII diagrams in code comments for complex designs.
+- ASCII diagrams in code comments only for complex designs where the diagram will stay maintained.
 - Diagram maintenance is part of the change. Stale diagrams are worse than none.

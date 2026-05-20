@@ -1,20 +1,22 @@
 # Verification Report Template
 
-Plan-level format. Group results by slice; verdict applies to the entire plan.
+Plan-level format. Group results by slice; verdict applies to the entire plan. The full checklist is internal; the report expands only material gaps by default.
 
 ```markdown
 ## Verification: [Change Name]
 
 ### Slice N: [Name]
 
-**Criterion:** [acceptance criterion from plan]
-**Result:** PASS / FAIL / PARTIAL
-**Evidence:** [command output or direct observation]
-**Gap:** [what is missing, or "none"]
+**PASS:** [count] criteria
+**Evidence:** [commands or observations that prove the pass]
 
-[Repeat for each criterion in this slice]
+**Gaps:** none, or:
+- Criterion: [failed, partial, skipped, or command-derived criterion]
+  Result: FAIL / PARTIAL
+  Evidence: [command output or direct observation]
+  Gap: [what is missing]
 
-[Repeat for each slice in the plan]
+[Repeat only for slices with material results]
 
 ### Summary
 
@@ -35,9 +37,9 @@ FAIL summary:
 
 ## Rules
 
-- Each criterion gets its own entry with evidence.
+- Verify each criterion internally; report passing criteria as grouped counts unless there are only 1-2 criteria or the user asks for full detail.
 - Evidence must be a direct quote from command output or a specific observation.
 - PARTIAL means some sub-conditions pass and some fail. Still counts as FAIL for the plan.
-- If overall is FAIL, list every gap across all slices, not just the first found.
+- If overall is FAIL, list every gap across all slices, not just the first found. Expand failures, skipped checks, and derived commands.
 - Write `VERIFY-GAP` annotations into PLAN.md for each failed criterion so auto-execute finds them on re-entry.
 - If overall is PASS, do not print a `Recommended next skill` line; use the `New objective` line for future work instead.

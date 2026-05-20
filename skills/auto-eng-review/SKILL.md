@@ -37,7 +37,7 @@ In engineering terms: what is being built, what systems does it touch, and what 
 
 ### Evaluate Risks
 
-For each dimension, rate 0–10 and explain what a 10 looks like.
+Use this matrix as an internal checklist. In chat, summarize only the verdict-driving dimensions unless the user asks for the full matrix.
 
 <RISK-MATRIX>
 
@@ -94,6 +94,7 @@ State the next skill based on the verdict.
 - Focus on execution safety, not product vision.
 - Prefer specific engineering objections over generic caution.
 - Do not broaden scope just to feel thorough.
+- Do not emit the full risk matrix when all dimensions are acceptable; keep the durable review to the 5-field template.
 - Verdict vocabulary is strict. Use only the three approved values.
 - If the plan is missing or unreadable, verdict is `needs_correction`. Do not guess.
 - Missing DESIGN.md is not a blocker when `canonical_design` is null, absent, or intentionally skipped by the plan.
@@ -114,8 +115,8 @@ Read `references/prime-directives.md` for 9 non-negotiable standards and prefere
 
 ### Engineering Review Sections
 
-Read `references/engineering-sections.md` for the 11-section methodology. (~160 lines: architecture, error/rescue map, security/threat model, data flow/interaction edge cases, code quality, test review, performance, observability, deployment/rollout, long-term trajectory, design/UX. Each section has specific checks and required ASCII diagrams.)
+Read `references/engineering-sections.md` only when the plan carries non-trivial engineering risk. (~160 lines: trigger-based checks for architecture, error/rescue map, security/threat model, data flow/interaction edge cases, code quality, test review, performance, observability, deployment/rollout, long-term trajectory, design/UX.)
 
 ### Implementation Alternatives
 
-Read `references/implementation-alternatives.md` for the mandatory 2-3 approach comparison. (~25 lines: APPROACH format template with Summary/Effort/Risk/Pros/Cons/Reuses; rules requiring minimal-viable + ideal-architecture variants.)
+Read `references/implementation-alternatives.md` only when PLAN.md lacks an approach rationale, the user asks for alternatives, or the review verdict depends on comparing safer execution paths. (~25 lines: compact APPROACH format.)

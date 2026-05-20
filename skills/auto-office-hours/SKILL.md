@@ -117,9 +117,9 @@ If the user approves an approach, write `.agent/work/<change>/INTAKE.md` with:
 - Rejected framings: directions the user explicitly ruled out during conversation, with their reasoning
 - Scope preservation: whether this preserves the user's full stated intent or intentionally decomposes it
 - Scope coverage: included, deferred, anti-goals, and needs-decision items; omit empty groups
-- Selected approach with rationale
-- Key assumptions and risks
-- Deferred scope: ideas surfaced during discussion that belong in `ROADMAP.md`, not this spec
+- Selected approach with one-line rationale; do not preserve the full alternatives analysis unless the user asked for it as a deliverable
+- Key assumptions and risks that change execution
+- Deferred scope: material ideas that belong in `ROADMAP.md`, not this spec
 - `.agent/.automaton/state/current.json` updated with `active_change` and `stage: frame`
 - `.agent/steering/ROADMAP.md` updated when scale is roadmap
 - Diagnostic handling: `error`-level diagnostics block advancement; `warning`-level diagnostics surface to `auto-frame`
@@ -137,6 +137,7 @@ If the user does not approve an approach, output a short discussion summary, why
 - **State the decision basis.** Name what the current evidence supports, what it does not support, and what evidence would change the assessment.
 - **Evaluate evidence directly.** If a claim is unsupported, name the missing evidence. If it is supported, name the evidence and ask the next diagnostic question.
 - **Do not drop request context silently.** Every material ask, context detail, perspective, or worry is included, deferred with reason, marked as an anti-goal, or turned into a focused question.
+- **Compact intake.** INTAKE.md is a decision record, not a transcript. Omit empty sections and analysis nobody downstream needs.
 - **Never say:** "That's an interesting approach," "There are many ways to think about this," "You might want to consider...," "That could work." Replace vague acknowledgment with a concrete evidence-backed assessment.
 - **End with an assignment.** Every session should produce one concrete next action, not a strategy, an action.
 

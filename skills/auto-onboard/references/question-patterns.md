@@ -2,6 +2,8 @@
 
 Ask follow-ups only when they change the steering outcome.
 
+For ROADMAP.md, do not ask during first-time onboarding; keep the placeholder. On refresher runs, ask only when strong repo evidence shows an existing or ongoing roadmap and user confirmation would decide whether to import or refresh it. Candidate future work is not enough.
+
 ## Pattern
 
 1. Name the evidence.
@@ -20,9 +22,9 @@ Ask follow-ups only when they change the steering outcome.
 
 `The top-level README describes this as a library, but the release scripts and deploy config suggest an operated service too. Should PROJECT.md frame this as a library-first repo, a service-first repo, or both equally?`
 
-### Unclear roadmap branch
+### Existing roadmap import
 
-`I found three plausible first phases: stabilize the runtime surface, document package boundaries, or improve delivery automation. Which of these should ROADMAP.md treat as Phase 1?`
+`I found an existing roadmap in \`docs/roadmap.md\` and matching milestone files under \`planning/\`. Since this is a refresh, should I import these as ROADMAP.md phases, leave ROADMAP.md unchanged, or route this to auto-office-hours for a fresh decomposition?`
 
 ### Ambiguous constraint
 

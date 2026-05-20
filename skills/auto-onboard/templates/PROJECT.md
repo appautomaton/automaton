@@ -1,5 +1,7 @@
 # Project
 
+Write this as a compact identity record. Omit any section with no evidence.
+
 ## One-Liner
 
 ...
@@ -8,36 +10,19 @@
 
 - ...
 
-## Current Users or Operators
-
-- ...
-
-## Current System Model
-
-- request or event flow: ...
-- primary surfaces: ...
-- critical dependencies: ...
-
-## Major Surfaces
+## Owned Surfaces
 
 | Surface | Path | Responsibility |
 |---------|------|----------------|
 | ... | `...` | ... |
 
-## Stack Summary
+## Stack and Commands
 
 - ...
-
-## Commands
-
-- install: `...`
-- dev: `...`
-- build: `...`
-- test: `...`
 
 ## Decision Principles Already Visible In The Repo
 
-- ...
+- ... (only principles that affect future changes)
 
 ## Evidence Anchors
 

@@ -20,6 +20,7 @@ auto-onboard builds bounded project truth from repository evidence, not training
 Before writing steering artifacts:
 - Separate observed, inferred, and unknown facts.
 - Cite paths for repo-shape claims.
+- Treat artifact writing as expensive: write only durable project truth and immediate blockers, not scratch notes.
 - Stop scanning once the next action is clear.
 - Read `references/quality.md` (~36 lines: anti-patterns, better shape, prose hygiene scan patterns) when artifacts turn into broad inventory.
 
@@ -34,7 +35,7 @@ Three cases:
      - No active change or stage is `none` → `auto-office-hours`
 3. **Already-onboarded, targeted refresh.** Steering exists and the user asks to update it (e.g., "update REQUIREMENTS because we added Postgres"). Focus on the evidence relevant to the update, update only the affected steering file(s), run `sync-status.mjs`, and report what changed. Read additional files when needed to produce an accurate update.
 
-When writing ROADMAP.md during first-time setup, use the format in `references/ROADMAP-CONTRACT.md` (~63 lines: canonical phase format, status values, update rules by skill, matching rule, single-file invariant).
+When handling ROADMAP.md during first-time setup, always keep the short placeholder. Do not create roadmap phases on a first run. On refresher runs, write roadmap phases only when strong repo evidence shows an existing or ongoing roadmap and the user confirms importing or refreshing it in chat; then use `references/ROADMAP-CONTRACT.md` (~63 lines: canonical phase format, status values, update rules by skill, matching rule, single-file invariant).
 
 ### Scan Top-Level Files
 
@@ -52,13 +53,15 @@ Read `references/topology-scan.md` (~56 lines: 7-layer read order, budget rules,
 
 If ambiguity affects the steering output, ask ≤ 3 questions. Read `references/question-patterns.md` (~39 lines: 4 good evidence→assumption→decision patterns, 3 anti-patterns) for how to ask. If the answer can be inferred from the repo with one more targeted read, do that instead.
 
+For ROADMAP.md specifically: on first-time onboarding, do not ask and do not create phases. On refresher runs, if strong evidence of an ongoing roadmap exists but user confirmation is missing, ask whether to import/refresh it, leave the current roadmap alone, or route to `auto-office-hours` for a fresh decomposition. If there is no strong evidence, do not ask; keep the placeholder or existing roadmap unchanged.
+
 ### Write Artifacts
 
 Use `templates/` as scaffolds:
-- `.agent/wiki/REPO-MAP.md`: bounded import record
-- `.agent/steering/PROJECT.md`: what this repo owns and why
-- `.agent/steering/REQUIREMENTS.md`: observed, inferred, and unknown constraints
-- `.agent/steering/ROADMAP.md`: 3 to 6 plausible phases when repo evidence supports multiple independent phases; otherwise leave the scaffold placeholder for `auto-office-hours` to fill on demand
+- `.agent/wiki/REPO-MAP.md`: bounded evidence index; no open-question parking, confidence verdict, or recommended next skill
+- `.agent/steering/PROJECT.md`: compact identity record; what this repo owns and why
+- `.agent/steering/REQUIREMENTS.md`: durable constraints only; no generic unknown parking
+- `.agent/steering/ROADMAP.md`: token-efficient placeholder on first run; refresher-only phase updates when strong roadmap evidence exists and the user confirms in chat
 - `.agent/steering/STATUS.md`: current state and next step
 
 ### Update State
@@ -95,7 +98,7 @@ Do not guess. Do not proceed.
 | REPO-MAP.md | `.agent/wiki/` | Bounded import record: surfaces, stack, boundaries, hotspots |
 | PROJECT.md | `.agent/steering/` | What this repo owns, why it exists, major surfaces |
 | REQUIREMENTS.md | `.agent/steering/` | Constraints, non-goals, risks, evidence anchors |
-| ROADMAP.md | `.agent/steering/` | 3–6 phases when evidence supports them; scaffold placeholder otherwise |
+| ROADMAP.md | `.agent/steering/` | High-signal placeholder on first run; refresher-only phases after strong roadmap evidence and chat confirmation |
 | STATUS.md | `.agent/steering/` | Current state, what is true now, next step |
 
 - `.agent/.automaton/state/current.json` initialized when missing; auto-onboard does not overwrite an existing `active_change` or `stage`
@@ -106,8 +109,11 @@ Do not guess. Do not proceed.
 
 - **Bounded scan.** Read no more than 10 files total. Summarize, do not transcribe.
 - **Evidence anchors.** Every claim in steering artifacts must cite a file path.
+- **Artifact minimalism.** Do not write speculative questions, confidence labels, or routing chatter into durable artifacts.
+- **Delete empty sections.** Templates are prompts, not required headings.
 - **Progressive loading.** README → config → 1 source file per surface → stop.
 - **No-re-read.** If you read a file once, do not read it again in this session.
+- **Roadmap restraint.** Never create roadmap phases on first-time onboarding. On refresh, change roadmap phases only when both evidence and user confirmation justify it.
 
 ## Deep
 

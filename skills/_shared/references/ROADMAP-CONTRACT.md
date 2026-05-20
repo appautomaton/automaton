@@ -32,7 +32,7 @@ Status progression is one-directional: `pending` → `active` → `done`. Do not
 
 | Skill | Action | When |
 |-------|--------|------|
-| `auto-onboard` | Fills ROADMAP.md with phases when repo evidence supports them; leaves scaffold placeholder otherwise | First-time project setup |
+| `auto-onboard` | Keeps ROADMAP.md as a short placeholder on first-time setup; on refresh, writes phases only when strong repo evidence shows an ongoing roadmap and the user confirms importing or refreshing it | First-time setup and targeted refresh |
 | `auto-office-hours` | Replaces ROADMAP.md content with the approved decomposition; sets the first spec to `status: active` with its `change:` slug | Scale is roadmap-sized and user approves an approach |
 | `auto-frame` | Appends deferred scope as new `status: pending` phases | Spec is narrower than the user's stated goal |
 | `auto-verify` | Sets matching phase to `status: done` | Final slice of the plan passes all criteria |
@@ -48,6 +48,8 @@ Status progression is one-directional: `pending` → `active` → `done`. Do not
 - ROADMAP.md is a steering artifact. It is NOT a canonical pointer in `current.json`.
 - ROADMAP.md is forward-looking. Work evidence lives in `.agent/work/<change>/`; the roadmap does not need to preserve completed-work history beyond `status: done` markers.
 - When `auto-office-hours` produces a user-approved decomposition, it replaces existing roadmap content. A user-approved roadmap supersedes a speculative onboard roadmap.
+- `auto-onboard` must not create roadmap phases during first-time onboarding.
+- `auto-onboard` must not synthesize roadmap phases from repo evidence alone during refresh.
 - At most one phase has `status: active` at any time.
 - A phase with `status: active` must have a non-empty `change:` field.
 - Deferred scope appended by `auto-frame` starts as `status: pending` with empty `change:`.
@@ -56,6 +58,8 @@ Status progression is one-directional: `pending` → `active` → `done`. Do not
 ## Anti-Patterns
 
 - Creating parallel roadmap files (e.g., `ROADMAP-<name>.md`) instead of updating `ROADMAP.md`.
+- Creating roadmap phases during first-time onboarding.
+- Using onboarding to create speculative roadmap phases without user confirmation.
 - Adding ROADMAP.md as a canonical pointer in `current.json`.
 - Setting multiple phases to `status: active` simultaneously.
 - Skipping `pending` and writing phases directly as `active` without user approval.

@@ -1,6 +1,6 @@
 # Builder Intake Template
 
-Write the approved intake to `.agent/work/<change-name>/INTAKE.md`. Content mode uses this template with audience, thesis, voice, and content anti-goals added to Shape Context.
+Write the approved intake to `.agent/work/<change-name>/INTAKE.md`. Keep it as a compact decision record, not a transcript. Content mode uses this template with audience, thesis, voice, and content anti-goals added to Shape Context.
 
 The INTAKE is a faithful record of what the user approved. Use the user's language where possible. When the agent reframed something and the user accepted the reframe, capture the accepted version and note it was a reframe.
 
@@ -18,10 +18,10 @@ Work shape: {feature / refactor / parity / audit / migration / coverage / conten
 {the user's final refined objective — not the initial framing, not the agent's rewrite}
 
 ## Broader Intent
-{the larger goal this spec serves, even if this spec addresses only part of it}
+{larger goal this spec serves; omit if identical to Objective}
 
 ## Shape Context
-{include the section that matches the work shape:}
+{include only the section that changes framing or verification:}
 {- Feature: "What Makes This Cool" — the core delight, novelty, or "whoa" factor}
 {- Parity: "Closure Target" — reference system, gap landscape, what "closed" means}
 {- Audit: "Key Questions" — what the audit must answer, what decision depends on findings}
@@ -32,7 +32,7 @@ Work shape: {feature / refactor / parity / audit / migration / coverage / conten
 {- Mixed: combine the relevant sections above}
 
 ## Constraints
-{hard limits that narrow the solution space: technical, regulatory, timeline, resource, or compatibility}
+{hard limits that narrow the solution space; omit if none}
 
 ## Scope Coverage
 - Included: {material request items covered by this change}
@@ -40,29 +40,17 @@ Work shape: {feature / refactor / parity / audit / migration / coverage / conten
 - Anti-goals: {explicit exclusions for this change}
 - Needs decision: {questions or options that would change scope; omit if none}
 
-## Rejected Framings
-{directions the user explicitly ruled out during conversation, with their reasoning. Omit if none.}
-
 ## Scope Preservation
 {whether this preserves the user's full stated intent or intentionally decomposes it}
 
-## Premises
-{assumptions challenged during conversation — what was tested, what held, what changed}
-
-## Approaches Considered
-### Approach A: {name}
-{summary, effort, risk, pros, cons}
-### Approach B: {name}
-{summary, effort, risk, pros, cons}
-
 ## Recommended Approach
-{chosen approach with rationale}
+{chosen approach and one-line rationale}
 
 ## Key Assumptions and Risks
-{assumptions that would change the approach if wrong; risks that affect execution}
+{only assumptions or risks that change execution; omit if none}
 
-## Deferred Scope
-{ideas surfaced during discussion that exceed this spec's boundary. Capture in ROADMAP.md. Omit if nothing was deferred.}
+## Rejected or Deferred
+{ruled-out framings and deferred scope with reasons; omit if none}
 
 ## Next Steps
 {concrete build tasks: first, second, third}
@@ -75,4 +63,5 @@ Work shape: {feature / refactor / parity / audit / migration / coverage / conten
 - The Objective must use the user's final refined language, not the initial framing.
 - Shape Context uses the section matching the work shape. Do not use "What Makes This Cool" for parity, audit, refactor, migration, or coverage work.
 - For Content mode: audience, thesis, voice direction, and content anti-goals are required fields in Shape Context.
+- Omit empty sections and do not preserve the full alternatives analysis; keep only the approved approach and material rejected/deferred items.
 - Save to `.agent/work/<change-name>/INTAKE.md`, never to host-specific paths.

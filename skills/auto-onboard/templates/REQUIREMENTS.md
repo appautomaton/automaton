@@ -1,51 +1,22 @@
 # Requirements
 
-## Product Commitments
+Write this as durable constraints only. Omit empty categories and speculative questions.
 
-### Observed
-
-- ...
-
-### Inferred
+## Hard Constraints
 
 - ...
 
-### Needs Confirmation
+## Invariants
 
 - ...
-
-## Technical Constraints and Invariants
-
-### Observed
-
-- ...
-
-### Inferred
-
-- ...
-
-### Needs Confirmation
-
-- ...
-
-## Quality and Operational Expectations
-
-- testing bar: ...
-- release or deployment constraint: ...
-- security or reliability expectation: ...
-
-## Integration Boundaries
-
-- upstream or downstream systems: ...
-- external contracts that cannot break: ...
 
 ## Non-Goals
 
 - ...
 
-## Open Risks and Unknowns
+## Planning Blockers
 
-- ...
+- None. Omit this section when there are no blockers that change framing, planning, or verification.
 
 ## Evidence Anchors
 

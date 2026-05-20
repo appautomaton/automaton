@@ -2,7 +2,7 @@
 
 No roadmap phases yet.
 
-Add phases only for user-approved roadmap decomposition, deferred SPEC scope, or repo-evident independent outcomes.
+First-time onboarding does not create roadmap phases. On refresh, update phases only after strong roadmap evidence and user confirmation in chat.
 
 ## Deferred or Not Now
 

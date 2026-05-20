@@ -51,16 +51,16 @@ Binary: the plan passes only when every criterion across all slices passes. One 
 
 ### Report
 
+Build the full criterion checklist internally. Report compactly by default: summarize passing criteria by slice and expand failures, skipped checks, derived commands, or PARTIAL results. If the plan has only 1-2 criteria, listing each criterion is fine.
+
 ```
 ## Verification: [Change Name]
 
 ### Slice N: [Name]
-- Criterion: [acceptance criterion]
-  Result: PASS / FAIL / PARTIAL
-  Evidence: [command output or observation]
-  Gap: [what is missing, or "none"]
+- PASS: [count] criteria, evidence: [commands or observations]
+- FAIL/PARTIAL/SKIPPED: [criterion, result, evidence, gap]
 
-[Repeat for each criterion in each slice]
+[Repeat only for slices with material results]
 
 PASS summary:
 **Overall:** PASS
@@ -113,6 +113,7 @@ Recommend `auto-execute`; it reads these annotations on re-entry.
 - Do not fix during verification. Report gaps and return to execute.
 - Verify the plan in full: all slices, all criteria.
 - If verification commands are missing from the plan, derive and run them. Document what you ran.
+- Do not print a long pass transcript. Expand only failures, skipped checks, derived commands, or user-requested detail.
 
 ## Deep
 
