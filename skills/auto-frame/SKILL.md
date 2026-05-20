@@ -31,9 +31,9 @@ Before finalizing `SPEC.md`:
 
 ### Restate
 
-If `.agent/work/<active_change>/INTAKE.md` exists, read it before interviewing. If no intake exists but approved office-hours context is present in the conversation (work scale, work shape, broader intent, scope coverage, or rejected framings), read that instead. Adopt the scale, shape, broader intent, target user or stakeholder, scope coverage, and rejected framings to calibrate constraints and interview depth. Do not re-ask what office-hours already established. Do not reintroduce directions the user explicitly rejected — if INTAKE.md includes rejected framings, treat them as hard constraints on the spec.
+If `.agent/work/<active_change>/INTAKE.md` exists, read it before interviewing. `INTAKE.md` is preferred context, not a prerequisite for framing. If no intake exists but approved office-hours context is present in the conversation (work scale, work shape, broader intent, scope coverage, or rejected framings), read that instead. If the user skipped office-hours, frame directly from the current request and repo evidence. Do not send the user back to office-hours solely because `INTAKE.md` is missing. Adopt the scale, shape, broader intent, target user or stakeholder, scope coverage, and rejected framings to calibrate constraints and interview depth. Do not re-ask what office-hours already established. Do not reintroduce directions the user explicitly rejected — if INTAKE.md includes rejected framings, treat them as hard constraints on the spec.
 
-State the goal in one sentence. If you cannot, ask one clarifying question and stop.
+State the goal in one sentence. If you cannot, ask one clarifying question and stop. Recommend `auto-office-hours` only when the request still needs objective discovery or multiple material decisions before any useful SPEC can be written.
 
 If your SPEC would be narrower than the user's stated goal or office-hours broader intent, either widen the SPEC, explicitly record the narrowing as decomposition with deferred scope in `.agent/steering/ROADMAP.md` (using the format in `references/ROADMAP-CONTRACT.md`), or ask for confirmation. Silent narrowing is a framing failure. A spec that covers a large coherent outcome is better than splitting into roadmap phases that lose shared context. Let the plan carry complexity through ordered slices.
 
@@ -119,6 +119,7 @@ Update `.agent/.automaton/state/current.json`:
 ## Rules
 
 - **SPEC.md is mandatory.** No file, no completion. Conversational framing without a written artifact is not auto-frame.
+- **INTAKE.md is optional.** Use it when present, but a clear current request can be framed without it.
 - Ask ≤ 3 questions (up to 5 for capability-sized goals without office-hours context). If you need more, the user is not ready to frame.
 - Keep notes operational. No essays.
 - Preserve review sections on refresh.

@@ -13,7 +13,7 @@ First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, cano
 
 ## Preamble
 
-auto-execute owns execute-stage orchestration, route selection, state, and scope. Direct implementation and subagent implementation are two routes inside this skill; the user should not have to switch skills to get the subagent route. Execute and verify one approved slice at a time inside the selected execution window. Continuation is the default after a verified slice; checkpoints and STOP conditions are the exceptions.
+auto-execute owns execute-stage orchestration, route selection, state, and scope. Direct implementation and subagent implementation are two routes inside this skill; the user should not have to switch skills to get the subagent route. Execute and verify one approved slice at a time inside the selected execution window. Continuation is the default after a verified slice; checkpoints and STOP conditions are the exceptions. An execution window is a context-management batch, not a completion boundary: when a window finishes and approved slices remain, select the next safe window and continue.
 
 Context budget: keep the active slice, execution-window metadata, acceptance criteria, route metadata, verification commands, and active files in context. Load linked detail files and traceability IDs for the active slice only. Read wider project files only when implementation correctness requires it.
 
@@ -114,6 +114,8 @@ Do not pause for checkpoint text that only records verification findings, implem
 
 Continue within the selected execution window only when verification passed, dependencies are met, the next slice still matches the approved plan, context remains healthy, and no STOP condition applies.
 
+When the selected execution window is complete but `PLAN.md` still has uncompleted approved slices, return to **Select Execution Window** immediately. Do not wrap up merely because the current window ended. Stopping with remaining slices is valid only when you name a concrete checkpoint, STOP condition, context-pressure tier, or unavailable host capability that prevents continuing now; "N slices remain" is progress state, not a stop reason.
+
 If all slices are complete and no STOP condition applies, ensure slice evidence is recorded, then continue directly into the `auto-verify` verification gate in the same session when the host/session can keep working. Do not make the user run `auto-verify` manually just because execution finished. Only recommend `auto-verify` as the next skill when continuation is blocked by a valid checkpoint, context pressure, unavailable host capability, or another explicit STOP condition.
 
 When continuing into verification, follow `auto-verify`'s contract: re-read the canonical `PLAN.md`, collect every acceptance criterion, run or derive the verification commands, and produce the verification report. Do not trust execute's own slice evidence as final verification.
@@ -161,7 +163,7 @@ Do NOT write code unless:
 - Commands run and their results
 - Subagent statuses and review verdicts, when used
 - `.agent/.automaton/state/current.json` updated only when canonical pointers, active change, or review state change; auto-execute does not write a slice cursor field
-- Execution window checkpoint or stop reason when continuation pauses
+- Execution window checkpoint or stop reason when continuation pauses; if approved slices remain, name the valid blocker that prevents continuing
 - Newly discovered risks or follow-ups
 - Diagnostic handling: `error`-level diagnostics halt the slice; `warning`-level diagnostics surface to the user and the next stage
 - Verification report when all slices complete and continuation is safe; otherwise recommended next skill: `auto-execute` (slices remain), `auto-verify` (execution complete but continuation blocked), or `auto-plan` (structural failure). The user or host invokes any recommended next skill; auto-execute does not require nested invocation.
@@ -175,6 +177,7 @@ Do NOT write code unless:
 - Stop and reframe when the approved slice is no longer valid.
 - Prefer targeted checks over full-suite rituals until the slice is stable.
 - Continue directly into `auto-verify` after the last slice when no valid checkpoint, STOP condition, context pressure, or host limitation blocks continuation.
+- Do not end with "remaining slices" as the only next action. Remaining approved slices require another execution-window pass unless a valid blocker is present.
 - Warn on review state but do not block execution unless the risk is slice-blocking.
 - Hold only the active slice, execution-window metadata, acceptance criteria, route metadata, and active files in context.
 - Use host-native subagents; do not invent a universal SDK or CLI.

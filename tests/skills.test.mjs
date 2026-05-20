@@ -362,9 +362,12 @@ test('auto-frame preserves scope and supports adaptive SPEC shapes', () => {
   assert.match(source, /SPEC\.md` is the reloadable contract/)
   assert.match(source, /spec\/\*\.md/)
   assert.match(source, /\.agent\/work\/<active_change>\/INTAKE\.md/)
+  assert.match(source, /`INTAKE\.md` is preferred context, not a prerequisite for framing/)
+  assert.match(source, /Do not send the user back to office-hours solely because `INTAKE\.md` is missing/)
   assert.match(source, /Silent narrowing is a framing failure/)
   assert.match(source, /Broader intent/)
   assert.match(source, /Work scale and work shape/)
+  assert.match(source, /\*\*INTAKE\.md is optional\.\*\*/)
   for (const token of ['structural change', 'behavioral invariants', 'gap matrix', 'audit questions', 'migration target', 'coverage target']) {
     assert.match(source, new RegExp(token, 'i'), `auto-frame must support adaptive spec token: ${token}`)
   }
@@ -428,6 +431,7 @@ test('auto-office-hours persists approved intake without pre-approval writes', (
   assert.match(source, /`active_change` → `<change>`/)
   assert.match(source, /`stage` → `frame`/)
   assert.match(source, /Run `sync-status\.mjs` from this skill's installed directory/)
+  assert.match(source, /`INTAKE\.md` is guaranteed only for an approved office-hours session/)
   assert.match(source, /no file writes before the user picks an approach/)
   assert.match(template, /Write the approved intake to `\.agent\/work\/<change-name>\/INTAKE\.md`/)
 })
@@ -468,6 +472,8 @@ test('auto-plan defines lean slice defaults without dropping execution safety', 
   assert.match(source, /default continuation path/)
   assert.match(source, /Parallel-safe means dependencies are independent and write sets are disjoint/)
   assert.match(source, /Continuation is the default/)
+  assert.match(source, /execution should continue through all approved slices/)
+  assert.match(source, /execution windows are context-management batches, not planned stopping points/)
   assert.match(source, /Verification findings, implementation caveats, downstream consequences, and next-slice recommendations are not checkpoints/)
   assert.match(source, /concrete question and options/)
   assert.match(source, /Do not use `decision` for reversible engineering judgment/)
@@ -479,6 +485,7 @@ test('auto-execute owns route selection and execution-window continuation', () =
   assert.match(source, /Direct implementation and subagent implementation are two routes inside this skill/)
   assert.match(source, /Select Execution Window/)
   assert.match(source, /Continuation is the default after a verified slice/)
+  assert.match(source, /An execution window is a context-management batch, not a completion boundary/)
   assert.match(source, /Always include the next uncompleted slice/)
   assert.match(source, /Checkpoint after: none/)
   assert.match(source, /Missing `Execution` means `direct`/)
@@ -497,6 +504,9 @@ test('auto-execute owns route selection and execution-window continuation', () =
   assert.match(source, /continue directly into the `auto-verify` verification gate/)
   assert.match(source, /Do not make the user run `auto-verify` manually/)
   assert.match(source, /Do not trust execute's own slice evidence as final verification/)
+  assert.match(source, /return to \*\*Select Execution Window\*\* immediately/)
+  assert.match(source, /"N slices remain" is progress state, not a stop reason/)
+  assert.match(source, /Remaining approved slices require another execution-window pass/)
 })
 
 test('auto-execute stop examples require bounded diagnostics before halting on uncertainty', () => {
