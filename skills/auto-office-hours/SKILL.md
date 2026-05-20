@@ -111,7 +111,7 @@ State which approach you recommend and why. Do NOT proceed until the user explic
 
 ### Persist Approved Intake
 
-After approval, derive a concise kebab-case change slug from the objective, reusing `active_change` only when it already matches this discussion. Write the approved intake to `.agent/work/<change>/INTAKE.md`. When scale is roadmap, replace `.agent/steering/ROADMAP.md` with the approved decomposition per `references/ROADMAP-CONTRACT.md`. Update `.agent/.automaton/state/current.json`:
+After approval, derive a date-prefixed change slug: `YYYY-MM-DD-<kebab-case-objective>` using today's date (e.g., `2026-05-20-production-pme-runtime`). Reuse `active_change` only when it already matches this discussion. Write the approved intake to `.agent/work/<change>/INTAKE.md`. When scale is roadmap, replace `.agent/steering/ROADMAP.md` with the approved decomposition per `references/ROADMAP-CONTRACT.md`. Update `.agent/.automaton/state/current.json`:
    - `active_change` → `<change>`
    - `stage` → `frame`
 

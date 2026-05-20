@@ -101,8 +101,11 @@ Apply the Artifact Signal Discipline rules from `references/ARTIFACT-LIFECYCLE.m
 
 ### Update State
 
+If `active_change` is `bootstrap` or does not match the current objective, derive a new slug: `YYYY-MM-DD-<kebab-case-objective>` using today's date (e.g., `2026-05-20-session-auth-jwt`). Update `active_change` before writing SPEC.md so the work folder uses the new slug.
+
 Run `sync-status.mjs` from this skill's installed directory → writes STATUS.md frontmatter from current.json, outputs `{synced, statusPath, active_change, stage}`.
 Update `.agent/.automaton/state/current.json`:
+- `active_change` → `<change>` (when derived or changed)
 - `canonical_spec` → path to the SPEC.md you just wrote
 - `stage` → `frame` (or `plan` if user approved and no review needed)
 
