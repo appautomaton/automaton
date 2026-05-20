@@ -233,6 +233,8 @@ Read `references/anti-sycophancy.md` for forbidden phrases and calibrated acknow
 
 Read `references/landscape-awareness.md` for three-layer synthesis and search guidelines. (~48 lines: 3-layer analysis framework, eureka check, search query templates by mode, privacy gate protocol.)
 
-### Design Doc Templates
+### Intake Templates
 
-Read `references/design-doc-templates.md` for Startup and Builder design document formats. (~123 lines: full INTAKE.md templates for both modes with all required sections.)
+Startup mode: read `references/startup-intake-template.md` (~80 lines: INTAKE.md template with demand evidence, status quo, target user, shape context, and startup-specific rules.)
+
+Builder and Content modes: read `references/builder-intake-template.md` (~78 lines: INTAKE.md template with shape context, content mode fields, and builder-specific rules.)

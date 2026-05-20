@@ -264,7 +264,8 @@ test('office-hours separates work scale from work shape', () => {
 
 test('office-hours captures request coverage before narrowing scope', () => {
   const source = readFileSync(join(skillsRoot, 'auto-office-hours', 'SKILL.md'), 'utf8')
-  const template = readFileSync(join(skillsRoot, 'auto-office-hours', 'references', 'design-doc-templates.md'), 'utf8')
+  const startupTemplate = readFileSync(join(skillsRoot, 'auto-office-hours', 'references', 'startup-intake-template.md'), 'utf8')
+  const builderTemplate = readFileSync(join(skillsRoot, 'auto-office-hours', 'references', 'builder-intake-template.md'), 'utf8')
 
   assert.match(source, /### Request Coverage/)
   assert.match(source, /perspectives or audiences/)
@@ -277,11 +278,13 @@ test('office-hours captures request coverage before narrowing scope', () => {
   assert.match(source, /Do not drop request context silently/)
   assert.match(source, /Scope coverage: included, deferred, anti-goals, and needs-decision items/)
 
-  assert.match(template, /## Scope Coverage/)
-  assert.match(template, /Included:/)
-  assert.match(template, /Deferred:/)
-  assert.match(template, /Anti-goals:/)
-  assert.match(template, /Needs decision:/)
+  for (const template of [startupTemplate, builderTemplate]) {
+    assert.match(template, /## Scope Coverage/)
+    assert.match(template, /Included:/)
+    assert.match(template, /Deferred:/)
+    assert.match(template, /Anti-goals:/)
+    assert.match(template, /Needs decision:/)
+  }
 })
 
 test('auto-frame preserves scope and supports adaptive SPEC shapes', () => {
@@ -347,7 +350,7 @@ test('read-only skills do not include the state-write template', () => {
 
 test('auto-office-hours persists approved intake without pre-approval writes', () => {
   const source = readFileSync(join(skillsRoot, 'auto-office-hours', 'SKILL.md'), 'utf8')
-  const template = readFileSync(join(skillsRoot, 'auto-office-hours', 'references', 'design-doc-templates.md'), 'utf8')
+  const template = readFileSync(join(skillsRoot, 'auto-office-hours', 'references', 'startup-intake-template.md'), 'utf8')
 
   assert.match(source, /Before approval, it writes nothing/)
   assert.match(source, /Persist Approved Intake/)
@@ -357,7 +360,7 @@ test('auto-office-hours persists approved intake without pre-approval writes', (
   assert.match(source, /`stage` → `frame`/)
   assert.match(source, /Run `sync-status\.mjs` from this skill's installed directory/)
   assert.match(source, /no file writes before the user picks an approach/)
-  assert.match(template, /Write the approved intake document to `\.agent\/work\/<change-name>\/INTAKE\.md`/)
+  assert.match(template, /Write the approved intake to `\.agent\/work\/<change-name>\/INTAKE\.md`/)
 })
 
 test('lifecycle controller skills load the artifact lifecycle contract', () => {

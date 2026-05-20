@@ -169,7 +169,7 @@ Update `.agent/.automaton/state/current.json`:
 
 ### Slice Design Examples
 
-Read `references/slice-examples.md` for well-designed vs. poorly-designed slices. (~61 lines: 2 good and 2 bad examples with explanations; rule of thumb: if you can't write the verification command before starting, the slice isn't defined.)
+Read `references/slice-examples.md` for well-designed vs. poorly-designed slices. (~103 lines: 2 good and 2 bad direct examples, 1 subagent-routed example with rationale, 1 topology section example with parallel-safe groups; rule of thumb: if you can't write the verification command before starting, the slice isn't defined.)
 
 ### Verification Patterns
 
