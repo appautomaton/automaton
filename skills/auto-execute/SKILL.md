@@ -105,7 +105,7 @@ Use this route when `Execution` is `subagent required`, when `subagent recommend
 
 The subagent route remains per-slice even when the execution window contains multiple slices.
 
-Before dispatching, read `references/SUBAGENT-PROTOCOL.md` (roles, dispatch packet, status vocabulary, stop conditions) and the prompt templates in `references/implementer-prompt.md`, `references/spec-reviewer-prompt.md`, and `references/code-quality-reviewer-prompt.md`. Read `references/HOST-TOOLS.md` for host-specific subagent tool mappings.
+Before dispatching, read `references/SUBAGENT-PROTOCOL.md` (roles, dispatch packet, status vocabulary, stop conditions) and the prompt templates in `references/implementer-prompt.md`, `references/spec-reviewer-prompt.md`, and `references/code-quality-reviewer-prompt.md`. Read `references/HOST-TOOLS.md` for host-specific subagent tool mappings. If prior slice orchestration summaries exist under `.agent/work/<change>/orchestration/`, scan them for decisions or discoveries relevant to the current slice.
 
 If host tools say subagents are unavailable:
 - For `subagent recommended`, fall back to direct execution only if the slice remains safe.
@@ -115,10 +115,10 @@ Run the per-slice protocol:
 1. Build a dispatch packet from the current slice only.
 2. Dispatch the implementer subagent.
 3. If the implementer returns `NEEDS_CONTEXT`, provide one targeted context correction and redispatch once.
-4. If the implementer returns `DONE` or acceptable `DONE_WITH_CONCERNS`, dispatch the spec reviewer.
+4. If the implementer returns `DONE` or acceptable `DONE_WITH_CONCERNS`, verify that expected file changes exist before dispatching the spec reviewer. If the implementer reports DONE but deliverables are missing, treat it as failed.
 5. If spec review is `APPROVED`, dispatch the quality reviewer.
 6. If a reviewer requests changes, send the concrete issues to an implementer subagent and re-review once for the same issue.
-7. Record an orchestration summary under `.agent/work/<change>/orchestration/` with statuses, evidence, commands, risks, and blockers.
+7. Record an orchestration summary under `.agent/work/<change>/orchestration/` with statuses, evidence, commands, risks, blockers, and key decisions or discoveries that may inform subsequent slices.
 
 Do not mark the slice complete unless implementer status is acceptable, spec review is `APPROVED`, quality review is `APPROVED`, and verification evidence exists or `auto-verify` is explicitly recommended.
 

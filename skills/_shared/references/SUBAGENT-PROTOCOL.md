@@ -24,6 +24,7 @@ Every subagent call should include a compact packet:
 - acceptance criteria or verification commands
 - relevant constraints and anti-goals
 - named files or areas to inspect
+- edit scope: files or directories the implementer may modify (unlisted paths are read-only)
 - expected output structure
 - stop conditions for missing context, ambiguity, or unsafe scope expansion
 
@@ -35,6 +36,7 @@ Do not ask a subagent to rediscover the whole project unless exploration is the 
 - Enter this protocol from `auto-execute`; do not make framing, resume, or product review multi-agent by default.
 - The coordinator provides full task text for the current slice and relevant constraints. Do not make subagents rediscover the whole plan.
 - Dispatch implementers sequentially by default. Cross-slice parallel dispatch is allowed only when `PLAN.md` explicitly marks slices parallel-safe, dependencies are independent, and write sets are disjoint.
+- On Codex, pass `fork_turns="none"` when spawning subagents to prevent child agents from inheriting the parent transcript and self-deadlocking on wait.
 - Review order is mandatory: spec compliance first, code quality second.
 - The coordinator does not implement directly while host-native subagent execution is viable.
 - If the host mapping is unclear, follow `HOST-TOOLS.md`. Do not invent a universal SDK or CLI.

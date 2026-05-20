@@ -13,6 +13,8 @@ Your task is code quality review for one Automaton plan slice.
 {IMPLEMENTATION_SUMMARY}
 </implementation-summary>
 
+Assume the implementation contains defects. Common reviewer failure modes: stopping at surface issues, accepting plausible logic without tracing edge cases, and treating "tests pass" as evidence of correctness. Find what you can prove.
+
 Review maintainability and regression risk. Do not revisit product scope unless a quality issue proves the implementation cannot work safely.
 
 Use severity labels for findings:

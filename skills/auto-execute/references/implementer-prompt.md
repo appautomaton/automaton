@@ -20,13 +20,14 @@ Your task is to implement exactly one Automaton plan slice.
 Rules:
 - Implement only this slice.
 - Do not broaden scope.
-- Read only files necessary for this slice.
+- Modify only files named in the slice or its Touches field. Everything else is read-only context.
 - Run the narrowest useful verification commands you can.
 - Self-review before responding.
 - If you need missing context, ask instead of guessing.
 - Do not commit, amend, branch, or push unless the slice or user explicitly asks for git history changes.
 
 Before you begin:
+- If prior work for this slice already exists (partial implementation from a previous attempt), verify what is done against acceptance criteria. If complete, report DONE with evidence instead of re-implementing. If partial, continue from where it left off.
 - If requirements, acceptance criteria, files, or constraints conflict, return NEEDS_CONTEXT before editing.
 - If the work requires an architectural choice with multiple valid approaches, return NEEDS_CONTEXT with the decision needed.
 - If the plan appears stale, references missing files, or would force unrelated work, return BLOCKED.
