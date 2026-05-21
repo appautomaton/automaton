@@ -13,7 +13,7 @@ First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, cano
 
 ## Preamble
 
-auto-frame always produces the canonical artifact: `SPEC.md`. If you leave this skill without a valid SPEC.md written to disk, you have failed. This skill does not write code, does not create PLAN.md, and does not proceed to planning without a written spec.
+auto-frame produces the canonical artifact: `SPEC.md` when the request is frameable. If you complete framing without a valid SPEC.md written to disk, you have failed. If the request still needs objective discovery or multiple material decisions before a useful spec can exist, continue into `auto-office-hours`'s contract in the same session instead of writing a weak SPEC or making the user re-invoke another skill. This skill does not write code, does not create PLAN.md, and does not proceed to planning without a written spec.
 
 Context budget: `SPEC.md` is the reloadable contract, not the entire body of detail. Keep it compact enough to re-read, but do not narrow a coherent goal just to keep the file short. For larger coherent work, summarize the contract in SPEC.md and link detail files under `spec/*.md`, such as `constraints.md`, `gap-matrix.md`, `risks.md`, or `acceptance-detail.md`. The primary scope check is coherence: one outcome = one spec, even when it needs progressive disclosure.
 
@@ -33,7 +33,7 @@ Before finalizing `SPEC.md`:
 
 If `.agent/work/<active_change>/INTAKE.md` exists, read it before interviewing. `INTAKE.md` is preferred context, not a prerequisite for framing. If no intake exists but approved office-hours context is present in the conversation (work scale, work shape, broader intent, scope coverage, or rejected framings), read that instead. If the user skipped office-hours, frame directly from the current request and repo evidence. Do not send the user back to office-hours solely because `INTAKE.md` is missing. Adopt the scale, shape, broader intent, target user or stakeholder, scope coverage, and rejected framings to calibrate constraints and interview depth. Do not re-ask what office-hours already established. Do not reintroduce directions the user explicitly rejected — if INTAKE.md includes rejected framings, treat them as hard constraints on the spec.
 
-State the goal in one sentence. If you cannot, ask one clarifying question and stop. Recommend `auto-office-hours` only when the request still needs objective discovery or multiple material decisions before any useful SPEC can be written.
+State the goal in one sentence. If you cannot, ask one clarifying question. If the answer still cannot produce a one-sentence goal, or if the request needs objective discovery or multiple material decisions before any useful SPEC can be written, continue into `auto-office-hours`'s diagnostic and intake flow in the same session. Recommend `auto-office-hours` only when continuation is blocked by context pressure, host limits, or a user choice to pause.
 
 If your SPEC would be narrower than the user's stated goal or office-hours broader intent, either widen the SPEC, explicitly record the narrowing as decomposition with deferred scope in `.agent/steering/ROADMAP.md` (using the format in `references/ROADMAP-CONTRACT.md`), or ask for confirmation. Silent narrowing is a framing failure. A spec that covers a large coherent outcome is better than splitting into roadmap phases that lose shared context. Let the plan carry complexity through ordered slices.
 
@@ -69,6 +69,16 @@ If anything is ambiguous, ask questions that materially change the spec. Do not 
 
 If INTAKE.md includes needs-decision items or unresolved assumptions, address those first. Do not re-ask what office-hours already established, but do follow up on things office-hours didn't resolve.
 </INTERVIEW>
+
+### Continue To Office-Hours When Not Frameable
+
+Use this only when one focused framing question is not enough. Continue into `auto-office-hours` in the same session when:
+- The user cannot state the problem, stakeholder, desired outcome, or content audience/thesis.
+- The request mixes multiple independent outcomes and the first spec is not obvious.
+- Scope, approach, or verification has multiple unresolved decisions that would produce materially different SPECs.
+- The user is asking for a strategy conversation, decomposition, or direction choice rather than a bounded spec.
+
+When this happens, follow `auto-office-hours`'s contract: classify mode, scale, and shape; run the minimum diagnostic; present approaches; wait for approval before writing `INTAKE.md`. Do not write SPEC.md until an approach is approved and the frame-ready conditions are met.
 
 ### Write SPEC.md
 
@@ -111,16 +121,16 @@ Update `.agent/.automaton/state/current.json`:
 
 ## Output
 
-- **SPEC.md**: written to `.agent/work/<change>/SPEC.md` (mandatory)
-- `.agent/.automaton/state/current.json` updated with `canonical_spec`; `stage` stays `frame` unless the user approves direct plan handoff
+- Frameable path: **SPEC.md** written to `.agent/work/<change>/SPEC.md` and `.agent/.automaton/state/current.json` updated with `canonical_spec`; `stage` stays `frame` unless the user approves direct plan handoff
+- Not-frameable path: continue into `auto-office-hours` and do not report framing complete until an approved intake exists and SPEC.md can be written
 - Diagnostic handling: `error`-level diagnostics block advancement; `warning`-level diagnostics surface to the next stage
-- Recommended next skill: `auto-ceo-review`, `auto-plan`, or `auto-office-hours`. The user or host invokes the next skill; auto-frame does not require nested invocation.
+- Handoff: after SPEC.md, recommend or continue to `auto-ceo-review` or `auto-plan` according to review needs. If the request is not frameable, continue into `auto-office-hours` when the same session can keep working; otherwise recommend it with the concrete blocker. The user or host may still invoke any next skill directly.
 
 ## Rules
 
-- **SPEC.md is mandatory.** No file, no completion. Conversational framing without a written artifact is not auto-frame.
+- **SPEC.md is mandatory for frame completion.** No file, no framing completion. If the request is not frameable, continue into office-hours rather than pretending framing is done.
 - **INTAKE.md is optional.** Use it when present, but a clear current request can be framed without it.
-- Ask ≤ 3 questions (up to 5 for capability-sized goals without office-hours context). If you need more, the user is not ready to frame.
+- Ask ≤ 3 framing questions (up to 5 for capability-sized goals without office-hours context). If you need more, the user is not ready to frame; continue into `auto-office-hours` when the same session can keep working.
 - Keep notes operational. No essays.
 - Preserve review sections on refresh.
 

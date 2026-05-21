@@ -25,6 +25,7 @@ Allowed active-change layout:
 .agent/work/<change>/PLAN.md
 .agent/work/<change>/slices/*.md
 .agent/work/<change>/DESIGN.md
+.agent/work/<change>/orchestration/*.md   # conditional: subagent route or complex review loops only
 ```
 
 Rules:
@@ -32,6 +33,7 @@ Rules:
 - `SPEC.md` must summarize and link every normative `spec/*.md` detail file. Unlinked supplemental files are notes, not contract.
 - `PLAN.md` must link any `slices/*.md` detail file and preserve requirement IDs, gap IDs, invariants, audit questions, migration checkpoints, or coverage targets from SPEC.md.
 - Execute and verify load only the detail files linked for the active slice or active requirement IDs.
+- Execute writes slice evidence in place: inline slices update `PLAN.md`; linked detail slices update `slices/slice-NNN.md`; `orchestration/*.md` is supporting evidence, not the default write target.
 - Split a change only for independent outcomes. Do not split or narrow one coherent outcome solely because the spec or plan has many files, gaps, constraints, or scenarios.
 - If a skill narrows the user's stated scope, it must name the narrowing, explain why, and record the deferred scope in `.agent/steering/ROADMAP.md` following the format in `ROADMAP-CONTRACT.md`, or ask for confirmation.
 
@@ -48,6 +50,8 @@ Rules:
 ## Handoff Contract
 
 Lifecycle stages hand off through five durable elements. Skills recommend, prepare, or continue into the next stage when the same session can safely do so. A verified PASS is terminal for the active change; any `auto-office-hours` mention is for a new objective, not a same-change handoff. Direct user/host invocation of the next skill remains valid, but a clean continuation should not force the user to manually invoke the next lifecycle skill.
+
+Seamless continuation is not mandatory nested skill invocation. It means the same agent session may load and follow the next stage's skill contract after the current stage's exit gate is satisfied. Do not invent a universal Skill tool or hidden dispatcher. When enough approved context exists, continue; when a real gate is missing, stop with the blocker and next action.
 
 1. **Exit gate** — the condition that must be true to advance.
 2. **Artifacts produced or updated** — concrete files written or modified for the active change.

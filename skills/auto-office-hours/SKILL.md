@@ -13,7 +13,7 @@ First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, cano
 
 ## Preamble
 
-auto-onboard produces steering artifacts; auto-office-hours produces clarity. This skill is conversational only until the user approves an approach. Before approval, it writes nothing. After approval, it persists the approved intake to `.agent/work/<change>/INTAKE.md` and records the active change so `auto-frame` can resume without conversation memory. `INTAKE.md` is guaranteed only for an approved office-hours session; aborted, skipped, or still-conversational office-hours sessions do not produce it. This skill never writes code, scaffolds projects, or creates SPEC.md.
+auto-onboard produces steering artifacts; auto-office-hours produces clarity. This skill is conversational only until the user approves an approach. Before approval, it writes nothing. After approval, it persists the approved intake to `.agent/work/<change>/INTAKE.md` and records the active change so `auto-frame` can resume without conversation memory. `INTAKE.md` is guaranteed only for an approved office-hours session; aborted, skipped, or still-conversational office-hours sessions do not produce it. This skill never writes code or scaffolds projects. It does not create SPEC.md in conversational mode; when approved intake is enough to frame safely, continue into `auto-frame`'s contract in the same session so the user does not have to ask again.
 
 Context budget: hold the conversation goal, evidence, request coverage, rejected framings, and the next decision. Read project files only when evidence in the repo changes the objective, especially for parity, audit, migration, coverage, or mixed work.
 
@@ -79,6 +79,16 @@ After approval, derive a date-prefixed change slug: `YYYY-MM-DD-<kebab-case-obje
 
    Run `sync-status.mjs` from this skill's installed directory.
 
+### Continue To Frame When Ready
+
+After `INTAKE.md` is written, continue into `auto-frame` in the same session when all of these are true:
+- The approved intake states the objective in one sentence.
+- Scope coverage has no unresolved `Needs decision` item that would change scope, approach, or verification.
+- The target stakeholder or artifact, desired outcome, constraints, anti-goals, and key risks are clear enough to produce acceptance criteria.
+- The host/session has enough context budget to write `SPEC.md` without dropping material request context.
+
+If those conditions pass, load and follow `auto-frame`'s contract, write `.agent/work/<change>/SPEC.md`, update `canonical_spec`, and report both artifacts. If any condition fails, stop after `INTAKE.md` with the concrete blocker or focused question. Do not make the user manually invoke `auto-frame` just because office-hours wrote intake successfully.
+
 <MODE-DETECTION>
 
 If the user's language shifts mid-session, reclassify mode, scale, or shape and state the change. If the user says "just do it" or expresses impatience, ask the two most critical unresolved questions; if they push back again, proceed to alternatives with explicit assumptions.
@@ -123,7 +133,7 @@ If the user approves an approach, write `.agent/work/<change>/INTAKE.md` with:
 - `.agent/.automaton/state/current.json` updated with `active_change` and `stage: frame`
 - `.agent/steering/ROADMAP.md` updated when scale is roadmap
 - Diagnostic handling: `error`-level diagnostics block advancement; `warning`-level diagnostics surface to `auto-frame`
-- Recommended next skill: `auto-frame`. The user or host invokes it; auto-office-hours does not require nested invocation.
+- Handoff: continue into `auto-frame` when the approved intake is frame-ready; otherwise recommend `auto-frame` with the specific missing condition. The user or host may still invoke `auto-frame` directly.
 
 The INTAKE is a faithful record of what the user approved, not the agent's editorial rewrite. Use the user's language where possible. When the agent reframed something and the user accepted the reframe, capture the accepted version and note it was a reframe.
 
@@ -133,6 +143,7 @@ If the user does not approve an approach, output a short discussion summary, why
 
 - **Conversational only until approval.** No code, no scaffolding, no file writes before the user picks an approach.
 - **INTAKE.md after approval.** Approved office-hours context must survive compaction and fresh sessions.
+- **Continue when frame-ready.** Approved, complete intake should flow into `auto-frame` without another user prompt.
 - **Do not bank questions.** Ask probe questions when they are relevant, with context.
 - **State the decision basis.** Name what the current evidence supports, what it does not support, and what evidence would change the assessment.
 - **Evaluate evidence directly.** If a claim is unsupported, name the missing evidence. If it is supported, name the evidence and ask the next diagnostic question.

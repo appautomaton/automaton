@@ -95,7 +95,7 @@ Run the per-slice protocol:
 4. Verify expected file changes before spec review.
 5. Run spec review before code-quality review.
 6. Send concrete reviewer issues to an implementer once, then re-review.
-7. Record an orchestration summary under `.agent/work/<change>/orchestration/`.
+7. Record a compact orchestration summary under `.agent/work/<change>/orchestration/` only when subagent/review details are needed for later reload. The slice status still updates in place.
 
 Do not mark the slice complete unless the implementer status is acceptable, spec review is `APPROVED`, quality review is `APPROVED`, and slice verification evidence exists. Plan-level verification happens after all slices are complete: continue directly into `auto-verify` when safe, or recommend it only when continuation is blocked.
 
@@ -103,7 +103,22 @@ Do not mark the slice complete unless the implementer status is acceptable, spec
 
 Run the narrowest useful checks as soon as they can fail. Prefer targeted checks over full-suite rituals until the slice is stable.
 
-Record completion evidence in the plan or orchestration artifact before moving to another slice. The next slice is selected from `PLAN.md`; do not invent slice cursor or checkpoint fields in `.agent/.automaton/state/current.json`. Change `.agent/.automaton/state/current.json` only when the stage, active change, review state, or canonical artifact pointers change.
+Record completion evidence in place before moving to another slice:
+- If the slice is inline in `PLAN.md`, update that slice entry in `PLAN.md`.
+- If the slice has `Detail: slices/slice-NNN.md`, update that linked detail file and keep only a compact status/evidence pointer in `PLAN.md`.
+- Do not create separate execution evidence files by default.
+
+Use this compact evidence shape:
+
+```markdown
+**Status:** complete | blocked | needs-plan-correction
+**Evidence:** changed `path`; command/result; key observation.
+**Risks / next:** none, or one concrete item.
+```
+
+Append-replace the evidence block for the slice instead of stacking repeated reports. Do not paste transcripts, full command logs, or source excerpts unless needed to explain a blocker.
+
+The next slice is selected from `PLAN.md`; do not invent slice cursor or checkpoint fields in `.agent/.automaton/state/current.json`. Change `.agent/.automaton/state/current.json` only when the stage, active change, review state, or canonical artifact pointers change.
 
 If the completed slice has a checkpoint, validate that it actually requires human input:
 - `human-verify` is valid only when the result cannot be verified by available commands, tests, host tools, or local inspection.
@@ -162,6 +177,7 @@ Do NOT write code unless:
 - Files changed with one-line rationale per file
 - Commands run and their results
 - Subagent statuses and review verdicts, when used
+- Slice evidence updated in place: inline slice in `PLAN.md`, or linked detail file plus compact `PLAN.md` pointer
 - `.agent/.automaton/state/current.json` updated only when canonical pointers, active change, or review state change; auto-execute does not write a slice cursor field
 - Execution window checkpoint or stop reason when continuation pauses; if approved slices remain, name the valid blocker that prevents continuing
 - Newly discovered risks or follow-ups
@@ -174,6 +190,7 @@ Do NOT write code unless:
 - Build an execution window, but execute and verify one slice at a time.
 - Serial execution is the default; parallel cross-slice dispatch requires explicit plan approval and disjoint write sets.
 - Do not silently redefine the plan. Record corrections transparently.
+- Do not create new execution evidence files by default; update `PLAN.md` or the linked `slices/slice-NNN.md` detail file in place.
 - Stop and reframe when the approved slice is no longer valid.
 - Prefer targeted checks over full-suite rituals until the slice is stable.
 - Continue directly into `auto-verify` after the last slice when no valid checkpoint, STOP condition, context pressure, or host limitation blocks continuation.

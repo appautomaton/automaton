@@ -69,19 +69,28 @@ Reviewers return exactly one status:
 
 ## Artifact Expectations
 
-Record important outcomes under the active change, for example:
+Use orchestration artifacts only for subagent routes or complex review loops where the details would pollute `PLAN.md` or a linked slice detail file. The slice's durable status still belongs in `PLAN.md` or `slices/slice-NNN.md`; orchestration files are supporting evidence.
+
+Write the summary first. Future coordinators should read `slice-NNN-summary.md` before any role-specific file.
 
 ```text
 .agent/work/<change>/orchestration/
+  slice-001-summary.md
   slice-001-implementer.md
   slice-001-spec-review.md
   slice-001-quality-review.md
-  slice-001-summary.md
 ```
 
-Artifacts should summarize outcomes and evidence. They should not duplicate full source files or full command logs unless needed to explain a blocker.
+`slice-NNN-summary.md` should contain only:
+- final status and decision
+- changed files
+- verification commands and results
+- reviewer verdicts
+- unresolved risks or next action
 
-Each artifact should include enough evidence for a fresh coordinator to continue: file paths, relevant line anchors when available, commands run, command results, and unresolved risks.
+Role files are optional. Write them only when needed to debug, rerun, or explain a non-obvious decision.
+
+Never paste full source files, full command logs, or chat transcripts unless needed to explain a blocker. Summarize with file paths, line anchors when available, commands run, command results, and unresolved risks.
 
 ## Stop Conditions
 
