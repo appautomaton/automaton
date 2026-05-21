@@ -15,7 +15,7 @@ First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, cano
 
 auto-resume rebuilds context from durable artifacts, not from the user's description or the agent's training data. It loads canonical artifacts in dependency order (spec first, then design, then plan) and reports what it found, what was blocked, and what comes next.
 
-Context budget: start with artifacts needed for the current stage. Read project files when understanding the codebase helps rebuild accurate context for the next action.
+Loading discipline: start with artifacts needed for the current stage. Read project files when understanding the codebase helps rebuild accurate context for the next action.
 
 ## Quality Gate
 
@@ -129,6 +129,6 @@ Read `references/recovery-scenarios.md` for common recovery situations. (~41 lin
 
 Read `references/artifact-order.md` for the full artifact dependency graph. (~48 lines: ASCII dependency graph from REPO-MAP through PLAN, loading rules by stage in table form, 3 anti-patterns.)
 
-### Context Budget
+### Context Loading Discipline
 
 Read `references/CONTEXT-BUDGET.md` for progressive loading and degradation tiers. (~76 lines: 4 principles, 6-step loading order, 4 degradation tiers with behavioral rules, no-re-read rule with exceptions.)

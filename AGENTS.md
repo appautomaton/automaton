@@ -48,4 +48,4 @@ node bin/automaton.mjs context frame
 ## Design Documentation
 
 - [`docs/design-decisions.md`](docs/design-decisions.md) — architectural choices with rationale
-- [`docs/progressive-disclosure.md`](docs/progressive-disclosure.md) — four-layer token budget model
+- [`docs/progressive-disclosure.md`](docs/progressive-disclosure.md) — four-layer progressive disclosure model

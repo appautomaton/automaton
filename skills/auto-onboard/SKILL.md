@@ -13,7 +13,7 @@ First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, cano
 
 ## Preamble
 
-auto-onboard builds bounded project truth from repository evidence, not training data, not conversation, not guessing. It writes five steering artifacts and never writes code. Context budget: REPO-MAP.md under 150 lines; stop scanning once you have enough.
+auto-onboard builds bounded project truth from repository evidence, not training data, not conversation, not guessing. It writes five steering artifacts and never writes code. Loading discipline: keep REPO-MAP.md under 150 lines; stop scanning once you have enough.
 
 ## Quality Gate
 
@@ -61,7 +61,7 @@ Use `templates/` as scaffolds:
 - `.agent/wiki/REPO-MAP.md`: bounded evidence index; no open-question parking, confidence verdict, or recommended next skill
 - `.agent/steering/PROJECT.md`: compact identity record; what this repo owns and why
 - `.agent/steering/REQUIREMENTS.md`: durable constraints only; no generic unknown parking
-- `.agent/steering/ROADMAP.md`: token-efficient placeholder on first run; refresher-only phase updates when strong roadmap evidence exists and the user confirms in chat
+- `.agent/steering/ROADMAP.md`: compact placeholder on first run; refresher-only phase updates when strong roadmap evidence exists and the user confirms in chat
 - `.agent/steering/STATUS.md`: current state and next step
 
 ### Update State

@@ -1,6 +1,6 @@
 # Progressive Disclosure Architecture
 
-How Automaton manages token budget across four layers. Each layer gates the next; nothing loads speculatively.
+How Automaton manages progressive loading across four layers. Each layer gates the next; nothing loads speculatively.
 
 ## Layers
 

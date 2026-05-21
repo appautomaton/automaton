@@ -26,7 +26,7 @@ The sequence should read like `why -> what must stay true -> what to do next`.
 - Separate `Observed`, `Inferred`, and `Needs Confirmation` when certainty differs.
 - When a user follow-up is needed, ask a bounded decision question instead of outsourcing discovery.
 - Do not use durable artifacts as scratchpads for speculative questions, confidence labels, or routing chatter.
-- Keep ROADMAP.md token-efficient by default. Do not create phases on first-time onboarding, and do not promote candidate phases during refresh without user confirmation.
+- Keep ROADMAP.md compact by default. Do not create phases on first-time onboarding, and do not promote candidate phases during refresh without user confirmation.
 - Keep roadmap items evidence-backed and near-term when phases are confirmed. Do not invent distant strategy.
 - Name concrete files, packages, and commands whenever they anchor the truth.
 - Do not let one artifact duplicate the full content of another. Each artifact should narrow the surface area.

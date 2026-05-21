@@ -15,7 +15,7 @@ First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, cano
 
 Execution safety review. Architecture, data flow, edge cases, test strategy, not product vision. Identifies risks that could cause failure, stalling, or rework.
 
-Context budget: one PLAN.md read, optional DESIGN.md when `canonical_design` exists, one risk matrix, one verdict. Read source files when assessing technical risk — slice boundaries, dependency assumptions, and blast radius claims are only verifiable against the actual code.
+Loading discipline: one PLAN.md read, optional DESIGN.md when `canonical_design` exists, one risk matrix, one verdict. Read source files when assessing technical risk — slice boundaries, dependency assumptions, and blast radius claims are only verifiable against the actual code.
 
 ## Quality Gate
 

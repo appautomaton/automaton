@@ -31,7 +31,8 @@ Canonical vocabulary for Automaton skills. Use these terms exactly. Do not subst
 |-----------|---------------|---------|
 | canonical pointer | main file, primary doc | The path in `.agent/.automaton/state/current.json` that points to the authoritative version of an artifact. |
 | active change | current work | The change named in `.agent/.automaton/state/current.json` under `active_change`. |
-| context budget | time estimate, complexity | Framing work in terms of context-window consumption, not duration. |
+| loading discipline | context budget field, token allocation | Internal guidance for loading only artifacts needed by the current stage or slice. |
+| context pressure | time estimate, percent budget | A real stop condition when loaded context risks dropping material state; report only when it blocks continuation. |
 | progressive loading | full scan, read everything | Loading only the files needed for the current slice, in dependency order. |
 | no-re-read | re-read, check again | A rule: do not re-read a file already loaded in this session unless it changed, the user asks, or verification requires fresh evidence. |
 

@@ -15,7 +15,7 @@ First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, cano
 
 auto-onboard produces steering artifacts; auto-office-hours produces clarity. This skill is conversational only until the user approves an approach. Before approval, it writes nothing. After approval, it persists the approved intake to `.agent/work/<change>/INTAKE.md` and records the active change so `auto-frame` can resume without conversation memory. `INTAKE.md` is guaranteed only for an approved office-hours session; aborted, skipped, or still-conversational office-hours sessions do not produce it. This skill never writes code or scaffolds projects. It does not create SPEC.md in conversational mode; when approved intake is enough to frame safely, continue into `auto-frame`'s contract in the same session so the user does not have to ask again.
 
-Context budget: hold the conversation goal, evidence, request coverage, rejected framings, and the next decision. Read project files only when evidence in the repo changes the objective, especially for parity, audit, migration, coverage, or mixed work.
+Loading discipline: hold the conversation goal, evidence, request coverage, rejected framings, and the next decision. Read project files only when evidence in the repo changes the objective, especially for parity, audit, migration, coverage, or mixed work.
 
 ## Quality Gate
 
@@ -85,7 +85,7 @@ After `INTAKE.md` is written, continue into `auto-frame` in the same session whe
 - The approved intake states the objective in one sentence.
 - Scope coverage has no unresolved `Needs decision` item that would change scope, approach, or verification.
 - The target stakeholder or artifact, desired outcome, constraints, anti-goals, and key risks are clear enough to produce acceptance criteria.
-- The host/session has enough context budget to write `SPEC.md` without dropping material request context.
+- The host/session can write `SPEC.md` without dropping material request context.
 
 If those conditions pass, load and follow `auto-frame`'s contract, write `.agent/work/<change>/SPEC.md`, update `canonical_spec`, and report both artifacts. If any condition fails, stop after `INTAKE.md` with the concrete blocker or focused question. Do not make the user manually invoke `auto-frame` just because office-hours wrote intake successfully.
 

@@ -6,14 +6,18 @@
 ### Slice 3: Implement user authentication middleware
 
 **Objective:** Add JWT validation to all protected API routes.
-**Context budget:** ~12% of context window.
+**Acceptance criteria:**
+- Protected API routes reject missing or invalid JWT Bearer tokens.
+- Existing valid-token requests still succeed.
+**Touches:** `src/middleware/auth.js`, protected route handlers, auth middleware tests.
 **Produces:** `src/middleware/auth.js` with `verifyToken` function, plus updated route handlers.
 **Verification:** `npm test -- auth.middleware.test.js` passes; `curl -H "Authorization: Bearer invalid" /api/protected` returns 401.
 ```
 
 Why this works:
 - Objective is specific and testable.
-- Context budget is explicit.
+- Acceptance criteria state observable behavior.
+- Touches names the expected work area.
 - Produces a specific artifact.
 - Verification is a concrete command with expected output.
 
@@ -23,16 +27,16 @@ Why this works:
 ### Slice 3: Add auth
 
 **Objective:** Make the API secure.
-**Context budget:** ~20% of context window.
 **Produces:** Working authentication.
 **Verification:** Tests pass.
 ```
 
 Why this fails:
 - "Make the API secure" is not actionable.
+- No acceptance criteria.
 - No specific artifact named.
 - "Tests pass" is not a specific command.
-- Context budget is too high for the vagueness.
+- Scope is too broad to execute safely.
 
 ## Another Good Example
 
@@ -40,7 +44,7 @@ Why this fails:
 ### Slice 2: Add database migration for user preferences
 
 **Objective:** Create migration that adds `preferences` JSONB column to `users` table.
-**Context budget:** ~8% of context window.
+**Touches:** `migrations/`, schema tests.
 **Produces:** `migrations/20240115_add_user_preferences.sql` plus rollback script.
 **Verification:** `npm run db:migrate` succeeds; `npm run db:rollback` reverts cleanly; schema inspection confirms column exists.
 ```
@@ -51,7 +55,6 @@ Why this fails:
 ### Slice 2: Database stuff
 
 **Objective:** Update the database.
-**Context budget:** ~15% of context window.
 **Produces:** Database changes.
 **Verification:** Check the database.
 ```

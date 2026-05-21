@@ -476,6 +476,8 @@ test('subagent protocol defines dispatch packets and bounded review loops', () =
 test('auto-plan defines lean slice defaults without dropping execution safety', () => {
   const source = readFileSync(join(skillsRoot, 'auto-plan', 'SKILL.md'), 'utf8')
 
+  assert.match(source, /Artifact discipline: `PLAN\.md` is the reloadable execution index/)
+  assert.match(source, /Bounded: it can be executed and verified without loading unrelated slices/)
   assert.match(source, /\*\*Execution:\*\* direct \| subagent recommended \| subagent required/)
   assert.match(source, /\*\*Checkpoint after:\*\* none \| human-verify \| decision \| human-action/)
   assert.match(source, /Required:/)
@@ -493,6 +495,30 @@ test('auto-plan defines lean slice defaults without dropping execution safety', 
   assert.match(source, /Verification findings, implementation caveats, downstream consequences, and next-slice recommendations are not checkpoints/)
   assert.match(source, /concrete question and options/)
   assert.match(source, /Do not use `decision` for reversible engineering judgment/)
+  assert.doesNotMatch(source, /\*\*Context budget:\*\*/)
+  assert.doesNotMatch(source, /Context budget for this change/)
+  assert.doesNotMatch(source, /known fraction of the context window/)
+  assert.doesNotMatch(source, /~X% of context window/)
+})
+
+test('durable artifact templates avoid context budget math', () => {
+  const contextBudget = readFileSync(join(skillsRoot, '_shared', 'references', 'CONTEXT-BUDGET.md'), 'utf8')
+  const sliceExamples = readFileSync(join(skillsRoot, 'auto-plan', 'references', 'slice-examples.md'), 'utf8')
+  const lexicon = readFileSync(join(skillsRoot, '_shared', 'authoring', 'LEXICON.md'), 'utf8')
+
+  for (const skillName of authoredSkills) {
+    const source = readFileSync(join(skillsRoot, skillName, 'SKILL.md'), 'utf8')
+    assert.doesNotMatch(source, /^Context budget:/m, `${skillName} must use artifact/loading discipline language`)
+    assert.doesNotMatch(source, /^### Context Budget$/m, `${skillName} must use context loading discipline headings`)
+  }
+
+  assert.match(contextBudget, /Keep artifacts concrete/)
+  assert.match(contextBudget, /Do not write context-budget fields, token-allocation notes, or percentage estimates/)
+  assert.match(contextBudget, /Context-size estimates in PLAN\.md/)
+  assert.match(lexicon, /loading discipline/)
+  assert.match(lexicon, /context pressure/)
+  assert.doesNotMatch(sliceExamples, /Context budget/)
+  assert.doesNotMatch(sliceExamples, /% of context window/)
 })
 
 test('auto-execute owns route selection and execution-window continuation', () => {

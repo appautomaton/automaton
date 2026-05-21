@@ -1,6 +1,6 @@
-# Context Budget
+# Context Loading Discipline
 
-Guidelines for managing context windows across multi-session agentic work.
+Internal guidelines for preserving reasoning headroom across multi-session agentic work.
 
 ## Principles
 
@@ -8,6 +8,7 @@ Guidelines for managing context windows across multi-session agentic work.
 2. **Load progressively.** Start with the smallest artifact that unlocks the next decision. Load more only when needed.
 3. **Never re-read.** If you loaded a file in this session, do not read it again unless the user explicitly requests it, you know it has changed, or you are running a verification step that requires fresh evidence.
 4. **Generate summaries, not transcripts.** When reporting findings, compress 500 lines of evidence into 5 lines of conclusion.
+5. **Keep artifacts concrete.** Do not write context-budget fields, token-allocation notes, or percentage estimates into SPEC.md, PLAN.md, slice detail files, evidence blocks, or STATUS.md. Artifacts record objectives, acceptance criteria, verification, dependencies, status, evidence, risks, and links.
 
 ## Progressive Loading Order
 
@@ -22,18 +23,18 @@ When entering any stage, load files in this order. Stop as soon as you have enou
 6. Source files          (read as needed to understand the project and produce accurate work)
 ```
 
-## Context Budget Language
+## Artifact Language Boundary
 
-Frame all work in terms of context consumption, not time.
+Use this guide to decide what to load, link, summarize, or checkpoint. Do not turn the heuristic into durable artifact prose.
 
 | Instead of... | Use... |
 |---------------|--------|
-| "This will take 2 hours" | "This slice consumes ~5% of the available context" |
-| "This is a big change" | "This change requires 3 slices, each ~10% of context" |
-| "Read the whole codebase" | "Scan 10 files to build a repo map (~8% of context)" |
+| Context-size estimates in PLAN.md | `Detail: slices/slice-NNN.md` when slice instructions are too large for the plan index |
+| "This is a big change" | "This requires three independently verifiable slices" |
+| "Read the whole codebase" | "Load files named by the active slice; scan wider only when correctness requires it" |
 | "Re-read the spec" | "The spec is already loaded. Summarize the relevant section unless this is a verification step." |
 
-## Session Budgets
+## Session Headroom
 
 **Rule of thumb:** Keep loaded context under 60% of total window. The remaining 40% is for reasoning and response generation.
 
@@ -45,7 +46,7 @@ Monitor context usage and adjust behavior accordingly. These are behavioral rule
 |------|-------|----------|
 | **PEAK** | 0–30% | Full operations. Read bodies, spawn multiple agents, inline results. |
 | **GOOD** | 30–50% | Normal operations. Prefer frontmatter reads, delegate aggressively. |
-| **DEGRADING** | 50–70% | Economize. Frontmatter-only reads, minimal inlining, warn user about budget. |
+| **DEGRADING** | 50–70% | Economize. Frontmatter-only reads, minimal inlining, warn user about context pressure. |
 | **EMERGENCY** | 70%+ | Halt new work. Checkpoint progress immediately. No new reads unless critical. |
 
 **Warning signs before panic thresholds fire:**
@@ -60,7 +61,7 @@ When you see these, assume context pressure and move to a higher tier of conserv
 
 - **Broad scans.** `find . -name "*.js" | xargs cat` loads the entire codebase. Never do this.
 - **Greedy wiki loading.** Loading every file in `.agent/wiki/` because "they might be useful."
-- **Artifact bloat.** SPEC.md that is 800 lines long. Split the change or move detail to DESIGN.md.
+- **Artifact bloat.** SPEC.md that is 800 lines long. Link detail under `spec/*.md` or move architecture rationale to DESIGN.md.
 - **Re-read loops.** Reading `package.json` three times in one session because it was not held in working memory.
 
 ## No-Re-Read Rule

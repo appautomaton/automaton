@@ -15,7 +15,7 @@ First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, cano
 
 auto-execute owns execute-stage orchestration, route selection, state, and scope. Direct implementation and subagent implementation are two routes inside this skill; the user should not have to switch skills to get the subagent route. Execute and verify one approved slice at a time inside the selected execution window. Continuation is the default after a verified slice; checkpoints and STOP conditions are the exceptions. An execution window is a context-management batch, not a completion boundary: when a window finishes and approved slices remain, select the next safe window and continue.
 
-Context budget: keep the active slice, execution-window metadata, acceptance criteria, route metadata, verification commands, and active files in context. Load linked detail files and traceability IDs for the active slice only. Read wider project files only when implementation correctness requires it.
+Loading discipline: keep the active slice, execution-window metadata, acceptance criteria, route metadata, verification commands, and active files in context. Load linked detail files and traceability IDs for the active slice only. Read wider project files only when implementation correctness requires it.
 
 ## Quality Gate
 
@@ -231,9 +231,9 @@ Read `references/stop-examples.md` for when to halt vs. push through. (~29 lines
 
 Read `references/debug-protocol.md` for root cause patterns by stack. (~53 lines.)
 
-### Context Budget
+### Context Loading Discipline
 
-Read `references/CONTEXT-BUDGET.md` for progressive loading and degradation tiers. (~76 lines.)
+Read `references/CONTEXT-BUDGET.md` for progressive loading and context pressure tiers. (~76 lines.)
 
 ### Artifact Lifecycle
 

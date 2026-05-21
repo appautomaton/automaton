@@ -15,7 +15,7 @@ First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, cano
 
 auto-plan builds the smallest plan that makes execution safe while preserving the approved scope. It does not write code. It breaks work into ordered slices, each producing a testable outcome. Small slices use defaults; material risk, dependency, or checkpoint differences are explicit.
 
-Context budget: `PLAN.md` is the reloadable execution index, not the whole implementation dossier. Keep PLAN.md compact enough to re-read. For large coherent work, summarize slices in PLAN.md and link optional detail files under `.agent/work/<change>/slices/`. Split only for independent outcomes, not because one coherent plan has many requirements.
+Artifact discipline: `PLAN.md` is the reloadable execution index, not the whole implementation dossier. Keep PLAN.md compact enough to re-read. For large coherent work, summarize slices in PLAN.md and link optional detail files under `.agent/work/<change>/slices/`. Split only for independent outcomes, not because one coherent plan has many requirements.
 
 ## Quality Gate
 
@@ -61,7 +61,7 @@ If `SPEC.md` names requirement IDs, gap IDs, invariants, audit questions, migrat
 
 Break work into ordered execution units, not topic buckets. Each slice must be:
 - Testable: it produces an outcome that can be verified.
-- Bounded: it consumes a known fraction of the context window.
+- Bounded: it can be executed and verified without loading unrelated slices.
 - Independent: it can be executed without loading slices that come after it.
 - Checkpointed only for human input: it marks a pause only when a human must act or choose before the next approved slice can start.
 
@@ -90,7 +90,6 @@ Defaults, state only when overriding:
 
 Include when useful:
 **Touches:** [files, directories, or subsystems]
-**Context budget:** [~X% of context window]
 **Produces:** [specific artifact or state change]
 **Detail:** [linked `slices/slice-NNN.md` file]
 ```
@@ -106,7 +105,7 @@ Rules:
 - Use `decision` only when the user must choose among named product, architecture, design, or scope options before the next slice can start. The checkpoint reason must include the concrete question and options. Do not use `decision` for reversible engineering judgment, known limitations, validation results, or "next slice should be..." notes.
 - Use `human-action` when progress requires an external action the agent cannot perform, such as 2FA, account approval, or off-machine access.
 - Slices should be small enough to complete in one session.
-- If a coherent slice exceeds ~15% of context window, move extended instructions to `slices/slice-NNN.md` and keep PLAN.md as the index. Split the slice only when it contains independent outcomes.
+- If a coherent slice has extended instructions that make PLAN.md hard to scan, move them to `slices/slice-NNN.md` and keep PLAN.md as the index. Split the slice only when it contains independent outcomes.
 </SLICE-DESIGN>
 
 ### Write PLAN.md
@@ -123,7 +122,6 @@ Write the plan to `.agent/work/<change>/PLAN.md`.
 - **Architecture approach** — trigger: introduces a new pattern, non-obvious decision, or cross-system integration. Omit when the design is obvious from SPEC.
 - **Requirement traceability** — trigger: SPEC names gap IDs, invariant IDs, audit questions, migration checkpoints, or coverage targets. Omit when the SPEC has no traceable IDs.
 - **Aggregate verification commands table** — trigger: ≥ 3 slices or commands not captured per-slice. Per-slice inline suffices for smaller plans (index over transcript).
-- **Context budget for this change** — trigger: plan spans multiple sessions, expects context pressure, or warrants budget allocation. Omit for plans under one session.
 
 Apply the Artifact Signal Discipline rules from `references/ARTIFACT-LIFECYCLE.md` while writing: no mirror sections, index over transcript, append-replace not stack. Replace prior `## Review:` sections on re-run for the same change — do not stack reviews.
 
@@ -175,9 +173,9 @@ Read `references/slice-examples.md` for well-designed vs. poorly-designed slices
 
 Read `references/verification-patterns.md` for common verification commands by stack. (~47 lines: Node/Python/Rust/Go/General commands, 4 verification principles including "verify the exact behavior, not absence of errors.")
 
-### Context Budget
+### Context Loading Discipline
 
-Read `references/CONTEXT-BUDGET.md` for progressive loading and degradation tiers. (~76 lines: 4 principles, 6-step loading order, 4 degradation tiers with behavioral rules, no-re-read rule with exceptions.)
+Read `references/CONTEXT-BUDGET.md` for progressive loading and context pressure tiers. (~76 lines: 4 principles, 6-step loading order, 4 pressure tiers with behavioral rules, no-re-read rule with exceptions.)
 
 ### Artifact Lifecycle
 

@@ -8,12 +8,12 @@ Load this reference only before finalizing or refreshing `PLAN.md`.
 - Hidden dependencies: a slice needs context, files, or decisions not named in the plan.
 - Untestable verification: checks that do not name commands or observable outcomes.
 - Architecture theater: new structure introduced only to make the plan look sophisticated.
-- Overloaded slices: one slice touching unrelated systems or exceeding the context budget.
+- Overloaded slices: one slice touching unrelated systems or too much to verify independently.
 
 ## Better Shape
 
 - Give every material slice a concrete output and verification command.
-- Make dependencies explicit and keep later slices out of earlier context.
+- Make dependencies explicit and keep later slices out of the active slice.
 - Prefer direct execution unless risk or file ownership justifies subagents.
 - Split any slice that cannot be verified independently.
 
