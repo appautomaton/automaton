@@ -6,7 +6,7 @@ Automaton installs markdown skills, lightweight runtime hooks, and durable `.age
 
 ## Acknowledgement 致谢
 
-Thanks to [Linux Do](https://linux.do/) for their vibrant AI development community. 🖤🤍💛
+Thanks to [Linux Do](https://linux.do/) (https://linux.do/) for their vibrant AI development community. 🖤🤍💛
 
 ## Why Use It
 
