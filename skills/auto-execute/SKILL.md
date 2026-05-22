@@ -21,7 +21,7 @@ Loading discipline: keep the active slice, execution-window metadata, acceptance
 
 Before marking a slice complete:
 - Keep edits inside the active slice.
-- Investigate root cause before fixing bugs.
+- Investigate root cause before fixing bugs. Escalate after 3 failed attempts with observations, attempts, and what you need; read `references/debug-protocol.md` (~53 lines) for extended guidance.
 - Remove obvious comments, needless abstraction, and defensive boilerplate.
 - Record verification evidence before advancing or selecting the next slice.
 - Read `references/quality.md` (~37 lines) when the diff looks clever or defensive rather than inevitable from the plan.
@@ -61,8 +61,6 @@ Slice defaults:
 For each slice in the window, extract objective, route metadata, dependencies, touched files or subsystems, constraints and anti-goals, acceptance criteria, verification commands, checkpoint metadata, and linked detail files and traceability IDs. If a material slice is missing acceptance criteria or verification, stop and recommend `auto-plan`.
 
 For content slices, also extract artifact target, audience, thesis, voice, content anti-goals, channel, source policy, factual risk, and format. If the slice requires a missing source or factual-risk decision, stop with `NEEDS_CONTEXT`.
-
-### Choose Execution Route
 
 ### Route Selection
 
@@ -128,13 +126,15 @@ Do not pause for checkpoint text that only records verification findings, implem
 
 Continue within the selected execution window only when verification passed, dependencies are met, the next slice still matches the approved plan, context remains healthy, and no STOP condition applies.
 
+If the checkpoint is valid, pause with the next action and checkpoint reason.
+
+### Continuation And Handoff
+
 When the selected execution window is complete but `PLAN.md` still has uncompleted approved slices, return to **Select Execution Window** immediately. Do not wrap up merely because the current window ended. Stopping with remaining slices is valid only when you name a concrete checkpoint, STOP condition, context-pressure tier, or unavailable host capability that prevents continuing now; "N slices remain" is progress state, not a stop reason.
 
 If all slices are complete and no STOP condition applies, ensure slice evidence is recorded, then continue into `auto-verify`'s contract in the same session when the host/session can keep working. Do not make the user run `auto-verify` manually just because execution finished. Only recommend `auto-verify` as the next skill when continuation is blocked by a valid checkpoint, context pressure, unavailable host capability, or another explicit STOP condition.
 
 When continuing into verification, follow `auto-verify`'s contract: re-read the canonical `PLAN.md`, collect every acceptance criterion, run or derive the verification commands, and produce the verification report. Do not trust execute's own slice evidence as final verification.
-
-If the checkpoint is valid, pause with the next action and checkpoint reason.
 
 ### Record Corrections
 
@@ -156,8 +156,6 @@ Halt immediately and report to the user when:
 
 Do not guess. Do not proceed.
 </STOP>
-
-Investigate root cause before fixing. Escalate after 3 failed attempts with observations, attempts, and what you need. Read `references/debug-protocol.md` (~53 lines) for extended guidance.
 
 <GATE>
 
@@ -190,7 +188,6 @@ Do NOT write code unless:
 - Do not create new execution evidence files by default; update `PLAN.md` or the linked `slices/slice-NNN.md` detail file in place.
 - Stop and reframe when the approved slice is no longer valid.
 - Prefer targeted checks over full-suite rituals until the slice is stable.
-- Continue into `auto-verify`'s contract after the last slice when no valid checkpoint, STOP condition, context pressure, or host limitation blocks continuation.
 - Do not end with "remaining slices" as the only next action. Remaining approved slices require another execution-window pass unless a valid blocker is present.
 - Warn on review state but do not block execution unless the risk is slice-blocking.
 - Hold only the active slice, execution-window metadata, acceptance criteria, route metadata, and active files in context.

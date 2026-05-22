@@ -4,6 +4,7 @@ import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import { DEFAULT_NEXT_STEP, STAGES } from '../lib/contracts.mjs'
+import { renderStatusSummary } from '../lib/status.mjs'
 
 function loadCurrentState(target) {
   if (!existsSync(target)) {
@@ -21,28 +22,14 @@ function loadCurrentState(target) {
   return { activeChange, stage }
 }
 
-function renderMinimalStatus(activeChange, stage) {
-  return [
-    '# Status',
-    '',
-    '## Current Change',
-    '',
-    `- active change: \`${activeChange}\``,
-    `- current stage: \`${stage}\``,
-    '',
-    '## What Is True Now',
-    '',
-    '- none recorded',
-    '',
-    '## Next Step',
-    '',
-    DEFAULT_NEXT_STEP,
-    '',
-    '## Open Risks',
-    '',
-    '- none recorded',
-    ''
-  ].join('\n')
+function scaffoldStatus(activeChange, stage) {
+  return renderStatusSummary({
+    activeChange,
+    stage,
+    whatIsTrueNow: [],
+    nextStep: DEFAULT_NEXT_STEP,
+    openRisks: []
+  })
 }
 
 export function syncStatusPointerFromCurrentState({ currentTarget, statusTarget }) {
@@ -55,7 +42,7 @@ export function syncStatusPointerFromCurrentState({ currentTarget, statusTarget 
   mkdirSync(dirname(statusTarget), { recursive: true })
 
   if (!existsSync(statusTarget)) {
-    writeFileSync(statusTarget, renderMinimalStatus(currentState.activeChange, currentState.stage), 'utf8')
+    writeFileSync(statusTarget, scaffoldStatus(currentState.activeChange, currentState.stage), 'utf8')
     return { status: 'initialized' }
   }
 
@@ -76,7 +63,7 @@ export function syncStatusPointerFromCurrentState({ currentTarget, statusTarget 
     return { status: 'unchanged' }
   }
 
-  writeFileSync(statusTarget, renderMinimalStatus(currentState.activeChange, currentState.stage), 'utf8')
+  writeFileSync(statusTarget, scaffoldStatus(currentState.activeChange, currentState.stage), 'utf8')
   return { status: 'initialized' }
 }
 

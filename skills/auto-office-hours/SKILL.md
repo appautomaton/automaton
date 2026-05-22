@@ -13,7 +13,7 @@ First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, cano
 
 ## Preamble
 
-auto-onboard produces steering artifacts; auto-office-hours produces clarity. This skill is conversational only until the user approves an approach. Before approval, it writes nothing. After approval, it persists the approved intake to `.agent/work/<change>/INTAKE.md` and records the active change so `auto-frame` can resume without conversation memory. `INTAKE.md` is guaranteed only for an approved office-hours session; aborted, skipped, or still-conversational office-hours sessions do not produce it. This skill does not write code or scaffold projects. It does not create SPEC.md in conversational mode; when approved intake is enough to frame safely, continue into `auto-frame`'s contract in the same session so the user does not have to ask again.
+auto-onboard produces steering artifacts; auto-office-hours produces clarity. This skill is conversational only until the user approves an approach. Before approval, it writes nothing. After approval, it persists the approved intake to `.agent/work/<change>/INTAKE.md` and records the active change so `auto-frame` can resume without conversation memory. This skill does not write code or scaffold projects. It does not create SPEC.md in conversational mode; when approved intake is enough to frame safely, continue into `auto-frame`'s contract in the same session so the user does not have to ask again.
 
 Loading discipline: hold the conversation goal, evidence, request coverage, rejected framings, and the next decision. Read project files only when evidence in the repo changes the objective, especially for parity, audit, migration, coverage, or mixed work.
 
@@ -115,6 +115,8 @@ Push until the answer names concrete evidence, a specific stakeholder, or an obs
 </STOP>
 
 ## Output
+
+`INTAKE.md` is guaranteed only for an approved office-hours session; aborted, skipped, or still-conversational sessions do not produce it.
 
 If the user approves an approach, write `.agent/work/<change>/INTAKE.md` with:
 - Work scale (bug / feature / capability / roadmap)
