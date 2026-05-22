@@ -20,7 +20,7 @@ const authoredSkills = [
   'auto-eng-review'
 ]
 const namePattern = /^[a-z0-9]+(-[a-z0-9]+)*$/
-const bareAutomatonScript = /automaton\/skills\/[^/]+\/scripts\/(?:get-context|sync-status|scaffold-agent)\.mjs/
+const bareAutomatonScript = /automaton\/skills\/[^/]+\/scripts\/(?:get-context|sync-status)\.mjs/
 const contentDimensions = ['Audience', 'Thesis', 'Voice', 'Content Anti-Goals', 'Channel', 'Source Policy', 'Factual Risk', 'Format']
 
 function escapeRegExp(value) {

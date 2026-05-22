@@ -31,9 +31,7 @@ Standalone scripts. Called by hooks or directly.
 
 | File | Purpose | Caller |
 |------|---------|--------|
-| `sync-status-pointer.mjs` | Lightweight: syncs change+stage to STATUS.md frontmatter | Stop hook |
-| `sync-status.mjs` | Full: current.json → STATUS.md (progress, next step, risks) | Skill scripts |
-| `update-state.mjs` | Writes activeChange + stage to current.json only | Direct |
+| `sync-status-pointer.mjs` | Syncs change+stage from current.json to STATUS.md pointers | Stop hook |
 
 ### Skill scripts (`.claude/skills/auto-*/scripts/`)
 
@@ -43,7 +41,6 @@ Self-contained — no runtime imports (see DD-007). Called by LLM via bash.
 |------|---------|
 | `get-context.mjs` | Reads current.json, outputs normalized JSON + diagnostics |
 | `sync-status.mjs` | Updates current.json + STATUS.md |
-| `scaffold-agent.mjs` | Creates .agent/ directory structure + initial steering files |
 
 ## Install Flow
 
