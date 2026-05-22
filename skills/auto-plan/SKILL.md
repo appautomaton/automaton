@@ -13,7 +13,9 @@ First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, cano
 
 ## Preamble
 
-auto-plan builds the smallest plan that makes execution safe while preserving the approved scope. It does not write code. It breaks work into ordered slices, each producing a testable outcome. Small slices use defaults; material risk, dependency, or checkpoint differences are explicit.
+auto-plan builds the smallest plan that makes execution safe while preserving the approved scope. It does not write code or broaden scope beyond the approved spec.
+
+Loading discipline: hold SPEC.md, review state, and source files needed for accurate slices. Read wider project files when understanding existing code informs slice boundaries or verification commands.
 
 Artifact discipline: `PLAN.md` is the reloadable execution index, not the whole implementation dossier. Keep PLAN.md compact enough to re-read. For large coherent work, summarize slices in PLAN.md and link optional detail files under `.agent/work/<change>/slices/`. Split only for independent outcomes, not because one coherent plan has many requirements.
 
@@ -32,8 +34,6 @@ Before finalizing `PLAN.md`:
 
 Load files in this order. Stop as soon as you have enough to proceed.
 
-<CONTEXT-LOADING>
-
 ```
 1. .agent/.automaton/state/current.json (always, < 50 tokens)
 2. STATUS.md             (always, < 200 tokens)
@@ -45,7 +45,6 @@ Load files in this order. Stop as soon as you have enough to proceed.
 ```
 
 Read and explore source files when understanding existing code helps produce accurate slices — module structure, current implementations, test patterns, and integration points all inform slice boundaries, verification commands, and dependency ordering. Do not ignore linked `spec/*.md` files when they contain normative requirements, gap IDs, invariants, or acceptance detail.
-</CONTEXT-LOADING>
 
 ### Assess Review State (if reviews exist)
 
@@ -68,8 +67,6 @@ Break work into ordered execution units, not topic buckets. Each slice must be:
 For content slices, also name the artifact target, allowed sources, factual-risk gate, and format constraint so `auto-execute` does not invent missing context.
 
 Before writing slices, think ahead to execution topology: which slices must run serially, which checkpoints require human judgment, which use subagents, and whether any parallel-safe groups exist. Continuation is the default after a verified slice; mark a checkpoint only when the agent must pause for human verification, a human decision, or a human action. Parallel-safe means dependencies are independent and write sets are disjoint; default to none. For multi-slice plans, make the topology clear that execution should continue through all approved slices; execution windows are context-management batches, not planned stopping points.
-
-<SLICE-DESIGN>
 
 Frame each slice with required fields first, then only the overrides the slice needs:
 
@@ -106,7 +103,6 @@ Rules:
 - Use `human-action` when progress requires an external action the agent cannot perform, such as 2FA, account approval, or off-machine access.
 - Slices should be small enough to complete in one session.
 - If a coherent slice has extended instructions that make PLAN.md hard to scan, move them to `slices/slice-NNN.md` and keep PLAN.md as the index. Split the slice only when it contains independent outcomes.
-</SLICE-DESIGN>
 
 ### Write PLAN.md
 
@@ -129,7 +125,7 @@ Apply the Artifact Signal Discipline rules from `references/ARTIFACT-LIFECYCLE.m
 
 If the architecture is non-trivial or new patterns are introduced, write `DESIGN.md` to `.agent/work/<change>/DESIGN.md`. Keep it under 200 lines. If the architecture is obvious from the spec, skip this file.
 
-<HARD-GATE>
+<GATE>
 
 Do NOT write PLAN.md if:
 - SPEC.md is missing or unreadable.
@@ -137,11 +133,11 @@ Do NOT write PLAN.md if:
 - The scope is still ambiguous after reading SPEC.md.
 
 If any of these are true, recommend `auto-frame` and stop.
-</HARD-GATE>
+</GATE>
 
 ### Update State
 
-Run `sync-status.mjs` from this skill's installed directory → writes STATUS.md frontmatter from current.json, outputs `{synced, statusPath, active_change, stage}`.
+Run `sync-status.mjs` from this skill's scripts directory.
 Update `.agent/.automaton/state/current.json`:
 - `canonical_design` → path to DESIGN.md (if written)
 - `canonical_plan` → path to PLAN.md
@@ -152,8 +148,8 @@ Update `.agent/.automaton/state/current.json`:
 - `PLAN.md`: written to `.agent/work/<change>/PLAN.md`
 - `DESIGN.md`: written to `.agent/work/<change>/DESIGN.md` (if needed)
 - `.agent/.automaton/state/current.json` updated with `canonical_design` (when written), `canonical_plan`, and `stage: plan`
-- Diagnostic handling: `error`-level diagnostics block advancement; `warning`-level diagnostics surface to the next stage
-- Recommended next skill: `auto-eng-review` or `auto-execute`. The user or host invokes the next skill; auto-plan does not require nested invocation.
+- Diagnostic handling: `error`-level diagnostics block the plan; `warning`-level diagnostics surface to the next stage
+- Recommended next skill: `auto-eng-review` or `auto-execute`. The user or host invokes the next skill; auto-plan does not chain.
 
 ## Rules
 

@@ -416,7 +416,7 @@ test('read-only skills do not include the state-write template', () => {
 
     assert.doesNotMatch(
       source,
-      /Run `sync-status\.mjs` from this skill's installed directory/,
+      /Run `sync-status\.mjs` from this skill's scripts directory/,
       `${skillName} is read-only and must not include the state-write template`
     )
     assert.doesNotMatch(
@@ -439,7 +439,7 @@ test('auto-office-hours persists approved intake without pre-approval writes', (
   assert.match(source, /Update `\.agent\/\.automaton\/state\/current\.json`:/)
   assert.match(source, /`active_change` → `<change>`/)
   assert.match(source, /`stage` → `frame`/)
-  assert.match(source, /Run `sync-status\.mjs` from this skill's installed directory/)
+  assert.match(source, /Run `sync-status\.mjs` from this skill's scripts directory/)
   assert.match(source, /`INTAKE\.md` is guaranteed only for an approved office-hours session/)
   assert.match(source, /Approved, complete intake should flow into `auto-frame` without another user prompt/)
   assert.match(source, /write `\.agent\/work\/<change>\/SPEC\.md`/)
@@ -551,7 +551,7 @@ test('auto-execute owns route selection and execution-window continuation', () =
   assert.match(source, /The route decision lives here/)
   assert.match(source, /Run the per-slice protocol/)
   assert.match(source, /Do not tell the user to invoke another execute skill/)
-  assert.match(source, /continue directly into the `auto-verify` verification gate/)
+  assert.match(source, /continue into `auto-verify`'s contract/)
   assert.match(source, /Do not make the user run `auto-verify` manually/)
   assert.match(source, /Do not trust execute's own slice evidence as final verification/)
   assert.match(source, /return to \*\*Select Execution Window\*\* immediately/)
@@ -604,7 +604,7 @@ test('auto-resume treats verified completion as no automatic next skill', () => 
 test('artifact lifecycle allows clean execute-to-verify continuation', () => {
   const lifecycle = readFileSync(join(skillsRoot, '_shared', 'references', 'ARTIFACT-LIFECYCLE.md'), 'utf8')
 
-  assert.match(lifecycle, /continue directly into `auto-verify`/)
+  assert.match(lifecycle, /continue into `auto-verify`'s contract/)
   assert.match(lifecycle, /same session can safely do so/)
   assert.match(lifecycle, /should not force the user to manually invoke the next lifecycle skill/)
 })
@@ -632,9 +632,11 @@ test('prompt references define canonical tags and verification context exception
   const contextBudget = readFileSync(join(skillsRoot, '_shared', 'references', 'CONTEXT-BUDGET.md'), 'utf8')
   const execute = readFileSync(join(skillsRoot, 'auto-execute', 'SKILL.md'), 'utf8')
 
-  assert.match(xml, /Use the canonical tag name exactly/)
+  assert.match(xml, /Use the canonical name exactly/)
   assert.match(xml, /Use `<STOP>` for halt conditions/)
   assert.match(xml, /Decision checkpoints require a concrete question and named options/)
+  assert.match(xml, /`<GATE>`/)
+  assert.doesNotMatch(xml, /HARD-GATE/)
   assert.match(contextBudget, /verification pass/)
   assert.match(execute, /<STOP>\n\nHalt immediately/)
   assert.doesNotMatch(execute, /STOP-CONDITIONS/)
@@ -901,5 +903,98 @@ test('auto-frame and auto-plan distinguish core from conditional sections', () =
     assert.match(source, /\*\*core\*\*/i, `${skillName} must label core fields/sections`)
     assert.match(source, /\*\*conditional\*\*/i, `${skillName} must label conditional fields/sections`)
     assert.match(source, /trigger/i, `${skillName} must state a trigger for each conditional field/section`)
+  }
+})
+
+test('every skill preamble contains a "does not" boundary sentence', () => {
+  for (const skillName of authoredSkills) {
+    const source = readFileSync(join(skillsRoot, skillName, 'SKILL.md'), 'utf8')
+    const preambleMatch = source.match(/## Preamble\n\n([\s\S]*?)(?=\n## )/)
+
+    if (preambleMatch) {
+      assert.match(
+        preambleMatch[1],
+        /does not/i,
+        `${skillName} preamble must contain a "does not" boundary sentence`
+      )
+    }
+  }
+})
+
+test('every skill with a preamble contains a loading discipline sentence', () => {
+  for (const skillName of authoredSkills) {
+    const source = readFileSync(join(skillsRoot, skillName, 'SKILL.md'), 'utf8')
+    const preambleMatch = source.match(/## Preamble\n\n([\s\S]*?)(?=\n## )/)
+
+    if (preambleMatch) {
+      assert.match(
+        preambleMatch[1],
+        /Loading discipline:|Context budget:/,
+        `${skillName} preamble must contain a loading discipline sentence`
+      )
+    }
+  }
+})
+
+test('only allowed XML tags appear in SKILL.md files', () => {
+  const allowed = new Set(['GATE', 'STOP', 'INTERVIEW', 'MODE-DETECTION'])
+
+  for (const skillName of authoredSkills) {
+    const source = readFileSync(join(skillsRoot, skillName, 'SKILL.md'), 'utf8')
+    const tags = source.match(/<([A-Z][A-Z0-9-]*)>/g) || []
+
+    for (const tag of tags) {
+      const name = tag.slice(1, -1)
+      assert.ok(
+        allowed.has(name),
+        `${skillName} uses disallowed XML tag <${name}>. Allowed: ${[...allowed].join(', ')}`
+      )
+    }
+  }
+})
+
+test('output sections use canonical diagnostic verbs', () => {
+  for (const skillName of authoredSkills) {
+    const source = readFileSync(join(skillsRoot, skillName, 'SKILL.md'), 'utf8')
+    const outputMatch = source.match(/## Output\n\n([\s\S]*?)(?=\n## |$)/)
+
+    if (!outputMatch) continue
+
+    const output = outputMatch[1]
+
+    if (/diagnostic/i.test(output)) {
+      assert.match(
+        output,
+        /block/,
+        `${skillName} Output must use "block" for error diagnostics`
+      )
+      assert.match(
+        output,
+        /surface/,
+        `${skillName} Output must use "surface" for warning diagnostics`
+      )
+    }
+  }
+})
+
+test('no skill uses "does not require nested invocation"', () => {
+  for (const skillName of authoredSkills) {
+    const source = readFileSync(join(skillsRoot, skillName, 'SKILL.md'), 'utf8')
+    assert.doesNotMatch(
+      source,
+      /does not require nested invocation/,
+      `${skillName} must use "does not chain" instead of "does not require nested invocation"`
+    )
+  }
+})
+
+test('no skill uses <HARD-GATE>', () => {
+  for (const skillName of authoredSkills) {
+    const source = readFileSync(join(skillsRoot, skillName, 'SKILL.md'), 'utf8')
+    assert.doesNotMatch(
+      source,
+      /HARD-GATE/,
+      `${skillName} must use <GATE> instead of <HARD-GATE>`
+    )
   }
 })

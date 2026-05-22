@@ -40,7 +40,7 @@ Canonical vocabulary for Automaton skills. Use these terms exactly. Do not subst
 
 | Canonical | Anti-patterns | Meaning |
 |-----------|---------------|---------|
-| HARD-GATE | important, be careful | An absolute block. The agent must not proceed past this point unless the listed conditions are satisfied. |
+| GATE | important, be careful | An absolute block. The agent must not proceed past this point unless the listed conditions are satisfied. |
 | STOP | pause, wait | A condition where the agent halts and reports, rather than guessing or proceeding. |
 | surface | mention, note | To call out a risk or finding explicitly to the user. |
 | reframe | redirect, change topic | To return to an earlier stage when the current direction is no longer valid. |
@@ -54,12 +54,13 @@ Canonical vocabulary for Automaton skills. Use these terms exactly. Do not subst
 | design | UI, UX | Interaction, visual, information architecture. |
 | security | auth, safety | Threat model, attack surface, secrets, compliance. |
 | runtime | ops, deploy | Performance, observability, infrastructure, cost. |
+| content | writing, article, brief | Audience, thesis, voice, channel, source policy, factual risk. |
 
 ## Prohibited Phrases
 
 Do not use these in skill instructions. They are too vague to shape behavior.
 
-- "Be careful" → Use `HARD-GATE` or `STOP` with explicit conditions.
+- "Be careful" → Use `GATE` or `STOP` with explicit conditions.
 - "Consider" → Use "Evaluate X against Y" or omit if not required.
 - "Think about" → Use "List" or "Compare" or remove.
 - "As needed" → Use explicit criteria for when to do something.

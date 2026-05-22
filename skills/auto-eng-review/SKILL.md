@@ -13,7 +13,7 @@ First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, cano
 
 ## Preamble
 
-Execution safety review. Architecture, data flow, edge cases, test strategy, not product vision. Identifies risks that could cause failure, stalling, or rework.
+Execution safety review. Architecture, data flow, edge cases, test strategy, not product vision. It does not modify the plan or reopen product scope. Identifies risks that could cause failure, stalling, or rework.
 
 Loading discipline: one PLAN.md read, optional DESIGN.md when `canonical_design` exists, one risk matrix, one verdict. Read source files when assessing technical risk — slice boundaries, dependency assumptions, and blast radius claims are only verifiable against the actual code.
 
@@ -39,7 +39,7 @@ In engineering terms: what is being built, what systems does it touch, and what 
 
 Use this matrix as an internal checklist. In chat, summarize only the verdict-driving dimensions unless the user asks for the full matrix.
 
-<RISK-MATRIX>
+### Risk Matrix
 
 | Dimension | Rating (0–10) | What a 10 looks like |
 |-----------|---------------|----------------------|
@@ -51,13 +51,12 @@ Use this matrix as an internal checklist. In chat, summarize only the verdict-dr
 | Dependency risk | | No new critical dependencies; existing ones are stable |
 
 A score ≤ 3 in any dimension is a blocking concern. Surface it explicitly.
-</RISK-MATRIX>
 
 ### Render Verdict
 
 Use exactly one of the three approved values.
 
-<VERDICT>
+### Verdict Values
 
 Use strict vocabulary. No synonyms.
 
@@ -66,7 +65,6 @@ Use strict vocabulary. No synonyms.
 | `approved` | Implementation is safe to proceed. | `auto-execute` |
 | `approved_with_risks` | Implementation is safe but carries known risks. Document them. | `auto-execute` |
 | `needs_correction` | Plan is flawed or unsafe. Return to planning. | `auto-plan` |
-</VERDICT>
 
 ### Append Review
 
@@ -74,7 +72,7 @@ Add a `## Review: Engineering` section to `PLAN.md` using the exact template in 
 
 ### Update State
 
-Run `sync-status.mjs` from this skill's installed directory.
+Run `sync-status.mjs` from this skill's scripts directory.
 Update `.agent/.automaton/state/current.json`:
 - `engineering_review` → `<verdict>`
 
@@ -87,7 +85,7 @@ State the next skill based on the verdict.
 - `PLAN.md` with appended `## Review: Engineering` section
 - `.agent/.automaton/state/current.json` updated with `engineering_review`; `stage` is unchanged by this skill
 - Diagnostic handling: `error`-level diagnostics block the review; `warning`-level diagnostics surface to the next stage
-- Recommended next skill, mapped from verdict per the Review Verdict Routing table in `references/ARTIFACT-LIFECYCLE.md`: `approved` or `approved_with_risks` → `auto-execute`; `needs_correction` → `auto-plan`. The user or host invokes the next skill; auto-eng-review does not require nested invocation.
+- Recommended next skill, mapped from verdict: `approved` or `approved_with_risks` → `auto-execute`; `needs_correction` → `auto-plan`. The user or host invokes the next skill; auto-eng-review does not chain.
 
 ## Rules
 

@@ -10,6 +10,8 @@ export const LENSES = CONTRACTS_DATA.lenses
 
 export const ARTIFACT_LAYOUT = CONTRACTS_DATA.artifactLayout
 
+export const DEFAULT_NEXT_STEP = CONTRACTS_DATA.defaultNextStep
+
 export function isValidStage(stage) {
   return STAGES.includes(stage)
 }

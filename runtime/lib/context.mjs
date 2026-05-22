@@ -1,10 +1,9 @@
 import { existsSync } from 'node:fs'
 import { basename, dirname, join } from 'node:path'
 
+import { DEFAULT_NEXT_STEP } from './contracts.mjs'
 import { loadCurrentState } from './state.mjs'
 import { loadStatusSummary } from './status.mjs'
-
-const DEFAULT_ONBOARDING_STEP = 'Run `auto-onboard` to refresh project truth for the repository before continuing.'
 
 function loadCurrentStateSummary(projectRoot) {
   const target = join(projectRoot, '.agent', '.automaton', 'state', 'current.json')
@@ -85,7 +84,7 @@ function isScaffoldStatus(status) {
   const noRisks = (status.openRisks ?? []).length === 0
   const nextStep = normalizeText(status.nextStep ?? '')
 
-  return noProgress && noRisks && nextStep === DEFAULT_ONBOARDING_STEP
+  return noProgress && noRisks && nextStep === DEFAULT_NEXT_STEP
 }
 
 export function buildSessionContext(projectRoot, options = {}) {

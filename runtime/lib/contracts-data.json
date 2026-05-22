@@ -1,6 +1,6 @@
 {
   "stages": ["frame", "plan", "execute", "verify", "resume"],
-  "lenses": ["product", "engineering", "design", "security", "runtime"],
+  "lenses": ["product", "engineering", "design", "security", "runtime", "content"],
   "artifactLayout": {
     "agentRoot": ".agent",
     "runtimeRoot": ".agent/.automaton",
@@ -23,6 +23,7 @@
     "canonicalSpec": "missing_canonical_spec",
     "canonicalPlan": "missing_canonical_plan"
   },
+  "defaultNextStep": "Run `auto-onboard` to refresh project truth for the repository before continuing.",
   "canonicalPointerChecks": [
     { "field": "canonicalSpec", "code": "stale_canonical_spec", "level": "error" },
     { "field": "canonicalPlan", "code": "stale_canonical_plan", "level": "error" },

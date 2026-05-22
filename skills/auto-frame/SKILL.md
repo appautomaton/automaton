@@ -15,9 +15,9 @@ First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, cano
 
 auto-frame produces the canonical artifact: `SPEC.md` when the request is frameable. If you complete framing without a valid SPEC.md written to disk, you have failed. If the request still needs objective discovery or multiple material decisions before a useful spec can exist, continue into `auto-office-hours`'s contract in the same session instead of writing a weak SPEC or making the user re-invoke another skill. This skill does not write code, does not create PLAN.md, and does not proceed to planning without a written spec.
 
-Artifact discipline: `SPEC.md` is the reloadable contract, not the entire body of detail. Keep it compact enough to re-read, but do not narrow a coherent goal just to keep the file short. For larger coherent work, summarize the contract in SPEC.md and link detail files under `spec/*.md`, such as `constraints.md`, `gap-matrix.md`, `risks.md`, or `acceptance-detail.md`. The primary scope check is coherence: one outcome = one spec, even when it needs progressive disclosure.
+Loading discipline: hold the INTAKE (if present), the objective, constraints, and risks. Read project files — implementations, patterns, module boundaries, current state — when grounding the spec in reality. Avoid exhaustive tree walks.
 
-Read and explore project files when understanding the codebase helps produce an accurate spec — existing implementations, patterns, module boundaries, and current state all inform constraints, risks, and acceptance criteria. Avoid exhaustive tree walks; read what you need to ground the spec in reality.
+Artifact discipline: `SPEC.md` is the reloadable contract, not the entire body of detail. Keep it compact enough to re-read, but do not narrow a coherent goal just to keep the file short. For larger coherent work, summarize the contract in SPEC.md and link detail files under `spec/*.md`, such as `constraints.md`, `gap-matrix.md`, `risks.md`, or `acceptance-detail.md`. The primary scope check is coherence: one outcome = one spec, even when it needs progressive disclosure.
 
 ## Quality Gate
 
@@ -84,7 +84,7 @@ When this happens, follow `auto-office-hours`'s contract: classify mode, scale, 
 
 If a `SPEC.md` already exists for this change, read it and preserve all `## Review:` sections.
 
-<HARD-GATE>
+<GATE>
 
 Do NOT proceed past this step without writing `SPEC.md` to `.agent/work/<change>/SPEC.md`.
 
@@ -107,13 +107,13 @@ These fields are **conditional** — include only when the named trigger applies
 - Blocking questions or assumptions — trigger: present and material; omit when "none" rather than writing the literal word "none"
 
 Apply the Artifact Signal Discipline rules from `references/ARTIFACT-LIFECYCLE.md` while writing: no mirror sections, index over transcript, append-replace not stack. If a `SPEC.md` already exists, refresh it and replace prior `## Review:` sections on re-run for the same change — do not stack reviews.
-</HARD-GATE>
+</GATE>
 
 ### Update State
 
 If `active_change` is `bootstrap` or does not match the current objective, derive a new slug: `YYYY-MM-DD-<kebab-case-objective>` using today's date (e.g., `2026-05-20-session-auth-jwt`). Update `active_change` before writing SPEC.md so the work folder uses the new slug.
 
-Run `sync-status.mjs` from this skill's installed directory → writes STATUS.md frontmatter from current.json, outputs `{synced, statusPath, active_change, stage}`.
+Run `sync-status.mjs` from this skill's scripts directory.
 Update `.agent/.automaton/state/current.json`:
 - `active_change` → `<change>` (when derived or changed)
 - `canonical_spec` → path to the SPEC.md you just wrote
@@ -122,9 +122,9 @@ Update `.agent/.automaton/state/current.json`:
 ## Output
 
 - Frameable path: **SPEC.md** written to `.agent/work/<change>/SPEC.md` and `.agent/.automaton/state/current.json` updated with `canonical_spec`; `stage` stays `frame` unless the user approves direct plan handoff
-- Not-frameable path: continue into `auto-office-hours` and do not report framing complete until an approved intake exists and SPEC.md can be written
-- Diagnostic handling: `error`-level diagnostics block advancement; `warning`-level diagnostics surface to the next stage
-- Handoff: after SPEC.md, recommend or continue to `auto-ceo-review` or `auto-plan` according to review needs. If the request is not frameable, continue into `auto-office-hours` when the same session can keep working; otherwise recommend it with the concrete blocker. The user or host may still invoke any next skill directly.
+- Not-frameable path: continue into `auto-office-hours`'s contract and do not report framing complete until an approved intake exists and SPEC.md can be written
+- Diagnostic handling: `error`-level diagnostics block the frame; `warning`-level diagnostics surface to the next stage
+- Handoff: after SPEC.md, recommend or continue into `auto-ceo-review`'s or `auto-plan`'s contract according to review needs. If the request is not frameable, continue into `auto-office-hours`'s contract when the same session can keep working; otherwise recommend it with the concrete blocker. The user or host invokes the next skill; auto-frame does not chain.
 
 ## Rules
 

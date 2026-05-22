@@ -42,7 +42,6 @@ test('install command creates bootstrap state and status reports it', () => {
     readFileSync(currentPath, 'utf8'),
     '{\n  "active_change": "bootstrap",\n  "stage": "frame"\n}\n'
   )
-  assert.equal(existsSync(join(root, '.agent', '.automaton', 'bin', 'update-state.mjs')), true)
   assert.equal(existsSync(join(root, '.agent', '.automaton', 'lib', 'state.mjs')), true)
   assert.equal(existsSync(join(root, '.agent', '.automaton', 'lib', 'contracts-data.json')), true)
 

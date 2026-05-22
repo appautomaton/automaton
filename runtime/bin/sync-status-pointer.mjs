@@ -3,8 +3,7 @@ import { existsSync, mkdirSync, readFileSync, realpathSync, writeFileSync } from
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-const STAGES = new Set(['frame', 'plan', 'execute', 'verify', 'resume'])
-const DEFAULT_NEXT_STEP = 'Run `auto-onboard` to refresh project truth for the repository before continuing.'
+import { DEFAULT_NEXT_STEP, STAGES } from '../lib/contracts.mjs'
 
 function loadCurrentState(target) {
   if (!existsSync(target)) {
@@ -15,7 +14,7 @@ function loadCurrentState(target) {
   const activeChange = parsed.active_change ?? parsed.activeChange
   const stage = parsed.stage
 
-  if (typeof activeChange !== 'string' || !STAGES.has(stage)) {
+  if (typeof activeChange !== 'string' || !STAGES.includes(stage)) {
     return null
   }
 

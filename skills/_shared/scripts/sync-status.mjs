@@ -2,16 +2,34 @@
 /**
  * sync-status.mjs
  *
- * Reads current.json and updates STATUS.md frontmatter and body pointers.
+ * Reads current.json and updates STATUS.md body pointers.
  * If STATUS.md does not exist, creates a minimal status summary.
  *
  * Usage: node sync-status.mjs [root=.]
  */
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs'
-import { dirname, join } from 'node:path'
+import { dirname, join, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-const STAGES = new Set(['frame', 'plan', 'execute', 'verify', 'resume'])
-const DEFAULT_NEXT_STEP = 'Run `auto-onboard` to refresh project truth for the repository before continuing.'
+const __dirname = dirname(fileURLToPath(import.meta.url))
+
+function loadContracts() {
+  const candidates = [
+    resolve(__dirname, '..', '..', '..', 'lib', 'contracts-data.json'),
+    resolve(__dirname, '..', '..', '..', 'runtime', 'lib', 'contracts-data.json'),
+    join(process.cwd(), '.agent', '.automaton', 'lib', 'contracts-data.json')
+  ]
+  for (const p of candidates) {
+    if (existsSync(p)) {
+      try { return JSON.parse(readFileSync(p, 'utf8')) } catch { /* next */ }
+    }
+  }
+  return null
+}
+
+const contracts = loadContracts()
+const STAGES = contracts?.stages ?? ['frame', 'plan', 'execute', 'verify', 'resume']
+const DEFAULT_NEXT_STEP = contracts?.defaultNextStep ?? 'Run `auto-onboard` to refresh project truth for the repository before continuing.'
 
 function renderStatusBody(activeChange, stage) {
   return [
@@ -120,7 +138,7 @@ try {
 const activeChange = currentState.active_change ?? currentState.activeChange ?? 'none'
 const stage = currentState.stage ?? 'none'
 
-if (!STAGES.has(stage)) {
+if (!STAGES.includes(stage)) {
   console.error(JSON.stringify({ error: `invalid stage: ${stage}` }))
   process.exit(1)
 }
@@ -129,14 +147,9 @@ const statusContent = existsSync(statusPath)
   ? readFileSync(statusPath, 'utf8')
   : ''
 
-const frontmatter = `---
-active_change: ${activeChange}
-stage: ${stage}
----`
-
 const { body } = splitFrontmatter(statusContent)
 const nextBody = updateStatusBody(body, activeChange, stage)
-const newContent = `${frontmatter}\n\n${nextBody.replace(/^\n+/, '')}`
+const newContent = nextBody.replace(/^\n+/, '')
 
 mkdirSync(dirname(statusPath), { recursive: true })
 writeFileSync(statusPath, newContent, 'utf8')

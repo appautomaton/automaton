@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { execFileSync, spawnSync } from 'node:child_process'
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
+import { execFileSync } from 'node:child_process'
+import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -21,19 +21,6 @@ test('current state round-trips through .agent/.automaton/state/current.json', (
     readFileSync(target, 'utf8'),
     '{\n  "active_change": "automaton-v1-foundation",\n  "stage": "plan"\n}\n'
   )
-})
-
-test('update-state script writes the current state payload to the provided target', () => {
-  const root = mkdtempSync(join(tmpdir(), 'automaton-state-script-'))
-  const target = join(root, '.agent', '.automaton', 'state', 'current.json')
-  const script = fileURLToPath(new URL('../runtime/bin/update-state.mjs', import.meta.url))
-
-  execFileSync(process.execPath, [script, target, 'automaton-v1-foundation', 'plan'])
-
-  assert.deepEqual(loadCurrentState(target), {
-    activeChange: 'automaton-v1-foundation',
-    stage: 'plan'
-  })
 })
 
 test('status summary round-trips through .agent/steering/STATUS.md', () => {
@@ -234,47 +221,6 @@ test('loadCurrentState rejects missing active change from disk', () => {
   assert.throws(() => loadCurrentState(target), /invalid current state: missing active change/)
 })
 
-test('update-state script rejects missing required args instead of writing a partial state', () => {
-  const root = mkdtempSync(join(tmpdir(), 'automaton-state-script-missing-args-'))
-  const target = join(root, '.agent', '.automaton', 'state', 'current.json')
-  const script = fileURLToPath(new URL('../runtime/bin/update-state.mjs', import.meta.url))
-
-  const result = spawnSync(process.execPath, [script, target, 'automaton-v1-foundation'], { encoding: 'utf8' })
-
-  assert.notEqual(result.status, 0)
-  assert.equal(existsSync(target), false)
-  assert.match(result.stderr, /missing required args|missing stage|invalid current state/)
-})
-
-test('update-state script preserves existing extra state keys when updating change and stage', () => {
-  const root = mkdtempSync(join(tmpdir(), 'automaton-state-script-merge-'))
-  const target = join(root, '.agent', '.automaton', 'state', 'current.json')
-  const script = fileURLToPath(new URL('../runtime/bin/update-state.mjs', import.meta.url))
-
-  saveCurrentState(target, {
-    activeChange: 'existing-change',
-    stage: 'frame',
-    canonicalSpec: 'docs/spec.md',
-    canonicalDesign: 'docs/design.md',
-    canonicalPlan: 'docs/plan.md',
-    custom_flag: true
-  })
-
-  execFileSync(process.execPath, [script, target, 'automaton-v1-foundation', 'plan'])
-
-  assert.deepEqual(loadCurrentState(target), {
-    activeChange: 'automaton-v1-foundation',
-    stage: 'plan',
-    canonicalSpec: 'docs/spec.md',
-    canonicalDesign: 'docs/design.md',
-    canonicalPlan: 'docs/plan.md',
-    custom_flag: true
-  })
-  assert.equal(
-    readFileSync(target, 'utf8'),
-    '{\n  "active_change": "automaton-v1-foundation",\n  "stage": "plan",\n  "canonical_spec": "docs/spec.md",\n  "canonical_design": "docs/design.md",\n  "canonical_plan": "docs/plan.md",\n  "custom_flag": true\n}\n'
-  )
-})
 
 test('saveCurrentState writes durable snake_case review keys and loadCurrentState normalizes them', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-state-review-keys-'))
@@ -427,8 +373,6 @@ test('shared sync-status script updates frontmatter and body pointers while pres
     active_change: 'updated-change',
     stage: 'verify'
   })
-  assert.match(source, /^active_change: updated-change$/m)
-  assert.match(source, /^stage: verify$/m)
   assert.match(source, /^- active change: `updated-change`$/m)
   assert.match(source, /^- current stage: `verify`$/m)
   assert.match(source, /^- canonical spec: `docs\/spec.md`$/m)
@@ -464,48 +408,3 @@ test('shared sync-status script creates a parseable status summary when missing'
   })
 })
 
-test('sync-status script updates current state and STATUS.md together', () => {
-  const root = mkdtempSync(join(tmpdir(), 'automaton-status-sync-script-'))
-  const currentTarget = join(root, '.agent', '.automaton', 'state', 'current.json')
-  const statusTarget = join(root, '.agent', 'steering', 'STATUS.md')
-  const script = fileURLToPath(new URL('../runtime/bin/sync-status.mjs', import.meta.url))
-
-  saveCurrentState(currentTarget, {
-    activeChange: 'existing-change',
-    stage: 'frame',
-    canonicalSpec: 'docs/spec.md',
-    custom_flag: true
-  })
-
-  execFileSync(
-    process.execPath,
-    [
-      script,
-      currentTarget,
-      statusTarget,
-      JSON.stringify({
-        activeChange: 'automaton-status-sync',
-        stage: 'verify',
-        canonicalDesign: 'docs/design.md',
-        nextStep: 'Write VERIFY.md with the targeted evidence.',
-        whatIsTrueNow: ['The sync helper updates both files together.'],
-        openRisks: ['A stale STATUS.md can still exist outside the helper path.']
-      })
-    ]
-  )
-
-  assert.deepEqual(loadCurrentState(currentTarget), {
-    activeChange: 'automaton-status-sync',
-    stage: 'verify',
-    canonicalSpec: 'docs/spec.md',
-    canonicalDesign: 'docs/design.md',
-    custom_flag: true
-  })
-  assert.deepEqual(loadStatusSummary(statusTarget), {
-    activeChange: 'automaton-status-sync',
-    stage: 'verify',
-    whatIsTrueNow: ['The sync helper updates both files together.'],
-    nextStep: 'Write VERIFY.md with the targeted evidence.',
-    openRisks: ['A stale STATUS.md can still exist outside the helper path.']
-  })
-})

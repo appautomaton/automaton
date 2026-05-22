@@ -13,7 +13,7 @@ First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, cano
 
 ## Preamble
 
-auto-onboard builds bounded project truth from repository evidence, not training data, not conversation, not guessing. It writes five steering artifacts and never writes code. Loading discipline: keep REPO-MAP.md under 150 lines; stop scanning once you have enough.
+auto-onboard builds bounded project truth from repository evidence, not training data, not conversation, not guessing. It does not write code or produce specs. Loading discipline: keep REPO-MAP.md under 150 lines; stop scanning once you have enough.
 
 ## Quality Gate
 
@@ -66,20 +66,20 @@ Use `templates/` as scaffolds:
 
 ### Update State
 
-Run `sync-status.mjs` from this skill's installed directory to align `.agent/steering/STATUS.md` with `.agent/.automaton/state/current.json`.
+Run `sync-status.mjs` from this skill's scripts directory.
 
 ### Report
 
 Summarize what you found, what you wrote, and what remains uncertain.
 
-<HARD-GATE>
+<GATE>
 
 Do NOT proceed past scanning if:
 - The repository has no `README.md`, no `package.json` equivalent, and no recognizable directory structure after reading 10 files.
 - The user has not confirmed whether to overwrite existing steering artifacts.
 
 If the repo is empty or unrecognizable, report this and stop.
-</HARD-GATE>
+</GATE>
 
 <STOP>
 
@@ -102,8 +102,8 @@ Do not guess. Do not proceed.
 | STATUS.md | `.agent/steering/` | Current state, what is true now, next step |
 
 - `.agent/.automaton/state/current.json` initialized when missing; auto-onboard does not overwrite an existing `active_change` or `stage`
-- Diagnostic handling: `error`-level diagnostics (missing primary project, conflicting conventions) halt the onboard; `warning`-level findings appear in the steering artifacts
-- Recommended next skill: `auto-office-hours` (when scale or shape is undefined) or `auto-frame` (when the user already has a bounded goal). The user or host invokes the next skill; auto-onboard does not require nested invocation.
+- Diagnostic handling: `error`-level diagnostics block the onboard; `warning`-level findings surface to the steering artifacts
+- Recommended next skill: `auto-office-hours` (when scale or shape is undefined) or `auto-frame` (when the user already has a bounded goal). The user or host invokes the next skill; auto-onboard does not chain.
 
 ## Rules
 

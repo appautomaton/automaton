@@ -36,7 +36,7 @@ test('kernel contracts are driven by the checked-in contract manifest', () => {
 
 test('kernel contracts expose stable stage, lens, and artifact layout values', () => {
   assert.deepEqual(STAGES, ['frame', 'plan', 'execute', 'verify', 'resume'])
-  assert.deepEqual(LENSES, ['product', 'engineering', 'design', 'security', 'runtime'])
+  assert.deepEqual(LENSES, ['product', 'engineering', 'design', 'security', 'runtime', 'content'])
   assert.deepEqual(ARTIFACT_LAYOUT, {
     agentRoot: '.agent',
     runtimeRoot: '.agent/.automaton',

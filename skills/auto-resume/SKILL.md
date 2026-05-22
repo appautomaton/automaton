@@ -13,7 +13,7 @@ First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, cano
 
 ## Preamble
 
-auto-resume rebuilds context from durable artifacts, not from the user's description or the agent's training data. It loads canonical artifacts in dependency order (spec first, then design, then plan) and reports what it found, what was blocked, and what comes next.
+auto-resume rebuilds context from durable artifacts, not from the user's description or the agent's training data. It does not modify artifacts, advance the stage, or start new work. It loads canonical artifacts in dependency order (spec first, then design, then plan) and reports what it found, what was blocked, and what comes next.
 
 Loading discipline: start with artifacts needed for the current stage. Read project files when understanding the codebase helps rebuild accurate context for the next action.
 
@@ -35,19 +35,14 @@ If `.agent/` does not exist or `current.json` is missing, recommend `auto-onboar
 
 ### Verify Artifact Integrity
 
-<ARTIFACT-CHECK>
-
 Check that canonical pointers in `current.json` resolve to actual files:
 - `canonical_spec` → does `SPEC.md` exist?
 - `canonical_design` → does `DESIGN.md` exist?
 - `canonical_plan` → does `PLAN.md` exist?
 
 If any pointer is stale (file missing or moved), report it plainly. Recommend `auto-onboard` if steering is missing, or `auto-frame` / `auto-plan` if the specific artifact is missing.
-</ARTIFACT-CHECK>
 
-### Load Artifacts in Dependency Order
-
-<STATE-RECOVERY>
+### Load Artifacts
 
 Load artifacts in this order. Stop at the current stage; do not load artifacts from future stages.
 
@@ -60,15 +55,12 @@ Stage: resume   → Load SPEC.md, STATUS.md
 ```
 
 If `current.json` and `STATUS.md` disagree on active change or stage, report the mismatch. Prefer `current.json` for recovery, but surface the discrepancy.
-</STATE-RECOVERY>
 
 ### Surface Review State
 
 If `current.json` contains `product_review` or `engineering_review`, read the corresponding `## Review:` sections from canonical artifacts and include them in the resume summary.
 
-### Summarize
-
-<CONTEXT-REPLAY>
+### Recovery Summary
 
 Produce a concise summary:
 
@@ -85,7 +77,6 @@ Produce a concise summary:
 ```
 
 Keep it under 200 tokens. The goal is orientation, not transcription.
-</CONTEXT-REPLAY>
 
 ### Recommend Next Skill
 
@@ -108,7 +99,7 @@ Based on the recovered state:
 - Review verdicts (if present)
 - `.agent/.automaton/state/current.json` is read-only for auto-resume; stale pointers are reported, not silently repaired
 - Diagnostic handling: missing or conflicting state surfaces as a `warning` in the summary; `error`-level diagnostics block the resume
-- Recommended next skill when recovered state is incomplete or blocked; none when the active change is verified complete. The user or host invokes any next skill; auto-resume does not require nested invocation.
+- Recommended next skill when recovered state is incomplete or blocked; none when the active change is verified complete. The user or host invokes the next skill; auto-resume does not chain.
 
 ## Rules
 

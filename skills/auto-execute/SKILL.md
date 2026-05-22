@@ -13,7 +13,7 @@ First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, cano
 
 ## Preamble
 
-auto-execute owns execute-stage orchestration, route selection, state, and scope. Direct implementation and subagent implementation are two routes inside this skill; the user should not have to switch skills to get the subagent route. Execute and verify one approved slice at a time inside the selected execution window. Continuation is the default after a verified slice; checkpoints and STOP conditions are the exceptions. An execution window is a context-management batch, not a completion boundary: when a window finishes and approved slices remain, select the next safe window and continue.
+auto-execute owns execute-stage orchestration, route selection, state, and scope. It does not reopen product scope or modify the approved plan's intent. Direct implementation and subagent implementation are two routes inside this skill; the user should not have to switch skills to get the subagent route. Execute and verify one approved slice at a time inside the selected execution window. Continuation is the default after a verified slice; checkpoints and STOP conditions are the exceptions. An execution window is a context-management batch, not a completion boundary: when a window finishes and approved slices remain, select the next safe window and continue.
 
 Loading discipline: keep the active slice, execution-window metadata, acceptance criteria, route metadata, verification commands, and active files in context. Load linked detail files and traceability IDs for the active slice only. Read wider project files only when implementation correctness requires it.
 
@@ -64,7 +64,7 @@ For content slices, also extract artifact target, audience, thesis, voice, conte
 
 ### Choose Execution Route
 
-<EXECUTION-ROUTING>
+### Route Selection
 
 Route from slice metadata and live conditions:
 - `direct`: the slice touches a small area, has no slice-blocking review risk, and fits in the parent session.
@@ -74,7 +74,6 @@ Route from slice metadata and live conditions:
 Override: use the subagent route when the user explicitly requests multi-agent execution.
 
 The route decision lives here. Do not tell the user to invoke another execute skill for the same slice.
-</EXECUTION-ROUTING>
 
 ### Direct Route
 
@@ -97,7 +96,7 @@ Run the per-slice protocol:
 6. Send concrete reviewer issues to an implementer once, then re-review.
 7. Record a compact orchestration summary under `.agent/work/<change>/orchestration/` only when subagent/review details are needed for later reload. The slice status still updates in place.
 
-Do not mark the slice complete unless the implementer status is acceptable, spec review is `APPROVED`, quality review is `APPROVED`, and slice verification evidence exists. Plan-level verification happens after all slices are complete: continue directly into `auto-verify` when safe, or recommend it only when continuation is blocked.
+Do not mark the slice complete unless the implementer status is acceptable, spec review is `APPROVED`, quality review is `APPROVED`, and slice verification evidence exists. Plan-level verification happens after all slices are complete: continue into `auto-verify`'s contract when safe, or recommend it only when continuation is blocked.
 
 ### Verify And Advance
 
@@ -131,7 +130,7 @@ Continue within the selected execution window only when verification passed, dep
 
 When the selected execution window is complete but `PLAN.md` still has uncompleted approved slices, return to **Select Execution Window** immediately. Do not wrap up merely because the current window ended. Stopping with remaining slices is valid only when you name a concrete checkpoint, STOP condition, context-pressure tier, or unavailable host capability that prevents continuing now; "N slices remain" is progress state, not a stop reason.
 
-If all slices are complete and no STOP condition applies, ensure slice evidence is recorded, then continue directly into the `auto-verify` verification gate in the same session when the host/session can keep working. Do not make the user run `auto-verify` manually just because execution finished. Only recommend `auto-verify` as the next skill when continuation is blocked by a valid checkpoint, context pressure, unavailable host capability, or another explicit STOP condition.
+If all slices are complete and no STOP condition applies, ensure slice evidence is recorded, then continue into `auto-verify`'s contract in the same session when the host/session can keep working. Do not make the user run `auto-verify` manually just because execution finished. Only recommend `auto-verify` as the next skill when continuation is blocked by a valid checkpoint, context pressure, unavailable host capability, or another explicit STOP condition.
 
 When continuing into verification, follow `auto-verify`'s contract: re-read the canonical `PLAN.md`, collect every acceptance criterion, run or derive the verification commands, and produce the verification report. Do not trust execute's own slice evidence as final verification.
 
@@ -158,18 +157,16 @@ Halt immediately and report to the user when:
 Do not guess. Do not proceed.
 </STOP>
 
-<DEBUG-PROTOCOL>
 Investigate root cause before fixing. Escalate after 3 failed attempts with observations, attempts, and what you need. Read `references/debug-protocol.md` (~53 lines) for extended guidance.
-</DEBUG-PROTOCOL>
 
-<HARD-GATE>
+<GATE>
 
 Do NOT write code unless:
 - `PLAN.md` is approved and `canonical_plan` is set.
 - The current slice has explicit acceptance criteria.
 - The route is direct, or the subagent route has passed its host capability check.
 - If the user asks for a "quick fix" outside the plan, reframe through `auto-frame`. Do not bypass the plan.
-</HARD-GATE>
+</GATE>
 
 ## Output
 
@@ -181,8 +178,8 @@ Do NOT write code unless:
 - `.agent/.automaton/state/current.json` updated only when canonical pointers, active change, or review state change; auto-execute does not write a slice cursor field
 - Execution window checkpoint or stop reason when continuation pauses; if approved slices remain, name the valid blocker that prevents continuing
 - Newly discovered risks or follow-ups
-- Diagnostic handling: `error`-level diagnostics halt the slice; `warning`-level diagnostics surface to the user and the next stage
-- Verification report when all slices complete and continuation is safe; otherwise recommended next skill: `auto-execute` (slices remain), `auto-verify` (execution complete but continuation blocked), or `auto-plan` (structural failure). The user or host invokes any recommended next skill; auto-execute does not require nested invocation.
+- Diagnostic handling: `error`-level diagnostics block the slice; `warning`-level diagnostics surface to the user and the next stage
+- Verification report when all slices complete and continuation is safe; otherwise recommended next skill: `auto-execute` (slices remain), `auto-verify` (execution complete but continuation blocked), or `auto-plan` (structural failure). The user or host invokes the next skill; auto-execute does not chain.
 
 ## Rules
 
@@ -193,7 +190,7 @@ Do NOT write code unless:
 - Do not create new execution evidence files by default; update `PLAN.md` or the linked `slices/slice-NNN.md` detail file in place.
 - Stop and reframe when the approved slice is no longer valid.
 - Prefer targeted checks over full-suite rituals until the slice is stable.
-- Continue directly into `auto-verify` after the last slice when no valid checkpoint, STOP condition, context pressure, or host limitation blocks continuation.
+- Continue into `auto-verify`'s contract after the last slice when no valid checkpoint, STOP condition, context pressure, or host limitation blocks continuation.
 - Do not end with "remaining slices" as the only next action. Remaining approved slices require another execution-window pass unless a valid blocker is present.
 - Warn on review state but do not block execution unless the risk is slice-blocking.
 - Hold only the active slice, execution-window metadata, acceptance criteria, route metadata, and active files in context.

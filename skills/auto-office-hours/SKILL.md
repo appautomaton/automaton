@@ -13,7 +13,7 @@ First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, cano
 
 ## Preamble
 
-auto-onboard produces steering artifacts; auto-office-hours produces clarity. This skill is conversational only until the user approves an approach. Before approval, it writes nothing. After approval, it persists the approved intake to `.agent/work/<change>/INTAKE.md` and records the active change so `auto-frame` can resume without conversation memory. `INTAKE.md` is guaranteed only for an approved office-hours session; aborted, skipped, or still-conversational office-hours sessions do not produce it. This skill never writes code or scaffolds projects. It does not create SPEC.md in conversational mode; when approved intake is enough to frame safely, continue into `auto-frame`'s contract in the same session so the user does not have to ask again.
+auto-onboard produces steering artifacts; auto-office-hours produces clarity. This skill is conversational only until the user approves an approach. Before approval, it writes nothing. After approval, it persists the approved intake to `.agent/work/<change>/INTAKE.md` and records the active change so `auto-frame` can resume without conversation memory. `INTAKE.md` is guaranteed only for an approved office-hours session; aborted, skipped, or still-conversational office-hours sessions do not produce it. This skill does not write code or scaffold projects. It does not create SPEC.md in conversational mode; when approved intake is enough to frame safely, continue into `auto-frame`'s contract in the same session so the user does not have to ask again.
 
 Loading discipline: hold the conversation goal, evidence, request coverage, rejected framings, and the next decision. Read project files only when evidence in the repo changes the objective, especially for parity, audit, migration, coverage, or mixed work.
 
@@ -77,7 +77,7 @@ After approval, derive a date-prefixed change slug: `YYYY-MM-DD-<kebab-case-obje
    - `active_change` → `<change>`
    - `stage` → `frame`
 
-   Run `sync-status.mjs` from this skill's installed directory.
+   Run `sync-status.mjs` from this skill's scripts directory.
 
 ### Continue To Frame When Ready
 
@@ -94,14 +94,14 @@ If those conditions pass, load and follow `auto-frame`'s contract, write `.agent
 If the user's language shifts mid-session, reclassify mode, scale, or shape and state the change. If the user says "just do it" or expresses impatience, ask the two most critical unresolved questions; if they push back again, proceed to alternatives with explicit assumptions.
 </MODE-DETECTION>
 
-<HARD-GATE>
+<GATE>
 
 Do NOT create INTAKE.md, SPEC.md, DESIGN.md, or any implementation artifact until:
 - The user has explicitly approved one of the presented approaches.
 - Blocking questions are resolved or explicitly accepted.
 
 If the user asks to "just start coding" or "skip to the plan," reframe: "We can move fast, but I need you to pick a direction first. Which approach feels right?" There are no file writes before the user picks an approach.
-</HARD-GATE>
+</GATE>
 
 <STOP>
 
@@ -132,8 +132,8 @@ If the user approves an approach, write `.agent/work/<change>/INTAKE.md` with:
 - Deferred scope: material ideas that belong in `ROADMAP.md`, not this spec
 - `.agent/.automaton/state/current.json` updated with `active_change` and `stage: frame`
 - `.agent/steering/ROADMAP.md` updated when scale is roadmap
-- Diagnostic handling: `error`-level diagnostics block advancement; `warning`-level diagnostics surface to `auto-frame`
-- Handoff: continue into `auto-frame` when the approved intake is frame-ready; otherwise recommend `auto-frame` with the specific missing condition. The user or host may still invoke `auto-frame` directly.
+- Diagnostic handling: `error`-level diagnostics block the intake; `warning`-level diagnostics surface to `auto-frame`
+- Handoff: continue into `auto-frame`'s contract when the approved intake is frame-ready; otherwise recommend `auto-frame` with the specific missing condition. The user or host invokes the next skill; auto-office-hours does not chain.
 
 The INTAKE is a faithful record of what the user approved, not the agent's editorial rewrite. Use the user's language where possible. When the agent reframed something and the user accepted the reframe, capture the accepted version and note it was a reframe.
 
