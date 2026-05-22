@@ -1,5 +1,9 @@
 # Automaton
 
+[![npm version](https://img.shields.io/npm/v/@appautomaton/automaton.svg)](https://www.npmjs.com/package/@appautomaton/automaton)
+[![license](https://img.shields.io/npm/l/@appautomaton/automaton.svg)](https://github.com/appautomaton/automaton/blob/main/LICENSE)
+[![node](https://img.shields.io/node/v/@appautomaton/automaton.svg)](https://www.npmjs.com/package/@appautomaton/automaton)
+
 Portable, stage-gated agentic-AI harness for Claude Code, Codex, and OpenCode.
 
 Automaton installs markdown skills, lightweight runtime hooks, and durable `.agent/` state into a project so agent work can survive context loss and move through clear gates.
@@ -62,6 +66,12 @@ npx @appautomaton/automaton install --uninstall --codex
 ## Contributor Docs
 
 Design and runtime notes live in [`docs/`](docs/).
+
+## Links
+
+- [npm package](https://www.npmjs.com/package/@appautomaton/automaton)
+- [GitHub](https://github.com/appautomaton/automaton)
+- [Issues](https://github.com/appautomaton/automaton/issues)
 
 ## License
 
