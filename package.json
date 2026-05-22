@@ -27,12 +27,21 @@
   },
   "homepage": "https://github.com/appautomaton/automaton#readme",
   "keywords": [
-    "agents",
+    "ai-agent",
+    "ai-coding-assistant",
+    "ai-tools",
     "agentic-ai",
+    "agentic-workflows",
+    "automation",
     "claude-code",
     "codex",
+    "context-window",
+    "developer-tools",
+    "llm",
     "opencode",
-    "skills"
+    "prompt-engineering",
+    "skills",
+    "workflow"
   ],
   "engines": {
     "node": ">=20"

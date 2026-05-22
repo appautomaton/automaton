@@ -6,7 +6,7 @@
 
 Portable, stage-gated agentic-AI harness for Claude Code, Codex, and OpenCode.
 
-Automaton installs markdown skills, lightweight runtime hooks, and durable `.agent/` state into a project so agent work can survive context loss and move through clear gates.
+An AI coding agent framework that gives LLM-powered development tools structured workflows for long-running tasks. Automaton installs markdown skills, lightweight runtime hooks, and durable `.agent/` state into a project so agent work survives context window limits, session restarts, and multi-step changes that would otherwise lose coherence.
 
 ## Acknowledgement 致谢
 
