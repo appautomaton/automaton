@@ -35,7 +35,7 @@ If `.agent/work/<active_change>/INTAKE.md` exists, read it before interviewing. 
 
 State the goal in one sentence. If you cannot, ask one clarifying question. If the answer still cannot produce a one-sentence goal, or if the request needs objective discovery or multiple material decisions before any useful SPEC can be written, continue into `auto-office-hours`'s diagnostic and intake flow in the same session. Recommend `auto-office-hours` only when continuation is blocked by context pressure, host limits, or a user choice to pause.
 
-If your SPEC would be narrower than the user's stated goal or office-hours broader intent, either widen the SPEC, explicitly record the narrowing as decomposition with deferred scope in `.agent/steering/ROADMAP.md` (using the format in `references/ROADMAP-CONTRACT.md`), or ask for confirmation. Silent narrowing is a framing failure. A spec that covers a large coherent outcome is better than splitting into roadmap phases that lose shared context. Let the plan carry complexity through ordered slices.
+If your SPEC would be narrower than the user's stated goal or office-hours broader intent, either widen the SPEC, explicitly record the narrowing as decomposition with deferred scope in `.agent/steering/ROADMAP.md` (using the format in `.agent/.automaton/references/ROADMAP-CONTRACT.md`), or ask for confirmation. Silent narrowing is a framing failure. A spec that covers a large coherent outcome is better than splitting into roadmap phases that lose shared context. Let the plan carry complexity through ordered slices.
 
 ### Coverage Check
 
@@ -106,7 +106,7 @@ These fields are **conditional** — include only when the named trigger applies
 - Scope coverage decisions — trigger: intake or request includes multiple material asks, perspectives, deferrals, anti-goals, or needs-decision items
 - Blocking questions or assumptions — trigger: present and material; omit when "none" rather than writing the literal word "none"
 
-Apply the Artifact Signal Discipline rules from `references/ARTIFACT-LIFECYCLE.md` while writing: no mirror sections, index over transcript, append-replace not stack. If a `SPEC.md` already exists, refresh it and replace prior `## Review:` sections on re-run for the same change — do not stack reviews.
+Apply the Artifact Signal Discipline rules from `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` while writing: no mirror sections, index over transcript, append-replace not stack. If a `SPEC.md` already exists, refresh it and replace prior `## Review:` sections on re-run for the same change — do not stack reviews.
 </GATE>
 
 ### Update State
@@ -146,7 +146,7 @@ Read `references/content-framing.md` for content-aware SPEC.md fields and anti-s
 
 ### Artifact Lifecycle
 
-Read `references/ARTIFACT-LIFECYCLE.md` when state pointers conflict or progressive disclosure layout is unclear. (~105 lines: stage handoffs table, progressive disclosure layout with allowed paths, review verdict routing, STOP conditions.)
+Read `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` when state pointers conflict or progressive disclosure layout is unclear. (~105 lines: stage handoffs table, progressive disclosure layout with allowed paths, review verdict routing, STOP conditions.)
 
 ### Edge Case: User tries to skip spec writing
 

@@ -29,7 +29,7 @@ Before producing the recovery summary:
 
 ### Load State
 
-Read `.agent/steering/STATUS.md`. Read `references/ARTIFACT-LIFECYCLE.md` for recovery order, stale-pointer handling, and stage handoffs. If the recovered state suggests the active change is complete or no active work exists, read `.agent/steering/ROADMAP.md` when it exists to surface pending phases as context, not to auto-start them.
+Read `.agent/steering/STATUS.md`. Read `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` for recovery order, stale-pointer handling, and stage handoffs. If the recovered state suggests the active change is complete or no active work exists, read `.agent/steering/ROADMAP.md` when it exists to surface pending phases as context, not to auto-start them.
 
 If `.agent/` does not exist or `current.json` is missing, recommend `auto-onboard` and stop.
 
@@ -122,4 +122,4 @@ Read `references/artifact-order.md` for the full artifact dependency graph. (~48
 
 ### Context Loading Discipline
 
-Read `references/CONTEXT-BUDGET.md` for progressive loading and degradation tiers. (~76 lines: 4 principles, 6-step loading order, 4 degradation tiers with behavioral rules, no-re-read rule with exceptions.)
+Read `.agent/.automaton/references/CONTEXT-BUDGET.md` for progressive loading and degradation tiers. (~76 lines: 4 principles, 6-step loading order, 4 degradation tiers with behavioral rules, no-re-read rule with exceptions.)

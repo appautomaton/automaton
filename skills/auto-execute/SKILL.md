@@ -81,7 +81,7 @@ Use this route only when route selection permits direct execution. Change code a
 
 Use this route when `Execution` is `subagent required`, when `subagent recommended` is justified, or when the user requested multi-agent execution. The subagent route remains per-slice even when the execution window contains multiple slices.
 
-Before dispatching, read `references/SUBAGENT-PROTOCOL.md` and `references/HOST-TOOLS.md`. Use `references/implementer-prompt.md`, `references/spec-reviewer-prompt.md`, and `references/code-quality-reviewer-prompt.md` as the role prompts. If prior orchestration summaries exist under `.agent/work/<change>/orchestration/`, scan them for relevant decisions or discoveries.
+Before dispatching, read `.agent/.automaton/references/SUBAGENT-PROTOCOL.md` and `references/HOST-TOOLS.md`. Use `references/implementer-prompt.md`, `references/spec-reviewer-prompt.md`, and `references/code-quality-reviewer-prompt.md` as the role prompts. If prior orchestration summaries exist under `.agent/work/<change>/orchestration/`, scan them for relevant decisions or discoveries.
 
 If host tools say subagents are unavailable, fall back from `subagent recommended` to direct execution only if the slice remains safe. For `subagent required`, stop and recommend `auto-plan` or a host/configuration change.
 
@@ -199,7 +199,7 @@ Do NOT write code unless:
 
 ### Subagent Protocol
 
-Read `references/SUBAGENT-PROTOCOL.md` only when subagent route is selected. (~95 lines: roles, dispatch packet schema, dispatch/review rules, status vocabulary, stop conditions.)
+Read `.agent/.automaton/references/SUBAGENT-PROTOCOL.md` only when subagent route is selected. (~95 lines: roles, dispatch packet schema, dispatch/review rules, status vocabulary, stop conditions.)
 
 ### Host Tools
 
@@ -227,8 +227,8 @@ Read `references/debug-protocol.md` for root cause patterns by stack. (~53 lines
 
 ### Context Loading Discipline
 
-Read `references/CONTEXT-BUDGET.md` for progressive loading and context pressure tiers. (~76 lines.)
+Read `.agent/.automaton/references/CONTEXT-BUDGET.md` for progressive loading and context pressure tiers. (~76 lines.)
 
 ### Artifact Lifecycle
 
-Read `references/ARTIFACT-LIFECYCLE.md` when state pointer conflicts arise or progressive disclosure rules need clarification. (~105 lines.)
+Read `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` when state pointer conflicts arise or progressive disclosure rules need clarification. (~105 lines.)

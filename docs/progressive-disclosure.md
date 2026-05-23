@@ -18,7 +18,7 @@ Layer 3   Work artifacts          Variable       When stage requires
 
 **Layer 1** — SKILL.md follows: preamble → quality gate → procedure → hard gates → stop conditions → `## Deep` with conditional references. Key pattern: `Read X (~N lines) when [trigger]` — size hint lets the model estimate cost.
 
-**Layer 2** — Per-skill references (domain-specific) and shared references (copied at install, see DD-001). Loaded only when trigger fires.
+**Layer 2** — Per-skill references (domain-specific) and shared references (.agent/.automaton/references, see DD-001). Loaded only when trigger fires.
 
 **Layer 3** — Artifacts load in order with stop-as-soon-as-you-can:
 `current.json (50 tok) → STATUS.md (200 tok) → SPEC.md (1k tok) → PLAN.md (1k tok) → wiki → source files`

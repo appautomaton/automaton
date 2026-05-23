@@ -35,7 +35,7 @@ Three cases:
      - No active change or stage is `none` → `auto-office-hours`
 3. **Already-onboarded, targeted refresh.** Steering exists and the user asks to update it (e.g., "update REQUIREMENTS because we added Postgres"). Focus on the evidence relevant to the update, update only the affected steering file(s), run `sync-status.mjs`, and report what changed. Read additional files when needed to produce an accurate update.
 
-When handling ROADMAP.md during first-time setup, always keep the short placeholder. Do not create roadmap phases on a first run. On refresher runs, write roadmap phases only when strong repo evidence shows an existing or ongoing roadmap and the user confirms importing or refreshing it in chat; then use `references/ROADMAP-CONTRACT.md` (~63 lines: canonical phase format, status values, update rules by skill, matching rule, single-file invariant).
+When handling ROADMAP.md during first-time setup, always keep the short placeholder. Do not create roadmap phases on a first run. On refresher runs, write roadmap phases only when strong repo evidence shows an existing or ongoing roadmap and the user confirms importing or refreshing it in chat; then use `.agent/.automaton/references/ROADMAP-CONTRACT.md` (~63 lines: canonical phase format, status values, update rules by skill, matching rule, single-file invariant).
 
 ### Scan Top-Level Files
 

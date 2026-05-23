@@ -451,7 +451,7 @@ test('lifecycle controller skills load the artifact lifecycle contract', () => {
   for (const skillName of ['auto-frame', 'auto-plan', 'auto-execute', 'auto-verify', 'auto-resume']) {
     const source = readFileSync(join(skillsRoot, skillName, 'SKILL.md'), 'utf8')
 
-    assert.match(source, /references\/ARTIFACT-LIFECYCLE\.md/, `${skillName} must load artifact lifecycle contract`)
+    assert.match(source, /\.agent\/\.automaton\/references\/ARTIFACT-LIFECYCLE\.md/, 'skill must load artifact lifecycle contract')
   }
 })
 

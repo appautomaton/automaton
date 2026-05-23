@@ -226,7 +226,8 @@ test('reinstalling Codex refreshes manifest-owned hooks and skills', () => {
 test('reinstalling Codex refreshes manifest-owned injected shared artifacts', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-reinstall-codex-shared-'))
   const host = getHost('codex')
-  const referenceTarget = join(root, '.codex', 'skills', 'auto-frame', 'references', 'CONTEXT-BUDGET.md')
+  const referenceTarget = join(root, '.agent', '.automaton', 'references', 'CONTEXT-BUDGET.md')
+  const legacyReferenceTarget = join(root, '.codex', 'skills', 'auto-frame', 'references', 'CONTEXT-BUDGET.md')
   const scriptTarget = join(root, '.codex', 'skills', 'auto-frame', 'scripts', 'get-context.mjs')
   const hostToolsTarget = join(root, '.codex', 'skills', 'auto-execute', 'references', 'HOST-TOOLS.md')
 
@@ -238,6 +239,7 @@ test('reinstalling Codex refreshes manifest-owned injected shared artifacts', ()
   installHost(host, { root, sourceRoot })
 
   assert.equal(readFileSync(referenceTarget, 'utf8'), readFileSync(join(sourceRoot, 'skills', '_shared', 'references', 'CONTEXT-BUDGET.md'), 'utf8'))
+  assert.equal(existsSync(legacyReferenceTarget), false)
   assert.equal(readFileSync(scriptTarget, 'utf8'), readFileSync(join(sourceRoot, 'skills', '_shared', 'scripts', 'get-context.mjs'), 'utf8'))
   assert.match(readFileSync(hostToolsTarget, 'utf8'), /spawn_agent/)
   assert.doesNotMatch(readFileSync(hostToolsTarget, 'utf8'), /stale host tools/)

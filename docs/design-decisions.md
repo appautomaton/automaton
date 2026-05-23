@@ -4,13 +4,15 @@ Rationale for choices where the why is not obvious from reading the code.
 
 ---
 
-## DD-001: Copy-based install, not shared references
+## DD-001: Central shared references, copied skill scripts
 
-`_shared/` (references + scripts) is the single source of truth. `injectSharedArtifacts()` copies them into each skill at install time. `_shared/` itself is never installed.
+`_shared/references/` is the package authoring source. `installProject()` copies those references once into `.agent/.automaton/references/`, and skill prompts read shared contracts from that project-common path. `_shared/` itself is never installed into host skill trees.
 
-**Why:** Skills must be self-contained after install. SKILL.md resolves `references/X.md` relative to its own directory. No `_shared/` exists in the target project, and `../` traversal is not a supported pattern in LLM skill file loading. Three host trees have no common ancestor.
+Shared scripts still copy into every skill `scripts/` directory because the LLM runs them relative to the active skill folder and they stay self-contained after install.
 
-**See:** `lib/install.mjs:191` (skip), `lib/install.mjs:216-257` (inject).
+**Why:** `.agent/` is the one common root across Claude, Codex, and OpenCode installs, so shared reference docs can live there without per-skill duplication. Scripts keep the old per-skill copy model because runtime module paths differ by host skill root.
+
+**See:** `lib/install.mjs` (`installProject`, `installHost`, `removeManifestOwnedSharedReferences`).
 
 ---
 

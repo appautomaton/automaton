@@ -50,7 +50,8 @@ Self-contained — no runtime imports (see DD-007). Called by LLM via bash.
 installProject()                    installHost(claude)
 ├─ scaffold .agent/ tree            ├─ copy skills/ → .claude/skills/
 ├─ sync runtime/ → .automaton/      │    (skip _shared/ directory)
-└─ seed current.json                ├─ inject _shared/refs + scripts per skill
+├─ sync shared refs → .automaton/references/
+└─ seed current.json                ├─ inject _shared/scripts per skill
                                     ├─ generate HOST-TOOLS.md per skill
                                     ├─ wire hooks in .claude/settings.json
                                     └─ record in install-manifest.json

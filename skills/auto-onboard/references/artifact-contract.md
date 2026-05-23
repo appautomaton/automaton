@@ -71,7 +71,7 @@ The sequence should read like `why -> what must stay true -> what to do next`.
 - never write phases during first-time onboarding
 - on refresher runs, write 3 to 6 ordered phases only when strong repo evidence shows an existing or ongoing roadmap and the user confirms importing or refreshing it in chat
 - on refresher runs, if strong roadmap evidence exists but confirmation is missing, ask one bounded follow-up before writing phases
-- each confirmed phase must include `status: pending` and an empty `change:` field; see `references/ROADMAP-CONTRACT.md` for the full format
+- each confirmed phase must include `status: pending` and an empty `change:` field; see `.agent/.automaton/references/ROADMAP-CONTRACT.md` for the full format
 - each confirmed phase should have an objective, why now, likely outputs, and an exit signal
 - confirmed phases should reflect the current repo, not generic best practices
 
