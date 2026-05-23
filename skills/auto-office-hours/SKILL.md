@@ -9,7 +9,7 @@ metadata:
 
 Pre-frame conversation. Turns a vague idea into a sharp objective before framing begins.
 
-First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding. Then detect mode, work scale, and work shape from the user's language.
+First action: run `scripts/get-context.mjs` from this skill's installed directory (the `scripts/` folder adjacent to this `SKILL.md`, not the project root) → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding. Then detect mode, work scale, and work shape from the user's language.
 
 ## Preamble
 

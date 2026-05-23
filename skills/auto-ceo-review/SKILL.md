@@ -9,7 +9,7 @@ metadata:
 
 Product-direction gate. Decides whether a spec is worth building before planning begins.
 
-First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding.
+First action: run `scripts/get-context.mjs` from this skill's installed directory (the `scripts/` folder adjacent to this `SKILL.md`, not the project root) → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding.
 
 ## Preamble
 

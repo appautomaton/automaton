@@ -9,7 +9,7 @@ metadata:
 
 Framing controller. Bounds and de-risks a request into a single `SPEC.md`.
 
-First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding. Read `STATUS.md` for open blockers.
+First action: run `scripts/get-context.mjs` from this skill's installed directory (the `scripts/` folder adjacent to this `SKILL.md`, not the project root) → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding. Read `STATUS.md` for open blockers.
 
 ## Preamble
 

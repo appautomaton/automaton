@@ -96,6 +96,11 @@ test('authored skills point script commands at installed host skill roots', () =
       /scripts\/get-context\.mjs/,
       `${skillName} must reference get-context.mjs from its scripts directory`
     )
+    assert.match(
+      source,
+      /scripts\/get-context\.mjs` from this skill's installed directory/,
+      `${skillName} must tell agents to run get-context.mjs relative to the installed skill directory`
+    )
   }
 })
 
