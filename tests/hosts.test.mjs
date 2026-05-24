@@ -278,14 +278,20 @@ test('reinstalling Codex removes manifest-owned legacy stop hook and per-skill s
   const manifestTarget = join(root, '.agent', '.automaton', 'state', 'install-manifest.json')
   const stopTarget = join(root, '.codex', 'hooks', 'stop.mjs')
   const legacyScriptTarget = join(root, '.codex', 'skills', 'auto-frame', 'scripts', 'get-context.mjs')
+  const removedScriptTarget = join(root, '.codex', 'skills', 'auto-frame', 'scripts', 'scaffold-agent.mjs')
 
   installHost(host, { root, sourceRoot })
   mkdirSync(join(root, '.codex', 'skills', 'auto-frame', 'scripts'), { recursive: true })
   writeFileSync(stopTarget, '// old stop hook\n', 'utf8')
   writeFileSync(legacyScriptTarget, '// old per-skill script\n', 'utf8')
+  writeFileSync(removedScriptTarget, '// old scaffold script\n', 'utf8')
 
   const manifest = JSON.parse(readFileSync(manifestTarget, 'utf8'))
-  manifest.hosts.codex.files.push('.codex/hooks/stop.mjs', '.codex/skills/auto-frame/scripts/get-context.mjs')
+  manifest.hosts.codex.files.push(
+    '.codex/hooks/stop.mjs',
+    '.codex/skills/auto-frame/scripts/get-context.mjs',
+    '.codex/skills/auto-frame/scripts/scaffold-agent.mjs'
+  )
   writeFileSync(manifestTarget, JSON.stringify(manifest, null, 2) + '\n', 'utf8')
 
   installHost(host, { root, sourceRoot })
@@ -293,8 +299,10 @@ test('reinstalling Codex removes manifest-owned legacy stop hook and per-skill s
   const nextManifest = JSON.parse(readFileSync(manifestTarget, 'utf8'))
   assert.equal(existsSync(stopTarget), false)
   assert.equal(existsSync(legacyScriptTarget), false)
+  assert.equal(existsSync(removedScriptTarget), false)
   assert.equal(nextManifest.hosts.codex.files.includes('.codex/hooks/stop.mjs'), false)
   assert.equal(nextManifest.hosts.codex.files.includes('.codex/skills/auto-frame/scripts/get-context.mjs'), false)
+  assert.equal(nextManifest.hosts.codex.files.includes('.codex/skills/auto-frame/scripts/scaffold-agent.mjs'), false)
 })
 
 test('Codex session-start hook reads Automaton state from a nested working directory', () => {
