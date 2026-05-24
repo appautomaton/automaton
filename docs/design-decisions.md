@@ -52,9 +52,9 @@ L1 (state invariants) in runtime. L2 (artifact shape) in consuming skill. L3 (pr
 
 ## DD-006: Session bootstrap via hook, not skill
 
-SessionStart hook produces ~100 tokens before any skill runs.
+SessionStart hook produces a short reminder before any skill runs.
 
-**Why:** Instant orientation without invoking a skill or reading files beyond `current.json` + `STATUS.md`. Fires on startup, resume, clear, compact — all re-entry points.
+**Why:** Instant orientation without invoking a skill or summarizing progress prose. The message identifies Automaton as an installed harness, points to `current.json` and `STATUS.md`, and reminds the agent that the user's latest request remains authoritative. Fires on startup, resume, clear, compact — all re-entry points.
 
 ---
 

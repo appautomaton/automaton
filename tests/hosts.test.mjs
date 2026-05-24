@@ -7,7 +7,6 @@ import { join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
 import { installHost, uninstallHost } from '../lib/install.mjs'
-import { saveStatusSummary } from '../lib/status.mjs'
 import { HOSTS, detectHosts, getHost } from '../hosts/index.mjs'
 
 const sourceRoot = fileURLToPath(new URL('..', import.meta.url))
@@ -109,12 +108,17 @@ test('Claude session-start hook reads Automaton state from a nested working dire
   assert.equal(result.status, 0)
   assert.equal(result.stderr, '')
   const payload = JSON.parse(result.stdout)
-  assert.match(payload.hookSpecificOutput.additionalContext, /Automaton: change=bootstrap; stage=frame\./)
-  assert.match(payload.hookSpecificOutput.additionalContext, /Read \.agent\/steering\/STATUS\.md and \.agent\/work\/bootstrap\//)
+  assert.match(payload.hookSpecificOutput.additionalContext, /^<automaton_reminder> This project has the Automaton stage-gated harness installed\./)
+  assert.match(payload.hookSpecificOutput.additionalContext, /State JSON: \.agent\/\.automaton\/state\/current\.json \(change=bootstrap; stage=frame\)\./)
+  assert.match(payload.hookSpecificOutput.additionalContext, /Status summary: \.agent\/steering\/STATUS\.md\./)
+  assert.match(payload.hookSpecificOutput.additionalContext, /Work artifacts, when relevant, live under \.agent\/work\//)
+  assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /\.agent\/work\/bootstrap\//)
+  assert.match(payload.hookSpecificOutput.additionalContext, /honor the user's latest request/)
+  assert.match(payload.hookSpecificOutput.additionalContext, /<\/automaton_reminder>$/)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /<change>/)
 })
 
-test('Claude session-start hook injects canonical artifacts and current progress', () => {
+test('Claude session-start hook injects the shared Automaton reminder without status prose', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-install-claude-context-'))
   const scriptTarget = join(root, '.claude', 'hooks', 'session-start.mjs')
   const currentTarget = join(root, '.agent', '.automaton', 'state', 'current.json')
@@ -125,21 +129,16 @@ test('Claude session-start hook injects canonical artifacts and current progress
     '{\n  "active_change": "deepen-skills",\n  "stage": "plan",\n  "canonical_spec": "automaton/.agent/work/deepen-skills/SPEC.md",\n  "canonical_plan": "automaton/.agent/work/deepen-skills/PLAN.md"\n}\n',
     'utf8'
   )
-  saveStatusSummary(join(root, '.agent', 'steering', 'STATUS.md'), {
-    whatIsTrueNow: ['Slice 1 shared references are complete.'],
-    nextStep: 'Execute Slice 2: deepen auto-onboard.',
-    openRisks: ['auto-frame was rewritten ahead of dependency order.']
-  })
 
   const result = spawnSync(process.execPath, [scriptTarget], { encoding: 'utf8' })
 
   assert.equal(result.status, 0)
   assert.equal(result.stderr, '')
   const payload = JSON.parse(result.stdout)
-  assert.match(payload.hookSpecificOutput.additionalContext, /Automaton: change=deepen-skills; stage=plan\./)
-  assert.match(payload.hookSpecificOutput.additionalContext, /automaton\/\.agent\/work\/deepen-skills\/\{SPEC\.md, PLAN\.md\}/)
-  assert.match(payload.hookSpecificOutput.additionalContext, /Progress: Slice 1 shared references are complete\./)
-  assert.match(payload.hookSpecificOutput.additionalContext, /Next: Execute Slice 2: deepen auto-onboard\./)
+  assert.match(payload.hookSpecificOutput.additionalContext, /State JSON: \.agent\/\.automaton\/state\/current\.json \(change=deepen-skills; stage=plan\)\./)
+  assert.match(payload.hookSpecificOutput.additionalContext, /canonical artifact pointers are in current\.json\./)
+  assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /Progress:/)
+  assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /Next:/)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /<change>/)
 })
 
@@ -314,12 +313,17 @@ test('Codex session-start hook reads Automaton state from a nested working direc
   assert.equal(result.status, 0)
   assert.equal(result.stderr, '')
   const payload = JSON.parse(result.stdout)
-  assert.match(payload.hookSpecificOutput.additionalContext, /Automaton: change=bootstrap; stage=frame\./)
-  assert.match(payload.hookSpecificOutput.additionalContext, /Read \.agent\/steering\/STATUS\.md and \.agent\/work\/bootstrap\//)
+  assert.match(payload.hookSpecificOutput.additionalContext, /^<automaton_reminder> This project has the Automaton stage-gated harness installed\./)
+  assert.match(payload.hookSpecificOutput.additionalContext, /State JSON: \.agent\/\.automaton\/state\/current\.json \(change=bootstrap; stage=frame\)\./)
+  assert.match(payload.hookSpecificOutput.additionalContext, /Status summary: \.agent\/steering\/STATUS\.md\./)
+  assert.match(payload.hookSpecificOutput.additionalContext, /Work artifacts, when relevant, live under \.agent\/work\//)
+  assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /\.agent\/work\/bootstrap\//)
+  assert.match(payload.hookSpecificOutput.additionalContext, /honor the user's latest request/)
+  assert.match(payload.hookSpecificOutput.additionalContext, /<\/automaton_reminder>$/)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /<change>/)
 })
 
-test('Codex session-start hook injects canonical artifacts and current progress', () => {
+test('Codex session-start hook injects the shared Automaton reminder without status prose', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-install-codex-context-'))
   const scriptTarget = join(root, '.codex', 'hooks', 'session-start.mjs')
   const currentTarget = join(root, '.agent', '.automaton', 'state', 'current.json')
@@ -330,21 +334,16 @@ test('Codex session-start hook injects canonical artifacts and current progress'
     '{\n  "active_change": "deepen-skills",\n  "stage": "plan",\n  "canonical_spec": "automaton/.agent/work/deepen-skills/SPEC.md",\n  "canonical_plan": "automaton/.agent/work/deepen-skills/PLAN.md"\n}\n',
     'utf8'
   )
-  saveStatusSummary(join(root, '.agent', 'steering', 'STATUS.md'), {
-    whatIsTrueNow: ['Slice 1 shared references are complete.'],
-    nextStep: 'Execute Slice 2: deepen auto-onboard.',
-    openRisks: ['auto-frame was rewritten ahead of dependency order.']
-  })
 
   const result = spawnSync(process.execPath, [scriptTarget], { encoding: 'utf8' })
 
   assert.equal(result.status, 0)
   assert.equal(result.stderr, '')
   const payload = JSON.parse(result.stdout)
-  assert.match(payload.hookSpecificOutput.additionalContext, /Automaton: change=deepen-skills; stage=plan\./)
-  assert.match(payload.hookSpecificOutput.additionalContext, /automaton\/\.agent\/work\/deepen-skills\/\{SPEC\.md, PLAN\.md\}/)
-  assert.match(payload.hookSpecificOutput.additionalContext, /Progress: Slice 1 shared references are complete\./)
-  assert.match(payload.hookSpecificOutput.additionalContext, /Next: Execute Slice 2: deepen auto-onboard\./)
+  assert.match(payload.hookSpecificOutput.additionalContext, /State JSON: \.agent\/\.automaton\/state\/current\.json \(change=deepen-skills; stage=plan\)\./)
+  assert.match(payload.hookSpecificOutput.additionalContext, /canonical artifact pointers are in current\.json\./)
+  assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /Progress:/)
+  assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /Next:/)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /<change>/)
 })
 
@@ -537,6 +536,8 @@ test('OpenCode install scaffolds the OpenCode skills surface', () => {
   assert.equal(existsSync(join(root, '.opencode', 'skills', 'auto-frame', 'scripts')), false)
   assert.equal(existsSync(join(root, '.opencode', 'plugins', 'automaton.js')), true)
   assert.match(pluginSource, /session\.compacted/)
+  assert.match(pluginSource, /noReply: true/)
+  assert.match(pluginSource, /chat\.message/)
   assert.doesNotMatch(pluginSource, /session\.idle/)
   assert.doesNotMatch(pluginSource, /showToast/)
 })
@@ -613,7 +614,8 @@ test('OpenCode plugin injects session context, dedups, and re-injects after comp
   const output1 = { messages: [{ info: { role: 'user' }, parts: [{ type: 'text', text: 'hi' }] }] }
   await plugin['experimental.chat.messages.transform']({}, output1)
   assert.equal(output1.messages[0].parts.length, 2)
-  assert.match(output1.messages[0].parts[0].text, /^Automaton: change=deepen-skills; stage=plan\./)
+  assert.match(output1.messages[0].parts[0].text, /^<automaton_reminder> This project has the Automaton stage-gated harness installed\./)
+  assert.match(output1.messages[0].parts[0].text, /State JSON: \.agent\/\.automaton\/state\/current\.json \(change=deepen-skills; stage=plan\)\./)
   assert.equal(output1.messages[0].parts[1].text, 'hi')
 
   // Behavior 2: re-running the transform on the same output does NOT double-inject.
@@ -629,8 +631,136 @@ test('OpenCode plugin injects session context, dedups, and re-injects after comp
   // Behavior 4: the compacted flag is one-shot — subsequent transforms revert to the default variant.
   const output3 = { messages: [{ info: { role: 'user' }, parts: [{ type: 'text', text: 'hi' }] }] }
   await plugin['experimental.chat.messages.transform']({}, output3)
-  assert.match(output3.messages[0].parts[0].text, /^Automaton:/)
+  assert.match(output3.messages[0].parts[0].text, /^<automaton_reminder>/)
   assert.doesNotMatch(output3.messages[0].parts[0].text, /Context compacted/)
+})
+
+test('OpenCode plugin persists session context with noReply and dedups existing context', async () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-opencode-persist-'))
+  const pluginTarget = join(root, '.opencode', 'plugins', 'automaton.js')
+  const currentTarget = join(root, '.agent', '.automaton', 'state', 'current.json')
+  const promptCalls = []
+  let sessionMessages = []
+
+  installHost(getHost('opencode'), { root, sourceRoot })
+  writeFileSync(
+    currentTarget,
+    '{\n  "active_change": "persist-opencode",\n  "stage": "frame"\n}\n',
+    'utf8'
+  )
+
+  const { AutomatonPlugin } = await import(pathToFileURL(pluginTarget).href)
+  const plugin = await AutomatonPlugin({
+    client: {
+      session: {
+        messages({ path }) {
+          assert.equal(path.id, 'session-1')
+          return Promise.resolve({ data: sessionMessages })
+        },
+        prompt(call) {
+          promptCalls.push(call)
+          sessionMessages = [
+            ...sessionMessages,
+            { info: { role: 'user' }, parts: call.body.parts }
+          ]
+          return Promise.resolve({ data: { id: 'message-1' } })
+        }
+      }
+    },
+    directory: root,
+    worktree: root
+  })
+
+  await plugin.event({ event: { type: 'session.created', properties: { info: { id: 'session-1' } } } })
+
+  assert.equal(promptCalls.length, 1)
+  assert.equal(promptCalls[0].path.id, 'session-1')
+  assert.equal(promptCalls[0].body.noReply, true)
+  assert.match(promptCalls[0].body.parts[0].text, /^<automaton_reminder> This project has the Automaton stage-gated harness installed\./)
+  assert.match(promptCalls[0].body.parts[0].text, /State JSON: \.agent\/\.automaton\/state\/current\.json \(change=persist-opencode; stage=frame\)\./)
+
+  await plugin['chat.message'](
+    { sessionID: 'session-1' },
+    { message: { role: 'user' }, parts: [{ type: 'text', text: 'hello' }] }
+  )
+
+  assert.equal(promptCalls.length, 1)
+})
+
+test('OpenCode plugin uses chat.message as persisted injection fallback', async () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-opencode-chat-message-'))
+  const pluginTarget = join(root, '.opencode', 'plugins', 'automaton.js')
+  const promptCalls = []
+
+  installHost(getHost('opencode'), { root, sourceRoot })
+
+  const { AutomatonPlugin } = await import(pathToFileURL(pluginTarget).href)
+  const plugin = await AutomatonPlugin({
+    client: {
+      session: {
+        messages() {
+          return Promise.resolve({ data: [] })
+        },
+        prompt(call) {
+          promptCalls.push(call)
+          return Promise.resolve({ data: { id: 'message-1' } })
+        }
+      }
+    },
+    directory: root,
+    worktree: root
+  })
+
+  await plugin['chat.message'](
+    { sessionID: 'session-2' },
+    { message: { role: 'user' }, parts: [{ type: 'text', text: 'hello' }] }
+  )
+
+  assert.equal(promptCalls.length, 1)
+  assert.equal(promptCalls[0].path.id, 'session-2')
+  assert.equal(promptCalls[0].body.noReply, true)
+  assert.match(promptCalls[0].body.parts[0].text, /^<automaton_reminder>/)
+
+  await plugin['chat.message'](
+    { sessionID: 'session-2' },
+    { message: { role: 'user' }, parts: [{ type: 'text', text: 'Automaton: already persisted' }] }
+  )
+
+  assert.equal(promptCalls.length, 1)
+})
+
+test('OpenCode plugin persists compacted context when session id is available', async () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-opencode-compact-persist-'))
+  const pluginTarget = join(root, '.opencode', 'plugins', 'automaton.js')
+  const promptCalls = []
+
+  installHost(getHost('opencode'), { root, sourceRoot })
+
+  const { AutomatonPlugin } = await import(pathToFileURL(pluginTarget).href)
+  const plugin = await AutomatonPlugin({
+    client: {
+      session: {
+        messages() {
+          return Promise.resolve({
+            data: [{ info: { role: 'user' }, parts: [{ type: 'text', text: 'Automaton: existing context' }] }]
+          })
+        },
+        prompt(call) {
+          promptCalls.push(call)
+          return Promise.resolve({ data: { id: 'message-1' } })
+        }
+      }
+    },
+    directory: root,
+    worktree: root
+  })
+
+  await plugin.event({ event: { type: 'session.compacted', properties: { sessionID: 'session-3' } } })
+
+  assert.equal(promptCalls.length, 1)
+  assert.equal(promptCalls[0].path.id, 'session-3')
+  assert.equal(promptCalls[0].body.noReply, true)
+  assert.match(promptCalls[0].body.parts[0].text, /Context compacted/)
 })
 
 test('OpenCode plugin transform is a no-op when no user message is present', async () => {

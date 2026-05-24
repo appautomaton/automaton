@@ -18,7 +18,7 @@ Module graph — files import each other. Called by hooks, not by skills.
 
 | File | Purpose |
 |------|---------|
-| `context.mjs` | `buildSessionContext()` — reads current.json + STATUS.md, outputs ~100 tok |
+| `context.mjs` | `buildSessionContext()` — reads current.json and outputs the cross-host harness reminder |
 | `state.mjs` | `loadCurrentState()` / `saveCurrentState()` — snake↔camel normalization |
 | `status.mjs` | STATUS.md prose-summary read/write |
 | `contracts.mjs` | Loads `contracts-data.json` — stages, prerequisites, review verdicts |
@@ -55,7 +55,7 @@ Manifest tracks every installed file for exact `--uninstall` cleanup.
 
 ```
 Session start
-  └─ Hook → buildSessionContext() → ~100 tok injected
+  └─ Hook → buildSessionContext() → short cross-host Automaton reminder
 
 User invokes /auto-frame
   └─ LLM reads SKILL.md

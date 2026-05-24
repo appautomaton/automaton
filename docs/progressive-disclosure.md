@@ -12,7 +12,7 @@ Layer 2   references/*.md         18-160 lines   When trigger fires
 Layer 3   Work artifacts          Variable       When stage requires
 ```
 
-**Layer 0** — `buildSessionContext()` reads `current.json` + `STATUS.md`, clips to one paragraph. Hard limits: `clip(140)` per entry, `summarizeEntries(2)` max items.
+**Layer 0** — `buildSessionContext()` reads only `current.json` for change/stage and emits a short harness reminder. It points to `current.json`, `STATUS.md`, and the work-artifact directory without summarizing STATUS prose.
 
 **Layer 0.5** — `.agent/.automaton/scripts/get-context.mjs` runs as each skill's first action. Self-contained (see DD-007), produces normalized JSON with diagnostics. Skills abort on error-level diagnostics before loading anything else.
 
