@@ -22,7 +22,7 @@ Shared scripts are self-contained but no longer copied into every skill folder.
 
 **Why:** JSON parsing is deterministic across LLM providers; markdown frontmatter is fragile. Separating cursor from summary prevents conflicting writes and avoids spending prompt tokens mirroring machine state into prose — state mutations go to JSON, prose goes to markdown.
 
-**See:** `runtime/lib/context.mjs:75-88`, `runtime/lib/status.mjs`.
+**See:** `runtime/lib/state.mjs`, `runtime/lib/status.mjs`, `runtime/lib/context.mjs`.
 
 ---
 
@@ -50,11 +50,11 @@ L1 (state invariants) in runtime. L2 (artifact shape) in consuming skill. L3 (pr
 
 ---
 
-## DD-006: Session bootstrap via hook, not skill
+## DD-006: Session bootstrap via host startup integration, not skill
 
-SessionStart hook produces a short reminder before any skill runs.
+Host startup integration produces a short reminder before any skill runs.
 
-**Why:** Instant orientation without invoking a skill or summarizing progress prose. The message identifies Automaton as an installed harness, points to `current.json` and `STATUS.md`, and reminds the agent that the user's latest request remains authoritative. Fires on startup, resume, clear, compact — all re-entry points.
+**Why:** Instant orientation without invoking a skill or summarizing progress prose. The message identifies Automaton as an installed harness, points to `current.json` and `STATUS.md`, and reminds the agent that the user's latest request remains authoritative. Claude and Codex use SessionStart hooks; OpenCode uses its plugin event/chat hooks, including compaction handling.
 
 ---
 

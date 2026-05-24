@@ -1,20 +1,20 @@
 # Runtime Architecture
 
-Automaton's JS is three independent script groups with different callers and zero cross-imports.
+Automaton's JS is three independent script groups with different callers and zero cross-imports between groups.
 
 ## Three Groups
 
 ```
 Caller          →  Code                  →  Installed at
 ────────────────────────────────────────────────────────
-Host hooks      →  Runtime lib           →  .agent/.automaton/lib/
+Host hooks/plugins → Runtime lib         →  .agent/.automaton/lib/
 LLM (via bash)  →  Shared skill scripts  →  .agent/.automaton/scripts/
 Developer       →  CLI                   →  npx @appautomaton/automaton
 ```
 
 ### Runtime lib (`.agent/.automaton/lib/`)
 
-Module graph — files import each other. Called by hooks, not by skills.
+Module graph — files import each other. Called by hooks/plugins, not by skills.
 
 | File | Purpose |
 |------|---------|
@@ -41,9 +41,9 @@ Self-contained — no runtime imports (see DD-007). Called by LLM via bash.
 ```
 installProject()                    installHost(claude)
 ├─ scaffold .agent/ tree            ├─ copy skills/ → .claude/skills/
-├─ sync runtime/ → .automaton/      │    (skip _shared/ directory)
-├─ sync shared refs → .automaton/references/
-├─ sync shared scripts → .automaton/scripts/
+├─ sync runtime/ → .agent/.automaton/ │  (skip _shared/ and per-skill scripts)
+├─ sync shared refs → .agent/.automaton/references/
+├─ sync shared scripts → .agent/.automaton/scripts/
 └─ seed current.json                ├─ generate HOST-TOOLS.md per skill
                                     ├─ wire hooks in .claude/settings.json
                                     └─ record in install-manifest.json

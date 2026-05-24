@@ -5,10 +5,10 @@ How Automaton manages progressive loading across four layers. Each layer gates t
 ## Layers
 
 ```
-Layer 0   SessionStart hook       ~100 tokens    Every session
-Layer 0.5 get-context.mjs         ~30 tokens     Every skill invocation
-Layer 1   SKILL.md entry point    106-251 lines  When skill invoked
-Layer 2   references/*.md         18-160 lines   When trigger fires
+Layer 0   Startup integration     ~100 tokens    Every session
+Layer 0.5 get-context.mjs         ~50 tokens     Every skill invocation
+Layer 1   SKILL.md entry point    105-234 lines  When skill invoked
+Layer 2   references/*.md         21-180 lines   When trigger fires
 Layer 3   Work artifacts          Variable       When stage requires
 ```
 
