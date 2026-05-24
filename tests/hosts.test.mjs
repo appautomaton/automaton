@@ -610,7 +610,7 @@ test('OpenCode plugin injects session context, dedups, and re-injects after comp
     worktree: root
   })
 
-  // Behavior 1: first transform prepends an "Automaton:" text part to the first user message.
+  // Behavior 1: first transform prepends the Automaton reminder to the first user message.
   const output1 = { messages: [{ info: { role: 'user' }, parts: [{ type: 'text', text: 'hi' }] }] }
   await plugin['experimental.chat.messages.transform']({}, output1)
   assert.equal(output1.messages[0].parts.length, 2)
