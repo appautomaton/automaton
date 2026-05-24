@@ -5,14 +5,18 @@ import { readFileSync } from 'node:fs'
 import {
   ARTIFACT_LAYOUT,
   CANONICAL_POINTER_CHECKS,
+  CHECKPOINT_TYPES,
   CONTRACTS_DATA,
   ENGINEERING_REVIEW_VERDICTS,
+  EXECUTION_ROUTES,
   LENSES,
   PREREQUISITE_DIAGNOSTIC_CODES,
   PRODUCT_REVIEW_VERDICTS,
   STAGE_PREREQUISITES,
   STAGES,
+  isValidCheckpointType,
   isValidEngineeringReview,
+  isValidExecutionRoute,
   isValidLens,
   isValidProductReview,
   isValidStage
@@ -26,6 +30,8 @@ test('kernel contracts are driven by the checked-in contract manifest', () => {
   assert.deepEqual(CONTRACTS_DATA, contractsManifest)
   assert.deepEqual(STAGES, contractsManifest.stages)
   assert.deepEqual(LENSES, contractsManifest.lenses)
+  assert.deepEqual(EXECUTION_ROUTES, contractsManifest.executionRoutes)
+  assert.deepEqual(CHECKPOINT_TYPES, contractsManifest.checkpointTypes)
   assert.deepEqual(ARTIFACT_LAYOUT, contractsManifest.artifactLayout)
   assert.deepEqual(STAGE_PREREQUISITES, contractsManifest.stagePrerequisites)
   assert.deepEqual(PRODUCT_REVIEW_VERDICTS, contractsManifest.reviewVerdicts.product)
@@ -49,6 +55,15 @@ test('kernel contracts expose stable stage, lens, and artifact layout values', (
   assert.equal(isValidStage('invent'), false)
   assert.equal(isValidLens('engineering'), true)
   assert.equal(isValidLens('marketing'), false)
+})
+
+test('kernel contracts expose stable execution-route and checkpoint vocabularies', () => {
+  assert.deepEqual(EXECUTION_ROUTES, ['direct', 'subagent recommended', 'subagent required'])
+  assert.deepEqual(CHECKPOINT_TYPES, ['none', 'human-verify', 'decision', 'human-action'])
+  assert.equal(isValidExecutionRoute('subagent required'), true)
+  assert.equal(isValidExecutionRoute('parallel'), false)
+  assert.equal(isValidCheckpointType('human-verify'), true)
+  assert.equal(isValidCheckpointType('blocking'), false)
 })
 
 test('kernel contracts expose stable stage prerequisites', () => {

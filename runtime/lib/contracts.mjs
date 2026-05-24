@@ -20,6 +20,20 @@ export function isValidLens(lens) {
   return LENSES.includes(lens)
 }
 
+export const EXECUTION_ROUTES = CONTRACTS_DATA.executionRoutes
+
+export const CHECKPOINT_TYPES = CONTRACTS_DATA.checkpointTypes
+
+export const TOPOLOGY_LABELS = CONTRACTS_DATA.topologyLabels
+
+export function isValidExecutionRoute(route) {
+  return EXECUTION_ROUTES.includes(route)
+}
+
+export function isValidCheckpointType(checkpoint) {
+  return CHECKPOINT_TYPES.includes(checkpoint)
+}
+
 export const STAGE_PREREQUISITES = CONTRACTS_DATA.stagePrerequisites
 
 export const PRODUCT_REVIEW_VERDICTS = CONTRACTS_DATA.reviewVerdicts.product

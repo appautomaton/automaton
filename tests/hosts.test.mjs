@@ -793,3 +793,44 @@ test('OpenCode plugin transform is a no-op when no user message is present', asy
   assert.equal(assistantOnly.messages[0].parts.length, 1)
   assert.equal(assistantOnly.messages[0].parts[0].text, 'reply')
 })
+
+test('host install generates HOST-TOOLS.md only in the auto-execute skill', () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-install-host-tools-single-'))
+
+  installHost(getHost('claude'), { root, sourceRoot })
+
+  const skillsRoot = join(root, '.claude', 'skills')
+  assert.equal(existsSync(join(skillsRoot, 'auto-execute', 'references', 'HOST-TOOLS.md')), true)
+  for (const skill of ['auto-frame', 'auto-plan', 'auto-verify', 'auto-resume', 'auto-onboard', 'auto-office-hours', 'auto-ceo-review', 'auto-eng-review']) {
+    assert.equal(
+      existsSync(join(skillsRoot, skill, 'references', 'HOST-TOOLS.md')),
+      false,
+      `${skill} must not carry a HOST-TOOLS.md copy`
+    )
+  }
+})
+
+test('reinstalling removes manifest-owned stale per-skill HOST-TOOLS copies', () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-reinstall-host-tools-stale-'))
+  const host = getHost('claude')
+  const manifestTarget = join(root, '.agent', '.automaton', 'state', 'install-manifest.json')
+  const staleTarget = join(root, '.claude', 'skills', 'auto-frame', 'references', 'HOST-TOOLS.md')
+  const keepTarget = join(root, '.claude', 'skills', 'auto-execute', 'references', 'HOST-TOOLS.md')
+
+  installHost(host, { root, sourceRoot })
+
+  // Simulate a prior install that scattered HOST-TOOLS.md into a non-dispatching skill.
+  mkdirSync(join(root, '.claude', 'skills', 'auto-frame', 'references'), { recursive: true })
+  writeFileSync(staleTarget, '# stale host tools\n', 'utf8')
+  const manifest = JSON.parse(readFileSync(manifestTarget, 'utf8'))
+  manifest.hosts.claude.files.push('.claude/skills/auto-frame/references/HOST-TOOLS.md')
+  writeFileSync(manifestTarget, JSON.stringify(manifest, null, 2) + '\n', 'utf8')
+
+  installHost(host, { root, sourceRoot })
+
+  const nextManifest = JSON.parse(readFileSync(manifestTarget, 'utf8'))
+  assert.equal(existsSync(staleTarget), false)
+  assert.equal(existsSync(keepTarget), true)
+  assert.equal(nextManifest.hosts.claude.files.includes('.claude/skills/auto-frame/references/HOST-TOOLS.md'), false)
+  assert.equal(nextManifest.hosts.claude.files.includes('.claude/skills/auto-execute/references/HOST-TOOLS.md'), true)
+})

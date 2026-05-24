@@ -111,7 +111,7 @@ Write the plan to `.agent/work/<change>/PLAN.md`.
 **Core** sections (always present):
 - **Goal**: restate *or* reference the bounded goal from SPEC.md — a one-line pointer is sufficient; do not mirror the full SPEC text
 - **Ordered slice sequence**: slices in dependency order, with linked detail files when needed
-- **Execution routing and topology**: default route/checkpoint policy plus explicit overrides, checkpoints, and parallel-safe groups (or "none")
+- **Execution routing and topology**: default route/checkpoint policy plus explicit overrides and checkpoints, and a **Parallel-safe groups:** line set to `none` or the parallel-safe slice groups
 - **Per-slice verification**: a verification command inline on every material slice
 
 **Conditional** sections — include only when the named trigger applies, otherwise omit or mark "n/a":

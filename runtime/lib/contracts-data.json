@@ -1,6 +1,11 @@
 {
   "stages": ["frame", "plan", "execute", "verify", "resume"],
   "lenses": ["product", "engineering", "design", "security", "runtime", "content"],
+  "executionRoutes": ["direct", "subagent recommended", "subagent required"],
+  "checkpointTypes": ["none", "human-verify", "decision", "human-action"],
+  "topologyLabels": {
+    "parallelSafeGroups": "Parallel-safe groups:"
+  },
   "artifactLayout": {
     "agentRoot": ".agent",
     "runtimeRoot": ".agent/.automaton",

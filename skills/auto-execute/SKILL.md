@@ -50,7 +50,7 @@ If the current slice links a `slices/slice-NNN.md` detail file or names requirem
 Identify the next uncompleted slice from `PLAN.md`. Build the smallest safe execution window:
 - Always include the next uncompleted slice.
 - Add following slices only while the previous slice has or defaults to `Checkpoint after: none`, dependencies are met, verification is explicit, and no STOP condition, slice-blocking review risk, or context pressure appears.
-- Execute the window serially by default. Cross-slice parallel dispatch is allowed only when `PLAN.md` explicitly marks slices parallel-safe and write sets are disjoint.
+- Execute the window serially by default. Cross-slice parallel dispatch is allowed only when `PLAN.md`'s **Parallel-safe groups:** line names the slices and their write sets are disjoint.
 
 Slice defaults:
 - Missing `Execution` means `direct`.

@@ -68,3 +68,16 @@ All 9 are distinct files (9 distinct md5s) but share an identical four-section s
 3. **C3** — factor the `quality.md` skeleton opportunistically, when those files are touched anyway.
 4. **C4** — investigate, then decide.
 5. **C5** — leave as-is.
+
+## Resolution — 2026-05-24
+
+Executed under change `2026-05-24-unify-automaton-consistency`. Outcomes by concern:
+
+- **C1 — rescoped and closed.** This audit overstated the gap: the `Execution:` route and `Checkpoint after:` vocabularies were *already* pinned in `contracts-data.json` and enforced by `tests/execution-contract.test.mjs` on both the emit and consume sides. Only the parallel-safe topology label was unpinned — it lived in prose. Fixed by adding `topologyLabels.parallelSafeGroups` to `contracts-data.json`, exporting `TOPOLOGY_LABELS`, making `auto-plan` emit the rigid `**Parallel-safe groups:**` field, having `auto-execute` recognize it, and adding 3 assertions. The plan→execute topology contract is now fully test-enforced.
+- **C2 — done.** `lib/install.mjs` generates `HOST-TOOLS.md` only into `auto-execute/references/`; a new `removeManifestOwnedStaleHostTools` pass removes the 8 stale per-skill copies (and their manifest entries) on reinstall. Uninstall already removes the single manifest-tracked copy. Two behavioral tests in `hosts.test.mjs`.
+- **C4 dead files — done.** The unreferenced `examples/review-template.md` copies (both review skills) were deleted; a `skills.test.mjs` guard forbids any skill shipping an `examples/` directory.
+- **C3 — decided: leave inline.** The 9 `quality.md` files share a skeleton but cost ~0 runtime tokens under progressive disclosure, and their bodies are genuinely stage-specific (`skills.test.mjs` already asserts each stays distinct). Factoring the skeleton into `_shared` would trade duplication for an indirection hop that hurts readability more than the duplication hurts maintenance.
+- **C4 review base — decided: leave inline.** Same reasoning; the ceo/eng review structures are parallel but per-domain tailored. No shared base.
+- **C5 — unchanged.** `content-*.md` remains per-stage by design.
+
+Net: every correctness and drift-hazard concern (C1, C2, dead files) is resolved and test-guarded; the footprint-hygiene-only items (C3, review base, C5) are deliberately left inline. Suite all green at 188 tests (+6 contract/guard tests from this change).

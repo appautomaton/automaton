@@ -364,6 +364,29 @@ test('review and verification templates avoid nobody-reads-this bulk', () => {
   assert.doesNotMatch(alternatives, /This is not optional/)
 })
 
+test('skills keep review-template.md in references only, with no dead examples dir', () => {
+  // The examples/review-template.md copies were unreferenced duplicates of references/review-template.md;
+  // both review skills load the references/ copy. Guard against the dead-file class returning.
+  for (const skillName of authoredSkills) {
+    assert.equal(
+      existsSync(join(skillsRoot, skillName, 'examples')),
+      false,
+      `${skillName} must not ship an examples/ directory (use references/ as the single source)`
+    )
+  }
+
+  for (const reviewSkill of ['auto-ceo-review', 'auto-eng-review']) {
+    assert.equal(
+      existsSync(join(skillsRoot, reviewSkill, 'references', 'review-template.md')),
+      true,
+      `${reviewSkill} must keep review-template.md under references/`
+    )
+    const skill = readFileSync(join(skillsRoot, reviewSkill, 'SKILL.md'), 'utf8')
+    assert.match(skill, /references\/review-template\.md/, `${reviewSkill} must load references/review-template.md`)
+    assert.doesNotMatch(skill, /examples\/review-template\.md/, `${reviewSkill} must not reference the deleted examples copy`)
+  }
+})
+
 test('auto-frame preserves scope and supports adaptive SPEC shapes', () => {
   const source = readFileSync(join(skillsRoot, 'auto-frame', 'SKILL.md'), 'utf8')
 
