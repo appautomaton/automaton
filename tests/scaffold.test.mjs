@@ -17,7 +17,6 @@ test('scaffold creates steering, work, and nested runtime directories', () => {
   assert.equal(existsSync(join(paths.steeringRoot, 'STATUS.md')), true)
   assert.equal(existsSync(paths.wikiRoot), true)
   assert.equal(existsSync(join(paths.agentRoot, 'work')), true)
-  assert.equal(existsSync(join(paths.runtimeRoot, 'bin')), true)
   assert.equal(existsSync(join(paths.runtimeRoot, 'lib')), true)
   assert.equal(existsSync(join(paths.runtimeRoot, 'scripts')), true)
   assert.equal(existsSync(join(paths.runtimeRoot, 'state')), true)

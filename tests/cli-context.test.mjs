@@ -95,25 +95,35 @@ test('install command preserves existing durable snake_case current state', () =
   assert.equal(statusResult.stdout, 'active change: existing-change\nstage: execute\n')
 })
 
-test('install command removes manifest-owned legacy runtime status pointer script', () => {
+test('install command removes manifest-owned legacy runtime bin scripts', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-install-legacy-runtime-'))
-  const legacyTarget = join(root, '.agent', '.automaton', 'bin', 'sync-status-pointer.mjs')
+  const legacyBinRoot = join(root, '.agent', '.automaton', 'bin')
+  const legacyFiles = [
+    '.agent/.automaton/bin/sync-status-pointer.mjs',
+    '.agent/.automaton/bin/sync-status.mjs',
+    '.agent/.automaton/bin/update-state.mjs'
+  ]
   const manifestTarget = join(root, '.agent', '.automaton', 'state', 'install-manifest.json')
 
   spawnSync(process.execPath, [cliPath, 'install', root], { encoding: 'utf8' })
-  mkdirSync(join(root, '.agent', '.automaton', 'bin'), { recursive: true })
-  writeFileSync(legacyTarget, '// old pointer sync\n', 'utf8')
+  mkdirSync(legacyBinRoot, { recursive: true })
+  for (const legacyFile of legacyFiles) {
+    writeFileSync(join(root, legacyFile), '// old runtime bin script\n', 'utf8')
+  }
 
   const manifest = JSON.parse(readFileSync(manifestTarget, 'utf8'))
-  manifest.project.files.push('.agent/.automaton/bin/sync-status-pointer.mjs')
+  manifest.project.files.push(...legacyFiles)
   writeFileSync(manifestTarget, JSON.stringify(manifest, null, 2) + '\n', 'utf8')
 
   const reinstallResult = spawnSync(process.execPath, [cliPath, 'install', root], { encoding: 'utf8' })
   const nextManifest = JSON.parse(readFileSync(manifestTarget, 'utf8'))
 
   assert.equal(reinstallResult.status, 0)
-  assert.equal(existsSync(legacyTarget), false)
-  assert.equal(nextManifest.project.files.includes('.agent/.automaton/bin/sync-status-pointer.mjs'), false)
+  for (const legacyFile of legacyFiles) {
+    assert.equal(existsSync(join(root, legacyFile)), false)
+    assert.equal(nextManifest.project.files.includes(legacyFile), false)
+  }
+  assert.equal(existsSync(legacyBinRoot), false)
 })
 
 test('status command rejects an invalid durable stage from current state', () => {
