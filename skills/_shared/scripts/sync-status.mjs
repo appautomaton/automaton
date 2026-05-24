@@ -2,8 +2,10 @@
 /**
  * sync-status.mjs
  *
- * Reads current.json and updates STATUS.md body pointers.
+ * Ensures STATUS.md has the compact prose summary shape.
  * If STATUS.md does not exist, creates a minimal status summary.
+ * Legacy current.json mirror sections are removed; current.json remains
+ * the only machine cursor for active change and stage.
  *
  * Usage: node sync-status.mjs [root=.]
  */
@@ -15,6 +17,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 
 function loadContracts() {
   const candidates = [
+    resolve(__dirname, '..', 'lib', 'contracts-data.json'),
     resolve(__dirname, '..', '..', '..', 'lib', 'contracts-data.json'),
     resolve(__dirname, '..', '..', '..', 'runtime', 'lib', 'contracts-data.json'),
     join(process.cwd(), '.agent', '.automaton', 'lib', 'contracts-data.json')
@@ -28,17 +31,11 @@ function loadContracts() {
 }
 
 const contracts = loadContracts()
-const STAGES = contracts?.stages ?? ['frame', 'plan', 'execute', 'verify', 'resume']
 const DEFAULT_NEXT_STEP = contracts?.defaultNextStep ?? 'Run `auto-onboard` to refresh project truth for the repository before continuing.'
 
-function renderStatusBody(activeChange, stage) {
+function renderStatusBody() {
   return [
     '# Status',
-    '',
-    '## Current Change',
-    '',
-    `- active change: \`${activeChange}\``,
-    `- current stage: \`${stage}\``,
     '',
     '## What Is True Now',
     '',
@@ -55,15 +52,6 @@ function renderStatusBody(activeChange, stage) {
   ].join('\n')
 }
 
-function renderCurrentChangeSection(activeChange, stage) {
-  return [
-    '## Current Change',
-    '',
-    `- active change: \`${activeChange}\``,
-    `- current stage: \`${stage}\``
-  ].join('\n')
-}
-
 function splitFrontmatter(source) {
   const match = source.match(/^---\n[\s\S]*?\n---\n*/)
 
@@ -74,81 +62,52 @@ function splitFrontmatter(source) {
   return { body: source.slice(match[0].length) }
 }
 
-function updateStatusBody(body, activeChange, stage) {
+function removeLegacyCurrentChange(body) {
+  return body
+    .replace(/## Current Change\n\n[\s\S]*?(?=\n## |$)/, '')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
+}
+
+function ensureSection(body, heading, fallback) {
+  if (body.includes(`## ${heading}\n`)) {
+    return body
+  }
+
+  return `${body.trimEnd()}\n\n## ${heading}\n\n${fallback}`
+}
+
+function updateStatusBody(body) {
   if (body.trim().length === 0) {
-    return renderStatusBody(activeChange, stage)
+    return renderStatusBody()
   }
 
-  const currentChange = renderCurrentChangeSection(activeChange, stage)
-  const currentChangePattern = /## Current Change\n\n[\s\S]*?(?=\n## |$)/
-  const currentChangeMatch = body.match(currentChangePattern)
+  let next = removeLegacyCurrentChange(body)
 
-  if (currentChangeMatch) {
-    let nextSection = currentChangeMatch[0]
-
-    if (/^- active change: `[^`]*`$/m.test(nextSection)) {
-      nextSection = nextSection.replace(/^- active change: `[^`]*`$/m, `- active change: \`${activeChange}\``)
-    } else {
-      nextSection = nextSection.replace('## Current Change\n\n', `## Current Change\n\n- active change: \`${activeChange}\`\n`)
-    }
-
-    if (/^- current stage: `[^`]*`$/m.test(nextSection)) {
-      nextSection = nextSection.replace(/^- current stage: `[^`]*`$/m, `- current stage: \`${stage}\``)
-    } else {
-      nextSection = nextSection.replace(
-        `- active change: \`${activeChange}\`\n`,
-        `- active change: \`${activeChange}\`\n- current stage: \`${stage}\`\n`
-      )
-    }
-
-    return body.replace(currentChangeMatch[0], nextSection)
+  if (!/^# Status(?:\n|$)/.test(next)) {
+    next = `# Status\n\n${next}`
   }
 
-  const withPointers = body
-    .replace(/^- active change: `[^`]*`$/m, `- active change: \`${activeChange}\``)
-    .replace(/^- current stage: `[^`]*`$/m, `- current stage: \`${stage}\``)
-
-  if (
-    withPointers.includes(`- active change: \`${activeChange}\``) &&
-    withPointers.includes(`- current stage: \`${stage}\``)
-  ) {
-    return withPointers
+  if (!next.includes('## What Is True Now\n') && !next.includes('## Next Step\n') && !next.includes('## Open Risks\n')) {
+    return renderStatusBody()
   }
 
-  if (body.startsWith('# Status\n')) {
-    return body.replace('# Status\n', `# Status\n\n${currentChange}\n`)
-  }
+  next = ensureSection(next, 'What Is True Now', '- none recorded')
+  next = ensureSection(next, 'Next Step', DEFAULT_NEXT_STEP)
+  next = ensureSection(next, 'Open Risks', '- none recorded')
 
-  return `${renderStatusBody(activeChange, stage)}\n${body}`
+  return `${next.trim()}\n`
 }
 
 const root = process.argv[2] ?? '.'
-const currentPath = join(root, '.agent', '.automaton', 'state', 'current.json')
 const statusPath = join(root, '.agent', 'steering', 'STATUS.md')
-
-let currentState
-
-try {
-  currentState = JSON.parse(readFileSync(currentPath, 'utf8'))
-} catch (err) {
-  console.error(JSON.stringify({ error: `Cannot read current.json: ${err.message}` }))
-  process.exit(1)
-}
-
-const activeChange = currentState.active_change ?? currentState.activeChange ?? 'none'
-const stage = currentState.stage ?? 'none'
-
-if (!STAGES.includes(stage)) {
-  console.error(JSON.stringify({ error: `invalid stage: ${stage}` }))
-  process.exit(1)
-}
 
 const statusContent = existsSync(statusPath)
   ? readFileSync(statusPath, 'utf8')
   : ''
 
 const { body } = splitFrontmatter(statusContent)
-const nextBody = updateStatusBody(body, activeChange, stage)
+const nextBody = updateStatusBody(body)
 const newContent = nextBody.replace(/^\n+/, '')
 
 mkdirSync(dirname(statusPath), { recursive: true })
@@ -156,7 +115,5 @@ writeFileSync(statusPath, newContent, 'utf8')
 
 console.log(JSON.stringify({
   synced: true,
-  statusPath,
-  active_change: activeChange,
-  stage
+  statusPath
 }, null, 2))

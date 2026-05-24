@@ -9,7 +9,7 @@ metadata:
 
 Implementation controller. Executes approved plan slices without reopening product scope.
 
-First action: run `scripts/get-context.mjs` from this skill's installed directory (the `scripts/` folder adjacent to this `SKILL.md`, not the project root) → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding.
+First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding.
 
 ## Preamble
 

@@ -19,6 +19,7 @@ test('scaffold creates steering, work, and nested runtime directories', () => {
   assert.equal(existsSync(join(paths.agentRoot, 'work')), true)
   assert.equal(existsSync(join(paths.runtimeRoot, 'bin')), true)
   assert.equal(existsSync(join(paths.runtimeRoot, 'lib')), true)
+  assert.equal(existsSync(join(paths.runtimeRoot, 'scripts')), true)
   assert.equal(existsSync(join(paths.runtimeRoot, 'state')), true)
   assert.equal(existsSync(join(paths.runtimeRoot, 'config')), true)
   assert.equal(existsSync(join(paths.runtimeRoot, 'cache')), true)
@@ -40,4 +41,3 @@ test('scaffold only seeds missing steering files', () => {
   assert.equal(existsSync(join(paths.steeringRoot, 'ROADMAP.md')), true)
   assert.equal(existsSync(join(paths.steeringRoot, 'STATUS.md')), true)
 })
-

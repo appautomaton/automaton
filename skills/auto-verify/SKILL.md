@@ -9,7 +9,7 @@ metadata:
 
 Verification gate. Independent audit of a completed plan; runs once, not per-slice.
 
-First action: run `scripts/get-context.mjs` from this skill's installed directory (the `scripts/` folder adjacent to this `SKILL.md`, not the project root) → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding.
+First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding.
 
 ## Preamble
 
@@ -85,7 +85,7 @@ FAIL summary:
 ### On Pass
 
 - Update `.agent/.automaton/state/current.json`: `stage` → `verify`
-- Run `sync-status.mjs` from this skill's scripts directory.
+- Run `node .agent/.automaton/scripts/sync-status.mjs` from the project root.
 - If `.agent/steering/ROADMAP.md` exists, update the matching phase to `status: done` per `.agent/.automaton/references/ROADMAP-CONTRACT.md`. Match by the phase's `change:` field against `active_change`; skip if empty or no match.
 - End the report with `Change status: complete` and a separate `New objective` line pointing to `auto-office-hours` for future work. Do not print a `Recommended next skill` line on PASS. Use `auto-resume` only for later re-entry or recovery.
 

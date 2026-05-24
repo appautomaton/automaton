@@ -1,10 +1,5 @@
 # Status
 
-## Current Change
-
-- active change: `bootstrap`
-- current stage: `frame`
-
 ## What Is True Now
 
 - The project steering was refreshed from repository evidence.

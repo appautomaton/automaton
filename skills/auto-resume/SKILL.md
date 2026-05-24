@@ -9,7 +9,7 @@ metadata:
 
 Session recovery. Rebuilds context from durable artifacts, not memory or guessing.
 
-First action: run `scripts/get-context.mjs` from this skill's installed directory (the `scripts/` folder adjacent to this `SKILL.md`, not the project root) → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding.
+First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding.
 
 ## Preamble
 
@@ -54,7 +54,7 @@ Stage: verify   → Change complete; load PLAN.md only if reporting what was ver
 Stage: resume   → Load SPEC.md, STATUS.md
 ```
 
-If `current.json` and `STATUS.md` disagree on active change or stage, report the mismatch. Prefer `current.json` for recovery, but surface the discrepancy.
+Treat `current.json` as the only source for active change, stage, and canonical artifact pointers. Treat `STATUS.md` as prose summary only; if it names stale artifacts or next steps, report that as stale prose and prefer `current.json`.
 
 ### Surface Review State
 
@@ -114,7 +114,7 @@ Based on the recovered state:
 
 ### Recovery Scenarios
 
-Read `references/recovery-scenarios.md` for common recovery situations. (~41 lines: 8 state→action pairs covering fresh session, no active change, stale pointers, current.json/STATUS.md mismatch, review verdict blocks, scaffold-level steering, multiple changes, stale status prose.)
+Read `references/recovery-scenarios.md` for common recovery situations. (~41 lines: 8 state→action pairs covering fresh session, no active change, stale pointers, stale STATUS.md prose, review verdict blocks, scaffold-level steering, multiple changes, and old artifact paths.)
 
 ### Artifact Dependency Order
 

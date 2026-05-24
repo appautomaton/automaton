@@ -40,7 +40,7 @@ The target root is optional and defaults to the current directory. To install in
 
 - `.agent/` durable project state, steering, work artifacts, and runtime files
 - host skills under `.codex/skills`, `.claude/skills`, or `.opencode/skills`
-- host hooks for context injection and status synchronization
+- host hooks for context injection
 - manifest-tracked install files for exact cleanup
 
 Automaton is copy-based: installed skills are local plain markdown files that can be inspected in the target project.

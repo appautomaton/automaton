@@ -9,7 +9,7 @@ metadata:
 
 Planning controller. Turns approved framing into ordered slices with verification commands.
 
-First action: run `scripts/get-context.mjs` from this skill's installed directory (the `scripts/` folder adjacent to this `SKILL.md`, not the project root) → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding.
+First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding.
 
 ## Preamble
 
@@ -137,7 +137,7 @@ If any of these are true, recommend `auto-frame` and stop.
 
 ### Update State
 
-Run `sync-status.mjs` from this skill's scripts directory.
+Run `node .agent/.automaton/scripts/sync-status.mjs` from the project root.
 Update `.agent/.automaton/state/current.json`:
 - `canonical_design` → path to DESIGN.md (if written)
 - `canonical_plan` → path to PLAN.md

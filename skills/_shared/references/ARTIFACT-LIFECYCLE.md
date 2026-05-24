@@ -80,7 +80,7 @@ Halt and report instead of continuing when:
 - `canonical_spec` is required but missing or unreadable.
 - `canonical_plan` is required but missing or unreadable.
 - `canonical_design` is set but the file is missing; report it and continue only when the active skill says DESIGN.md is optional.
-- `STATUS.md` and `.agent/.automaton/state/current.json` disagree on active change or stage.
+- `STATUS.md` prose appears to describe a different active change, artifact, or next step than `.agent/.automaton/state/current.json`.
 - A stage is asked to consume an artifact from a future stage.
 - The requested work would add archive behavior, runtime lifecycle enforcement, daemons, dashboards, browser workflows, marketplace behavior, or vendor-source imports without a new SPEC.
 

@@ -7,8 +7,7 @@ import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import { loadCurrentState, saveCurrentState } from '../lib/state.mjs'
-import { loadStatusSummary, readStatusPointer, saveStatusSummary } from '../lib/status.mjs'
-import { syncStatusPointerFromCurrentState } from '../runtime/bin/sync-status-pointer.mjs'
+import { loadStatusSummary, saveStatusSummary } from '../lib/status.mjs'
 
 test('current state round-trips through .agent/.automaton/state/current.json', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-state-'))
@@ -27,8 +26,6 @@ test('status summary round-trips through .agent/steering/STATUS.md', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-status-summary-'))
   const target = join(root, '.agent', 'steering', 'STATUS.md')
   const summary = {
-    activeChange: 'automaton-status-sync',
-    stage: 'plan',
     whatIsTrueNow: ['Automaton has a compact sync helper.'],
     nextStep: 'Run the targeted state and CLI checks.',
     openRisks: ['Live host writeback still depends on controller discipline.']
@@ -38,12 +35,12 @@ test('status summary round-trips through .agent/steering/STATUS.md', () => {
 
   assert.equal(
     readFileSync(target, 'utf8'),
-    '# Status\n\n## Current Change\n\n- active change: `automaton-status-sync`\n- current stage: `plan`\n\n## What Is True Now\n\n- Automaton has a compact sync helper.\n\n## Next Step\n\nRun the targeted state and CLI checks.\n\n## Open Risks\n\n- Live host writeback still depends on controller discipline.\n'
+    '# Status\n\n## What Is True Now\n\n- Automaton has a compact sync helper.\n\n## Next Step\n\nRun the targeted state and CLI checks.\n\n## Open Risks\n\n- Live host writeback still depends on controller discipline.\n'
   )
   assert.deepEqual(loadStatusSummary(target), summary)
 })
 
-test('status parser tolerates human annotations after cursor fields', () => {
+test('status parser reads prose summary without cursor fields', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-status-summary-annotated-'))
   const target = join(root, '.agent', 'steering', 'STATUS.md')
 
@@ -52,11 +49,6 @@ test('status parser tolerates human annotations after cursor fields', () => {
     target,
     [
       '# Status',
-      '',
-      '## Current Change',
-      '',
-      '- active change: `gap-closure`',
-      '- current stage: `verify` (complete)',
       '',
       '## What Is True Now',
       '',
@@ -74,41 +66,11 @@ test('status parser tolerates human annotations after cursor fields', () => {
     'utf8'
   )
 
-  assert.deepEqual(readStatusPointer(target), {
-    activeChange: 'gap-closure',
-    stage: 'verify'
-  })
   assert.deepEqual(loadStatusSummary(target), {
-    activeChange: 'gap-closure',
-    stage: 'verify',
     whatIsTrueNow: ['The active frame is summarized without relying on status prose as a path cursor.'],
     nextStep: 'Read current.json for canonical artifact paths.',
     openRisks: []
   })
-})
-
-test('sync-status-pointer preserves summary when pointers already match current state', () => {
-  const root = mkdtempSync(join(tmpdir(), 'automaton-status-pointer-preserve-'))
-  const currentTarget = join(root, '.agent', '.automaton', 'state', 'current.json')
-  const statusTarget = join(root, '.agent', 'steering', 'STATUS.md')
-  const summary = {
-    activeChange: 'bootstrap',
-    stage: 'frame',
-    whatIsTrueNow: ['Steering has been refreshed from repository evidence.'],
-    nextStep: 'Run `auto-frame` for the next concrete product change.',
-    openRisks: ['Release policy is not yet defined.']
-  }
-
-  saveCurrentState(currentTarget, {
-    activeChange: 'bootstrap',
-    stage: 'frame'
-  })
-  saveStatusSummary(statusTarget, summary)
-
-  const result = syncStatusPointerFromCurrentState({ currentTarget, statusTarget })
-
-  assert.deepEqual(result, { status: 'unchanged' })
-  assert.deepEqual(loadStatusSummary(statusTarget), summary)
 })
 
 test('saveCurrentState writes durable snake_case keys and loadCurrentState normalizes them', () => {
@@ -318,18 +280,11 @@ test('shared get-context script normalizes durable state and preserves extra key
   })
 })
 
-test('shared sync-status script updates frontmatter and body pointers while preserving status details', () => {
+test('shared sync-status script strips legacy cursor fields while preserving status details', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-shared-status-sync-'))
-  const currentTarget = join(root, '.agent', '.automaton', 'state', 'current.json')
   const statusTarget = join(root, '.agent', 'steering', 'STATUS.md')
   const script = fileURLToPath(new URL('../skills/_shared/scripts/sync-status.mjs', import.meta.url))
 
-  saveCurrentState(currentTarget, {
-    activeChange: 'updated-change',
-    stage: 'verify',
-    canonicalSpec: 'docs/spec.md',
-    canonicalPlan: 'docs/plan.md'
-  })
   mkdirSync(join(root, '.agent', 'steering'), { recursive: true })
   writeFileSync(
     statusTarget,
@@ -369,17 +324,14 @@ test('shared sync-status script updates frontmatter and body pointers while pres
 
   assert.deepEqual(JSON.parse(output), {
     synced: true,
-    statusPath: statusTarget,
-    active_change: 'updated-change',
-    stage: 'verify'
+    statusPath: statusTarget
   })
-  assert.match(source, /^- active change: `updated-change`$/m)
-  assert.match(source, /^- current stage: `verify`$/m)
-  assert.match(source, /^- canonical spec: `docs\/spec.md`$/m)
+  assert.doesNotMatch(source, /## Current Change/)
+  assert.doesNotMatch(source, /active change/)
+  assert.doesNotMatch(source, /current stage/)
+  assert.doesNotMatch(source, /canonical spec/)
   assert.match(source, /^Preserve this next step\.$/m)
   assert.deepEqual(loadStatusSummary(statusTarget), {
-    activeChange: 'updated-change',
-    stage: 'verify',
     whatIsTrueNow: ['Preserve this progress note.'],
     nextStep: 'Preserve this next step.',
     openRisks: ['Preserve this risk.']
@@ -388,23 +340,14 @@ test('shared sync-status script updates frontmatter and body pointers while pres
 
 test('shared sync-status script creates a parseable status summary when missing', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-shared-status-missing-'))
-  const currentTarget = join(root, '.agent', '.automaton', 'state', 'current.json')
   const statusTarget = join(root, '.agent', 'steering', 'STATUS.md')
   const script = fileURLToPath(new URL('../skills/_shared/scripts/sync-status.mjs', import.meta.url))
-
-  saveCurrentState(currentTarget, {
-    activeChange: 'new-change',
-    stage: 'plan'
-  })
 
   execFileSync(process.execPath, [script, root], { encoding: 'utf8' })
 
   assert.deepEqual(loadStatusSummary(statusTarget), {
-    activeChange: 'new-change',
-    stage: 'plan',
     whatIsTrueNow: [],
     nextStep: 'Run `auto-onboard` to refresh project truth for the repository before continuing.',
     openRisks: []
   })
 })
-

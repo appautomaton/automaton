@@ -71,10 +71,6 @@ function formatArtifactTargets(artifacts, activeChange) {
   return artifacts.join(', ')
 }
 
-function statusMatchesState(status, state) {
-  return status !== null && state !== null && status.activeChange === state.activeChange && status.stage === state.stage
-}
-
 function isScaffoldStatus(status) {
   if (status === null) {
     return false
@@ -109,7 +105,7 @@ export function buildSessionContext(projectRoot, options = {}) {
     messages.push('Read .agent/steering/STATUS.md first.')
   }
 
-  if (statusMatchesState(status, state) && !isScaffoldStatus(status)) {
+  if (status !== null && !isScaffoldStatus(status)) {
     const progress = summarizeEntries(status.whatIsTrueNow ?? [])
 
     if (progress.length > 0) {
@@ -119,10 +115,8 @@ export function buildSessionContext(projectRoot, options = {}) {
     if (status.nextStep) {
       messages.push(`Next: ${clip(status.nextStep)}`)
     }
-  } else if (statusMatchesState(status, state) && isScaffoldStatus(status)) {
+  } else if (status !== null && isScaffoldStatus(status)) {
     messages.push('STATUS.md summary is scaffold-level; use canonical artifacts for current progress.')
-  } else if (status !== null && state !== null) {
-    messages.push('STATUS.md summary is stale; prefer current.json and canonical artifacts.')
   }
 
   messages.push('Run auto-onboard only if steering is missing or still scaffold-level.')

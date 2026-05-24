@@ -9,7 +9,7 @@ metadata:
 
 Framing controller. Bounds and de-risks a request into a single `SPEC.md`.
 
-First action: run `scripts/get-context.mjs` from this skill's installed directory (the `scripts/` folder adjacent to this `SKILL.md`, not the project root) → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding. Read `STATUS.md` for open blockers.
+First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding. Read `STATUS.md` for open blockers.
 
 ## Preamble
 
@@ -113,7 +113,7 @@ Apply the Artifact Signal Discipline rules from `.agent/.automaton/references/AR
 
 If `active_change` is `bootstrap` or does not match the current objective, derive a new slug: `YYYY-MM-DD-<kebab-case-objective>` using today's date (e.g., `2026-05-20-session-auth-jwt`). Update `active_change` before writing SPEC.md so the work folder uses the new slug.
 
-Run `sync-status.mjs` from this skill's scripts directory.
+Run `node .agent/.automaton/scripts/sync-status.mjs` from the project root.
 Update `.agent/.automaton/state/current.json`:
 - `active_change` → `<change>` (when derived or changed)
 - `canonical_spec` → path to the SPEC.md you just wrote

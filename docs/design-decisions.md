@@ -4,21 +4,23 @@ Rationale for choices where the why is not obvious from reading the code.
 
 ---
 
-## DD-001: Central shared references, copied skill scripts
+## DD-001: Central shared references and scripts
 
-`_shared/references/` is the package authoring source. `installProject()` copies those references once into `.agent/.automaton/references/`, and skill prompts read shared contracts from that project-common path. `_shared/` itself is never installed into host skill trees.
+`_shared/references/` and `_shared/scripts/` are the package authoring sources. `installProject()` copies those references once into `.agent/.automaton/references/` and scripts once into `.agent/.automaton/scripts/`. Skill prompts read shared contracts and run shared scripts from those project-common paths. `_shared/` itself is never installed into host skill trees.
 
-Shared scripts still copy into every skill `scripts/` directory because the LLM runs them relative to the active skill folder and they stay self-contained after install.
+Shared scripts are self-contained but no longer copied into every skill folder.
 
-**Why:** `.agent/` is the one common root across Claude, Codex, and OpenCode installs, so shared reference docs can live there without per-skill duplication. Scripts keep the old per-skill copy model because runtime module paths differ by host skill root.
+**Why:** `.agent/` is the one common root across Claude, Codex, and OpenCode installs, so shared reference docs and scripts can live there without per-skill duplication.
 
-**See:** `lib/install.mjs` (`installProject`, `installHost`, `removeManifestOwnedSharedReferences`).
+**See:** `lib/install.mjs` (`installProject`, `installHost`, `removeManifestOwnedSharedReferences`, `removeManifestOwnedSharedScripts`).
 
 ---
 
 ## DD-002: current.json as cursor, STATUS.md as summary
 
-**Why:** JSON parsing is deterministic across LLM providers; markdown frontmatter is fragile. Separating cursor from summary prevents conflicting writes — state mutations go to JSON, prose goes to markdown.
+`current.json` is the only source for active change, stage, canonical artifact pointers, and review verdicts. `STATUS.md` carries the prose summary only: what is true now, next step, and open risks.
+
+**Why:** JSON parsing is deterministic across LLM providers; markdown frontmatter is fragile. Separating cursor from summary prevents conflicting writes and avoids spending prompt tokens mirroring machine state into prose — state mutations go to JSON, prose goes to markdown.
 
 **See:** `runtime/lib/context.mjs:75-88`, `runtime/lib/status.mjs`.
 
@@ -58,8 +60,8 @@ SessionStart hook produces ~100 tokens before any skill runs.
 
 ## DD-007: get-context.mjs is self-contained
 
-Every skill's first action runs `scripts/get-context.mjs`. This script duplicates normalization logic from `runtime/lib/state.mjs` instead of importing it.
+Every skill's first action runs `node .agent/.automaton/scripts/get-context.mjs`. This script duplicates normalization logic from `runtime/lib/state.mjs` instead of importing it.
 
-**Why:** Skill scripts are copied into host-specific directories where runtime module paths don't resolve. Self-containment ensures the script works regardless of where it's installed.
+**Why:** Shared skill scripts run from installed project runtime state where package source imports may not resolve. Self-containment keeps them usable across host surfaces and package/source layouts.
 
 **See:** `skills/_shared/scripts/get-context.mjs:44` (comment).
