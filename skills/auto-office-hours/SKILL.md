@@ -9,7 +9,7 @@ metadata:
 
 Pre-frame conversation. Turns a vague idea into a sharp objective before framing begins.
 
-First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding. Then detect mode, work scale, and work shape from the user's language.
+First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding. Then detect mode, work scale, and work shape from the user's language.
 
 ## Preamble
 
@@ -38,7 +38,7 @@ Determine and confirm all three axes:
 
 State all three in one confirmation, for example: "This reads as Builder mode, capability-sized, and parity-shaped. Does that match?" If the user disagrees on any axis, adjust before continuing.
 
-For bug-sized goals with a known fix, consider whether `auto-frame` is the better next skill. For Content mode, read `references/content-intake.md` (~61 lines) and use its audience, thesis, anti-goals, and voice diagnostics. For roadmap-sized goals, read `references/ROADMAP-CONTRACT.md` (~63 lines), help choose the first spec, and preserve the broader intent while decomposing.
+For bug-sized goals with a known fix, consider whether `auto-frame` is the better next skill. For Content mode, read `references/content-intake.md` (~61 lines) and use its audience, thesis, anti-goals, and voice diagnostics. For roadmap-sized goals, read `.agent/.automaton/references/ROADMAP-CONTRACT.md` (~63 lines), help choose the first spec, and preserve the broader intent while decomposing.
 
 ### Run Diagnostic
 
@@ -73,11 +73,11 @@ Recommend one approach and explain the decision basis: what evidence supports it
 
 ### Persist Approved Intake
 
-After approval, derive a date-prefixed change slug: `YYYY-MM-DD-<kebab-case-objective>` using today's date (e.g., `2026-05-20-production-pme-runtime`). Reuse `active_change` only when it already matches this discussion. Write the approved intake to `.agent/work/<change>/INTAKE.md`. When scale is roadmap, replace `.agent/steering/ROADMAP.md` with the approved decomposition per `references/ROADMAP-CONTRACT.md`. Update `.agent/.automaton/state/current.json`:
+After approval, derive a date-prefixed change slug: `YYYY-MM-DD-<kebab-case-objective>` using today's date (e.g., `2026-05-20-production-pme-runtime`). Reuse `active_change` only when it already matches this discussion. Write the approved intake to `.agent/work/<change>/INTAKE.md`. When scale is roadmap, replace `.agent/steering/ROADMAP.md` with the approved decomposition per `.agent/.automaton/references/ROADMAP-CONTRACT.md`. Update `.agent/.automaton/state/current.json`:
    - `active_change` → `<change>`
    - `stage` → `frame`
 
-   Run `sync-status.mjs` from this skill's scripts directory.
+   Run `node .agent/.automaton/scripts/sync-status.mjs` from the project root.
 
 ### Continue To Frame When Ready
 

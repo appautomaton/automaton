@@ -4,21 +4,25 @@ Rationale for choices where the why is not obvious from reading the code.
 
 ---
 
-## DD-001: Copy-based install, not shared references
+## DD-001: Central shared references and scripts
 
-`_shared/` (references + scripts) is the single source of truth. `injectSharedArtifacts()` copies them into each skill at install time. `_shared/` itself is never installed.
+`_shared/references/` and `_shared/scripts/` are the package authoring sources. `installProject()` copies those references once into `.agent/.automaton/references/` and scripts once into `.agent/.automaton/scripts/`. Skill prompts read shared contracts and run shared scripts from those project-common paths. `_shared/` itself is never installed into host skill trees.
 
-**Why:** Skills must be self-contained after install. SKILL.md resolves `references/X.md` relative to its own directory. No `_shared/` exists in the target project, and `../` traversal is not a supported pattern in LLM skill file loading. Three host trees have no common ancestor.
+Shared scripts are self-contained but no longer copied into every skill folder.
 
-**See:** `lib/install.mjs:191` (skip), `lib/install.mjs:216-257` (inject).
+**Why:** `.agent/` is the one common root across Claude, Codex, and OpenCode installs, so shared reference docs and scripts can live there without per-skill duplication.
+
+**See:** `lib/install.mjs` (`installProject`, `installHost`, `removeManifestOwnedSharedReferences`, `removeManifestOwnedSharedScripts`).
 
 ---
 
 ## DD-002: current.json as cursor, STATUS.md as summary
 
-**Why:** JSON parsing is deterministic across LLM providers; markdown frontmatter is fragile. Separating cursor from summary prevents conflicting writes — state mutations go to JSON, prose goes to markdown.
+`current.json` is the only source for active change, stage, canonical artifact pointers, and review verdicts. `STATUS.md` carries the prose summary only: what is true now, next step, and open risks.
 
-**See:** `runtime/lib/context.mjs:75-88`, `runtime/lib/status.mjs`.
+**Why:** JSON parsing is deterministic across LLM providers; markdown frontmatter is fragile. Separating cursor from summary prevents conflicting writes and avoids spending prompt tokens mirroring machine state into prose — state mutations go to JSON, prose goes to markdown.
+
+**See:** `runtime/lib/state.mjs`, `runtime/lib/status.mjs`, `runtime/lib/context.mjs`.
 
 ---
 
@@ -46,18 +50,18 @@ L1 (state invariants) in runtime. L2 (artifact shape) in consuming skill. L3 (pr
 
 ---
 
-## DD-006: Session bootstrap via hook, not skill
+## DD-006: Session bootstrap via host startup integration, not skill
 
-SessionStart hook produces ~100 tokens before any skill runs.
+Host startup integration produces a short reminder before any skill runs.
 
-**Why:** Instant orientation without invoking a skill or reading files beyond `current.json` + `STATUS.md`. Fires on startup, resume, clear, compact — all re-entry points.
+**Why:** Instant orientation without invoking a skill or summarizing progress prose. The message identifies Automaton as an installed harness, points to `current.json` and `STATUS.md`, and reminds the agent that the user's latest request remains authoritative. Claude and Codex use SessionStart hooks; OpenCode uses its plugin event/chat hooks, including compaction handling.
 
 ---
 
 ## DD-007: get-context.mjs is self-contained
 
-Every skill's first action runs `scripts/get-context.mjs`. This script duplicates normalization logic from `runtime/lib/state.mjs` instead of importing it.
+Every skill's first action runs `node .agent/.automaton/scripts/get-context.mjs`. This script duplicates normalization logic from `runtime/lib/state.mjs` instead of importing it.
 
-**Why:** Skill scripts are copied into host-specific directories where runtime module paths don't resolve. Self-containment ensures the script works regardless of where it's installed.
+**Why:** Shared skill scripts run from installed project runtime state where package source imports may not resolve. Self-containment keeps them usable across host surfaces and package/source layouts.
 
 **See:** `skills/_shared/scripts/get-context.mjs:44` (comment).

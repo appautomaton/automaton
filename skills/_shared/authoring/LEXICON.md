@@ -11,9 +11,9 @@ Canonical vocabulary for Automaton skills. Use these terms exactly. Do not subst
 | slice | task, subtask, step | A testable, deliverable chunk of a plan. Ordered and verifiable. |
 | artifact | document, file | A markdown file produced by a skill: `SPEC.md`, `DESIGN.md`, `PLAN.md`. |
 | steering | project config | Files in `.agent/steering/` that describe project truth: `PROJECT.md`, `STATUS.md`, `REQUIREMENTS.md`, `ROADMAP.md`. |
-| skill folder | skill file | A self-contained directory with `SKILL.md`, `references/`, `scripts/`, and optionally `templates/`. |
+| skill folder | skill file | A self-contained directory with `SKILL.md`, `references/`, and optionally `templates/`. |
 | references | guides, docs, examples | Lazy-loaded deep content inside a skill folder. Loaded only when needed. |
-| scripts | helpers, tools | Self-contained `.mjs` files inside a skill folder. Invoked via `bash` tool with `node`. |
+| scripts | helpers, tools | Shared self-contained `.mjs` files in `.agent/.automaton/scripts/`. Invoked via `bash` tool with `node`. |
 
 ## Review Verdicts
 

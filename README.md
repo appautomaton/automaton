@@ -6,7 +6,7 @@
 
 Portable, stage-gated agentic-AI harness for Claude Code, Codex, and OpenCode.
 
-An AI coding agent framework that gives LLM-powered development tools structured workflows for long-running tasks. Automaton installs markdown skills, lightweight runtime hooks, and durable `.agent/` state into a project so agent work survives context window limits, session restarts, and multi-step changes that would otherwise lose coherence.
+An AI coding agent framework that gives LLM-powered development tools structured workflows for long-running tasks. Automaton installs markdown skills, lightweight startup integrations, and durable `.agent/` state into a project so agent work survives context window limits, session restarts, and multi-step changes that would otherwise lose coherence.
 
 ## Acknowledgement 致谢
 
@@ -40,7 +40,7 @@ The target root is optional and defaults to the current directory. To install in
 
 - `.agent/` durable project state, steering, work artifacts, and runtime files
 - host skills under `.codex/skills`, `.claude/skills`, or `.opencode/skills`
-- host hooks for context injection and status synchronization
+- host hooks/plugins for context injection
 - manifest-tracked install files for exact cleanup
 
 Automaton is copy-based: installed skills are local plain markdown files that can be inspected in the target project.
@@ -65,7 +65,7 @@ npx @appautomaton/automaton install --uninstall --codex
 
 ## Contributor Docs
 
-Design and runtime notes live in [`docs/`](docs/).
+Contributor-only design and runtime notes live in the repository [`docs/`](docs/) directory; they are not included in the npm package payload.
 
 ## Links
 

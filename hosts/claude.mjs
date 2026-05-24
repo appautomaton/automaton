@@ -1,10 +1,10 @@
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 
-import { renderSessionStartHook, renderStopHook } from './hooks.mjs'
+import { renderSessionStartHook, shellQuote } from './hooks.mjs'
 
 function renderClaudeHookCommand(scriptName) {
-  return `node "$CLAUDE_PROJECT_DIR"/.claude/hooks/${scriptName}.mjs`
+  return `${shellQuote(process.execPath)} "$CLAUDE_PROJECT_DIR"/.claude/hooks/${scriptName}.mjs`
 }
 
 function renderClaudeSettings() {
@@ -18,16 +18,6 @@ function renderClaudeSettings() {
               {
                 type: 'command',
                 command: renderClaudeHookCommand('session-start')
-              }
-            ]
-          }
-        ],
-        Stop: [
-          {
-            hooks: [
-              {
-                type: 'command',
-                command: renderClaudeHookCommand('stop')
               }
             ]
           }
@@ -53,8 +43,7 @@ export const claudeHost = {
   installFiles() {
     return {
       '.claude/settings.json': renderClaudeSettings(),
-      '.claude/hooks/session-start.mjs': renderSessionStartHook(),
-      '.claude/hooks/stop.mjs': renderStopHook()
+      '.claude/hooks/session-start.mjs': renderSessionStartHook()
     }
   },
   detect(root) {

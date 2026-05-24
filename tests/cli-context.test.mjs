@@ -6,8 +6,6 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-import { saveStatusSummary } from '../lib/status.mjs'
-
 const cliPath = fileURLToPath(new URL('../bin/automaton.mjs', import.meta.url))
 
 test('context command prints the retrieval summary for the requested stage', () => {
@@ -44,6 +42,8 @@ test('install command creates bootstrap state and status reports it', () => {
   )
   assert.equal(existsSync(join(root, '.agent', '.automaton', 'lib', 'state.mjs')), true)
   assert.equal(existsSync(join(root, '.agent', '.automaton', 'lib', 'contracts-data.json')), true)
+  assert.equal(existsSync(join(root, '.agent', '.automaton', 'scripts', 'get-context.mjs')), true)
+  assert.equal(existsSync(join(root, '.agent', '.automaton', 'scripts', 'sync-status.mjs')), true)
 
   const statusResult = spawnSync(process.execPath, [cliPath, 'status', root], { encoding: 'utf8' })
 
@@ -67,30 +67,6 @@ test('status command reads seeded durable snake_case current state', () => {
   assert.equal(result.status, 0)
   assert.equal(result.stderr, '')
   assert.equal(result.stdout, 'active change: automaton-v1-foundation\nstage: plan\n')
-})
-
-test('status command reports a STATUS.md mismatch without hiding current state', () => {
-  const root = mkdtempSync(join(tmpdir(), 'automaton-status-mismatch-'))
-  const currentPath = join(root, '.agent', '.automaton', 'state', 'current.json')
-  const statusPath = join(root, '.agent', 'steering', 'STATUS.md')
-  mkdirSync(join(root, '.agent', '.automaton', 'state'), { recursive: true })
-  writeFileSync(currentPath, '{\n  "active_change": "existing-change",\n  "stage": "execute"\n}\n', 'utf8')
-  saveStatusSummary(statusPath, {
-    activeChange: 'stale-change',
-    stage: 'plan',
-    whatIsTrueNow: ['STATUS.md was not refreshed after planning changed.'],
-    nextStep: 'Refresh the project truth before ending the turn.',
-    openRisks: ['Resume could follow the wrong next step.']
-  })
-
-  const result = spawnSync(process.execPath, [cliPath, 'status', root], { encoding: 'utf8' })
-
-  assert.equal(result.status, 0)
-  assert.equal(result.stderr, '')
-  assert.equal(
-    result.stdout,
-    'active change: existing-change\nstage: execute\nstatus file mismatch: STATUS.md says active change: stale-change, stage: plan\n'
-  )
 })
 
 test('install command preserves existing durable snake_case current state', () => {
@@ -117,6 +93,37 @@ test('install command preserves existing durable snake_case current state', () =
   assert.equal(statusResult.status, 0)
   assert.equal(statusResult.stderr, '')
   assert.equal(statusResult.stdout, 'active change: existing-change\nstage: execute\n')
+})
+
+test('install command removes manifest-owned legacy runtime bin scripts', () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-install-legacy-runtime-'))
+  const legacyBinRoot = join(root, '.agent', '.automaton', 'bin')
+  const legacyFiles = [
+    '.agent/.automaton/bin/sync-status-pointer.mjs',
+    '.agent/.automaton/bin/sync-status.mjs',
+    '.agent/.automaton/bin/update-state.mjs'
+  ]
+  const manifestTarget = join(root, '.agent', '.automaton', 'state', 'install-manifest.json')
+
+  spawnSync(process.execPath, [cliPath, 'install', root], { encoding: 'utf8' })
+  mkdirSync(legacyBinRoot, { recursive: true })
+  for (const legacyFile of legacyFiles) {
+    writeFileSync(join(root, legacyFile), '// old runtime bin script\n', 'utf8')
+  }
+
+  const manifest = JSON.parse(readFileSync(manifestTarget, 'utf8'))
+  manifest.project.files.push(...legacyFiles)
+  writeFileSync(manifestTarget, JSON.stringify(manifest, null, 2) + '\n', 'utf8')
+
+  const reinstallResult = spawnSync(process.execPath, [cliPath, 'install', root], { encoding: 'utf8' })
+  const nextManifest = JSON.parse(readFileSync(manifestTarget, 'utf8'))
+
+  assert.equal(reinstallResult.status, 0)
+  for (const legacyFile of legacyFiles) {
+    assert.equal(existsSync(join(root, legacyFile)), false)
+    assert.equal(nextManifest.project.files.includes(legacyFile), false)
+  }
+  assert.equal(existsSync(legacyBinRoot), false)
 })
 
 test('status command rejects an invalid durable stage from current state', () => {

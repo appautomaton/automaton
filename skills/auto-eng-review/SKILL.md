@@ -9,7 +9,7 @@ metadata:
 
 Engineering-safety gate. Validates that a plan is safe to execute before implementation begins.
 
-First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding. Read `PLAN.md`; read `DESIGN.md` only when `canonical_design` is set and resolves to a file.
+First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding. Read `PLAN.md`; read `DESIGN.md` only when `canonical_design` is set and resolves to a file.
 
 ## Preamble
 
@@ -72,7 +72,7 @@ Add a `## Review: Engineering` section to `PLAN.md` using the exact template in 
 
 ### Update State
 
-Run `sync-status.mjs` from this skill's scripts directory.
+Run `node .agent/.automaton/scripts/sync-status.mjs` from the project root.
 Update `.agent/.automaton/state/current.json`:
 - `engineering_review` → `<verdict>`
 

@@ -39,8 +39,8 @@ function unique(values) {
   return [...new Set(values.filter(Boolean))]
 }
 
-// Keep this script self-contained because skill scripts are copied into
-// host-specific surfaces where runtime module imports may not resolve.
+// Keep this script self-contained because skills invoke it from installed
+// project runtime state where package source imports may not resolve.
 function contractManifestCandidates(currentJsonPath) {
   const scriptDir = dirname(fileURLToPath(import.meta.url))
   const projectRoot = deriveProjectRoot(currentJsonPath)
@@ -48,6 +48,7 @@ function contractManifestCandidates(currentJsonPath) {
   return unique([
     projectRoot === null ? null : join(projectRoot, '.agent', '.automaton', 'lib', 'contracts-data.json'),
     join(process.cwd(), '.agent', '.automaton', 'lib', 'contracts-data.json'),
+    resolve(scriptDir, '..', 'lib', 'contracts-data.json'),
     resolve(scriptDir, '..', '..', '..', 'runtime', 'lib', 'contracts-data.json')
   ])
 }
@@ -61,7 +62,7 @@ function loadContractManifest(currentJsonPath) {
     try {
       return JSON.parse(readFileSync(candidate, 'utf8'))
     } catch {
-      // Try the next candidate; copied skill scripts should stay usable.
+      // Try the next candidate; installed shared scripts should stay usable.
     }
   }
 
@@ -156,23 +157,6 @@ function diagnose(state, projectRoot, manifest) {
     for (const { field, code, level } of manifest.canonicalPointerChecks ?? []) {
       if (state[field] && !existsSync(join(projectRoot, state[field]))) {
         diagnostics.push(diagnostic(level, code, `${field} points to ${state[field]} but file does not exist`))
-      }
-    }
-  }
-
-  if (projectRoot !== null && state.activeChange && state.activeChange !== 'none' && stageIsValid) {
-    const statusPath = join(projectRoot, '.agent', 'steering', 'STATUS.md')
-    if (existsSync(statusPath)) {
-      try {
-        const statusSource = readFileSync(statusPath, 'utf8')
-        const statusChange = statusSource.match(/^- active change: `([^`]+)`(?:\s.*)?$/m)?.[1]
-        const statusStage = statusSource.match(/^- current stage: `([^`]+)`(?:\s.*)?$/m)?.[1]
-        if (statusChange && statusStage && validStages.has(statusStage) &&
-            (statusChange !== state.activeChange || statusStage !== state.stage)) {
-          diagnostics.push(diagnostic('warning', 'status_mismatch', `STATUS.md says change=${statusChange} stage=${statusStage}; current.json says change=${state.activeChange} stage=${state.stage}`))
-        }
-      } catch {
-        // STATUS.md unreadable — not a diagnostic.
       }
     }
   }

@@ -7,6 +7,13 @@ import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { buildCli } from '../bin/automaton.mjs'
 
+function copySourceFixture(source, target) {
+  cpSync(source, target, {
+    recursive: true,
+    filter: (sourcePath) => !sourcePath.split(/[\\/]/).includes('.git')
+  })
+}
+
 test('cli exposes install, context, status, and validate commands', () => {
   const cli = buildCli()
 
@@ -19,7 +26,7 @@ test('cli prints commands when executed from a path with spaces', () => {
   const automatonPath = join(tempRoot, 'workspace with spaces')
   const cliPath = join(automatonPath, 'bin', 'automaton.mjs')
 
-  cpSync(automatonSourcePath, automatonPath, { recursive: true })
+  copySourceFixture(automatonSourcePath, automatonPath)
 
   const result = spawnSync(process.execPath, [cliPath], { encoding: 'utf8' })
 
@@ -35,7 +42,7 @@ test('cli prints commands when executed through a symlinked bin path', () => {
   const targetCliPath = join(copiedAutomatonPath, 'bin', 'automaton.mjs')
   const symlinkCliPath = join(tempRoot, 'automaton-link.mjs')
 
-  cpSync(automatonSourcePath, copiedAutomatonPath, { recursive: true })
+  copySourceFixture(automatonSourcePath, copiedAutomatonPath)
   symlinkSync(targetCliPath, symlinkCliPath)
 
   const result = spawnSync(process.execPath, [symlinkCliPath], { encoding: 'utf8' })

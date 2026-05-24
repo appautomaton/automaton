@@ -1,13 +1,13 @@
 import { existsSync } from 'node:fs'
-import { join } from 'node:path'
+import { join, resolve } from 'node:path'
 
-import { renderSessionStartHook, renderStopHook } from './hooks.mjs'
+import { renderSessionStartHook, shellQuote } from './hooks.mjs'
 
-function renderHookCommand(scriptName) {
-  return `sh -lc 'root=$(git rev-parse --show-toplevel 2>/dev/null || pwd); while [ ! -f "$root/.codex/hooks/${scriptName}.mjs" ] && [ "$root" != "/" ]; do root=$(dirname "$root"); done; node "$root/.codex/hooks/${scriptName}.mjs"'`
+function renderHookCommand(root, scriptName) {
+  return `${shellQuote(process.execPath)} ${shellQuote(resolve(root, '.codex', 'hooks', `${scriptName}.mjs`))}`
 }
 
-function renderCodexHooksConfig() {
+function renderCodexHooksConfig(root) {
   return JSON.stringify(
     {
       hooks: {
@@ -17,17 +17,7 @@ function renderCodexHooksConfig() {
             hooks: [
               {
                 type: 'command',
-                command: renderHookCommand('session-start')
-              }
-            ]
-          }
-        ],
-        Stop: [
-          {
-            hooks: [
-              {
-                type: 'command',
-                command: renderHookCommand('stop')
+                command: renderHookCommand(root, 'session-start')
               }
             ]
           }
@@ -52,12 +42,11 @@ export const codexHost = {
     configuration: 'Requires [features].multi_agent = true in .codex/config.toml.',
     unavailable: false
   },
-  installFiles() {
+  installFiles({ root = '.' } = {}) {
     return {
       '.codex/config.toml': `[features]\nhooks = true\nmulti_agent = true\n`,
-      '.codex/hooks.json': renderCodexHooksConfig(),
-      '.codex/hooks/session-start.mjs': renderSessionStartHook(),
-      '.codex/hooks/stop.mjs': renderStopHook()
+      '.codex/hooks.json': renderCodexHooksConfig(root),
+      '.codex/hooks/session-start.mjs': renderSessionStartHook()
     }
   },
   detect(root) {

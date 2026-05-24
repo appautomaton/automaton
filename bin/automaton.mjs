@@ -7,7 +7,6 @@ import { join, resolve } from 'node:path'
 import { installHosts, installProject, uninstallHosts, uninstallProject } from '../lib/install.mjs'
 import { automatonPaths } from '../lib/paths.mjs'
 import { contextSummary } from '../lib/retrieval.mjs'
-import { readStatusPointer, statusPointerConflict } from '../lib/status.mjs'
 import { loadCurrentState, normalizeCurrentState } from '../lib/state.mjs'
 import { validateHandoff } from '../lib/validate.mjs'
 import { HOSTS } from '../hosts/index.mjs'
@@ -24,16 +23,8 @@ export function buildCli() {
 
 export { contextSummary }
 
-export function statusSummary(state, conflict = null) {
-  const lines = [`active change: ${state.activeChange}`, `stage: ${state.stage}`]
-
-  if (conflict !== null) {
-    lines.push(
-      `status file mismatch: STATUS.md says active change: ${conflict.status.activeChange}, stage: ${conflict.status.stage}`
-    )
-  }
-
-  return lines.join('\n')
+export function statusSummary(state) {
+  return [`active change: ${state.activeChange}`, `stage: ${state.stage}`].join('\n')
 }
 
 function parseInstallArgs(argv) {
@@ -94,13 +85,12 @@ function run(argv) {
     const root = rest[0] ?? '.'
     const paths = automatonPaths(root)
     const currentPath = join(paths.runtimeRoot, 'state', 'current.json')
-    const statusPath = join(paths.steeringRoot, 'STATUS.md')
     if (!existsSync(currentPath)) {
       console.log('active change: none\nstage: none')
       return
     }
     const currentState = loadCurrentState(currentPath)
-    console.log(statusSummary(currentState, statusPointerConflict(currentState, readStatusPointer(statusPath))))
+    console.log(statusSummary(currentState))
     return
   }
 

@@ -7,8 +7,7 @@ import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import { saveCurrentState } from '../lib/state.mjs'
-import { saveStatusSummary } from '../lib/status.mjs'
-import { validateState, validateArtifacts, validateStatusAgreement, validateHandoff } from '../lib/validate.mjs'
+import { validateState, validateArtifacts, validateHandoff } from '../lib/validate.mjs'
 
 test('validateState returns no diagnostics for valid frame state', () => {
   const result = validateState({ activeChange: 'my-change', stage: 'frame' })
@@ -164,57 +163,8 @@ test('validateArtifacts returns no diagnostics when pointer files exist', () => 
   assert.deepEqual(diagnostics, [])
 })
 
-test('validateStatusAgreement returns no diagnostics when pointers match', () => {
-  const root = mkdtempSync(join(tmpdir(), 'automaton-validate-status-'))
-  saveStatusSummary(join(root, '.agent', 'steering', 'STATUS.md'), {
-    activeChange: 'my-change',
-    stage: 'plan',
-    whatIsTrueNow: [],
-    nextStep: 'Continue planning.',
-    openRisks: []
-  })
-
-  const diagnostics = validateStatusAgreement({ activeChange: 'my-change', stage: 'plan' }, root)
-
-  assert.deepEqual(diagnostics, [])
-})
-
-test('validateStatusAgreement returns warning when pointers disagree', () => {
-  const root = mkdtempSync(join(tmpdir(), 'automaton-validate-status-'))
-  saveStatusSummary(join(root, '.agent', 'steering', 'STATUS.md'), {
-    activeChange: 'old-change',
-    stage: 'frame',
-    whatIsTrueNow: [],
-    nextStep: 'Continue.',
-    openRisks: []
-  })
-
-  const diagnostics = validateStatusAgreement({ activeChange: 'new-change', stage: 'plan' }, root)
-
-  assert.equal(diagnostics.length, 1)
-  assert.equal(diagnostics[0].level, 'warning')
-  assert.equal(diagnostics[0].code, 'status_mismatch')
-  assert.match(diagnostics[0].message, /old-change/)
-  assert.match(diagnostics[0].message, /new-change/)
-})
-
-test('validateStatusAgreement returns no diagnostics when STATUS.md is missing', () => {
-  const root = mkdtempSync(join(tmpdir(), 'automaton-validate-status-'))
-
-  const diagnostics = validateStatusAgreement({ activeChange: 'my-change', stage: 'plan' }, root)
-
-  assert.deepEqual(diagnostics, [])
-})
-
-test('validateHandoff combines state, artifact, and status checks', () => {
+test('validateHandoff combines state and artifact checks', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-validate-handoff-'))
-  saveStatusSummary(join(root, '.agent', 'steering', 'STATUS.md'), {
-    activeChange: 'stale-change',
-    stage: 'frame',
-    whatIsTrueNow: [],
-    nextStep: 'Continue.',
-    openRisks: []
-  })
 
   const result = validateHandoff({
     activeChange: 'my-change',
@@ -225,7 +175,6 @@ test('validateHandoff combines state, artifact, and status checks', () => {
   assert.equal(result.valid, false)
   const codes = result.diagnostics.map(d => d.code)
   assert.ok(codes.includes('stale_canonical_spec'))
-  assert.ok(codes.includes('status_mismatch'))
 })
 
 test('validateHandoff reports valid when all checks pass', () => {
@@ -233,13 +182,6 @@ test('validateHandoff reports valid when all checks pass', () => {
   const specPath = join(root, '.agent', 'work', 'my-change', 'SPEC.md')
   mkdirSync(join(root, '.agent', 'work', 'my-change'), { recursive: true })
   writeFileSync(specPath, '# Spec\n', 'utf8')
-  saveStatusSummary(join(root, '.agent', 'steering', 'STATUS.md'), {
-    activeChange: 'my-change',
-    stage: 'plan',
-    whatIsTrueNow: [],
-    nextStep: 'Continue.',
-    openRisks: []
-  })
 
   const result = validateHandoff({
     activeChange: 'my-change',
@@ -251,7 +193,7 @@ test('validateHandoff reports valid when all checks pass', () => {
   assert.deepEqual(result.diagnostics, [])
 })
 
-test('validateHandoff skips artifact and status checks when stage is invalid', () => {
+test('validateHandoff skips artifact checks when stage is invalid', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-validate-handoff-'))
 
   const result = validateHandoff({
@@ -339,30 +281,6 @@ test('get-context script reports invalid review verdict', () => {
   const verdictDiag = parsed.diagnostics.find(d => d.code === 'invalid_product_review')
   assert.ok(verdictDiag)
   assert.match(verdictDiag.message, /thumbs_up/)
-})
-
-test('get-context script reports status mismatch', () => {
-  const root = mkdtempSync(join(tmpdir(), 'automaton-validate-context-'))
-  const target = join(root, '.agent', '.automaton', 'state', 'current.json')
-  const script = fileURLToPath(new URL('../skills/_shared/scripts/get-context.mjs', import.meta.url))
-
-  saveCurrentState(target, { activeChange: 'new-change', stage: 'plan', canonicalSpec: 'x' })
-  mkdirSync(join(root, '.agent', 'work', 'new-change'), { recursive: true })
-  writeFileSync(join(root, 'x'), '# Spec\n', 'utf8')
-  saveStatusSummary(join(root, '.agent', 'steering', 'STATUS.md'), {
-    activeChange: 'old-change',
-    stage: 'frame',
-    whatIsTrueNow: [],
-    nextStep: 'Continue.',
-    openRisks: []
-  })
-
-  const output = execFileSync(process.execPath, [script, target], { encoding: 'utf8' })
-  const parsed = JSON.parse(output)
-
-  const mismatchDiag = parsed.diagnostics.find(d => d.code === 'status_mismatch')
-  assert.ok(mismatchDiag)
-  assert.equal(mismatchDiag.level, 'warning')
 })
 
 test('automaton validate command reports valid state', () => {
@@ -561,39 +479,6 @@ test('get-context and validateHandoff produce same codes for stale pointer', () 
   assert.deepEqual(contextCodes, validateCodes)
 })
 
-test('get-context and validateHandoff produce same codes for status mismatch', () => {
-  const root = mkdtempSync(join(tmpdir(), 'automaton-validate-parity-'))
-  const target = join(root, '.agent', '.automaton', 'state', 'current.json')
-  const script = fileURLToPath(new URL('../skills/_shared/scripts/get-context.mjs', import.meta.url))
-
-  saveCurrentState(target, {
-    activeChange: 'my-change',
-    stage: 'plan',
-    canonicalSpec: 'SPEC.md'
-  })
-  writeFileSync(join(root, 'SPEC.md'), '# Spec\n', 'utf8')
-  saveStatusSummary(join(root, '.agent', 'steering', 'STATUS.md'), {
-    activeChange: 'old-change',
-    stage: 'frame',
-    whatIsTrueNow: [],
-    nextStep: 'Continue.',
-    openRisks: []
-  })
-
-  const contextOutput = JSON.parse(
-    execFileSync(process.execPath, [script, target], { encoding: 'utf8' })
-  )
-  const validateResult = validateHandoff(
-    { activeChange: 'my-change', stage: 'plan', canonicalSpec: 'SPEC.md' },
-    root
-  )
-
-  const contextCodes = contextOutput.diagnostics.map(d => d.code).sort()
-  const validateCodes = validateResult.diagnostics.map(d => d.code).sort()
-
-  assert.deepEqual(contextCodes, validateCodes)
-})
-
 test('get-context skips file diagnostics when path is non-canonical', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-validate-noncanonical-'))
   const target = join(root, 'some', 'random', 'current.json')
@@ -618,10 +503,10 @@ test('get-context skips file diagnostics when path is non-canonical', () => {
 test('get-context reports warning and skips semantic checks when contract manifest is unavailable', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-validate-no-manifest-'))
   const script = fileURLToPath(new URL('../skills/_shared/scripts/get-context.mjs', import.meta.url))
-  const isolatedScript = join(root, 'skills', 'auto-frame', 'scripts', 'get-context.mjs')
+  const isolatedScript = join(root, '.agent', '.automaton', 'scripts', 'get-context.mjs')
   const target = join(root, '.agent', '.automaton', 'state', 'current.json')
 
-  mkdirSync(join(root, 'skills', 'auto-frame', 'scripts'), { recursive: true })
+  mkdirSync(join(root, '.agent', '.automaton', 'scripts'), { recursive: true })
   mkdirSync(join(root, '.agent', '.automaton', 'state'), { recursive: true })
   copyFileSync(script, isolatedScript)
   writeFileSync(target, JSON.stringify({ active_change: 'my-change', stage: 'plan' }), 'utf8')

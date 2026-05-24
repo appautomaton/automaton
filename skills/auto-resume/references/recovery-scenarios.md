@@ -15,10 +15,10 @@
 **State:** `current.json` points to `.agent/work/feature-x/SPEC.md` but file does not exist.
 **Action:** Report stale pointer. Search `.agent/work/` for existing artifacts. If found, ask user to confirm. If not found, recommend `auto-frame`.
 
-## Scenario 4: current.json vs STATUS.md Mismatch
+## Scenario 4: STATUS.md Prose Looks Stale
 
-**State:** `current.json` says stage is `execute`, STATUS.md says stage is `plan`.
-**Action:** Report mismatch. Prefer `current.json` for recovery (it is machine-written). Surface the discrepancy and ask user to confirm.
+**State:** `current.json` says stage is `execute`, but STATUS.md prose describes planning as the next step.
+**Action:** Prefer `current.json` for recovery. Report the STATUS.md note as stale prose only if it could mislead the next operator.
 
 ## Scenario 5: Review Verdict Blocks Progress
 

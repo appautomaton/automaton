@@ -20,7 +20,7 @@ const authoredSkills = [
   'auto-eng-review'
 ]
 const namePattern = /^[a-z0-9]+(-[a-z0-9]+)*$/
-const bareAutomatonScript = /automaton\/skills\/[^/]+\/scripts\/(?:get-context|sync-status)\.mjs/
+const perSkillScriptCommand = /`scripts\/(?:get-context|sync-status)\.mjs`/
 const contentDimensions = ['Audience', 'Thesis', 'Voice', 'Content Anti-Goals', 'Channel', 'Source Policy', 'Factual Risk', 'Format']
 
 function escapeRegExp(value) {
@@ -81,11 +81,11 @@ test('portable skill names are unique and match their directory names', () => {
   assert.equal(new Set(names).size, names.length)
 })
 
-test('authored skills point script commands at installed host skill roots', () => {
+test('authored skills point script commands at shared project runtime scripts', () => {
   for (const skillName of authoredSkills) {
     const source = readFileSync(join(skillsRoot, skillName, 'SKILL.md'), 'utf8')
 
-    assert.doesNotMatch(source, bareAutomatonScript, `${skillName} must not use project-root script paths`)
+    assert.doesNotMatch(source, perSkillScriptCommand, `${skillName} must not use per-skill script commands`)
 
     if (!source.includes('get-context.mjs')) {
       continue
@@ -93,8 +93,13 @@ test('authored skills point script commands at installed host skill roots', () =
 
     assert.match(
       source,
-      /scripts\/get-context\.mjs/,
-      `${skillName} must reference get-context.mjs from its scripts directory`
+      /node \.agent\/\.automaton\/scripts\/get-context\.mjs/,
+      `${skillName} must reference get-context.mjs from the shared runtime scripts directory`
+    )
+    assert.match(
+      source,
+      /get-context\.mjs` from the project root/,
+      `${skillName} must tell agents to run get-context.mjs from the project root`
     )
   }
 })
@@ -416,7 +421,7 @@ test('read-only skills do not include the state-write template', () => {
 
     assert.doesNotMatch(
       source,
-      /Run `sync-status\.mjs` from this skill's scripts directory/,
+      /sync-status\.mjs/,
       `${skillName} is read-only and must not include the state-write template`
     )
     assert.doesNotMatch(
@@ -439,7 +444,7 @@ test('auto-office-hours persists approved intake without pre-approval writes', (
   assert.match(source, /Update `\.agent\/\.automaton\/state\/current\.json`:/)
   assert.match(source, /`active_change` → `<change>`/)
   assert.match(source, /`stage` → `frame`/)
-  assert.match(source, /Run `sync-status\.mjs` from this skill's scripts directory/)
+  assert.match(source, /Run `node \.agent\/\.automaton\/scripts\/sync-status\.mjs` from the project root\./)
   assert.match(source, /`INTAKE\.md` is guaranteed only for an approved office-hours session/)
   assert.match(source, /Approved, complete intake should flow into `auto-frame` without another user prompt/)
   assert.match(source, /write `\.agent\/work\/<change>\/SPEC\.md`/)
@@ -451,7 +456,7 @@ test('lifecycle controller skills load the artifact lifecycle contract', () => {
   for (const skillName of ['auto-frame', 'auto-plan', 'auto-execute', 'auto-verify', 'auto-resume']) {
     const source = readFileSync(join(skillsRoot, skillName, 'SKILL.md'), 'utf8')
 
-    assert.match(source, /references\/ARTIFACT-LIFECYCLE\.md/, `${skillName} must load artifact lifecycle contract`)
+    assert.match(source, /\.agent\/\.automaton\/references\/ARTIFACT-LIFECYCLE\.md/, 'skill must load artifact lifecycle contract')
   }
 })
 

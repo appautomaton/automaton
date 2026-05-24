@@ -9,7 +9,6 @@ import {
   PREREQUISITE_DIAGNOSTIC_CODES,
   CANONICAL_POINTER_CHECKS
 } from './contracts.mjs'
-import { readStatusPointer, statusPointerConflict } from './status.mjs'
 
 function diagnostic(level, code, message) {
   return { level, code, message }
@@ -67,24 +66,6 @@ export function validateArtifacts(state, projectRoot) {
   return diagnostics
 }
 
-export function validateStatusAgreement(state, projectRoot) {
-  const statusPath = join(projectRoot, '.agent', 'steering', 'STATUS.md')
-  const pointer = readStatusPointer(statusPath)
-  const conflict = statusPointerConflict(state, pointer)
-
-  if (conflict === null) {
-    return []
-  }
-
-  return [
-    diagnostic(
-      'warning',
-      'status_mismatch',
-      `STATUS.md says change=${conflict.status.activeChange} stage=${conflict.status.stage}; current.json says change=${conflict.current.activeChange} stage=${conflict.current.stage}`
-    )
-  ]
-}
-
 export function validateHandoff(state, projectRoot) {
   const stateResult = validateState(state)
 
@@ -92,13 +73,7 @@ export function validateHandoff(state, projectRoot) {
     ? validateArtifacts(state, projectRoot)
     : []
 
-  const canCheckStatus = state.activeChange && state.activeChange !== 'none' &&
-    state.stage && state.stage !== 'none' && isValidStage(state.stage)
-  const statusDiagnostics = canCheckStatus
-    ? validateStatusAgreement(state, projectRoot)
-    : []
-
-  const allDiagnostics = [...stateResult.diagnostics, ...artifactDiagnostics, ...statusDiagnostics]
+  const allDiagnostics = [...stateResult.diagnostics, ...artifactDiagnostics]
 
   return {
     valid: allDiagnostics.every(d => d.level !== 'error'),

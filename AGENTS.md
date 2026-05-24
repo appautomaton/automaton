@@ -4,9 +4,9 @@ Portable, stage-gated agentic-AI harness for Claude Code, Codex, and OpenCode.
 
 ## Architecture
 
-- **Copy-based install.** Skills are self-contained after install. `_shared/` fans out into each skill at install time (see `docs/design-decisions.md` DD-001).
-- **Skills are pure markdown.** `SKILL.md` + `references/` + `scripts/`. No compiled binaries.
-- **Three hosts.** Claude, Codex, OpenCode — each wires hooks and maps subagent tools.
+- **Copy-based install.** Skills and shared runtime files are inspectable after install. `_shared/` installs once under `.agent/.automaton/` where host skills can reference it (see `docs/design-decisions.md` DD-001).
+- **Skills are pure markdown.** `SKILL.md` + `references/` + optional `templates/`. Shared helper scripts live in `skills/_shared/scripts/`.
+- **Three hosts.** Claude, Codex, OpenCode — each wires startup context through host hooks/plugins and maps subagent tools.
 - **Five stages.** `frame → plan → execute → verify → resume`. Prerequisites enforced in `runtime/lib/contracts-data.json`.
 - **No mandatory nested invocation.** Skills hand off through durable artifacts; clean same-session continuation is allowed when the lifecycle contract says it is safe.
 
@@ -40,7 +40,7 @@ node bin/automaton.mjs context frame
 ## Conventions
 
 - Edit skills in `skills/` only. Never edit installed copies.
-- Shared references and scripts go in `skills/_shared/`. Install copies them to every skill.
+- Shared references and scripts go in `skills/_shared/`. Install copies them once into `.agent/.automaton/references/` and `.agent/.automaton/scripts/`.
 - Skill entry points should stay clear, concise, high-signal, and platform-agnostic. Detail belongs in `references/` via `## Deep` triggers when progressive disclosure keeps the entry point easier to use.
 - `current.json` is the machine cursor. `STATUS.md` is the human summary. Don't duplicate pointers.
 - Runtime enforces only L1 validation (stage enum, pointer resolution). L2/L3 live in prompts and tests.

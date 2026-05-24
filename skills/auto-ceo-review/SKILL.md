@@ -9,7 +9,7 @@ metadata:
 
 Product-direction gate. Decides whether a spec is worth building before planning begins.
 
-First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding.
+First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding.
 
 ## Preamble
 
@@ -60,7 +60,7 @@ Add a `## Review: Product` section to `SPEC.md` using the exact template in `ref
 
 ### Update State
 
-Run `sync-status.mjs` from this skill's scripts directory.
+Run `node .agent/.automaton/scripts/sync-status.mjs` from the project root.
 Update `.agent/.automaton/state/current.json`:
 - `product_review` → `<verdict>`
 

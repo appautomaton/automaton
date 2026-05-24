@@ -9,7 +9,7 @@ metadata:
 
 Planning controller. Turns approved framing into ordered slices with verification commands.
 
-First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding.
+First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding.
 
 ## Preamble
 
@@ -119,7 +119,7 @@ Write the plan to `.agent/work/<change>/PLAN.md`.
 - **Requirement traceability** — trigger: SPEC names gap IDs, invariant IDs, audit questions, migration checkpoints, or coverage targets. Omit when the SPEC has no traceable IDs.
 - **Aggregate verification commands table** — trigger: ≥ 3 slices or commands not captured per-slice. Per-slice inline suffices for smaller plans (index over transcript).
 
-Apply the Artifact Signal Discipline rules from `references/ARTIFACT-LIFECYCLE.md` while writing: no mirror sections, index over transcript, append-replace not stack. Replace prior `## Review:` sections on re-run for the same change — do not stack reviews.
+Apply the Artifact Signal Discipline rules from `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` while writing: no mirror sections, index over transcript, append-replace not stack. Replace prior `## Review:` sections on re-run for the same change — do not stack reviews.
 
 ### Write DESIGN.md (if non-trivial)
 
@@ -137,7 +137,7 @@ If any of these are true, recommend `auto-frame` and stop.
 
 ### Update State
 
-Run `sync-status.mjs` from this skill's scripts directory.
+Run `node .agent/.automaton/scripts/sync-status.mjs` from the project root.
 Update `.agent/.automaton/state/current.json`:
 - `canonical_design` → path to DESIGN.md (if written)
 - `canonical_plan` → path to PLAN.md
@@ -171,8 +171,8 @@ Read `references/verification-patterns.md` for common verification commands by s
 
 ### Context Loading Discipline
 
-Read `references/CONTEXT-BUDGET.md` for progressive loading and context pressure tiers. (~76 lines: 4 principles, 6-step loading order, 4 pressure tiers with behavioral rules, no-re-read rule with exceptions.)
+Read `.agent/.automaton/references/CONTEXT-BUDGET.md` for progressive loading and context pressure tiers. (~76 lines: 4 principles, 6-step loading order, 4 pressure tiers with behavioral rules, no-re-read rule with exceptions.)
 
 ### Artifact Lifecycle
 
-Read `references/ARTIFACT-LIFECYCLE.md` when handoff rules or state pointer boundaries need clarification. (~105 lines: stage handoffs table, progressive disclosure layout with allowed paths, review verdict routing, STOP conditions.)
+Read `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` when handoff rules or state pointer boundaries need clarification. (~105 lines: stage handoffs table, progressive disclosure layout with allowed paths, review verdict routing, STOP conditions.)

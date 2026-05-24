@@ -7,7 +7,6 @@ import { join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
 import { installHost, uninstallHost } from '../lib/install.mjs'
-import { saveStatusSummary } from '../lib/status.mjs'
 import { HOSTS, detectHosts, getHost } from '../hosts/index.mjs'
 
 const sourceRoot = fileURLToPath(new URL('..', import.meta.url))
@@ -70,15 +69,17 @@ test('Claude install scaffolds .agent and the Claude skills surface', () => {
   assert.equal(existsSync(join(root, '.claude', 'skills', 'auto-execute', 'SKILL.md')), true)
   assert.match(readFileSync(join(root, '.claude', 'skills', 'auto-execute', 'references', 'HOST-TOOLS.md'), 'utf8'), /Agent tool/)
   assert.equal(existsSync(join(root, '.claude', 'skills', 'auto-onboard', 'templates', 'PROJECT.md')), true)
-  assert.deepEqual(Object.keys(settings.hooks), ['SessionStart', 'Stop'])
+  assert.equal(existsSync(join(root, '.claude', 'skills', 'auto-frame', 'scripts')), false)
+  assert.deepEqual(Object.keys(settings.hooks), ['SessionStart'])
+  assert.equal(settings.hooks.SessionStart[0].hooks[0].command.includes(process.execPath), true)
   assert.equal(existsSync(join(root, '.claude', 'hooks', 'session-start.mjs')), true)
-  assert.equal(existsSync(join(root, '.claude', 'hooks', 'stop.mjs')), true)
+  assert.equal(existsSync(join(root, '.claude', 'hooks', 'stop.mjs')), false)
 })
 
 test('reinstalling Claude refreshes manifest-owned hooks and skills', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-reinstall-claude-'))
   const host = getHost('claude')
-  const hookTarget = join(root, '.claude', 'hooks', 'stop.mjs')
+  const hookTarget = join(root, '.claude', 'hooks', 'session-start.mjs')
   const skillTarget = join(root, '.claude', 'skills', 'auto-frame', 'SKILL.md')
 
   installHost(host, { root, sourceRoot })
@@ -87,7 +88,7 @@ test('reinstalling Claude refreshes manifest-owned hooks and skills', () => {
 
   installHost(host, { root, sourceRoot })
 
-  assert.equal(readFileSync(hookTarget, 'utf8'), host.installFiles({ root })['.claude/hooks/stop.mjs'])
+  assert.equal(readFileSync(hookTarget, 'utf8'), host.installFiles({ root })['.claude/hooks/session-start.mjs'])
   assert.equal(readFileSync(skillTarget, 'utf8'), readFileSync(join(sourceRoot, 'skills', 'auto-frame', 'SKILL.md'), 'utf8'))
 })
 
@@ -107,12 +108,17 @@ test('Claude session-start hook reads Automaton state from a nested working dire
   assert.equal(result.status, 0)
   assert.equal(result.stderr, '')
   const payload = JSON.parse(result.stdout)
-  assert.match(payload.hookSpecificOutput.additionalContext, /Automaton: change=bootstrap; stage=frame\./)
-  assert.match(payload.hookSpecificOutput.additionalContext, /Read \.agent\/steering\/STATUS\.md and \.agent\/work\/bootstrap\//)
+  assert.match(payload.hookSpecificOutput.additionalContext, /^<automaton_reminder> This project has the Automaton stage-gated harness installed\./)
+  assert.match(payload.hookSpecificOutput.additionalContext, /State JSON: \.agent\/\.automaton\/state\/current\.json \(change=bootstrap; stage=frame\)\./)
+  assert.match(payload.hookSpecificOutput.additionalContext, /Status summary: \.agent\/steering\/STATUS\.md\./)
+  assert.match(payload.hookSpecificOutput.additionalContext, /Work artifacts, when relevant, live under \.agent\/work\//)
+  assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /\.agent\/work\/bootstrap\//)
+  assert.match(payload.hookSpecificOutput.additionalContext, /honor the user's latest request/)
+  assert.match(payload.hookSpecificOutput.additionalContext, /<\/automaton_reminder>$/)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /<change>/)
 })
 
-test('Claude session-start hook injects canonical artifacts and current progress', () => {
+test('Claude session-start hook injects the shared Automaton reminder without status prose', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-install-claude-context-'))
   const scriptTarget = join(root, '.claude', 'hooks', 'session-start.mjs')
   const currentTarget = join(root, '.agent', '.automaton', 'state', 'current.json')
@@ -123,42 +129,17 @@ test('Claude session-start hook injects canonical artifacts and current progress
     '{\n  "active_change": "deepen-skills",\n  "stage": "plan",\n  "canonical_spec": "automaton/.agent/work/deepen-skills/SPEC.md",\n  "canonical_plan": "automaton/.agent/work/deepen-skills/PLAN.md"\n}\n',
     'utf8'
   )
-  saveStatusSummary(join(root, '.agent', 'steering', 'STATUS.md'), {
-    activeChange: 'deepen-skills',
-    stage: 'plan',
-    whatIsTrueNow: ['Slice 1 shared references are complete.'],
-    nextStep: 'Execute Slice 2: deepen auto-onboard.',
-    openRisks: ['auto-frame was rewritten ahead of dependency order.']
-  })
 
   const result = spawnSync(process.execPath, [scriptTarget], { encoding: 'utf8' })
 
   assert.equal(result.status, 0)
   assert.equal(result.stderr, '')
   const payload = JSON.parse(result.stdout)
-  assert.match(payload.hookSpecificOutput.additionalContext, /Automaton: change=deepen-skills; stage=plan\./)
-  assert.match(payload.hookSpecificOutput.additionalContext, /automaton\/\.agent\/work\/deepen-skills\/\{SPEC\.md, PLAN\.md\}/)
-  assert.match(payload.hookSpecificOutput.additionalContext, /Progress: Slice 1 shared references are complete\./)
-  assert.match(payload.hookSpecificOutput.additionalContext, /Next: Execute Slice 2: deepen auto-onboard\./)
+  assert.match(payload.hookSpecificOutput.additionalContext, /State JSON: \.agent\/\.automaton\/state\/current\.json \(change=deepen-skills; stage=plan\)\./)
+  assert.match(payload.hookSpecificOutput.additionalContext, /canonical artifact pointers are in current\.json\./)
+  assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /Progress:/)
+  assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /Next:/)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /<change>/)
-})
-
-test('Claude stop hook initializes STATUS.md from current state', () => {
-  const root = mkdtempSync(join(tmpdir(), 'automaton-install-claude-stop-'))
-  const scriptTarget = join(root, '.claude', 'hooks', 'stop.mjs')
-  const statusTarget = join(root, '.agent', 'steering', 'STATUS.md')
-
-  installHost(getHost('claude'), { root, sourceRoot })
-
-  const result = spawnSync(process.execPath, [scriptTarget], { encoding: 'utf8' })
-
-  assert.equal(result.status, 0)
-  assert.equal(result.stderr, '')
-  assert.equal(result.stdout, '')
-  assert.equal(
-    readFileSync(statusTarget, 'utf8'),
-    '# Status\n\n## Current Change\n\n- active change: `bootstrap`\n- current stage: `frame`\n\n## What Is True Now\n\n- none recorded\n\n## Next Step\n\nRun `auto-onboard` to refresh project truth for the repository before continuing.\n\n## Open Risks\n\n- none recorded\n'
-  )
 })
 
 test('Claude install preserves existing settings while adding Automaton hooks', () => {
@@ -172,7 +153,48 @@ test('Claude install preserves existing settings while adding Automaton hooks', 
   const settings = JSON.parse(readFileSync(settingsTarget, 'utf8'))
 
   assert.equal(settings.env.FOO, 'bar')
-  assert.deepEqual(Object.keys(settings.hooks), ['SessionStart', 'Stop'])
+  assert.deepEqual(Object.keys(settings.hooks), ['SessionStart'])
+})
+
+test('Claude reinstall refreshes legacy Automaton settings hooks without duplicating them', () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-install-claude-settings-migrate-'))
+  const settingsTarget = join(root, '.claude', 'settings.json')
+  mkdirSync(join(root, '.claude'), { recursive: true })
+  writeFileSync(settingsTarget, JSON.stringify({
+    env: { FOO: 'bar' },
+    hooks: {
+      SessionStart: [
+        {
+          matcher: 'startup|resume|clear|compact',
+          hooks: [
+            {
+              type: 'command',
+              command: 'node "$CLAUDE_PROJECT_DIR"/.claude/hooks/session-start.mjs'
+            }
+          ]
+        }
+      ],
+      Stop: [
+        {
+          hooks: [
+            {
+              type: 'command',
+              command: 'node "$CLAUDE_PROJECT_DIR"/.claude/hooks/stop.mjs'
+            }
+          ]
+        }
+      ]
+    }
+  }, null, 2) + '\n', 'utf8')
+
+  installHost(getHost('claude'), { root, sourceRoot })
+
+  const settings = JSON.parse(readFileSync(settingsTarget, 'utf8'))
+
+  assert.equal(settings.env.FOO, 'bar')
+  assert.deepEqual(Object.keys(settings.hooks), ['SessionStart'])
+  assert.equal(settings.hooks.SessionStart.length, 1)
+  assert.equal(settings.hooks.SessionStart[0].hooks[0].command.includes(process.execPath), true)
 })
 
 test('Claude uninstall preserves unrelated settings while removing Automaton hooks', () => {
@@ -201,16 +223,19 @@ test('Codex install scaffolds config, hooks, and skills', () => {
   const hostTools = readFileSync(join(root, '.codex', 'skills', 'auto-execute', 'references', 'HOST-TOOLS.md'), 'utf8')
   assert.match(hostTools, /spawn_agent/)
   assert.match(hostTools, /custom agent defined as TOML/)
-  assert.deepEqual(Object.keys(hooks.hooks), ['SessionStart', 'Stop'])
-  assert.match(hooks.hooks.SessionStart[0].hooks[0].command, /git rev-parse --show-toplevel/)
+  assert.deepEqual(Object.keys(hooks.hooks), ['SessionStart'])
+  assert.doesNotMatch(hooks.hooks.SessionStart[0].hooks[0].command, /sh -lc|git rev-parse --show-toplevel/)
+  assert.match(hooks.hooks.SessionStart[0].hooks[0].command, /\.codex\/hooks\/session-start\.mjs/)
+  assert.equal(hooks.hooks.SessionStart[0].hooks[0].command.includes(process.execPath), true)
+  assert.equal(existsSync(join(root, '.codex', 'skills', 'auto-frame', 'scripts')), false)
   assert.equal(existsSync(join(root, '.codex', 'hooks', 'session-start.mjs')), true)
-  assert.equal(existsSync(join(root, '.codex', 'hooks', 'stop.mjs')), true)
+  assert.equal(existsSync(join(root, '.codex', 'hooks', 'stop.mjs')), false)
 })
 
 test('reinstalling Codex refreshes manifest-owned hooks and skills', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-reinstall-codex-'))
   const host = getHost('codex')
-  const hookTarget = join(root, '.codex', 'hooks', 'stop.mjs')
+  const hookTarget = join(root, '.codex', 'hooks', 'session-start.mjs')
   const skillTarget = join(root, '.codex', 'skills', 'auto-frame', 'SKILL.md')
 
   installHost(host, { root, sourceRoot })
@@ -219,15 +244,17 @@ test('reinstalling Codex refreshes manifest-owned hooks and skills', () => {
 
   installHost(host, { root, sourceRoot })
 
-  assert.equal(readFileSync(hookTarget, 'utf8'), host.installFiles({ root })['.codex/hooks/stop.mjs'])
+  assert.equal(readFileSync(hookTarget, 'utf8'), host.installFiles({ root })['.codex/hooks/session-start.mjs'])
   assert.equal(readFileSync(skillTarget, 'utf8'), readFileSync(join(sourceRoot, 'skills', 'auto-frame', 'SKILL.md'), 'utf8'))
 })
 
 test('reinstalling Codex refreshes manifest-owned injected shared artifacts', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-reinstall-codex-shared-'))
   const host = getHost('codex')
-  const referenceTarget = join(root, '.codex', 'skills', 'auto-frame', 'references', 'CONTEXT-BUDGET.md')
-  const scriptTarget = join(root, '.codex', 'skills', 'auto-frame', 'scripts', 'get-context.mjs')
+  const referenceTarget = join(root, '.agent', '.automaton', 'references', 'CONTEXT-BUDGET.md')
+  const legacyReferenceTarget = join(root, '.codex', 'skills', 'auto-frame', 'references', 'CONTEXT-BUDGET.md')
+  const scriptTarget = join(root, '.agent', '.automaton', 'scripts', 'get-context.mjs')
+  const legacyScriptTarget = join(root, '.codex', 'skills', 'auto-frame', 'scripts', 'get-context.mjs')
   const hostToolsTarget = join(root, '.codex', 'skills', 'auto-execute', 'references', 'HOST-TOOLS.md')
 
   installHost(host, { root, sourceRoot })
@@ -238,9 +265,44 @@ test('reinstalling Codex refreshes manifest-owned injected shared artifacts', ()
   installHost(host, { root, sourceRoot })
 
   assert.equal(readFileSync(referenceTarget, 'utf8'), readFileSync(join(sourceRoot, 'skills', '_shared', 'references', 'CONTEXT-BUDGET.md'), 'utf8'))
+  assert.equal(existsSync(legacyReferenceTarget), false)
+  assert.equal(existsSync(legacyScriptTarget), false)
   assert.equal(readFileSync(scriptTarget, 'utf8'), readFileSync(join(sourceRoot, 'skills', '_shared', 'scripts', 'get-context.mjs'), 'utf8'))
   assert.match(readFileSync(hostToolsTarget, 'utf8'), /spawn_agent/)
   assert.doesNotMatch(readFileSync(hostToolsTarget, 'utf8'), /stale host tools/)
+})
+
+test('reinstalling Codex removes manifest-owned legacy stop hook and per-skill scripts', () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-reinstall-codex-legacy-scripts-'))
+  const host = getHost('codex')
+  const manifestTarget = join(root, '.agent', '.automaton', 'state', 'install-manifest.json')
+  const stopTarget = join(root, '.codex', 'hooks', 'stop.mjs')
+  const legacyScriptTarget = join(root, '.codex', 'skills', 'auto-frame', 'scripts', 'get-context.mjs')
+  const removedScriptTarget = join(root, '.codex', 'skills', 'auto-frame', 'scripts', 'scaffold-agent.mjs')
+
+  installHost(host, { root, sourceRoot })
+  mkdirSync(join(root, '.codex', 'skills', 'auto-frame', 'scripts'), { recursive: true })
+  writeFileSync(stopTarget, '// old stop hook\n', 'utf8')
+  writeFileSync(legacyScriptTarget, '// old per-skill script\n', 'utf8')
+  writeFileSync(removedScriptTarget, '// old scaffold script\n', 'utf8')
+
+  const manifest = JSON.parse(readFileSync(manifestTarget, 'utf8'))
+  manifest.hosts.codex.files.push(
+    '.codex/hooks/stop.mjs',
+    '.codex/skills/auto-frame/scripts/get-context.mjs',
+    '.codex/skills/auto-frame/scripts/scaffold-agent.mjs'
+  )
+  writeFileSync(manifestTarget, JSON.stringify(manifest, null, 2) + '\n', 'utf8')
+
+  installHost(host, { root, sourceRoot })
+
+  const nextManifest = JSON.parse(readFileSync(manifestTarget, 'utf8'))
+  assert.equal(existsSync(stopTarget), false)
+  assert.equal(existsSync(legacyScriptTarget), false)
+  assert.equal(existsSync(removedScriptTarget), false)
+  assert.equal(nextManifest.hosts.codex.files.includes('.codex/hooks/stop.mjs'), false)
+  assert.equal(nextManifest.hosts.codex.files.includes('.codex/skills/auto-frame/scripts/get-context.mjs'), false)
+  assert.equal(nextManifest.hosts.codex.files.includes('.codex/skills/auto-frame/scripts/scaffold-agent.mjs'), false)
 })
 
 test('Codex session-start hook reads Automaton state from a nested working directory', () => {
@@ -259,12 +321,17 @@ test('Codex session-start hook reads Automaton state from a nested working direc
   assert.equal(result.status, 0)
   assert.equal(result.stderr, '')
   const payload = JSON.parse(result.stdout)
-  assert.match(payload.hookSpecificOutput.additionalContext, /Automaton: change=bootstrap; stage=frame\./)
-  assert.match(payload.hookSpecificOutput.additionalContext, /Read \.agent\/steering\/STATUS\.md and \.agent\/work\/bootstrap\//)
+  assert.match(payload.hookSpecificOutput.additionalContext, /^<automaton_reminder> This project has the Automaton stage-gated harness installed\./)
+  assert.match(payload.hookSpecificOutput.additionalContext, /State JSON: \.agent\/\.automaton\/state\/current\.json \(change=bootstrap; stage=frame\)\./)
+  assert.match(payload.hookSpecificOutput.additionalContext, /Status summary: \.agent\/steering\/STATUS\.md\./)
+  assert.match(payload.hookSpecificOutput.additionalContext, /Work artifacts, when relevant, live under \.agent\/work\//)
+  assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /\.agent\/work\/bootstrap\//)
+  assert.match(payload.hookSpecificOutput.additionalContext, /honor the user's latest request/)
+  assert.match(payload.hookSpecificOutput.additionalContext, /<\/automaton_reminder>$/)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /<change>/)
 })
 
-test('Codex session-start hook injects canonical artifacts and current progress', () => {
+test('Codex session-start hook injects the shared Automaton reminder without status prose', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-install-codex-context-'))
   const scriptTarget = join(root, '.codex', 'hooks', 'session-start.mjs')
   const currentTarget = join(root, '.agent', '.automaton', 'state', 'current.json')
@@ -275,49 +342,17 @@ test('Codex session-start hook injects canonical artifacts and current progress'
     '{\n  "active_change": "deepen-skills",\n  "stage": "plan",\n  "canonical_spec": "automaton/.agent/work/deepen-skills/SPEC.md",\n  "canonical_plan": "automaton/.agent/work/deepen-skills/PLAN.md"\n}\n',
     'utf8'
   )
-  saveStatusSummary(join(root, '.agent', 'steering', 'STATUS.md'), {
-    activeChange: 'deepen-skills',
-    stage: 'plan',
-    whatIsTrueNow: ['Slice 1 shared references are complete.'],
-    nextStep: 'Execute Slice 2: deepen auto-onboard.',
-    openRisks: ['auto-frame was rewritten ahead of dependency order.']
-  })
 
   const result = spawnSync(process.execPath, [scriptTarget], { encoding: 'utf8' })
 
   assert.equal(result.status, 0)
   assert.equal(result.stderr, '')
   const payload = JSON.parse(result.stdout)
-  assert.match(payload.hookSpecificOutput.additionalContext, /Automaton: change=deepen-skills; stage=plan\./)
-  assert.match(payload.hookSpecificOutput.additionalContext, /automaton\/\.agent\/work\/deepen-skills\/\{SPEC\.md, PLAN\.md\}/)
-  assert.match(payload.hookSpecificOutput.additionalContext, /Progress: Slice 1 shared references are complete\./)
-  assert.match(payload.hookSpecificOutput.additionalContext, /Next: Execute Slice 2: deepen auto-onboard\./)
+  assert.match(payload.hookSpecificOutput.additionalContext, /State JSON: \.agent\/\.automaton\/state\/current\.json \(change=deepen-skills; stage=plan\)\./)
+  assert.match(payload.hookSpecificOutput.additionalContext, /canonical artifact pointers are in current\.json\./)
+  assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /Progress:/)
+  assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /Next:/)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /<change>/)
-})
-
-test('Codex stop hook updates stale STATUS.md pointers while preserving summary sections', () => {
-  const root = mkdtempSync(join(tmpdir(), 'automaton-install-codex-stop-'))
-  const scriptTarget = join(root, '.codex', 'hooks', 'stop.mjs')
-  const statusTarget = join(root, '.agent', 'steering', 'STATUS.md')
-
-  installHost(getHost('codex'), { root, sourceRoot })
-  saveStatusSummary(statusTarget, {
-    activeChange: 'stale-change',
-    stage: 'plan',
-    whatIsTrueNow: ['A stale status summary survived the previous session.'],
-    nextStep: 'Refresh the controller-owned summary after verification.',
-    openRisks: ['Resume could follow the wrong active change.']
-  })
-
-  const result = spawnSync(process.execPath, [scriptTarget], { encoding: 'utf8' })
-
-  assert.equal(result.status, 0)
-  assert.equal(result.stderr, '')
-  assert.equal(result.stdout, '')
-  assert.equal(
-    readFileSync(statusTarget, 'utf8'),
-    '# Status\n\n## Current Change\n\n- active change: `bootstrap`\n- current stage: `frame`\n\n## What Is True Now\n\n- A stale status summary survived the previous session.\n\n## Next Step\n\nRefresh the controller-owned summary after verification.\n\n## Open Risks\n\n- Resume could follow the wrong active change.\n'
-  )
 })
 
 test('Codex install migrates manifest-owned legacy stage skill names within .codex skills', () => {
@@ -506,8 +541,12 @@ test('OpenCode install scaffolds the OpenCode skills surface', () => {
   assert.equal(existsSync(join(root, '.opencode', 'skills', 'auto-frame', 'SKILL.md')), true)
   assert.equal(existsSync(join(root, '.opencode', 'skills', 'auto-execute', 'SKILL.md')), true)
   assert.match(readFileSync(join(root, '.opencode', 'skills', 'auto-execute', 'references', 'HOST-TOOLS.md'), 'utf8'), /@mention/)
+  assert.equal(existsSync(join(root, '.opencode', 'skills', 'auto-frame', 'scripts')), false)
   assert.equal(existsSync(join(root, '.opencode', 'plugins', 'automaton.js')), true)
-  assert.match(pluginSource, /session\.idle/)
+  assert.match(pluginSource, /session\.compacted/)
+  assert.match(pluginSource, /noReply: true/)
+  assert.match(pluginSource, /chat\.message/)
+  assert.doesNotMatch(pluginSource, /session\.idle/)
   assert.doesNotMatch(pluginSource, /showToast/)
 })
 
@@ -539,68 +578,6 @@ test('reinstalling OpenCode preserves a preexisting user-owned plugin file', () 
   installHost(host, { root, sourceRoot })
 
   assert.equal(readFileSync(pluginTarget, 'utf8'), '// user-owned plugin\n')
-})
-
-test('OpenCode plugin syncs STATUS.md pointers on session.idle without user-facing toast', async () => {
-  const root = mkdtempSync(join(tmpdir(), 'automaton-install-opencode-idle-'))
-  const pluginTarget = join(root, '.opencode', 'plugins', 'automaton.js')
-  const statusTarget = join(root, '.agent', 'steering', 'STATUS.md')
-
-  installHost(getHost('opencode'), { root, sourceRoot })
-  saveStatusSummary(statusTarget, {
-    activeChange: 'stale-change',
-    stage: 'execute',
-    whatIsTrueNow: ['OpenCode still has stale status pointers.'],
-    nextStep: 'Refresh the project truth after the idle hook runs.',
-    openRisks: ['Idle reminders can lag behind the actual current state.']
-  })
-
-  const { AutomatonPlugin } = await import(pathToFileURL(pluginTarget).href)
-  const plugin = await AutomatonPlugin({
-    client: {
-      session: {
-        prompt() {
-          return Promise.resolve()
-        }
-      }
-    },
-    directory: root,
-    worktree: root
-  })
-
-  await plugin.event({ event: { type: 'session.idle', properties: {} } })
-
-  assert.equal(
-    readFileSync(statusTarget, 'utf8'),
-    '# Status\n\n## Current Change\n\n- active change: `bootstrap`\n- current stage: `frame`\n\n## What Is True Now\n\n- OpenCode still has stale status pointers.\n\n## Next Step\n\nRefresh the project truth after the idle hook runs.\n\n## Open Risks\n\n- Idle reminders can lag behind the actual current state.\n'
-  )
-})
-
-test('OpenCode plugin syncs STATUS.md on session.idle', async () => {
-  const root = mkdtempSync(join(tmpdir(), 'automaton-install-opencode-idle-'))
-  const pluginTarget = join(root, '.opencode', 'plugins', 'automaton.js')
-  const currentTarget = join(root, '.agent', '.automaton', 'state', 'current.json')
-  const statusTarget = join(root, '.agent', 'steering', 'STATUS.md')
-
-  installHost(getHost('opencode'), { root, sourceRoot })
-  writeFileSync(
-    currentTarget,
-    '{\n  "active_change": "deepen-skills",\n  "stage": "plan"\n}\n',
-    'utf8'
-  )
-  writeFileSync(statusTarget, '# Status\n\nOld content.\n', 'utf8')
-
-  const { AutomatonPlugin } = await import(pathToFileURL(pluginTarget).href)
-  const plugin = await AutomatonPlugin({
-    client: { session: { prompt() { return Promise.resolve() } } },
-    directory: root,
-    worktree: root
-  })
-
-  await plugin.event({ event: { type: 'session.idle', properties: {} } })
-
-  assert.match(readFileSync(statusTarget, 'utf8'), /active change: `deepen-skills`/)
-  assert.match(readFileSync(statusTarget, 'utf8'), /current stage: `plan`/)
 })
 
 test('Claude SessionStart matcher fires on startup, resume, clear, and compact', () => {
@@ -641,11 +618,12 @@ test('OpenCode plugin injects session context, dedups, and re-injects after comp
     worktree: root
   })
 
-  // Behavior 1: first transform prepends an "Automaton:" text part to the first user message.
+  // Behavior 1: first transform prepends the Automaton reminder to the first user message.
   const output1 = { messages: [{ info: { role: 'user' }, parts: [{ type: 'text', text: 'hi' }] }] }
   await plugin['experimental.chat.messages.transform']({}, output1)
   assert.equal(output1.messages[0].parts.length, 2)
-  assert.match(output1.messages[0].parts[0].text, /^Automaton: change=deepen-skills; stage=plan\./)
+  assert.match(output1.messages[0].parts[0].text, /^<automaton_reminder> This project has the Automaton stage-gated harness installed\./)
+  assert.match(output1.messages[0].parts[0].text, /State JSON: \.agent\/\.automaton\/state\/current\.json \(change=deepen-skills; stage=plan\)\./)
   assert.equal(output1.messages[0].parts[1].text, 'hi')
 
   // Behavior 2: re-running the transform on the same output does NOT double-inject.
@@ -661,8 +639,136 @@ test('OpenCode plugin injects session context, dedups, and re-injects after comp
   // Behavior 4: the compacted flag is one-shot — subsequent transforms revert to the default variant.
   const output3 = { messages: [{ info: { role: 'user' }, parts: [{ type: 'text', text: 'hi' }] }] }
   await plugin['experimental.chat.messages.transform']({}, output3)
-  assert.match(output3.messages[0].parts[0].text, /^Automaton:/)
+  assert.match(output3.messages[0].parts[0].text, /^<automaton_reminder>/)
   assert.doesNotMatch(output3.messages[0].parts[0].text, /Context compacted/)
+})
+
+test('OpenCode plugin persists session context with noReply and dedups existing context', async () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-opencode-persist-'))
+  const pluginTarget = join(root, '.opencode', 'plugins', 'automaton.js')
+  const currentTarget = join(root, '.agent', '.automaton', 'state', 'current.json')
+  const promptCalls = []
+  let sessionMessages = []
+
+  installHost(getHost('opencode'), { root, sourceRoot })
+  writeFileSync(
+    currentTarget,
+    '{\n  "active_change": "persist-opencode",\n  "stage": "frame"\n}\n',
+    'utf8'
+  )
+
+  const { AutomatonPlugin } = await import(pathToFileURL(pluginTarget).href)
+  const plugin = await AutomatonPlugin({
+    client: {
+      session: {
+        messages({ path }) {
+          assert.equal(path.id, 'session-1')
+          return Promise.resolve({ data: sessionMessages })
+        },
+        prompt(call) {
+          promptCalls.push(call)
+          sessionMessages = [
+            ...sessionMessages,
+            { info: { role: 'user' }, parts: call.body.parts }
+          ]
+          return Promise.resolve({ data: { id: 'message-1' } })
+        }
+      }
+    },
+    directory: root,
+    worktree: root
+  })
+
+  await plugin.event({ event: { type: 'session.created', properties: { info: { id: 'session-1' } } } })
+
+  assert.equal(promptCalls.length, 1)
+  assert.equal(promptCalls[0].path.id, 'session-1')
+  assert.equal(promptCalls[0].body.noReply, true)
+  assert.match(promptCalls[0].body.parts[0].text, /^<automaton_reminder> This project has the Automaton stage-gated harness installed\./)
+  assert.match(promptCalls[0].body.parts[0].text, /State JSON: \.agent\/\.automaton\/state\/current\.json \(change=persist-opencode; stage=frame\)\./)
+
+  await plugin['chat.message'](
+    { sessionID: 'session-1' },
+    { message: { role: 'user' }, parts: [{ type: 'text', text: 'hello' }] }
+  )
+
+  assert.equal(promptCalls.length, 1)
+})
+
+test('OpenCode plugin uses chat.message as persisted injection fallback', async () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-opencode-chat-message-'))
+  const pluginTarget = join(root, '.opencode', 'plugins', 'automaton.js')
+  const promptCalls = []
+
+  installHost(getHost('opencode'), { root, sourceRoot })
+
+  const { AutomatonPlugin } = await import(pathToFileURL(pluginTarget).href)
+  const plugin = await AutomatonPlugin({
+    client: {
+      session: {
+        messages() {
+          return Promise.resolve({ data: [] })
+        },
+        prompt(call) {
+          promptCalls.push(call)
+          return Promise.resolve({ data: { id: 'message-1' } })
+        }
+      }
+    },
+    directory: root,
+    worktree: root
+  })
+
+  await plugin['chat.message'](
+    { sessionID: 'session-2' },
+    { message: { role: 'user' }, parts: [{ type: 'text', text: 'hello' }] }
+  )
+
+  assert.equal(promptCalls.length, 1)
+  assert.equal(promptCalls[0].path.id, 'session-2')
+  assert.equal(promptCalls[0].body.noReply, true)
+  assert.match(promptCalls[0].body.parts[0].text, /^<automaton_reminder>/)
+
+  await plugin['chat.message'](
+    { sessionID: 'session-2' },
+    { message: { role: 'user' }, parts: [{ type: 'text', text: 'Automaton: already persisted' }] }
+  )
+
+  assert.equal(promptCalls.length, 1)
+})
+
+test('OpenCode plugin persists compacted context when session id is available', async () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-opencode-compact-persist-'))
+  const pluginTarget = join(root, '.opencode', 'plugins', 'automaton.js')
+  const promptCalls = []
+
+  installHost(getHost('opencode'), { root, sourceRoot })
+
+  const { AutomatonPlugin } = await import(pathToFileURL(pluginTarget).href)
+  const plugin = await AutomatonPlugin({
+    client: {
+      session: {
+        messages() {
+          return Promise.resolve({
+            data: [{ info: { role: 'user' }, parts: [{ type: 'text', text: 'Automaton: existing context' }] }]
+          })
+        },
+        prompt(call) {
+          promptCalls.push(call)
+          return Promise.resolve({ data: { id: 'message-1' } })
+        }
+      }
+    },
+    directory: root,
+    worktree: root
+  })
+
+  await plugin.event({ event: { type: 'session.compacted', properties: { sessionID: 'session-3' } } })
+
+  assert.equal(promptCalls.length, 1)
+  assert.equal(promptCalls[0].path.id, 'session-3')
+  assert.equal(promptCalls[0].body.noReply, true)
+  assert.match(promptCalls[0].body.parts[0].text, /Context compacted/)
 })
 
 test('OpenCode plugin transform is a no-op when no user message is present', async () => {

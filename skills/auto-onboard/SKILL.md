@@ -9,7 +9,7 @@ metadata:
 
 Repository discovery. Builds bounded project truth from evidence, not guessing.
 
-First action: run `scripts/get-context.mjs` → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding.
+First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding.
 
 ## Preamble
 
@@ -33,9 +33,9 @@ Three cases:
 2. **Already-onboarded, no update requested.** `.agent/steering/PROJECT.md` contains real project truth and the user did not ask for a refresh. Report what exists and route by state:
      - Active change with a stage → `auto-resume`
      - No active change or stage is `none` → `auto-office-hours`
-3. **Already-onboarded, targeted refresh.** Steering exists and the user asks to update it (e.g., "update REQUIREMENTS because we added Postgres"). Focus on the evidence relevant to the update, update only the affected steering file(s), run `sync-status.mjs`, and report what changed. Read additional files when needed to produce an accurate update.
+3. **Already-onboarded, targeted refresh.** Steering exists and the user asks to update it (e.g., "update REQUIREMENTS because we added Postgres"). Focus on the evidence relevant to the update, update only the affected steering file(s), run `node .agent/.automaton/scripts/sync-status.mjs`, and report what changed. Read additional files when needed to produce an accurate update.
 
-When handling ROADMAP.md during first-time setup, always keep the short placeholder. Do not create roadmap phases on a first run. On refresher runs, write roadmap phases only when strong repo evidence shows an existing or ongoing roadmap and the user confirms importing or refreshing it in chat; then use `references/ROADMAP-CONTRACT.md` (~63 lines: canonical phase format, status values, update rules by skill, matching rule, single-file invariant).
+When handling ROADMAP.md during first-time setup, always keep the short placeholder. Do not create roadmap phases on a first run. On refresher runs, write roadmap phases only when strong repo evidence shows an existing or ongoing roadmap and the user confirms importing or refreshing it in chat; then use `.agent/.automaton/references/ROADMAP-CONTRACT.md` (~63 lines: canonical phase format, status values, update rules by skill, matching rule, single-file invariant).
 
 ### Scan Top-Level Files
 
@@ -66,7 +66,7 @@ Use `templates/` as scaffolds:
 
 ### Update State
 
-Run `sync-status.mjs` from this skill's scripts directory.
+Run `node .agent/.automaton/scripts/sync-status.mjs` from the project root.
 
 ### Report
 
