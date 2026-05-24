@@ -17,6 +17,8 @@ auto-onboard produces steering artifacts; auto-office-hours produces clarity. Th
 
 Loading discipline: hold the conversation goal, evidence, request coverage, rejected framings, and the next decision. Read project files only when evidence in the repo changes the objective, especially for parity, audit, migration, coverage, or mixed work.
 
+Interaction: when asking the user to confirm or choose, keep the chat surface plain, organized, and grounded in their words. Do not expose internal taxonomy labels such as mode, scale, or shape. For real branch decisions such as approach selection or unresolved Needs decision items, offer 2–4 concrete options with a one-line reason for each. Use the host question tool when available; otherwise present the same options inline. Keep the reasoning internal; the user sees the conclusion and the choice.
+
 ## Quality Gate
 
 Before presenting alternatives, recommending an approach, or writing `INTAKE.md`:
@@ -36,7 +38,7 @@ Determine and confirm all three axes:
 - **Work scale:** bug-sized, feature-sized, capability-sized, or roadmap-sized. Do not equate "large" with roadmap-sized. Capability-sized work remains one spec when it serves one coherent outcome; roadmap-sized means multiple independently valuable outcomes that need decomposition through `ROADMAP.md`.
 - **Work shape:** feature, refactor, parity, audit, migration, coverage, content, or mixed.
 
-State all three in one confirmation, for example: "This reads as Builder mode, capability-sized, and parity-shaped. Does that match?" If the user disagrees on any axis, adjust before continuing.
+Hold this classification internally to steer questioning; do not surface taxonomy labels to the user. Confirm your read in plain language grounded in their words, for example: "So this is one focused piece of work: reworking your terminology and runtime code together, not a multi-project effort. Did I get that right?" not "capability-sized, refactor-shaped." If the user corrects any dimension, adjust before continuing.
 
 For bug-sized goals with a known fix, consider whether `auto-frame` is the better next skill. For Content mode, read `references/content-intake.md` (~61 lines) and use its audience, thesis, anti-goals, and voice diagnostics. For roadmap-sized goals, read `.agent/.automaton/references/ROADMAP-CONTRACT.md` (~63 lines), help choose the first spec, and preserve the broader intent while decomposing.
 
