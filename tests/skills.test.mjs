@@ -1062,7 +1062,7 @@ test('every skill with a preamble contains a loading discipline sentence', () =>
 })
 
 test('only allowed XML tags appear in SKILL.md files', () => {
-  const allowed = new Set(['GATE', 'STOP', 'INTERVIEW', 'MODE-DETECTION'])
+  const allowed = new Set(['GATE', 'STOP', 'INTERVIEW'])
 
   for (const skillName of authoredSkills) {
     const source = readFileSync(join(skillsRoot, skillName, 'SKILL.md'), 'utf8')

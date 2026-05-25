@@ -86,11 +86,6 @@ After `INTAKE.md` is written, continue inline into `auto-frame` when all are tru
 
 If those conditions pass, load and follow `auto-frame`'s contract, write `.agent/work/<change>/SPEC.md`, and let auto-frame record `canonical_spec`. If any condition fails, stop after intake with the blocker or focused question.
 
-<MODE-DETECTION>
-
-If the user's language shifts mid-session, reclassify mode, scale, or shape and state the change in plain language. If the user says "just do it" or expresses impatience, ask the two most critical unresolved questions; if they push back again, present alternatives with explicit assumptions.
-</MODE-DETECTION>
-
 <GATE>
 
 Do NOT create INTAKE.md, SPEC.md, DESIGN.md, or implementation artifacts until:
@@ -130,3 +125,5 @@ If the user does not approve an approach, output a short discussion summary, why
 - Ask follow-up questions when they matter; do not bank them for a later checklist.
 - State the decision basis; name what evidence supports, what it does not support, and what would change the recommendation.
 - Keep INTAKE compact; omit empty sections and analysis nobody downstream needs.
+- If the user's language shifts from exploration to urgency, or from technical to business framing, reclassify mode, scale, or shape and state the change in plain language.
+- If the user expresses impatience, ask the two most critical unresolved questions; if they push back again, present alternatives with explicit assumptions.
