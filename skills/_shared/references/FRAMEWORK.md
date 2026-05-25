@@ -22,7 +22,7 @@ Every skill follows this skeleton:
 Preamble        — identity, "does not" boundary, loading discipline
 Quality Gate    — checks before finalizing; each skill ships a quality.md reference
 Do              — skill-specific procedure
-Output          — artifacts produced, state changes, diagnostic handling, handoff
+Output          — artifacts produced, state changes, handoff
 Rules           — guardrails
 ```
 
@@ -34,12 +34,6 @@ Conditional reference reads (`Read references/X.md when Y`) appear inline at the
 - **Update state only through `sync-status.mjs`.** Never edit `current.json` by hand.
 - Canonical pointers (`canonical_spec`, `canonical_plan`, `canonical_design`) and review verdicts are fields in `current.json`.
 - Work artifacts live under `.agent/work/<change>/`; steering under `.agent/steering/`.
-
-## Diagnostic Handling
-
-Every skill follows the same contract:
-- **Error-level** diagnostics from `get-context.mjs` block the current operation. Report and stop.
-- **Warning-level** diagnostics surface to the next stage or the user. They do not block.
 
 ## Quality Gate
 
