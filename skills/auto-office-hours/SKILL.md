@@ -112,7 +112,6 @@ Approved path:
 - Deferred scope is named for `ROADMAP.md` or later work.
 - `stage: frame` and `active_change` are recorded through `sync-status.mjs`.
 - `.agent/steering/ROADMAP.md` is updated when scale is roadmap.
-- Diagnostic handling: error-level diagnostics block this skill; warning-level diagnostics surface to `auto-frame`.
 - Approved, complete intake should flow into `auto-frame` without another user prompt when frame-ready.
 
 The INTAKE.md is a decision record, not a transcript. It is a faithful record of what the user approved, not the agent's editorial rewrite.

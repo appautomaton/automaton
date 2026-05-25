@@ -92,7 +92,6 @@ State the next skill based on the verdict.
 
 - `PLAN.md` with appended `## Review: Engineering` section
 - `.agent/.automaton/state/current.json` updated through `sync-status.mjs` with `engineering_review`; `stage` is unchanged by this skill
-- Diagnostic handling: error-level diagnostics block this skill; warning-level diagnostics surface to the next stage.
 - Next handoff, mapped from verdict: `approved` or `approved_with_risks` → stop, recommend `auto-execute`; `needs_correction` → stop, recommend `auto-plan`. Entering `auto-execute` starts code changes, so the user or host invokes it.
 
 ## Rules

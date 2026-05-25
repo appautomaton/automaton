@@ -72,7 +72,7 @@ Each gap block needs `VERIFY-GAP`, evidence, and a fix objective. Apply append-r
 - Inline verification report; `PLAN.md` annotated with `VERIFY-GAP` blocks on failure
 - State recorded in `current.json` through `sync-status.mjs`: `stage: verify` when verification starts, `stage: verified` on pass, or `stage: execute` on fail
 - `.agent/steering/ROADMAP.md` phase marked done on pass when applicable
-- Diagnostic handling: error-level diagnostics block this skill; warning-level findings surface to the report.
+- Warning-level findings surface to the verification report.
 - PASS closeout: report `Change status: complete` and `New objective: use auto-office-hours`; do not emit `Recommended next skill`
 - FAIL closeout: stop and recommend `auto-execute` — gap-fixing re-enters code changes, so the user or host invokes it.
 

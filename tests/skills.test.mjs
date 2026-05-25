@@ -951,7 +951,6 @@ test('lifecycle skills express handoff in durable-state vocabulary', () => {
     const skill = readFileSync(join(skillsRoot, skillName, 'SKILL.md'), 'utf8')
 
     assert.match(skill, /current\.json|canonical_/, `${skillName} must reference durable state via current.json or canonical pointers`)
-    assert.match(skill, /diagnostic/i, `${skillName} must describe diagnostic handling`)
     assert.match(skill, /[Rr]ecommend|[Nn]ext handoff|New objective|Change status/, `${skillName} must describe next action, completion, or future objective`)
     assert.match(skill, /\.agent\/(?:work|steering)\/|SPEC\.md|PLAN\.md|DESIGN\.md/, `${skillName} must name an artifact path`)
   }
