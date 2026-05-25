@@ -386,7 +386,7 @@ Do not write "No issues found" for skipped sections.
 
 ---
 
-### Q5. Review handoff asymmetry is unexplained
+### Q5. Review handoff asymmetry is unexplained ✅
 
 *Refined from original Q6 — extend symmetrically to auto-ceo-review*
 
@@ -605,7 +605,7 @@ Sorted by impact ÷ effort, ready for execution.
 | 12 | Q2 — Verdict calibration in review preambles | XS |
 | 13 | Q3 — auto-onboard pre-flight GATE | XS |
 | 14 | Q4 — Quick Scan in engineering-sections.md | XS |
-| 15 | Q5 — Symmetric handoff explanations on both review skills | XS |
+| 15 | ~~Q5 — Symmetric handoff explanations on both review skills~~ | ✅ |
 | 16 | Q6 — Normalize description: verbs to "Use when" | XS |
 | 17 | Q7 — Session Entry table in FRAMEWORK.md | XS |
 | 18 | Q8 — Sweep "return to" → "stop and recommend" in handoff contexts | XS |
