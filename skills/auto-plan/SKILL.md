@@ -86,9 +86,7 @@ Rules:
 - Omitted `Depends on` means `none`.
 - Continuation is the default. Omitted `Checkpoint after` means `none`, so the next slice may start after verification passes.
 - Verification findings, implementation caveats, downstream consequences, and next-slice recommendations are not checkpoints when the approved plan already names the next slice. Record them as slice evidence or risks and continue.
-- Use `human-verify` only when the result cannot be verified by available commands, tests, host tools, or local inspection.
-- Use `decision` only when the user must choose among named product, architecture, design, or scope options before the next slice can start. The checkpoint reason must include the concrete question and options. Do not use `decision` for reversible engineering judgment, known limitations, validation results, or "next slice should be..." notes.
-- Use `human-action` when progress requires an external action the agent cannot perform, such as 2FA, account approval, or off-machine access.
+- Checkpoint types (`human-verify`, `decision`, `human-action`) are defined once in `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Checkpoint Semantics). Assign a checkpoint only when its definition holds; default to `none`.
 - Keep slices small enough for one session. Move extended instructions to `slices/slice-NNN.md`; split only for independent outcomes.
 
 ### Write PLAN.md
@@ -132,7 +130,7 @@ Run `node .agent/.automaton/scripts/sync-status.mjs --canonical-plan ".agent/wor
 - `DESIGN.md`: written to `.agent/work/<change>/DESIGN.md` (if needed)
 - `.agent/.automaton/state/current.json`: records `canonical_design` (when written), `canonical_plan`, and `stage: plan` through `sync-status.mjs`
 - Diagnostic handling: `error`-level diagnostics block the plan; `warning`-level diagnostics surface to the next stage
-- Recommended next skill: `auto-eng-review` or `auto-execute`. The user or host invokes the next skill; auto-plan does not chain.
+- Next handoff: stop and recommend `auto-eng-review` (optional engineering review) or `auto-execute`. `auto-plan` does not continue inline — the optional review is user-invoked, and entering `auto-execute` starts code changes a human authorizes.
 
 ## Rules
 

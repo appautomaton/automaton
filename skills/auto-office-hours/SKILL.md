@@ -78,7 +78,7 @@ Run `node .agent/.automaton/scripts/sync-status.mjs --active-change "<change>" -
 
 ### Continue To Frame When Ready
 
-After `INTAKE.md` is written, continue into `auto-frame` in the same session when all are true:
+After `INTAKE.md` is written, continue inline into `auto-frame` when all are true:
 - The approved intake states the objective in one sentence.
 - Scope coverage has no unresolved `Needs decision` item that would change scope, approach, or verification.
 - The target stakeholder or artifact, desired outcome, constraints, anti-goals, and key risks are clear enough to produce acceptance criteria.

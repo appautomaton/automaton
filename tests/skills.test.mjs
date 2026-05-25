@@ -156,7 +156,7 @@ test('auto-onboard ships progressive-disclosure support docs and templates', () 
   assert.match(questionPatterns, /Candidate future work is not enough/)
   assert.match(sharedRoadmapContract, /must not create roadmap phases during first-time onboarding/)
   assert.match(sharedRoadmapContract, /must not synthesize roadmap phases from repo evidence alone during refresh/)
-  assert.match(roadmapTemplate, /No roadmap phases yet/)
+  assert.match(roadmapTemplate, /No active roadmap/)
   assert.match(roadmapTemplate, /First-time onboarding does not create roadmap phases/)
   assert.match(roadmapTemplate, /user confirmation in chat/)
   assert.doesNotMatch(roadmapTemplate, /repo-evident independent outcomes/)
@@ -526,8 +526,6 @@ test('auto-plan defines lean slice defaults without dropping execution safety', 
   assert.match(source, /execution should continue through all approved slices/)
   assert.match(source, /execution windows are context-management batches, not planned stopping points/)
   assert.match(source, /Verification findings, implementation caveats, downstream consequences, and next-slice recommendations are not checkpoints/)
-  assert.match(source, /concrete question and options/)
-  assert.match(source, /Do not use `decision` for reversible engineering judgment/)
   assert.doesNotMatch(source, /\*\*Context budget:\*\*/)
   assert.doesNotMatch(source, /Context budget for this change/)
   assert.doesNotMatch(source, /known fraction of the context window/)
@@ -584,7 +582,7 @@ test('auto-execute owns route selection and execution-window continuation', () =
   assert.match(source, /The route decision lives here/)
   assert.match(source, /Run the per-slice protocol/)
   assert.match(source, /Do not tell the user to invoke another execute skill/)
-  assert.match(source, /continue into `auto-verify`'s contract/)
+  assert.match(source, /continue inline into `auto-verify`'s contract/)
   assert.match(source, /Do not make the user run `auto-verify` manually/)
   assert.match(source, /Do not trust execute's own slice evidence as final verification/)
   assert.match(source, /return to \*\*Select Execution Window\*\* immediately/)
@@ -642,9 +640,9 @@ test('auto-resume treats verified completion as no automatic next skill', () => 
 test('artifact lifecycle allows clean execute-to-verify continuation', () => {
   const lifecycle = readFileSync(join(skillsRoot, '_shared', 'references', 'ARTIFACT-LIFECYCLE.md'), 'utf8')
 
-  assert.match(lifecycle, /continue into `auto-verify`'s contract/)
-  assert.match(lifecycle, /same session can safely do so/)
-  assert.match(lifecycle, /should not force the user to manually invoke the next lifecycle skill/)
+  assert.match(lifecycle, /`auto-verify` is the mandatory gate, not an optional review/)
+  assert.match(lifecycle, /Continue inline by default/)
+  assert.match(lifecycle, /does not force the user to re-invoke the next skill/)
 })
 
 test('controller prompts route current state writes through sync-status', () => {
@@ -896,7 +894,7 @@ test('lifecycle skills express handoff in durable-state vocabulary', () => {
 
     assert.match(skill, /current\.json|canonical_/, `${skillName} must reference durable state via current.json or canonical pointers`)
     assert.match(skill, /diagnostic/i, `${skillName} must describe diagnostic handling`)
-    assert.match(skill, /[Rr]ecommended next skill|next skill|New objective|Change status/, `${skillName} must describe next action, completion, or future objective`)
+    assert.match(skill, /[Rr]ecommend|[Nn]ext handoff|New objective|Change status/, `${skillName} must describe next action, completion, or future objective`)
     assert.match(skill, /\.agent\/(?:work|steering)\/|SPEC\.md|PLAN\.md|DESIGN\.md/, `${skillName} must name an artifact path`)
   }
 })
@@ -933,8 +931,9 @@ test('artifact lifecycle reference defines handoff contract and validation tiers
   assert.match(lifecycle, /[Ss]tate mutation/)
   assert.match(lifecycle, /[Dd]iagnostic handling/)
   assert.match(lifecycle, /[Nn]ext-stage recommendation/)
-  assert.match(lifecycle, /recommend, prepare, or continue into the next stage/)
-  assert.match(lifecycle, /Seamless continuation is not mandatory nested skill invocation/)
+  assert.match(lifecycle, /\*\*Continue inline\*\*/)
+  assert.match(lifecycle, /\*\*Stop and hand off\*\*/)
+  assert.match(lifecycle, /not nested skill invocation/)
   assert.match(lifecycle, /Do not invent a universal Skill tool or hidden dispatcher/)
 
   assert.match(lifecycle, /^## Validation Tiers$/m)

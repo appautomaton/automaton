@@ -13,7 +13,7 @@ First action: run `node .agent/.automaton/scripts/get-context.mjs` from the proj
 
 ## Preamble
 
-Independent audit. Re-read the plan, run proof commands, and compare fresh results to acceptance criteria. It does not trust execute's self-assessment or fix what it finds.
+Independent audit. Re-read the plan, run proof commands, and compare fresh results to acceptance criteria. It does not trust execute's self-assessment or fix what it finds. When verify continues inline from execute, execute's reasoning and slice evidence are already in context — treat them as unverified claims, re-run every command, and judge from fresh output alone. Continuation must never soften the audit.
 
 Loading discipline: one PLAN.md read + verification commands per criterion. Read source files when verifying correctness requires inspecting the actual changes, not just command output.
 
@@ -74,7 +74,7 @@ Each gap block needs `VERIFY-GAP`, evidence, and a fix objective. Recommend `aut
 - `.agent/steering/ROADMAP.md` phase marked done on pass when applicable
 - Diagnostic handling: `error`-level diagnostics block the verification run; `warning`-level findings surface to the report
 - PASS closeout: report `Change status: complete` and `New objective: use auto-office-hours`; do not emit `Recommended next skill`
-- FAIL closeout: recommend `auto-execute`. The user or host invokes the next skill; auto-verify does not chain.
+- FAIL closeout: stop and recommend `auto-execute` — gap-fixing re-enters code changes, so the user or host invokes it.
 
 ## Rules
 

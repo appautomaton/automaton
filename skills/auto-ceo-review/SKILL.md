@@ -64,14 +64,14 @@ Run `node .agent/.automaton/scripts/sync-status.mjs --product-review "<verdict>"
 
 ### Recommend
 
-State the next skill based on the verdict.
+On a non-blocking verdict (`approved` or `approved_with_risks`), continue inline into `auto-plan`. On `needs_clarification` or `descoped`, stop and recommend the mapped skill.
 
 ## Output
 
 - `SPEC.md` with appended `## Review: Product` section
 - `.agent/.automaton/state/current.json` updated through `sync-status.mjs` with `product_review`; `stage` is unchanged by this skill
 - Diagnostic handling: `error`-level diagnostics block the review; `warning`-level diagnostics surface to the next stage
-- Recommended next skill, mapped from verdict: `approved` or `approved_with_risks` → `auto-plan`; `needs_clarification` → `auto-frame` or `auto-office-hours`; `descoped` → `auto-office-hours` or stop. The user or host invokes the next skill; auto-ceo-review does not chain.
+- Next handoff, mapped from verdict: `approved` or `approved_with_risks` → continue inline into `auto-plan`; `needs_clarification` → stop, recommend `auto-frame` or `auto-office-hours`; `descoped` → stop, recommend `auto-office-hours` or halt.
 
 ## Rules
 

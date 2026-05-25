@@ -75,3 +75,45 @@ test('auto-execute recognizes the parallel-safe topology label defined in contra
     'auto-execute must recognize the parallel-safe topology label (plan→execute contract drift)'
   )
 })
+
+// The label tests above pin the checkpoint *vocabulary*. They do not pin its *meaning*: auto-plan and
+// auto-execute used to each carry their own prose definition of human-verify/decision/human-action, and
+// those had already drifted (plan defined `decision` over "scope" options; execute over "risk posture").
+// Both files still contained the label strings, so the tests above stayed green through the drift. These
+// tests move the definitions to a single home in ARTIFACT-LIFECYCLE.md and fail if a skill re-hosts one.
+const lifecycleRef = readFileSync(
+  join(skillsRoot, '_shared', 'references', 'ARTIFACT-LIFECYCLE.md'),
+  'utf8'
+)
+
+test('ARTIFACT-LIFECYCLE.md is the single home for checkpoint semantics', () => {
+  assert.ok(
+    lifecycleRef.includes('## Checkpoint Semantics'),
+    'ARTIFACT-LIFECYCLE.md must define checkpoint semantics in one section'
+  )
+  for (const checkpoint of CHECKPOINT_TYPES) {
+    assert.ok(
+      lifecycleRef.includes(`\`${checkpoint}\``),
+      `Checkpoint Semantics must define "${checkpoint}"`
+    )
+  }
+})
+
+test('auto-plan and auto-execute point to checkpoint semantics instead of re-defining them', () => {
+  const pointer = 'ARTIFACT-LIFECYCLE.md` (Checkpoint Semantics)'
+  assert.ok(planSkill.includes(pointer), 'auto-plan must point to the canonical checkpoint semantics')
+  assert.ok(executeSkill.includes(pointer), 'auto-execute must point to the canonical checkpoint semantics')
+
+  // Distinctive fragments of the canonical per-type definitions must live only in the contract.
+  const definitionFragments = [
+    'local inspection cannot verify the result', // human-verify
+    'among named product, architecture, design', // decision: option categories
+    'concrete question and the options', // decision: reason content
+    'reversible engineering judgment', // decision: exclusions
+  ]
+  for (const fragment of definitionFragments) {
+    assert.ok(lifecycleRef.includes(fragment), `ARTIFACT-LIFECYCLE.md must hold the definition fragment: ${fragment}`)
+    assert.ok(!planSkill.includes(fragment), `auto-plan must not re-define checkpoints: ${fragment}`)
+    assert.ok(!executeSkill.includes(fragment), `auto-execute must not re-define checkpoints: ${fragment}`)
+  }
+})

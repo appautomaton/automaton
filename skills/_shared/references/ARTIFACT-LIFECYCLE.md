@@ -40,24 +40,46 @@ Allowed active-change layout:
 
 | Stage | Required inputs | Produces | State pointer expectations | Next handoff |
 | --- | --- | --- | --- | --- |
-| `frame` | active change; optional `INTAKE.md` or framing context | `INTAKE.md`, `SPEC.md`, and roadmap update when office-hours approves roadmap scale | office-hours sets `active_change` and `stage: frame`; frame sets `canonical_spec`; `stage` stays `frame` unless plan handoff is approved | `auto-frame`, `auto-ceo-review`, `auto-plan`, or `auto-office-hours` |
-| `plan` | `canonical_spec`; optional review sections | `.agent/work/<change>/PLAN.md`; optional `DESIGN.md` | `canonical_plan` points to PLAN.md; `canonical_design` only when DESIGN.md exists; `stage` becomes `plan` | `auto-eng-review` or `auto-execute` |
-| `execute` | approved PLAN.md, current slice, acceptance criteria, verification commands | code/docs/tests plus PLAN-required slice evidence | auto-execute sets `stage: execute` after `canonical_plan` resolves and before changes; do not change canonical pointers to missing files; do not add slice cursor state | re-enter `auto-execute` for remaining slices unless blocked; continue into `auto-verify`'s contract when all slices complete and no checkpoint, STOP condition, context pressure, or host limitation blocks continuation |
-| `verify` | canonical PLAN.md, executed slices, verification commands | verification report; `VERIFY-GAP` annotations in PLAN.md on failure | auto-verify sets `stage: verify` after `canonical_plan` resolves and before commands; failure returns state to `stage: execute` | `auto-execute` on fail; `verified` on pass |
-| `verified` | canonical PLAN.md and verification evidence | completed change summary; roadmap phase marked done when applicable | `stage: verified` set only on full verification pass | no next lifecycle skill; may mention `auto-office-hours` only as a new-objective entry point |
-| `resume` | current state and canonical artifact pointers | concise recovery summary and next recommended skill | does not invent missing pointers; stale pointers are reported, not silently repaired | the skill matching recovered state |
+| `frame` | active change; optional `INTAKE.md` or framing context | `INTAKE.md`, `SPEC.md`, and roadmap update when office-hours approves roadmap scale | office-hours sets `active_change` and `stage: frame`; frame sets `canonical_spec`; `stage` stays `frame` unless plan handoff is approved | **Continue** → `auto-plan` (construction) or `auto-office-hours` (not frameable). **Stop** → recommend `auto-ceo-review` (optional review). |
+| `plan` | `canonical_spec`; optional review sections | `.agent/work/<change>/PLAN.md`; optional `DESIGN.md` | `canonical_plan` points to PLAN.md; `canonical_design` only when DESIGN.md exists; `stage` becomes `plan` | **Stop** → recommend `auto-eng-review` (optional) or `auto-execute`. |
+| `execute` | approved PLAN.md, current slice, acceptance criteria, verification commands | code/docs/tests plus PLAN-required slice evidence | auto-execute sets `stage: execute` after `canonical_plan` resolves and before changes; do not change canonical pointers to missing files; do not add slice cursor state | **Continue** → re-enter for remaining slices, then `auto-verify` when all complete; **stop** at a valid checkpoint, STOP condition, context pressure, or host limit. |
+| `verify` | canonical PLAN.md, executed slices, verification commands | verification report; `VERIFY-GAP` annotations in PLAN.md on failure | auto-verify sets `stage: verify` after `canonical_plan` resolves and before commands; failure returns state to `stage: execute` | **Stop** → `verified` on pass (terminal); recommend `auto-execute` on fail. |
+| `verified` | canonical PLAN.md and verification evidence | completed change summary; roadmap phase marked done when applicable | `stage: verified` set only on full verification pass | None — terminal. `auto-office-hours` only as a new-objective entry point. |
+| `resume` | current state and canonical artifact pointers | concise recovery summary and next recommended skill | does not invent missing pointers; stale pointers are reported, not silently repaired | Orient and stop → recommend the skill matching recovered state. |
 
 ## Handoff Contract
 
-Lifecycle stages hand off through five durable elements. Skills recommend, prepare, or continue into the next stage when the same session can safely do so. `stage: verified` is terminal for the active change; any `auto-office-hours` mention is for a new objective, not a same-change handoff.
+Every lifecycle edge resolves to one of two moves:
 
-Seamless continuation is not mandatory nested skill invocation. A clean continuation should not force the user to manually invoke the next lifecycle skill, but direct user/host invocation remains valid. Do not invent a universal Skill tool or hidden dispatcher. Continue only after the exit gate is satisfied; otherwise stop with the blocker and next action.
+- **Continue inline** — adopt and follow the next stage's contract in the same session, so a clean handoff does not force the user to re-invoke the next skill. This is not nested skill invocation (DD-003): no skill calls another; the agent loads the next stage's SKILL.md and proceeds. Do not invent a universal Skill tool or hidden dispatcher.
+- **Stop and hand off** — end the turn with the next-stage recommendation, blocker, or completion note. The user or host invokes the next skill; direct invocation is always valid.
+
+**Continue inline by default** once the exit gate is satisfied, any review verdict is non-blocking, and context is healthy. **Stop and hand off at three edges:**
+
+1. **Entry into `execute`** — code and project artifacts start changing there, so a human authorizes it. Covers `plan → execute`, `auto-eng-review → execute`, and a failed `verify → execute`.
+2. **Entry into an optional review** — `auto-ceo-review` and `auto-eng-review` are user-invoked. A producing skill recommends a review and stops; it does not auto-run a review on the artifact it just wrote, which would trap the review in the producer's own context.
+3. **Verify outcomes** — a pass closes the change; a fail returns to execute. Stop either way.
+
+`auto-verify` is the mandatory gate, not an optional review, so `execute → verify` continues inline — but the audit re-derives from fresh command output, never from execute's reasoning. `auto-onboard` and `auto-resume` are utilities: they report findings and recommend a next skill rather than continuing, so the user keeps the direction. `stage: verified` is terminal; any `auto-office-hours` mention is for a new objective, not a same-change handoff.
+
+Each handoff carries five durable elements:
 
 1. **Exit gate** — condition required to advance.
 2. **Artifacts produced or updated** — files written for the active change.
 3. **State mutation** — `current.json` fields changed through `sync-status.mjs`: `stage`, canonical pointers, or review verdicts.
 4. **Diagnostic handling** — `error` diagnostics block advancement; `warning` diagnostics surface to the next stage.
 5. **Next-stage recommendation, blocker, or completion note** — what to invoke next, what blocks progress, or that the active change is complete.
+
+## Checkpoint Semantics
+
+`Checkpoint after:` marks a slice that must pause for human input before the next slice starts. The label vocabulary is pinned in `contracts-data.json`; each value's meaning is defined here, once, so `auto-plan` (which assigns checkpoints) and `auto-execute` (which honors them) cannot drift.
+
+- **`none`** (default) — no pause. The next slice may start once verification passes.
+- **`human-verify`** — valid only when available commands, tests, host tools, and local inspection cannot verify the result. If any of those can confirm it, it is not a checkpoint.
+- **`decision`** — valid only when a human must choose among named product, architecture, design, scope, or risk options before the next slice can start, and the answer changes that next slice. The checkpoint reason must state the concrete question and the options. Not for reversible engineering judgment, known limitations, verification findings, or "the next slice should be…" notes.
+- **`human-action`** — valid only when progress requires an external action the agent cannot perform, such as 2FA, account approval, or off-machine access.
+
+Verification findings, implementation caveats, downstream consequences, and recommendations for an already-approved next slice are not checkpoints. Record them as slice evidence or risks and continue.
 
 ## Review Verdict Routing
 

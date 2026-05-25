@@ -72,7 +72,7 @@ Use `references/recovery-scenarios.md` for the full routing table. The invariant
 - Review verdicts (if present)
 - `.agent/.automaton/state/current.json` is read-only for auto-resume; stale pointers are reported, not silently repaired
 - Diagnostic handling: missing or conflicting state surfaces as a `warning` in the summary; `error`-level diagnostics block the resume
-- Recommended next skill when recovered state is incomplete or blocked; none when the active change is verified complete. The user or host invokes the next skill; auto-resume does not chain.
+- Orient and stop (utility skill): recommend the next skill when recovered state is incomplete or blocked; none when the active change is verified complete. auto-resume reports and stops rather than continuing, so the user picks the direction.
 
 ## Rules
 

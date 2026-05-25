@@ -114,10 +114,7 @@ Append-replace the evidence block. Do not paste transcripts, full command logs, 
 
 The next slice is selected from `PLAN.md`; do not invent slice cursor or checkpoint fields in `.agent/.automaton/state/current.json`. Change state only through `node .agent/.automaton/scripts/sync-status.mjs` when stage, active change, review state, or canonical artifact pointers change.
 
-If the completed slice has a checkpoint, validate that it actually requires human input:
-- `human-verify` is valid only when available commands, tests, host tools, and local inspection cannot verify the result.
-- `decision` is valid only when the checkpoint reason names a concrete question and options whose answer changes the next slice, architecture, design, product scope, or risk posture.
-- `human-action` is valid only when progress requires an external action the agent cannot perform.
+If the completed slice has a checkpoint, validate that it actually requires human input per the checkpoint definitions (`human-verify`, `decision`, `human-action`) in `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Checkpoint Semantics): a checkpoint holds only when its defined condition is met.
 
 Do not pause for checkpoint text that only records verification findings, implementation caveats, downstream consequences, known limitations, or a recommendation for the next already-approved slice. Record a plan correction, keep the evidence, and continue when normal continuation conditions pass.
 
@@ -127,7 +124,7 @@ Continue within the selected execution window only when verification passed, dep
 
 When the selected execution window is complete but `PLAN.md` still has uncompleted approved slices, return to **Select Execution Window** immediately. "N slices remain" is progress state, not a stop reason. Remaining approved slices require another execution-window pass unless a valid checkpoint, STOP condition, context-pressure tier, or unavailable host capability prevents continuing.
 
-If all slices are complete and no STOP condition applies, ensure slice evidence is recorded, then continue into `auto-verify`'s contract in the same session when safe. Do not make the user run `auto-verify` manually just because execution finished. When continuing, re-read the canonical `PLAN.md`, collect every acceptance criterion, run or derive verification commands, and produce the verification report. Do not trust execute's own slice evidence as final verification.
+If all slices are complete and no STOP condition applies, ensure slice evidence is recorded, then continue inline into `auto-verify`'s contract when safe. Do not make the user run `auto-verify` manually just because execution finished. When continuing, re-read the canonical `PLAN.md`, collect every acceptance criterion, run or derive verification commands, and produce the verification report. Do not trust execute's own slice evidence as final verification.
 
 ### Record Corrections
 
