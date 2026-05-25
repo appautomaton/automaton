@@ -23,7 +23,7 @@ Before producing the recovery summary:
 - Trust durable artifacts over memory.
 - Report stale pointers plainly.
 - Recommend a next skill only when recovered state has incomplete or blocked work. For verified completion, report no next lifecycle skill.
-- Read `references/quality.md` (~36 lines) when the summary becomes narrative recap.
+- Read `references/quality.md` when the summary becomes narrative recap.
 
 ## Do
 
@@ -81,7 +81,7 @@ Use `references/recovery-scenarios.md` for the full routing table. The invariant
 - Artifacts loaded
 - Review verdicts (if present)
 - `.agent/.automaton/state/current.json` is read-only for auto-resume; stale pointers are reported, not silently repaired
-- Diagnostic handling: missing or conflicting state surfaces as a `warning` in the summary; `error`-level diagnostics block the resume
+- Diagnostic handling: error-level diagnostics block this skill; missing or conflicting state surfaces as a warning in the summary.
 - Orient and stop (utility skill): recommend the next skill when recovered state is incomplete or blocked; none when the active change is verified complete. auto-resume reports and stops rather than continuing, so the user picks the direction.
 
 ## Rules

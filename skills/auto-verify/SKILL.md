@@ -23,7 +23,7 @@ Before writing the verification report:
 - Tie every result to fresh command output or direct observation.
 - Name skipped checks explicitly. Omission is not a pass.
 - Treat partial evidence as FAIL for the plan.
-- Read `references/quality.md` (~36 lines) when the report sounds confident without proof.
+- Read `references/quality.md` when the report sounds confident without proof.
 
 ## Do
 
@@ -72,7 +72,7 @@ Each gap block needs `VERIFY-GAP`, evidence, and a fix objective. Recommend `aut
 - Inline verification report; `PLAN.md` annotated with `VERIFY-GAP` blocks on failure
 - State recorded in `current.json` through `sync-status.mjs`: `stage: verify` when verification starts, `stage: verified` on pass, or `stage: execute` on fail
 - `.agent/steering/ROADMAP.md` phase marked done on pass when applicable
-- Diagnostic handling: `error`-level diagnostics block the verification run; `warning`-level findings surface to the report
+- Diagnostic handling: error-level diagnostics block this skill; warning-level findings surface to the report.
 - PASS closeout: report `Change status: complete` and `New objective: use auto-office-hours`; do not emit `Recommended next skill`
 - FAIL closeout: stop and recommend `auto-execute` — gap-fixing re-enters code changes, so the user or host invokes it.
 

@@ -22,7 +22,7 @@ Before writing steering artifacts:
 - Cite paths for repo-shape claims.
 - Treat artifact writing as expensive: write only durable project truth and immediate blockers, not scratch notes.
 - Stop scanning once the next action is clear.
-- Read `references/quality.md` (~36 lines) when artifacts turn into broad inventory.
+- Read `references/quality.md` when artifacts turn into broad inventory.
 
 ## Do
 
@@ -90,7 +90,7 @@ Do not guess. Do not proceed.
 
 - Steering artifacts: `.agent/wiki/REPO-MAP.md`, `.agent/steering/PROJECT.md`, `.agent/steering/REQUIREMENTS.md`, `.agent/steering/ROADMAP.md`
 - `.agent/.automaton/state/current.json` is initialized by install/scaffold when missing; auto-onboard does not overwrite an existing `active_change` or `stage`
-- Diagnostic handling: `error`-level diagnostics block the onboard; `warning`-level findings surface to the steering artifacts
+- Diagnostic handling: error-level diagnostics block this skill; warning-level findings surface to the steering artifacts.
 - Orient and stop (utility skill): recommend `auto-office-hours` (when scale or shape is undefined) or `auto-frame` (bounded goal already in hand). auto-onboard reports and stops rather than continuing, so the user picks the direction.
 
 ## Rules

@@ -26,7 +26,7 @@ Before finalizing `SPEC.md`:
 - Preserve the user's broader intent; do not silently narrow scope.
 - Move implementation detail out unless it constrains scope.
 - Mark uncertain claims as assumptions.
-- Read `references/quality.md` (~38 lines) when the spec feels broad, padded, or hard to verify.
+- Read `references/quality.md` when the spec feels broad, padded, or hard to verify.
 
 ## Do
 
@@ -100,7 +100,7 @@ After writing SPEC.md, run `node .agent/.automaton/scripts/sync-status.mjs --act
 
 - Frameable path: **SPEC.md** written to `.agent/work/<change>/SPEC.md`; `canonical_spec` and frame state recorded through `sync-status.mjs`.
 - Not-frameable path: continue into `auto-office-hours`'s contract and do not report framing complete until an approved intake exists and SPEC.md can be written.
-- Diagnostic handling: error-level diagnostics block the frame; warning-level diagnostics surface to the next stage.
+- Diagnostic handling: error-level diagnostics block this skill; warning-level diagnostics surface to the next stage.
 - Handoff: after SPEC.md, continue inline into `auto-plan` when no review is needed and context is healthy. `auto-ceo-review` is an optional review — recommend it and stop rather than auto-running it on the spec just written. If not frameable, continue inline into `auto-office-hours` with the concrete blocker.
 
 ## Rules

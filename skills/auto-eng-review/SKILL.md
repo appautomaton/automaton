@@ -23,7 +23,7 @@ Before appending the engineering review:
 - Ground concerns in slices, file areas, commands, or missing artifacts.
 - Separate blockers from follow-up cleanup.
 - Avoid reopening product scope unless the plan is unbuildable.
-- Read `references/quality.md` (~36 lines) when findings are generic or unactionable.
+- Read `references/quality.md` when findings are generic or unactionable.
 
 ## Do
 
@@ -90,7 +90,7 @@ State the next skill based on the verdict.
 
 - `PLAN.md` with appended `## Review: Engineering` section
 - `.agent/.automaton/state/current.json` updated through `sync-status.mjs` with `engineering_review`; `stage` is unchanged by this skill
-- Diagnostic handling: `error`-level diagnostics block the review; `warning`-level diagnostics surface to the next stage
+- Diagnostic handling: error-level diagnostics block this skill; warning-level diagnostics surface to the next stage.
 - Next handoff, mapped from verdict: `approved` or `approved_with_risks` → stop, recommend `auto-execute`; `needs_correction` → stop, recommend `auto-plan`. Entering `auto-execute` starts code changes, so the user or host invokes it.
 
 ## Rules

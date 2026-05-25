@@ -23,7 +23,7 @@ Before marking a slice complete:
 - Keep edits inside the active slice.
 - Investigate root cause before fixing bugs; read `references/debug-protocol.md` only when bounded diagnosis needs more structure.
 - Record verification evidence before advancing or selecting the next slice.
-- Read `references/quality.md` (~37 lines) when the diff looks clever, defensive, or broader than the plan requires.
+- Read `references/quality.md` when the diff looks clever, defensive, or broader than the plan requires.
 
 ## Prerequisites
 
@@ -160,7 +160,7 @@ Do NOT write code unless:
 - Slice evidence updated in place: inline slice in `PLAN.md`, or linked detail file plus compact `PLAN.md` pointer.
 - Execute stage recorded through `sync-status.mjs` when execution begins; no slice cursor field is added to current.json.
 - Execution window checkpoint or stop reason when continuation pauses; if approved slices remain, name the valid blocker that prevents continuing.
-- Diagnostic handling: error-level diagnostics block the slice; warning-level diagnostics surface to the user and the next stage.
+- Diagnostic handling: error-level diagnostics block this skill; warning-level diagnostics surface to the user and the next stage.
 - Verification report when all slices complete and continuation is safe; otherwise recommended next skill: `auto-execute` (slices remain), `auto-verify` (execution complete but continuation blocked), or `auto-plan` (structural failure).
 
 ## Rules

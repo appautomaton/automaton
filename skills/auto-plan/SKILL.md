@@ -26,7 +26,7 @@ Before finalizing `PLAN.md`:
 - Attach a verification command to every material slice.
 - Name the execution topology: default continuation path, explicit checkpoints, subagent routes, and any parallel-safe groups.
 - Remove vague tasks that do not define done.
-- Read `references/quality.md` (~36 lines) when the plan leaves execution decisions to the implementer.
+- Read `references/quality.md` when the plan leaves execution decisions to the implementer.
 
 ## Do
 
@@ -129,7 +129,7 @@ Run `node .agent/.automaton/scripts/sync-status.mjs --canonical-plan ".agent/wor
 - `PLAN.md`: written to `.agent/work/<change>/PLAN.md`
 - `DESIGN.md`: written to `.agent/work/<change>/DESIGN.md` (if needed)
 - `.agent/.automaton/state/current.json`: records `canonical_design` (when written), `canonical_plan`, and `stage: plan` through `sync-status.mjs`
-- Diagnostic handling: `error`-level diagnostics block the plan; `warning`-level diagnostics surface to the next stage
+- Diagnostic handling: error-level diagnostics block this skill; warning-level diagnostics surface to the next stage.
 - Next handoff: stop and recommend `auto-eng-review` (optional engineering review) or `auto-execute`. `auto-plan` does not continue inline — the optional review is user-invoked, and entering `auto-execute` starts code changes a human authorizes.
 
 ## Rules
