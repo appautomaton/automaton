@@ -15,6 +15,8 @@ First action: run `node .agent/.automaton/scripts/get-context.mjs` from the proj
 
 Product bet review. Restates the objective as one crisp bet, identifies differentiation, calls out generic or mis-scoped direction. Does not design implementation or write code.
 
+A good review names the bet in one sentence, identifies the weakest assumption, and renders a verdict in under 150 words. A bad review restates the spec.
+
 Loading discipline: one SPEC.md read, one review paragraph, one verdict. Read project files when understanding the codebase helps ground the review — verify that spec claims reflect what actually exists before approving or rejecting.
 
 ## Quality Gate

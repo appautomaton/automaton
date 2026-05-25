@@ -15,6 +15,8 @@ First action: run `node .agent/.automaton/scripts/get-context.mjs` from the proj
 
 Execution safety review. Architecture, data flow, edge cases, test strategy, not product vision. It does not modify the plan or reopen product scope. Identifies risks that could cause failure, stalling, or rework.
 
+A good review names the riskiest slice, the most likely failure mode, and whether the test strategy catches it. A bad review lists generic concerns.
+
 Loading discipline: one PLAN.md read, optional DESIGN.md when `canonical_design` exists, one risk matrix, one verdict. Read source files when assessing technical risk — slice boundaries, dependency assumptions, and blast radius claims are only verifiable against the actual code.
 
 ## Quality Gate
