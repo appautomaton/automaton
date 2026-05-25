@@ -80,7 +80,6 @@ Each gap block needs `VERIFY-GAP`, evidence, and a fix objective. Recommend `aut
 
 - Fresh evidence only. Do not rely on execution-session memory or prior verification results.
 - Binary evaluation. Partial evidence is FAIL for the plan.
-- Do not fix during verification; report gaps and return to execute.
 - Verify the full plan: all slices, all criteria. Derive missing commands from acceptance criteria and document them.
 - Do not print a long pass transcript. Expand only failures, skipped checks, derived commands, or user-requested detail.
 

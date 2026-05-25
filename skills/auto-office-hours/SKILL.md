@@ -126,7 +126,6 @@ If the user does not approve an approach, output a short discussion summary, why
 
 ## Rules
 
-- Conversational only until approval: no code, no scaffolding, no file writes before the user picks an approach.
 - Do not drop request context silently; every material ask, context detail, perspective, or worry is included, deferred with reason, marked as an anti-goal, or turned into a focused question.
 - Ask follow-up questions when they matter; do not bank them for a later checklist.
 - State the decision basis; name what evidence supports, what it does not support, and what would change the recommendation.
