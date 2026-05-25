@@ -109,9 +109,9 @@ Add an L3 test: every "continue inline" appearance in lifecycle skills must refe
 
 ---
 
-### R3. Failure handling unified across both state scripts
+### R3. Failure handling unified across both state scripts ✅ resolved differently
 
-*Refined from original R3 — unify with existing Diagnostic Handling block*
+*Resolved by removing the Diagnostic Handling section from FRAMEWORK.md entirely. LLMs naturally report script failures without prompt-level instruction. The runtime (exit code 1, error JSON) is sufficient signal.*
 
 **Where:** All 7 skills that invoke `sync-status.mjs`. The script exits non-zero on error and prints `"synced": false` to stdout. No SKILL.md says "if it fails, stop." FRAMEWORK.md's Diagnostic Handling block currently mentions only `get-context.mjs`.
 
@@ -157,9 +157,9 @@ Recovery recommendation: `auto-onboard` (rebuild state from artifacts).
 
 ---
 
-### R5. Halt-on-error contract divorced from invocation imperative
+### R5. Halt-on-error contract divorced from invocation imperative ✅ resolved differently
 
-*New (Pass 2)*
+*Resolved by removing the Diagnostic Handling section and per-skill boilerplate entirely. The premise (agents need prompt-level instruction to stop on script errors) was not validated by real usage. The runtime's exit code and error JSON are sufficient.*
 
 **Where:** All 9 skills. `First action: run get-context.mjs` sits at line 12. The error-handling contract sits in Output at lines 75–158 (or in FRAMEWORK.md).
 
@@ -582,8 +582,8 @@ Sorted by impact ÷ effort, ready for execution.
 | # | Item | Effort | Impact |
 |---|------|--------|--------|
 | 1 | R1 — Anchor Inline Continuation Gate in FRAMEWORK + replace 5 edge phrasings | S | Closes vaguest cross-skill contract; all 5 inline edges resolve to one rule |
-| 2 | R5 — Co-locate halt-on-error with First action across 9 skills | XS | Highest leverage per token edited; closes the core "what do I do first" contract |
-| 3 | R3 — Unified diagnostic-handling clause covering both scripts | XS | Closes state-divergence at mutation point |
+| 2 | ~~R5 — Co-locate halt-on-error with First action across 9 skills~~ | ✅ | Resolved: removed babysitting language entirely |
+| 3 | ~~R3 — Unified diagnostic-handling clause covering both scripts~~ | ✅ | Resolved: removed babysitting language entirely |
 | 4 | R6 — Classify Shape step in auto-frame (subsumes original Q3) | S | Closes 6+ silent shape-degradation paths |
 | 5 | R2 — Extend auto-plan GATE for stage:execute + slice evidence | XS | Prevents accidental plan/evidence destruction |
 | 6 | R4 — auto-resume STOP for invalid_state_json | XS | Documents existing runtime behavior |
