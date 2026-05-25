@@ -305,7 +305,7 @@ Read `references/execution-loop.md` for the full verify-advance-continue protoco
 
 These sharpen output without changing system behavior.
 
-### Q1. auto-plan quality-gate trigger is meta-cognitive
+### Q1. auto-plan quality-gate trigger is meta-cognitive 🚫
 
 *Retained*
 
@@ -601,7 +601,7 @@ Sorted by impact ÷ effort, ready for execution.
 
 | # | Item | Effort |
 |---|------|--------|
-| 11 | Q1 — Make auto-plan quality trigger observable | XS |
+| 11 | ~~Q1 — Make auto-plan quality trigger observable~~ | 🚫 |
 | 12 | ~~Q2 — Verdict calibration in review preambles~~ | ✅ |
 | 13 | Q3 — auto-onboard pre-flight GATE | XS |
 | 14 | Q4 — Quick Scan in engineering-sections.md | XS |
