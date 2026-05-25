@@ -19,11 +19,9 @@ Load this reference only before presenting alternatives, recommending an approac
 
 ## Prose Hygiene
 
-Office-hours output attracts sycophantic validation and promotional framing. Assessments should name evidence, not feelings.
+Office-hours output attracts agreeable validation and promotional framing. Assessments should name evidence, not feelings.
 
 Scan for:
-- "That's an interesting approach": state the evidence-backed assessment
-- "There are many ways to think about this": pick one and state what evidence would change it
 - "exciting opportunity", "tremendous potential": name the specific wedge and evidence
 - Promotional adjectives about the user's idea
 - Alternatives that differ by tone but not by tradeoff

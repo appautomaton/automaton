@@ -310,8 +310,7 @@ test('office-hours separates work scale from work shape', () => {
 
 test('office-hours captures request coverage before narrowing scope', () => {
   const source = readFileSync(join(skillsRoot, 'auto-office-hours', 'SKILL.md'), 'utf8')
-  const startupTemplate = readFileSync(join(skillsRoot, 'auto-office-hours', 'references', 'startup-intake-template.md'), 'utf8')
-  const builderTemplate = readFileSync(join(skillsRoot, 'auto-office-hours', 'references', 'builder-intake-template.md'), 'utf8')
+  const intakeTemplate = readFileSync(join(skillsRoot, 'auto-office-hours', 'references', 'intake-template.md'), 'utf8')
 
   assert.match(source, /### Request Coverage/)
   assert.match(source, /perspectives or audiences/)
@@ -324,18 +323,22 @@ test('office-hours captures request coverage before narrowing scope', () => {
   assert.match(source, /Do not drop request context silently/)
   assert.match(source, /Scope coverage: included, deferred, anti-goals, and needs-decision items/)
 
-  for (const template of [startupTemplate, builderTemplate]) {
-    assert.match(template, /compact decision record/)
-    assert.match(template, /## Scope Coverage/)
-    assert.match(template, /Included:/)
-    assert.match(template, /Deferred:/)
-    assert.match(template, /Anti-goals:/)
-    assert.match(template, /Needs decision:/)
-    assert.match(template, /Omit empty sections/)
-    assert.match(template, /do not preserve the full alternatives analysis/)
-    assert.doesNotMatch(template, /## Approaches Considered/)
-    assert.doesNotMatch(template, /## Premises/)
-  }
+  assert.match(intakeTemplate, /compact decision record/)
+  assert.match(intakeTemplate, /## Scope Coverage/)
+  assert.match(intakeTemplate, /Included:/)
+  assert.match(intakeTemplate, /Deferred:/)
+  assert.match(intakeTemplate, /Anti-goals:/)
+  assert.match(intakeTemplate, /Needs decision:/)
+  assert.match(intakeTemplate, /Mode Context/)
+  assert.match(intakeTemplate, /Startup/)
+  assert.match(intakeTemplate, /Builder/)
+  assert.match(intakeTemplate, /Content/)
+  assert.match(intakeTemplate, /Omit empty sections/)
+  assert.match(intakeTemplate, /do not preserve the full alternatives analysis/)
+  assert.doesNotMatch(intakeTemplate, /## Approaches Considered/)
+  assert.doesNotMatch(intakeTemplate, /## Premises/)
+  assert.equal(existsSync(join(skillsRoot, 'auto-office-hours', 'references', 'startup-intake-template.md')), false)
+  assert.equal(existsSync(join(skillsRoot, 'auto-office-hours', 'references', 'builder-intake-template.md')), false)
 })
 
 test('review and verification templates avoid nobody-reads-this bulk', () => {
@@ -459,7 +462,7 @@ test('read-only skills do not include the state-write template', () => {
 
 test('auto-office-hours persists approved intake without pre-approval writes', () => {
   const source = readFileSync(join(skillsRoot, 'auto-office-hours', 'SKILL.md'), 'utf8')
-  const template = readFileSync(join(skillsRoot, 'auto-office-hours', 'references', 'startup-intake-template.md'), 'utf8')
+  const template = readFileSync(join(skillsRoot, 'auto-office-hours', 'references', 'intake-template.md'), 'utf8')
 
   assert.match(source, /Before approval, it writes nothing/)
   assert.match(source, /does not create SPEC\.md in conversational mode/)
@@ -871,14 +874,18 @@ test('codex install copies content-aware skill surfaces from source', () => {
 
 test('auto-office-hours uses observable diagnostic checks instead of posture language', () => {
   const skill = readFileSync(join(skillsRoot, 'auto-office-hours', 'SKILL.md'), 'utf8')
-  const antiSycophancy = readFileSync(join(skillsRoot, 'auto-office-hours', 'references', 'anti-sycophancy.md'), 'utf8')
+  const calibration = readFileSync(join(skillsRoot, 'auto-office-hours', 'references', 'diagnostic-calibration.md'), 'utf8')
 
   assert.match(skill, /names concrete evidence, a specific stakeholder, or an observable workaround/)
   assert.match(skill, /Evaluate evidence directly/)
   assert.doesNotMatch(skill, /uncomfortable|Comfort means|Challenge directly|take a position/i)
 
-  assert.match(antiSycophancy, /evidence-backed assessment/)
-  assert.doesNotMatch(antiSycophancy, /take a position|point of discomfort/)
+  assert.match(calibration, /evidence-backed assessment/)
+  assert.match(calibration, /Soft To Sharp/)
+  assert.doesNotMatch(calibration, /take a position|point of discomfort/)
+  assert.equal(existsSync(join(skillsRoot, 'auto-office-hours', 'references', 'anti-sycophancy.md')), false)
+  assert.equal(existsSync(join(skillsRoot, 'auto-office-hours', 'references', 'pushback-patterns.md')), false)
+  assert.equal(existsSync(join(skillsRoot, 'auto-office-hours', 'references', 'question-exemplars.md')), false)
 })
 
 test('lifecycle skills express handoff in durable-state vocabulary', () => {

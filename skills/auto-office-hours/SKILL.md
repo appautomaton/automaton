@@ -70,7 +70,7 @@ Recommend one approach and explain what evidence supports it, what it does not p
 
 ### Persist Approved Intake
 
-After approval, derive a date-prefixed change slug: `YYYY-MM-DD-<kebab-case-objective>` using today's date. Reuse `active_change` only when it already matches this discussion. Write `.agent/work/<change>/INTAKE.md` using `references/startup-intake-template.md` or `references/builder-intake-template.md`; Content mode uses the builder template with the required content fields from `references/content-intake.md`.
+After approval, derive a date-prefixed change slug: `YYYY-MM-DD-<kebab-case-objective>` using today's date. Reuse `active_change` only when it already matches this discussion. Write `.agent/work/<change>/INTAKE.md` using `references/intake-template.md`; Content mode includes the required content fields from `references/content-intake.md`.
 
 When scale is roadmap, replace `.agent/steering/ROADMAP.md` with the approved decomposition per `.agent/.automaton/references/ROADMAP-CONTRACT.md`.
 
@@ -135,9 +135,7 @@ If the user does not approve an approach, output a short discussion summary, why
 ## Deep
 
 - Read `references/operating-principles.md` for Startup and Builder doctrine.
-- Read `references/question-exemplars.md` when questions drift soft or generic.
-- Read `references/pushback-patterns.md` when answers are vague market, social proof, platform vision, growth, or undefined-term claims.
+- Read `references/diagnostic-calibration.md` when questions drift soft or generic, answers stay vague, or the response risks agreeable validation instead of evidence-backed assessment.
 - Read `references/alternatives-format.md` before presenting approaches.
-- Read `references/anti-sycophancy.md` when the response risks agreeable validation instead of evidence-backed assessment.
 - Read `references/landscape-awareness.md` when market, ecosystem, competitor, or current-state evidence would change the frame.
-- Read `references/startup-intake-template.md` or `references/builder-intake-template.md` before writing INTAKE.md.
+- Read `references/intake-template.md` before writing INTAKE.md.
