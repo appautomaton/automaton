@@ -268,16 +268,17 @@ test('shared anti-slop reference is the canonical content pattern taxonomy', () 
 
 test('artifact lifecycle reference defines stage handoffs and canonical pointers', () => {
   const lifecycle = readFileSync(join(skillsRoot, '_shared', 'references', 'ARTIFACT-LIFECYCLE.md'), 'utf8')
+  const framework = readFileSync(join(skillsRoot, '_shared', 'references', 'FRAMEWORK.md'), 'utf8')
 
   for (const stage of ['frame', 'plan', 'execute', 'verify', 'verified', 'resume']) {
-    assert.match(lifecycle, new RegExp(`\\\`${stage}\\\``))
+    assert.match(framework, new RegExp(`\\\`${stage}\\\``))
   }
 
-  assert.match(lifecycle, /canonical_spec/)
-  assert.match(lifecycle, /canonical_plan/)
-  assert.match(lifecycle, /canonical_design/)
-  assert.match(lifecycle, /`current\.json` is the cursor/)
-  assert.match(lifecycle, /Skills update it through `sync-status\.mjs`/)
+  assert.match(framework, /canonical_spec/)
+  assert.match(framework, /canonical_plan/)
+  assert.match(framework, /canonical_design/)
+  assert.match(framework, /current\.json/)
+  assert.match(framework, /sync-status\.mjs/)
   assert.match(lifecycle, /do not create a separate status prose artifact to mirror them/)
   assert.match(lifecycle, /Do not add archive behavior/)
   assert.match(lifecycle, /\.agent\/work\/<change>/)
@@ -694,8 +695,10 @@ test('controller prompts route current state writes through sync-status', () => 
     const source = readFileSync(join(skillsRoot, skillName, 'SKILL.md'), 'utf8')
 
     assert.match(source, pattern, `${skillName} must call sync-status.mjs with state flags`)
-    assert.match(source, /Do not edit `current\.json` by hand\./, `${skillName} must forbid hand-editing current.json`)
   }
+
+  const framework = readFileSync(join(skillsRoot, '_shared', 'references', 'FRAMEWORK.md'), 'utf8')
+  assert.match(framework, /[Nn]ever edit `current\.json` by hand/, 'FRAMEWORK.md must forbid hand-editing current.json')
 })
 
 test('authored skills do not require STATUS.md as lifecycle context', () => {

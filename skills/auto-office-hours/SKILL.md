@@ -9,7 +9,7 @@ metadata:
 
 Pre-frame conversation. Turns a vague idea into a sharp objective before framing begins.
 
-First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root. If the command fails, briefly troubleshoot the invocation or runtime path. If it runs and returns error diagnostics, report them and stop before writing artifacts. Then detect mode, work scale, and work shape from the user's language.
+First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root. Then detect mode, work scale, and work shape from the user's language.
 
 ## Preamble
 
@@ -74,7 +74,7 @@ After approval, derive a date-prefixed change slug: `YYYY-MM-DD-<kebab-case-obje
 
 When scale is roadmap, replace `.agent/steering/ROADMAP.md` with the approved decomposition per `.agent/.automaton/references/ROADMAP-CONTRACT.md`.
 
-Run `node .agent/.automaton/scripts/sync-status.mjs --active-change "<change>" --stage frame` from the project root. This records `active_change` and `stage` through the shared state validator. Do not edit `current.json` by hand.
+Run `node .agent/.automaton/scripts/sync-status.mjs --active-change "<change>" --stage frame` from the project root. This records `active_change` and `stage` through the shared state validator.
 
 ### Continue To Frame When Ready
 

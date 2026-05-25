@@ -9,7 +9,7 @@ metadata:
 
 Implementation controller. Executes approved plan slices without reopening product scope.
 
-First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root. If the command fails, briefly troubleshoot the invocation or runtime path. If it runs and returns error diagnostics, report them and stop before writing artifacts.
+First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root.
 
 ## Preamble
 
@@ -44,7 +44,7 @@ If the current slice involves prose, read `references/content-execution.md`. If 
 
 ### Mark Execute Stage
 
-After the canonical `PLAN.md` resolves and before changing code or project artifacts, run `node .agent/.automaton/scripts/sync-status.mjs --stage execute` from the project root. This records that the active change has entered execution while preserving the existing `canonical_plan`. Do not edit `current.json` by hand.
+After the canonical `PLAN.md` resolves and before changing code or project artifacts, run `node .agent/.automaton/scripts/sync-status.mjs --stage execute` from the project root. This records that the active change has entered execution while preserving the existing `canonical_plan`.
 
 ### Select Execution Window
 

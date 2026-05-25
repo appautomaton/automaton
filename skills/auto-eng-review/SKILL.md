@@ -9,7 +9,7 @@ metadata:
 
 Optional engineering-safety review. Validates that a plan is safe to execute before implementation begins.
 
-First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root. If the command fails, briefly troubleshoot the invocation or runtime path. If it runs and returns error diagnostics, report them and stop before writing artifacts. Then read `PLAN.md`; read `DESIGN.md` only when `canonical_design` is set and resolves to a file.
+First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root. Then read `PLAN.md`; read `DESIGN.md` only when `canonical_design` is set and resolves to a file.
 
 ## Preamble
 
@@ -23,7 +23,7 @@ Before appending the engineering review:
 - Ground concerns in slices, file areas, commands, or missing artifacts.
 - Separate blockers from follow-up cleanup.
 - Avoid reopening product scope unless the plan is unbuildable.
-- Read `references/quality.md` (~36 lines: anti-patterns, better shape, prose hygiene scan patterns) when findings are generic or unactionable.
+- Read `references/quality.md` (~36 lines) when findings are generic or unactionable.
 
 ## Do
 
@@ -72,7 +72,7 @@ Add a `## Review: Engineering` section to `PLAN.md` using the exact template in 
 
 ### Update State
 
-Run `node .agent/.automaton/scripts/sync-status.mjs --engineering-review "<verdict>"` from the project root. Do not edit `current.json` by hand.
+Run `node .agent/.automaton/scripts/sync-status.mjs --engineering-review "<verdict>"` from the project root.
 
 ### Recommend
 
@@ -97,22 +97,8 @@ State the next skill based on the verdict.
 
 ## Deep
 
-### Review Template
-
-Read `references/review-template.md` for the exact markdown format. (~21 lines: 5-field format covering verdict/strength/concern/action/verified, with rules on sentence limits and no extra commentary.)
-
-### Risk Matrix Examples
-
-Read `references/risk-examples.md` for sample risk matrices. (~40 lines: 3 scored examples: API migration → approved_with_risks, new external service → needs_correction, refactor → approved.)
-
-### Engineering Prime Directives
-
-Read `references/prime-directives.md` for 9 non-negotiable standards and preferences. (~35 lines: 9 standards from zero-silent-failures to scrap-it permission; engineering preferences section covering DRY, testing, observability, security, deployment.)
-
-### Engineering Review Sections
-
-Read `references/engineering-sections.md` only when the plan carries non-trivial engineering risk. (~160 lines: trigger-based checks for architecture, error/rescue map, security/threat model, data flow/interaction edge cases, code quality, test review, performance, observability, deployment/rollout, long-term trajectory, design/UX.)
-
-### Implementation Alternatives
-
-Read `references/implementation-alternatives.md` only when PLAN.md lacks an approach rationale, the user asks for alternatives, or the review verdict depends on comparing safer execution paths. (~25 lines: compact APPROACH format.)
+- Read `references/review-template.md` for the exact markdown format.
+- Read `references/risk-examples.md` for sample risk matrices.
+- Read `references/prime-directives.md` for 9 non-negotiable standards and preferences.
+- Read `references/engineering-sections.md` only when the plan carries non-trivial engineering risk.
+- Read `references/implementation-alternatives.md` only when PLAN.md lacks an approach rationale, the user asks for alternatives, or the review verdict depends on comparing safer execution paths.

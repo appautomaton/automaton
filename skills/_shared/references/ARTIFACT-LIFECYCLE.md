@@ -4,10 +4,8 @@ Shared contract for what each Automaton stage consumes, writes, records, and han
 
 ## Invariants
 
-- The only valid stages are `frame`, `plan`, `execute`, `verify`, `verified`, and `resume`.
-- The artifact layout remains `.agent/steering/`, `.agent/wiki/`, `.agent/work/<change>/`, and `.agent/.automaton/state/current.json`.
-- Canonical pointers live in `.agent/.automaton/state/current.json`.
-- `current.json` is the cursor for active change, stage, and canonical artifact paths. Skills update it through `sync-status.mjs`.
+Stage list, state contract, and `sync-status.mjs` mandate are in `FRAMEWORK.md`.
+
 - Concrete paths belong in `current.json`, `SPEC.md`, and `PLAN.md`; do not create a separate status prose artifact to mirror them.
 - Skills write artifacts only for the active change unless a skill explicitly documents a steering or wiki output.
 - Do not add archive behavior here: no archive commands, runtime enforcement, daemons, dashboards, browser workflows, marketplace behavior, or vendor-source imports.
@@ -49,12 +47,9 @@ Allowed active-change layout:
 
 ## Handoff Contract
 
-Every lifecycle edge resolves to one of two moves:
+The two-move model (**Continue inline** / **Stop and hand off**) is in `FRAMEWORK.md`. Continue inline by default so a clean handoff does not force the user to re-invoke the next skill. This is not nested skill invocation (DD-003): no skill calls another; the agent loads the next stage's SKILL.md and proceeds. Do not invent a universal Skill tool or hidden dispatcher.
 
-- **Continue inline** — adopt and follow the next stage's contract in the same session, so a clean handoff does not force the user to re-invoke the next skill. This is not nested skill invocation (DD-003): no skill calls another; the agent loads the next stage's SKILL.md and proceeds. Do not invent a universal Skill tool or hidden dispatcher.
-- **Stop and hand off** — end the turn with the next-stage recommendation, blocker, or completion note. The user or host invokes the next skill; direct invocation is always valid.
-
-**Continue inline by default** once the exit gate is satisfied, any review verdict is non-blocking, and context is healthy. **Stop and hand off at three edges:**
+**Stop and hand off at three edges:**
 
 1. **Entry into `execute`** — code and project artifacts start changing there, so a human authorizes it. Covers `plan → execute`, `auto-eng-review → execute`, and a failed `verify → execute`.
 2. **Entry into an optional review** — `auto-ceo-review` and `auto-eng-review` are user-invoked. A producing skill recommends a review and stops; it does not auto-run a review on the artifact it just wrote, which would trap the review in the producer's own context.

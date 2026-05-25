@@ -9,7 +9,7 @@ metadata:
 
 Planning controller. Turns approved framing into ordered slices with verification commands.
 
-First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root. If the command fails, briefly troubleshoot the invocation or runtime path. If it runs and returns error diagnostics, report them and stop before writing artifacts.
+First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root.
 
 ## Preamble
 
@@ -26,7 +26,7 @@ Before finalizing `PLAN.md`:
 - Attach a verification command to every material slice.
 - Name the execution topology: default continuation path, explicit checkpoints, subagent routes, and any parallel-safe groups.
 - Remove vague tasks that do not define done.
-- Read `references/quality.md` (~36 lines: anti-patterns, better shape, prose hygiene scan patterns) when the plan leaves execution decisions to the implementer.
+- Read `references/quality.md` (~36 lines) when the plan leaves execution decisions to the implementer.
 
 ## Do
 
@@ -122,7 +122,7 @@ If any of these are true, recommend `auto-frame` and stop.
 
 ### Update State
 
-Run `node .agent/.automaton/scripts/sync-status.mjs --canonical-plan ".agent/work/<change>/PLAN.md" --stage plan` from the project root. Add `--canonical-design ".agent/work/<change>/DESIGN.md"` when DESIGN.md was written. Do not edit `current.json` by hand.
+Run `node .agent/.automaton/scripts/sync-status.mjs --canonical-plan ".agent/work/<change>/PLAN.md" --stage plan` from the project root. Add `--canonical-design ".agent/work/<change>/DESIGN.md"` when DESIGN.md was written.
 
 ## Output
 
@@ -142,18 +142,7 @@ Run `node .agent/.automaton/scripts/sync-status.mjs --canonical-plan ".agent/wor
 
 ## Deep
 
-### Slice Design Examples
-
-Read `references/slice-examples.md` for well-designed vs. poorly-designed slices. (~103 lines: 2 good and 2 bad direct examples, 1 subagent-routed example with rationale, 1 topology section example with parallel-safe groups; rule of thumb: if you can't write the verification command before starting, the slice isn't defined.)
-
-### Verification Patterns
-
-Read `references/verification-patterns.md` for common verification commands by stack. (~47 lines: Node/Python/Rust/Go/General commands, 4 verification principles including "verify the exact behavior, not absence of errors.")
-
-### Context Loading Discipline
-
-Read `.agent/.automaton/references/CONTEXT-BUDGET.md` for progressive loading and context pressure tiers. (~76 lines: 4 principles, 6-step loading order, 4 pressure tiers with behavioral rules, no-re-read rule with exceptions.)
-
-### Artifact Lifecycle
-
-Read `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` when handoff rules or state pointer boundaries need clarification. (~105 lines: stage handoffs table, progressive disclosure layout with allowed paths, review verdict routing, STOP conditions.)
+- Read `references/slice-examples.md` for well-designed vs. poorly-designed slices.
+- Read `references/verification-patterns.md` for common verification commands by stack.
+- Read `.agent/.automaton/references/CONTEXT-BUDGET.md` for progressive loading and context pressure tiers.
+- Read `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` when handoff rules or state pointer boundaries need clarification.

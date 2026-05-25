@@ -9,7 +9,7 @@ metadata:
 
 Optional product-direction review. Decides whether a spec is worth building before planning begins.
 
-First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root. If the command fails, briefly troubleshoot the invocation or runtime path. If it runs and returns error diagnostics, report them and stop before writing artifacts.
+First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root.
 
 ## Preamble
 
@@ -23,7 +23,7 @@ Before appending the product review:
 - Replace strategic filler with user, action, value, and risk.
 - Separate supported claims from assumptions.
 - Name the strongest risk even when approving.
-- Read `references/quality.md` (~36 lines: anti-patterns, better shape, prose hygiene scan patterns) when the review sounds like polite validation.
+- Read `references/quality.md` (~36 lines) when the review sounds like polite validation.
 
 ## Do
 
@@ -60,7 +60,7 @@ Add a `## Review: Product` section to `SPEC.md` using the exact template in `ref
 
 ### Update State
 
-Run `node .agent/.automaton/scripts/sync-status.mjs --product-review "<verdict>"` from the project root. Do not edit `current.json` by hand.
+Run `node .agent/.automaton/scripts/sync-status.mjs --product-review "<verdict>"` from the project root.
 
 ### Recommend
 
@@ -82,22 +82,8 @@ On a non-blocking verdict (`approved` or `approved_with_risks`), continue inline
 
 ## Deep
 
-### Review Template
-
-Read `references/review-template.md` for the exact markdown format. (~21 lines: 5-field format covering verdict/strength/concern/action/de-scoped, with rules on sentence limits and no extra commentary.)
-
-### Product Bet Framing
-
-Read `references/bet-framing.md` for 10x check, platonic ideal, dream state mapping. (~70 lines: crisp vs. vague bet examples, reframing structure, 10x check, platonic ideal exercise, dream state mapping diagram, temporal interrogation by implementation hour, expansion framing FLAT vs. EXPANSIVE pattern.)
-
-### Review Modes
-
-Read `references/review-modes.md` for four scope postures and mode selection defaults. (~48 lines: SCOPE EXPANSION, SELECTIVE EXPANSION, HOLD SCOPE, SCOPE REDUCTION, each with ceremony/protocol; mode selection table by context.)
-
-### Product Checklist
-
-Read `references/product-checklist.md` for premise challenge, differentiation, scope calibration. (~44 lines: 7 check categories covering premise challenge, differentiation scan, scope calibration, leverage assessment, user sovereignty, anti-goal filter, temporal check.)
-
-### Cognitive Patterns
-
-Read `references/cognitive-patterns.md` for 18 thinking instincts. (~53 lines: 18 patterns from classification instinct to design-for-trust; application map linking patterns to review tasks.)
+- Read `references/review-template.md` for the exact markdown format.
+- Read `references/bet-framing.md` for 10x check, platonic ideal, dream state mapping.
+- Read `references/review-modes.md` for four scope postures and mode selection defaults.
+- Read `references/product-checklist.md` for premise challenge, differentiation, scope calibration.
+- Read `references/cognitive-patterns.md` for 18 thinking instincts.

@@ -9,7 +9,7 @@ metadata:
 
 Framing controller. Bounds and de-risks a request into a single `SPEC.md`.
 
-First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root. If the command fails, briefly troubleshoot the invocation or runtime path. If it runs and returns error diagnostics, report them and stop before writing artifacts.
+First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root.
 
 ## Preamble
 
@@ -94,7 +94,7 @@ Apply `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` while writing: no mir
 
 If `active_change` is `bootstrap` or does not match the current objective, derive a new slug: `YYYY-MM-DD-<kebab-case-objective>` using today's date. Use that slug before writing SPEC.md.
 
-After writing SPEC.md, run `node .agent/.automaton/scripts/sync-status.mjs --active-change "<change>" --canonical-spec ".agent/work/<change>/SPEC.md" --stage frame` from the project root. Use `--stage plan` only when the user approved direct plan handoff and no review is needed. Do not edit `current.json` by hand.
+After writing SPEC.md, run `node .agent/.automaton/scripts/sync-status.mjs --active-change "<change>" --canonical-spec ".agent/work/<change>/SPEC.md" --stage frame` from the project root. Use `--stage plan` only when the user approved direct plan handoff and no review is needed.
 
 ## Output
 

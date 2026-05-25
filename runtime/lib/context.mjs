@@ -36,6 +36,7 @@ export function buildSessionContext(projectRoot, options = {}) {
   }
 
   messages.push('Work artifacts, when relevant, live under .agent/work/; canonical artifact pointers are in current.json.')
+  messages.push('Read .agent/.automaton/references/FRAMEWORK.md once per session for the operating model.')
   messages.push("Reminder only: honor the user's latest request; use Automaton files when relevant, not as a mandate.")
   messages.push('Vocabulary: change, stage, slice, artifact, steering.')
 

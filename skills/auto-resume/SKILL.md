@@ -9,7 +9,7 @@ metadata:
 
 Session recovery. Rebuilds context from durable artifacts, not memory or guessing.
 
-First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root. If the command fails, briefly troubleshoot the invocation or runtime path. If it runs and returns error diagnostics, report them and stop before writing artifacts.
+First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root.
 
 ## Preamble
 
@@ -23,7 +23,7 @@ Before producing the recovery summary:
 - Trust durable artifacts over memory.
 - Report stale pointers plainly.
 - Recommend a next skill only when recovered state has incomplete or blocked work. For verified completion, report no next lifecycle skill.
-- Read `references/quality.md` (~36 lines: anti-patterns, better shape, prose hygiene scan patterns) when the summary becomes narrative recap.
+- Read `references/quality.md` (~36 lines) when the summary becomes narrative recap.
 
 ## Do
 
@@ -85,14 +85,6 @@ Use `references/recovery-scenarios.md` for the full routing table. The invariant
 
 ## Deep
 
-### Recovery Scenarios
-
-Read `references/recovery-scenarios.md` for common recovery situations. (~31 lines: state→action pairs covering fresh session, no active change, stale pointers, review verdict blocks, scaffold-level steering, and multiple changes.)
-
-### Artifact Dependency Order
-
-Read `references/artifact-order.md` for the full artifact dependency graph. (~48 lines: ASCII dependency graph from REPO-MAP through PLAN, loading rules by stage in table form, 3 anti-patterns.)
-
-### Context Loading Discipline
-
-Read `.agent/.automaton/references/CONTEXT-BUDGET.md` for progressive loading and degradation tiers. (~76 lines: 4 principles, 6-step loading order, 4 degradation tiers with behavioral rules, no-re-read rule with exceptions.)
+- Read `references/recovery-scenarios.md` for common recovery situations.
+- Read `references/artifact-order.md` for the full artifact dependency graph.
+- Read `.agent/.automaton/references/CONTEXT-BUDGET.md` for progressive loading and degradation tiers.

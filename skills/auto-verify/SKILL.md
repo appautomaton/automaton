@@ -9,11 +9,11 @@ metadata:
 
 Verification gate. Independent audit of a completed plan; runs once, not per-slice.
 
-First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root. If the command fails, briefly troubleshoot the invocation or runtime path. If it runs and returns error diagnostics, report them and stop before writing artifacts.
+First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root.
 
 ## Preamble
 
-Independent audit. Re-read the plan, run proof commands, and compare fresh results to acceptance criteria. It does not trust execute's self-assessment or fix what it finds. When verify continues inline from execute, execute's reasoning and slice evidence are already in context — treat them as unverified claims, re-run every command, and judge from fresh output alone. Continuation must never soften the audit.
+Independent audit. Re-read the plan, run proof commands, and compare fresh results to acceptance criteria. It does not trust execute's self-assessment or fix what it finds. When continuing inline from execute, re-derive from fresh command output — execute's reasoning is context, not evidence.
 
 Loading discipline: one PLAN.md read + verification commands per criterion. Read source files when verifying correctness requires inspecting the actual changes, not just command output.
 
@@ -23,7 +23,7 @@ Before writing the verification report:
 - Tie every result to fresh command output or direct observation.
 - Name skipped checks explicitly. Omission is not a pass.
 - Treat partial evidence as FAIL for the plan.
-- Read `references/quality.md` (~36 lines: anti-patterns, better shape, prose hygiene scan patterns) when the report sounds confident without proof.
+- Read `references/quality.md` (~36 lines) when the report sounds confident without proof.
 
 ## Do
 
@@ -33,7 +33,7 @@ Read the canonical `PLAN.md`. Load only linked `slices/slice-NNN.md` files and r
 
 ### Mark Verify Stage
 
-After `PLAN.md` resolves and before running commands, run `node .agent/.automaton/scripts/sync-status.mjs --stage verify` from the project root. Do not edit `current.json` by hand.
+After `PLAN.md` resolves and before running commands, run `node .agent/.automaton/scripts/sync-status.mjs --stage verify` from the project root.
 
 ### Collect Acceptance Criteria
 
@@ -70,7 +70,7 @@ Each gap block needs `VERIFY-GAP`, evidence, and a fix objective. Recommend `aut
 ## Output
 
 - Inline verification report; `PLAN.md` annotated with `VERIFY-GAP` blocks on failure
-- State recorded through `sync-status.mjs`: `stage: verify` when verification starts, `stage: verified` on pass, or `stage: execute` on fail
+- State recorded in `current.json` through `sync-status.mjs`: `stage: verify` when verification starts, `stage: verified` on pass, or `stage: execute` on fail
 - `.agent/steering/ROADMAP.md` phase marked done on pass when applicable
 - Diagnostic handling: `error`-level diagnostics block the verification run; `warning`-level findings surface to the report
 - PASS closeout: report `Change status: complete` and `New objective: use auto-office-hours`; do not emit `Recommended next skill`
@@ -86,14 +86,6 @@ Each gap block needs `VERIFY-GAP`, evidence, and a fix objective. Recommend `aut
 
 ## Deep
 
-### Verification Report Template
-
-Read `references/verification-template.md` for extended format guidance. (~43 lines: grouped-by-slice report format with Criterion/Result/Evidence/Gap per entry; PASS/FAIL summary shapes; rules on evidence requirements and PARTIAL counting as FAIL.)
-
-### Common Verification Gaps
-
-Read `references/common-gaps.md` for frequently missed scenarios. (~51 lines: 6-category checklist covering input validation, error handling, state/side-effects, security, observability, edge cases, with specific items per category.)
-
-### Artifact Lifecycle
-
-Read `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` when state pointer or handoff rules need clarification. (~105 lines: stage handoffs table, progressive disclosure layout with allowed paths, review verdict routing, STOP conditions.)
+- Read `references/verification-template.md` for extended format guidance.
+- The LLM already knows common verification gaps (input validation, error handling, concurrency, security, observability). Verify what the plan requires; flag an unmentioned gap only when it is obviously critical to the change.
+- Read `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` when state pointer or handoff rules need clarification.

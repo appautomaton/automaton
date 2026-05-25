@@ -9,7 +9,7 @@ metadata:
 
 Repository discovery. Builds bounded project truth from evidence, not guessing.
 
-First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root. If the command fails, briefly troubleshoot the invocation or runtime path. If it runs and returns error diagnostics, report them and stop before writing artifacts.
+First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root.
 
 ## Preamble
 
@@ -22,7 +22,7 @@ Before writing steering artifacts:
 - Cite paths for repo-shape claims.
 - Treat artifact writing as expensive: write only durable project truth and immediate blockers, not scratch notes.
 - Stop scanning once the next action is clear.
-- Read `references/quality.md` (~36 lines: anti-patterns, better shape, prose hygiene scan patterns) when artifacts turn into broad inventory.
+- Read `references/quality.md` (~36 lines) when artifacts turn into broad inventory.
 
 ## Do
 
@@ -103,14 +103,6 @@ Do not guess. Do not proceed.
 
 ## Deep
 
-### Scan Protocol
-
-Read `references/topology-scan.md` for runtime surfaces, package boundaries, stack conventions. (~56 lines: 7-layer read order from existing Automaton state through delivery surfaces, budget rules, REPO-MAP.md output requirements.)
-
-### Artifact Contract
-
-Read `references/artifact-contract.md` for exact format and required sections. (~92 lines: progressive disclosure structure for 5 artifacts, writing standard, confidence model with Observed/Inferred/Needs Confirmation, per-artifact expectations and required sections.)
-
-### Question Patterns
-
-Read `references/question-patterns.md` for good and bad follow-up questions. (~39 lines: 4 good patterns with evidence→assumption→decision structure, 3 bad open-ended anti-patterns, escalation rule.)
+- Read `references/topology-scan.md` for runtime surfaces, package boundaries, stack conventions.
+- Read `references/artifact-contract.md` for exact format and required sections.
+- Read `references/question-patterns.md` for good and bad follow-up questions.
