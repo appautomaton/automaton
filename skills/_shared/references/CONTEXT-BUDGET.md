@@ -8,7 +8,7 @@ Internal guidelines for preserving reasoning headroom across multi-session agent
 2. **Load progressively.** Start with the smallest artifact that unlocks the next decision. Load more only when needed.
 3. **Never re-read.** If you loaded a file in this session, do not read it again unless the user explicitly requests it, you know it has changed, or you are running a verification step that requires fresh evidence.
 4. **Generate summaries, not transcripts.** When reporting findings, compress 500 lines of evidence into 5 lines of conclusion.
-5. **Keep artifacts concrete.** Do not write context-budget fields, token-allocation notes, or percentage estimates into SPEC.md, PLAN.md, slice detail files, evidence blocks, or STATUS.md. Artifacts record objectives, acceptance criteria, verification, dependencies, status, evidence, risks, and links.
+5. **Keep artifacts concrete.** Do not write context-budget fields, token-allocation notes, or percentage estimates into SPEC.md, PLAN.md, slice detail files, or evidence blocks. Artifacts record objectives, acceptance criteria, verification, dependencies, status, evidence, risks, and links.
 
 ## Progressive Loading Order
 
@@ -16,11 +16,10 @@ When entering any stage, load files in this order. Stop as soon as you have enou
 
 ```
 1. .agent/.automaton/state/current.json (always, < 50 tokens)
-2. STATUS.md             (always, < 200 tokens)
-3. SPEC.md               (if canonical_spec exists, < 1000 tokens)
-4. PLAN.md               (if executing, < 1000 tokens)
-5. Wiki pages            (only if referenced by spec or plan)
-6. Source files          (read as needed to understand the project and produce accurate work)
+2. SPEC.md               (if canonical_spec exists, < 1000 tokens)
+3. PLAN.md               (if executing, < 1000 tokens)
+4. Wiki pages            (only if referenced by spec or plan)
+5. Source files          (read as needed to understand the project and produce accurate work)
 ```
 
 ## Artifact Language Boundary

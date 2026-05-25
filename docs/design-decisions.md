@@ -12,17 +12,17 @@ Shared scripts are self-contained but no longer copied into every skill folder.
 
 **Why:** `.agent/` is the one common root across Claude, Codex, and OpenCode installs, so shared reference docs and scripts can live there without per-skill duplication.
 
-**See:** `lib/install.mjs` (`installProject`, `installHost`, `removeManifestOwnedSharedReferences`, `removeManifestOwnedSharedScripts`).
+**See:** `lib/install.mjs` (`installProject`, `installHost`, `syncHostSkills`).
 
 ---
 
-## DD-002: current.json as cursor, STATUS.md as summary
+## DD-002: current.json as the single state cursor
 
-`current.json` is the only source for active change, stage, canonical artifact pointers, and review verdicts. `STATUS.md` carries the prose summary only: what is true now, next step, and open risks.
+`current.json` is the only source for active change, stage, canonical artifact pointers, and review verdicts. Maintained prose summaries are intentionally not part of the lifecycle contract.
 
-**Why:** JSON parsing is deterministic across LLM providers; markdown frontmatter is fragile. Separating cursor from summary prevents conflicting writes and avoids spending prompt tokens mirroring machine state into prose — state mutations go to JSON, prose goes to markdown.
+**Why:** JSON parsing is deterministic across LLM providers; markdown summaries drift and cost prompt tokens. State mutations go to JSON. Human-readable context comes from canonical artifacts (`INTAKE.md`, `SPEC.md`, `PLAN.md`, review sections, and roadmap items) or from generated command output.
 
-**See:** `runtime/lib/state.mjs`, `runtime/lib/status.mjs`, `runtime/lib/context.mjs`.
+**See:** `runtime/lib/state.mjs`, `runtime/lib/context.mjs`.
 
 ---
 
@@ -34,7 +34,7 @@ Shared scripts are self-contained but no longer copied into every skill folder.
 
 ## DD-004: Prerequisites as data, not code
 
-Stage prerequisites declared in `contracts-data.json`. Plan requires `canonicalSpec`; execute requires `canonicalPlan`.
+Stage prerequisites declared in `contracts-data.json`. Plan requires `canonicalSpec`; execute, verify, and verified require `canonicalPlan`.
 
 **Why:** LLMs comply inconsistently with soft guidance under user pressure. Data-driven prerequisites are enforced by `validate.mjs` regardless of prompt.
 
@@ -54,7 +54,7 @@ L1 (state invariants) in runtime. L2 (artifact shape) in consuming skill. L3 (pr
 
 Host startup integration produces a short reminder before any skill runs.
 
-**Why:** Instant orientation without invoking a skill or summarizing progress prose. The message identifies Automaton as an installed harness, points to `current.json` and `STATUS.md`, and reminds the agent that the user's latest request remains authoritative. Claude and Codex use SessionStart hooks; OpenCode uses its plugin event/chat hooks, including compaction handling.
+**Why:** Instant orientation without invoking a skill or summarizing progress prose. The message identifies Automaton as an installed harness, points to `current.json` and the work-artifact tree, and reminds the agent that the user's latest request remains authoritative. Claude and Codex use SessionStart hooks; OpenCode uses its plugin event/chat hooks, including compaction handling.
 
 ---
 

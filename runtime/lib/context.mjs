@@ -4,7 +4,6 @@ import { join } from 'node:path'
 import { loadCurrentState } from './state.mjs'
 
 const STATE_PATH = '.agent/.automaton/state/current.json'
-const STATUS_PATH = '.agent/steering/STATUS.md'
 
 function loadCurrentStateSummary(projectRoot) {
   const target = join(projectRoot, STATE_PATH)
@@ -36,12 +35,12 @@ export function buildSessionContext(projectRoot, options = {}) {
     messages.push(`State JSON: ${STATE_PATH} (no active state recorded).`)
   }
 
-  messages.push(`Status summary: ${STATUS_PATH}. Work artifacts, when relevant, live under .agent/work/; canonical artifact pointers are in current.json.`)
+  messages.push('Work artifacts, when relevant, live under .agent/work/; canonical artifact pointers are in current.json.')
   messages.push("Reminder only: honor the user's latest request; use Automaton files when relevant, not as a mandate.")
   messages.push('Vocabulary: change, stage, slice, artifact, steering.')
 
   if (compacted) {
-    messages.push('Context compacted; reload the state/status paths before relying on prior Automaton context.')
+    messages.push('Context compacted; reload current.json and relevant work artifacts before relying on prior Automaton context.')
   }
 
   messages.push('</automaton_reminder>')

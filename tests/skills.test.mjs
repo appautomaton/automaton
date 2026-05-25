@@ -113,8 +113,7 @@ test('auto-onboard ships progressive-disclosure support docs and templates', () 
     'templates/REPO-MAP.md',
     'templates/PROJECT.md',
     'templates/REQUIREMENTS.md',
-    'templates/ROADMAP.md',
-    'templates/STATUS.md'
+    'templates/ROADMAP.md'
   ]
 
   for (const relativePath of expectedFiles) {
@@ -131,8 +130,8 @@ test('auto-onboard ships progressive-disclosure support docs and templates', () 
   const roadmapTemplate = readFileSync(join(onboardRoot, 'templates', 'ROADMAP.md'), 'utf8')
   const sharedRoadmapContract = readFileSync(join(skillsRoot, '_shared', 'references', 'ROADMAP-CONTRACT.md'), 'utf8')
 
-  assert.match(artifactContract, /do not duplicate canonical artifact paths/)
-  assert.match(artifactContract, /name artifact roles instead/)
+  assert.match(artifactContract, /Do not duplicate canonical artifact paths/)
+  assert.match(artifactContract, /`current\.json`, SPEC\.md, and PLAN\.md own active work pointers/)
   assert.match(artifactContract, /Do not use durable artifacts as scratchpads/)
   assert.match(artifactContract, /do not include `Open Questions`, `Import Verdict`/)
   assert.match(artifactContract, /do not carry generic unknowns/)
@@ -244,7 +243,7 @@ test('shared references include subagent protocol but no host-specific generated
 test('artifact lifecycle reference defines stage handoffs and canonical pointers', () => {
   const lifecycle = readFileSync(join(skillsRoot, '_shared', 'references', 'ARTIFACT-LIFECYCLE.md'), 'utf8')
 
-  for (const stage of ['frame', 'plan', 'execute', 'verify', 'resume']) {
+  for (const stage of ['frame', 'plan', 'execute', 'verify', 'verified', 'resume']) {
     assert.match(lifecycle, new RegExp(`\\\`${stage}\\\``))
   }
 
@@ -252,20 +251,21 @@ test('artifact lifecycle reference defines stage handoffs and canonical pointers
   assert.match(lifecycle, /canonical_plan/)
   assert.match(lifecycle, /canonical_design/)
   assert.match(lifecycle, /`current\.json` is the cursor/)
-  assert.match(lifecycle, /`STATUS\.md` is a compact human summary, not a pointer registry/)
-  assert.match(lifecycle, /Do not duplicate canonical SPEC, DESIGN, PLAN/)
+  assert.match(lifecycle, /Skills update it through `sync-status\.mjs`/)
+  assert.match(lifecycle, /do not create a separate status prose artifact to mirror them/)
   assert.match(lifecycle, /Do not add archive behavior/)
   assert.match(lifecycle, /\.agent\/work\/<change>/)
   assert.match(lifecycle, /\.agent\/work\/<change>\/INTAKE\.md/)
   assert.match(lifecycle, /discovered by `active_change`, not by a canonical pointer/)
 })
 
-test('auto-resume treats STATUS prose paths as non-authoritative summary text', () => {
+test('auto-resume recovery scenarios prefer current state and canonical artifacts', () => {
   const recovery = readFileSync(join(skillsRoot, 'auto-resume', 'references', 'recovery-scenarios.md'), 'utf8')
 
-  assert.match(recovery, /STATUS\.md Mentions Old Artifact Paths/)
-  assert.match(recovery, /Prefer `current\.json` and the canonical artifacts/)
-  assert.match(recovery, /stale summary text/)
+  assert.match(recovery, /Fresh Session, Active Change Exists/)
+  assert.match(recovery, /Stale Canonical Pointer/)
+  assert.match(recovery, /Report stale pointer/)
+  assert.doesNotMatch(recovery, /STATUS\.md|status prose|summary text/)
 })
 
 test('artifact lifecycle supports progressive disclosure without scope narrowing', () => {
@@ -389,6 +389,7 @@ test('skills keep review-template.md in references only, with no dead examples d
 
 test('auto-frame preserves scope and supports adaptive SPEC shapes', () => {
   const source = readFileSync(join(skillsRoot, 'auto-frame', 'SKILL.md'), 'utf8')
+  const specShape = readFileSync(join(skillsRoot, 'auto-frame', 'references', 'spec-shape.md'), 'utf8')
 
   assert.match(source, /produces the canonical artifact: `SPEC\.md` when the request is frameable/)
   assert.match(source, /SPEC\.md` is the reloadable contract/)
@@ -400,16 +401,17 @@ test('auto-frame preserves scope and supports adaptive SPEC shapes', () => {
   assert.match(source, /continue into `auto-office-hours`'s diagnostic and intake flow/)
   assert.match(source, /Use this only when one focused framing question is not enough/)
   assert.match(source, /Silent narrowing is a framing failure/)
-  assert.match(source, /Broader intent/)
-  assert.match(source, /Work scale and work shape/)
+  assert.match(specShape, /Broader intent/)
+  assert.match(specShape, /Work scale and work shape/)
   assert.match(source, /\*\*INTAKE\.md is optional\.\*\*/)
   for (const token of ['structural change', 'behavioral invariants', 'gap matrix', 'audit questions', 'migration target', 'coverage target']) {
-    assert.match(source, new RegExp(token, 'i'), `auto-frame must support adaptive spec token: ${token}`)
+    assert.match(specShape, new RegExp(token, 'i'), `auto-frame spec shape must support adaptive spec token: ${token}`)
   }
 })
 
 test('auto-frame checks request coverage before writing SPEC', () => {
   const source = readFileSync(join(skillsRoot, 'auto-frame', 'SKILL.md'), 'utf8')
+  const specShape = readFileSync(join(skillsRoot, 'auto-frame', 'references', 'spec-shape.md'), 'utf8')
 
   assert.match(source, /### Coverage Check/)
   assert.match(source, /scope coverage/)
@@ -419,8 +421,8 @@ test('auto-frame checks request coverage before writing SPEC', () => {
   assert.match(source, /Anti-goals must appear/)
   assert.match(source, /Needs-decision items require one focused question or 2–3 concrete options/)
   assert.match(source, /Do not drop a material item silently/)
-  assert.match(source, /Target user or stakeholder/)
-  assert.match(source, /Scope coverage decisions/)
+  assert.match(specShape, /Target user or stakeholder/i)
+  assert.match(specShape, /Scope coverage decisions/i)
 })
 
 test('plan execute and verify preserve linked detail and traceability IDs', () => {
@@ -464,10 +466,10 @@ test('auto-office-hours persists approved intake without pre-approval writes', (
   assert.match(source, /Persist Approved Intake/)
   assert.match(source, /Continue To Frame When Ready/)
   assert.match(source, /\.agent\/work\/<change>\/INTAKE\.md/)
-  assert.match(source, /Update `\.agent\/\.automaton\/state\/current\.json`:/)
-  assert.match(source, /`active_change` → `<change>`/)
-  assert.match(source, /`stage` → `frame`/)
-  assert.match(source, /Run `node \.agent\/\.automaton\/scripts\/sync-status\.mjs` from the project root\./)
+  assert.match(source, /sync-status\.mjs --active-change "<change>" --stage frame/)
+  assert.match(source, /records `active_change` and `stage`/)
+  assert.match(source, /`stage: frame`/)
+  assert.match(source, /shared state validator/)
   assert.match(source, /`INTAKE\.md` is guaranteed only for an approved office-hours session/)
   assert.match(source, /Approved, complete intake should flow into `auto-frame` without another user prompt/)
   assert.match(source, /write `\.agent\/work\/<change>\/SPEC\.md`/)
@@ -604,10 +606,13 @@ test('auto-verify treats pass as completed change, not resume handoff', () => {
   assert.match(skill, /New objective.*`auto-office-hours`/)
   assert.match(skill, /Use `auto-resume` only for later re-entry or recovery/)
   assert.match(skill, /PASS closeout: report `Change status: complete` and `New objective: use auto-office-hours`; do not emit `Recommended next skill`/)
+  assert.match(skill, /sync-status\.mjs --stage verify/)
+  assert.match(skill, /sync-status\.mjs --stage verified/)
+  assert.match(skill, /sync-status\.mjs --stage execute/)
   assert.match(template, /PASS summary:/)
   assert.match(template, /New objective.*`auto-office-hours`/)
   assert.match(template, /use the `New objective` line for future work instead/)
-  assert.match(lifecycle, /no next lifecycle skill on pass/)
+  assert.match(lifecycle, /`stage: verified` is terminal/)
   assert.match(lifecycle, /`auto-office-hours` mention is for a new objective, not a same-change handoff/)
   assert.match(roadmap, /during re-entry or recovery/)
   assert.doesNotMatch(skill, /Recommended next skill: `auto-resume`/)
@@ -618,15 +623,17 @@ test('auto-verify treats pass as completed change, not resume handoff', () => {
 test('auto-resume treats verified completion as no automatic next skill', () => {
   const skill = readFileSync(join(skillsRoot, 'auto-resume', 'SKILL.md'), 'utf8')
   const artifactOrder = readFileSync(join(skillsRoot, 'auto-resume', 'references', 'artifact-order.md'), 'utf8')
+  const recoveryScenarios = readFileSync(join(skillsRoot, 'auto-resume', 'references', 'recovery-scenarios.md'), 'utf8')
 
   assert.match(skill, /For verified completion, report no next lifecycle skill/)
-  assert.match(skill, /Stage `verify` → change complete; report completion/)
-  assert.match(skill, /surface them as optional future work/)
+  assert.match(recoveryScenarios, /Stage `verify` → `auto-verify`/)
+  assert.match(recoveryScenarios, /Stage `verified` → change complete; report completion/)
+  assert.match(skill + recoveryScenarios, /surface them as optional future work/)
   assert.match(skill, /none - change complete/)
   assert.match(skill, /Do not turn a completed verified change into an automatic `auto-office-hours` handoff/)
   assert.match(artifactOrder, /surface pending roadmap items only as context/)
   assert.doesNotMatch(skill, /Change complete and ROADMAP\.md has pending items → `auto-office-hours`/)
-  assert.doesNotMatch(skill, /Stage `verify`[^.\n]*`auto-office-hours`/)
+  assert.doesNotMatch(skill, /Stage `verified`[^.\n]*`auto-office-hours`/)
 })
 
 test('artifact lifecycle allows clean execute-to-verify continuation', () => {
@@ -637,13 +644,38 @@ test('artifact lifecycle allows clean execute-to-verify continuation', () => {
   assert.match(lifecycle, /should not force the user to manually invoke the next lifecycle skill/)
 })
 
-test('controller prompts use canonical state path for direct state writes', () => {
-  const directUpdatePattern = /Update `current\.json`|`current\.json` updated/
+test('controller prompts route current state writes through sync-status', () => {
+  const directUpdatePattern = /Update `\.agent\/\.automaton\/state\/current\.json`:|Update `current\.json`|`current\.json` updated/
 
   for (const skillName of authoredSkills) {
     const source = readFileSync(join(skillsRoot, skillName, 'SKILL.md'), 'utf8')
 
-    assert.doesNotMatch(source, directUpdatePattern, `${skillName} must name .agent/.automaton/state/current.json for direct state writes`)
+    assert.doesNotMatch(source, directUpdatePattern, `${skillName} must not instruct direct current.json edits`)
+  }
+
+  const expectedStateFlags = {
+    'auto-office-hours': /sync-status\.mjs --active-change "<change>" --stage frame/,
+    'auto-frame': /sync-status\.mjs --active-change "<change>" --canonical-spec/,
+    'auto-plan': /sync-status\.mjs --canonical-plan/,
+    'auto-execute': /sync-status\.mjs --stage execute/,
+    'auto-verify': /sync-status\.mjs --stage verify/,
+    'auto-ceo-review': /sync-status\.mjs --product-review "<verdict>"/,
+    'auto-eng-review': /sync-status\.mjs --engineering-review "<verdict>"/
+  }
+
+  for (const [skillName, pattern] of Object.entries(expectedStateFlags)) {
+    const source = readFileSync(join(skillsRoot, skillName, 'SKILL.md'), 'utf8')
+
+    assert.match(source, pattern, `${skillName} must call sync-status.mjs with state flags`)
+    assert.match(source, /Do not edit `current\.json` by hand\./, `${skillName} must forbid hand-editing current.json`)
+  }
+})
+
+test('authored skills do not require STATUS.md as lifecycle context', () => {
+  for (const skillName of authoredSkills) {
+    const source = readFileSync(join(skillsRoot, skillName, 'SKILL.md'), 'utf8')
+
+    assert.doesNotMatch(source, /STATUS\.md|Status summary|status summary/, `${skillName} must not depend on STATUS.md`)
   }
 })
 
@@ -858,7 +890,7 @@ test('lifecycle skills express handoff in durable-state vocabulary', () => {
     assert.match(skill, /current\.json|canonical_/, `${skillName} must reference durable state via current.json or canonical pointers`)
     assert.match(skill, /diagnostic/i, `${skillName} must describe diagnostic handling`)
     assert.match(skill, /[Rr]ecommended next skill|next skill|New objective|Change status/, `${skillName} must describe next action, completion, or future objective`)
-    assert.match(skill, /\.agent\/(?:work|steering)\/|SPEC\.md|PLAN\.md|DESIGN\.md|STATUS\.md/, `${skillName} must name an artifact path`)
+    assert.match(skill, /\.agent\/(?:work|steering)\/|SPEC\.md|PLAN\.md|DESIGN\.md/, `${skillName} must name an artifact path`)
   }
 })
 
@@ -924,7 +956,8 @@ test('auto-frame and auto-plan distinguish core from conditional sections', () =
   // The doctrine requires lifecycle SKILL.md required-section lists to label every
   // field as core (always present) or conditional (include only when a trigger applies).
   // Match case-insensitively because individual skills may use Title Case for labels.
-  const frame = readFileSync(join(skillsRoot, 'auto-frame', 'SKILL.md'), 'utf8')
+  const frame = readFileSync(join(skillsRoot, 'auto-frame', 'SKILL.md'), 'utf8') +
+    readFileSync(join(skillsRoot, 'auto-frame', 'references', 'spec-shape.md'), 'utf8')
   const plan = readFileSync(join(skillsRoot, 'auto-plan', 'SKILL.md'), 'utf8')
 
   for (const [skillName, source] of [['auto-frame', frame], ['auto-plan', plan]]) {

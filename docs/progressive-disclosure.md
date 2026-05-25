@@ -12,7 +12,7 @@ Layer 2   references/*.md         21-180 lines   When trigger fires
 Layer 3   Work artifacts          Variable       When stage requires
 ```
 
-**Layer 0** — `buildSessionContext()` reads only `current.json` for change/stage and emits a short harness reminder. It points to `current.json`, `STATUS.md`, and the work-artifact directory without summarizing STATUS prose.
+**Layer 0** — `buildSessionContext()` reads only `current.json` for change/stage and emits a short harness reminder. It points to `current.json` and the work-artifact directory without summarizing progress prose.
 
 **Layer 0.5** — `.agent/.automaton/scripts/get-context.mjs` runs as each skill's first action. Self-contained (see DD-007), produces normalized JSON with diagnostics. Skills abort on error-level diagnostics before loading anything else.
 
@@ -21,7 +21,7 @@ Layer 3   Work artifacts          Variable       When stage requires
 **Layer 2** — Per-skill references (domain-specific) and shared references (`.agent/.automaton/references`, see DD-001). Loaded only when trigger fires.
 
 **Layer 3** — Artifacts load in order with stop-as-soon-as-you-can:
-`current.json (50 tok) → STATUS.md (200 tok) → SPEC.md (1k tok) → PLAN.md (1k tok) → wiki → source files`
+`current.json (50 tok) → SPEC.md (1k tok) → PLAN.md (1k tok) → wiki → source files`
 
 ## Degradation Tiers
 

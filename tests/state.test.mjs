@@ -1,13 +1,12 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { execFileSync } from 'node:child_process'
-import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
+import { execFileSync, spawnSync } from 'node:child_process'
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import { loadCurrentState, saveCurrentState } from '../lib/state.mjs'
-import { loadStatusSummary, saveStatusSummary } from '../lib/status.mjs'
 
 test('current state round-trips through .agent/.automaton/state/current.json', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-state-'))
@@ -20,57 +19,6 @@ test('current state round-trips through .agent/.automaton/state/current.json', (
     readFileSync(target, 'utf8'),
     '{\n  "active_change": "automaton-v1-foundation",\n  "stage": "plan"\n}\n'
   )
-})
-
-test('status summary round-trips through .agent/steering/STATUS.md', () => {
-  const root = mkdtempSync(join(tmpdir(), 'automaton-status-summary-'))
-  const target = join(root, '.agent', 'steering', 'STATUS.md')
-  const summary = {
-    whatIsTrueNow: ['Automaton has a compact sync helper.'],
-    nextStep: 'Run the targeted state and CLI checks.',
-    openRisks: ['Live host writeback still depends on controller discipline.']
-  }
-
-  saveStatusSummary(target, summary)
-
-  assert.equal(
-    readFileSync(target, 'utf8'),
-    '# Status\n\n## What Is True Now\n\n- Automaton has a compact sync helper.\n\n## Next Step\n\nRun the targeted state and CLI checks.\n\n## Open Risks\n\n- Live host writeback still depends on controller discipline.\n'
-  )
-  assert.deepEqual(loadStatusSummary(target), summary)
-})
-
-test('status parser reads prose summary without cursor fields', () => {
-  const root = mkdtempSync(join(tmpdir(), 'automaton-status-summary-annotated-'))
-  const target = join(root, '.agent', 'steering', 'STATUS.md')
-
-  mkdirSync(join(root, '.agent', 'steering'), { recursive: true })
-  writeFileSync(
-    target,
-    [
-      '# Status',
-      '',
-      '## What Is True Now',
-      '',
-      '- The active frame is summarized without relying on status prose as a path cursor.',
-      '',
-      '## Next Step',
-      '',
-      'Read current.json for canonical artifact paths.',
-      '',
-      '## Open Risks',
-      '',
-      '- none recorded',
-      ''
-    ].join('\n'),
-    'utf8'
-  )
-
-  assert.deepEqual(loadStatusSummary(target), {
-    whatIsTrueNow: ['The active frame is summarized without relying on status prose as a path cursor.'],
-    nextStep: 'Read current.json for canonical artifact paths.',
-    openRisks: []
-  })
 })
 
 test('saveCurrentState writes durable snake_case keys and loadCurrentState normalizes them', () => {
@@ -280,74 +228,122 @@ test('shared get-context script normalizes durable state and preserves extra key
   })
 })
 
-test('shared sync-status script strips legacy cursor fields while preserving status details', () => {
-  const root = mkdtempSync(join(tmpdir(), 'automaton-shared-status-sync-'))
+test('shared sync-status script is a no-op without state flags', () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-shared-state-noop-'))
   const statusTarget = join(root, '.agent', 'steering', 'STATUS.md')
   const script = fileURLToPath(new URL('../skills/_shared/scripts/sync-status.mjs', import.meta.url))
 
   mkdirSync(join(root, '.agent', 'steering'), { recursive: true })
-  writeFileSync(
-    statusTarget,
-    [
-      '---',
-      'active_change: stale-change',
-      'stage: frame',
-      '---',
-      '',
-      '# Status',
-      '',
-      '## Current Change',
-      '',
-      '- active change: `stale-change`',
-      '- current stage: `frame`',
-      '- canonical spec: `docs/spec.md`',
-      '- canonical plan: `docs/plan.md`',
-      '',
-      '## What Is True Now',
-      '',
-      '- Preserve this progress note.',
-      '',
-      '## Next Step',
-      '',
-      'Preserve this next step.',
-      '',
-      '## Open Risks',
-      '',
-      '- Preserve this risk.',
-      ''
-    ].join('\n'),
-    'utf8'
-  )
+  writeFileSync(statusTarget, '# Status\n\nLegacy note that should not be normalized.\n', 'utf8')
 
-  const output = execFileSync(process.execPath, [script, root], { encoding: 'utf8' })
-  const source = readFileSync(statusTarget, 'utf8')
+  const output = JSON.parse(execFileSync(process.execPath, [script, root], { encoding: 'utf8' }))
 
-  assert.deepEqual(JSON.parse(output), {
+  assert.deepEqual(output, {
     synced: true,
-    statusPath: statusTarget
+    statePath: join(root, '.agent', '.automaton', 'state', 'current.json')
   })
-  assert.doesNotMatch(source, /## Current Change/)
-  assert.doesNotMatch(source, /active change/)
-  assert.doesNotMatch(source, /current stage/)
-  assert.doesNotMatch(source, /canonical spec/)
-  assert.match(source, /^Preserve this next step\.$/m)
-  assert.deepEqual(loadStatusSummary(statusTarget), {
-    whatIsTrueNow: ['Preserve this progress note.'],
-    nextStep: 'Preserve this next step.',
-    openRisks: ['Preserve this risk.']
-  })
+  assert.equal(readFileSync(statusTarget, 'utf8'), '# Status\n\nLegacy note that should not be normalized.\n')
 })
 
-test('shared sync-status script creates a parseable status summary when missing', () => {
-  const root = mkdtempSync(join(tmpdir(), 'automaton-shared-status-missing-'))
+test('shared sync-status script does not create STATUS.md when missing', () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-shared-status-absent-'))
   const statusTarget = join(root, '.agent', 'steering', 'STATUS.md')
   const script = fileURLToPath(new URL('../skills/_shared/scripts/sync-status.mjs', import.meta.url))
 
   execFileSync(process.execPath, [script, root], { encoding: 'utf8' })
 
-  assert.deepEqual(loadStatusSummary(statusTarget), {
-    whatIsTrueNow: [],
-    nextStep: 'Run `auto-onboard` to refresh project truth for the repository before continuing.',
-    openRisks: []
+  assert.equal(existsSync(statusTarget), false)
+})
+
+test('shared sync-status script updates current state through validated flags', () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-shared-state-sync-'))
+  const script = fileURLToPath(new URL('../skills/_shared/scripts/sync-status.mjs', import.meta.url))
+  const currentTarget = join(root, '.agent', '.automaton', 'state', 'current.json')
+  const specPath = '.agent/work/my-change/SPEC.md'
+  const planPath = '.agent/work/my-change/PLAN.md'
+
+  mkdirSync(join(root, '.agent', 'work', 'my-change'), { recursive: true })
+  writeFileSync(join(root, specPath), '# Spec\n', 'utf8')
+  writeFileSync(join(root, planPath), '# Plan\n', 'utf8')
+
+  const frameOutput = JSON.parse(execFileSync(process.execPath, [
+    script,
+    root,
+    '--active-change',
+    'my-change',
+    '--canonical-spec',
+    specPath,
+    '--stage',
+    'frame'
+  ], { encoding: 'utf8' }))
+
+  assert.equal(frameOutput.synced, true)
+  assert.equal(frameOutput.stateChanged, true)
+  assert.deepEqual(frameOutput.changed, ['active_change', 'canonical_spec', 'stage'])
+  assert.deepEqual(frameOutput.diagnostics, [])
+  assert.deepEqual(loadCurrentState(currentTarget), {
+    activeChange: 'my-change',
+    canonicalSpec: specPath,
+    stage: 'frame'
+  })
+
+  execFileSync(process.execPath, [
+    script,
+    root,
+    '--canonical-plan',
+    planPath,
+    '--stage',
+    'plan'
+  ], { encoding: 'utf8' })
+
+  assert.deepEqual(loadCurrentState(currentTarget), {
+    activeChange: 'my-change',
+    canonicalSpec: specPath,
+    canonicalPlan: planPath,
+    stage: 'plan'
+  })
+})
+
+test('shared sync-status script rejects invalid state updates without writing current state', () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-shared-state-reject-'))
+  const script = fileURLToPath(new URL('../skills/_shared/scripts/sync-status.mjs', import.meta.url))
+  const currentTarget = join(root, '.agent', '.automaton', 'state', 'current.json')
+
+  const result = spawnSync(process.execPath, [script, root, '--stage', 'plan'], { encoding: 'utf8' })
+  const output = JSON.parse(result.stdout)
+
+  assert.equal(result.status, 1)
+  assert.equal(output.synced, false)
+  assert.ok(output.diagnostics.some((item) => item.code === 'missing_active_change'))
+  assert.ok(output.diagnostics.some((item) => item.code === 'missing_canonical_spec'))
+  assert.equal(existsSync(currentTarget), false)
+})
+
+test('shared sync-status script resets change-scoped state when active change changes', () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-shared-state-reset-'))
+  const script = fileURLToPath(new URL('../skills/_shared/scripts/sync-status.mjs', import.meta.url))
+  const currentTarget = join(root, '.agent', '.automaton', 'state', 'current.json')
+
+  saveCurrentState(currentTarget, {
+    activeChange: 'old-change',
+    stage: 'verify',
+    canonicalSpec: '.agent/work/old-change/SPEC.md',
+    canonicalPlan: '.agent/work/old-change/PLAN.md',
+    productReview: 'approved',
+    engineeringReview: 'approved'
+  })
+
+  execFileSync(process.execPath, [
+    script,
+    root,
+    '--active-change',
+    'new-change',
+    '--stage',
+    'frame'
+  ], { encoding: 'utf8' })
+
+  assert.deepEqual(loadCurrentState(currentTarget), {
+    activeChange: 'new-change',
+    stage: 'frame'
   })
 })

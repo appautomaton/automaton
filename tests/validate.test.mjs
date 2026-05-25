@@ -56,6 +56,13 @@ test('validateState returns error when verify stage is missing canonicalPlan', (
   assert.equal(result.diagnostics[0].code, 'missing_canonical_plan')
 })
 
+test('validateState returns error when verified stage is missing canonicalPlan', () => {
+  const result = validateState({ activeChange: 'my-change', stage: 'verified' })
+
+  assert.equal(result.valid, false)
+  assert.equal(result.diagnostics[0].code, 'missing_canonical_plan')
+})
+
 test('validateState returns no diagnostics for resume stage without canonical pointers', () => {
   const result = validateState({ activeChange: 'my-change', stage: 'resume' })
 

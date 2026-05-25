@@ -9,7 +9,7 @@ metadata:
 
 Session recovery. Rebuilds context from durable artifacts, not memory or guessing.
 
-First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding.
+First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root. If the command fails, briefly troubleshoot the invocation or runtime path. If it runs and returns error diagnostics, report them and stop before writing artifacts.
 
 ## Preamble
 
@@ -29,32 +29,15 @@ Before producing the recovery summary:
 
 ### Load State
 
-Read `.agent/steering/STATUS.md`. Read `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` for recovery order, stale-pointer handling, and stage handoffs. If the recovered state suggests the active change is complete or no active work exists, read `.agent/steering/ROADMAP.md` when it exists to surface pending phases as context, not to auto-start them.
-
-If `.agent/` does not exist or `current.json` is missing, recommend `auto-onboard` and stop.
+Read `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` for recovery order, stale-pointer handling, and stage handoffs. If `.agent/` or `current.json` is missing, recommend `auto-onboard` and stop. If work is complete or absent, read `.agent/steering/ROADMAP.md` only to surface pending phases as context.
 
 ### Verify Artifact Integrity
 
-Check that canonical pointers in `current.json` resolve to actual files:
-- `canonical_spec` → does `SPEC.md` exist?
-- `canonical_design` → does `DESIGN.md` exist?
-- `canonical_plan` → does `PLAN.md` exist?
-
-If any pointer is stale (file missing or moved), report it plainly. Recommend `auto-onboard` if steering is missing, or `auto-frame` / `auto-plan` if the specific artifact is missing.
+Check that `canonical_spec`, `canonical_design`, and `canonical_plan` resolve when present. If any pointer is stale, report it plainly; recommend `auto-onboard` for missing steering, `auto-frame` for missing SPEC.md, or `auto-plan` for missing PLAN.md.
 
 ### Load Artifacts
 
-Load artifacts in this order. Stop at the current stage; do not load artifacts from future stages.
-
-```
-Stage: frame    → Load INTAKE.md (if exists), SPEC.md
-Stage: plan     → Load SPEC.md, then DESIGN.md (if exists), then PLAN.md
-Stage: execute  → Load SPEC.md, DESIGN.md (if exists), PLAN.md, current slice
-Stage: verify   → Change complete; load PLAN.md only if reporting what was verified
-Stage: resume   → Load SPEC.md, STATUS.md
-```
-
-Treat `current.json` as the only source for active change, stage, and canonical artifact pointers. Treat `STATUS.md` as prose summary only; if it names stale artifacts or next steps, report that as stale prose and prefer `current.json`.
+Treat `current.json` as the only source for active change, stage, and canonical artifact pointers. Load artifacts in dependency order and stop at the current stage; read `references/artifact-order.md` for the full stage table.
 
 ### Surface Review State
 
@@ -62,11 +45,11 @@ If `current.json` contains `product_review` or `engineering_review`, read the co
 
 ### Recovery Summary
 
-Produce a concise summary:
+Produce a concise summary under 200 tokens:
 
 ```
 **Active change:** [name]
-**Stage:** [frame|plan|execute|verify|resume]
+**Stage:** [frame|plan|execute|verify|verified|resume]
 **Artifacts loaded:** [list]
 **What was done:** [1-2 sentences]
 **What was blocked:** [1-2 sentences, or "nothing"]
@@ -76,21 +59,11 @@ Produce a concise summary:
 **Roadmap:** [N pending / M total, or "not tracked"]
 ```
 
-Keep it under 200 tokens. The goal is orientation, not transcription.
+The goal is orientation, not transcription.
 
 ### Recommend Next Skill
 
-Based on the recovered state:
-- Stage `frame` with intake but no spec → `auto-frame` (intake survives)
-- Stage `frame` with no spec and no intake → `auto-frame`
-- Stage `frame` with spec but no product review → `auto-ceo-review`
-- Stage `plan` with no plan → `auto-plan`
-- Stage `plan` with plan but no engineering review → `auto-eng-review`
-- Stage `execute` → `auto-execute`
-- Stage `verify` → change complete; report completion. If ROADMAP.md has pending items, surface them as optional future work, but do not recommend `auto-office-hours` unless the user explicitly asks to start the next phase.
-- Stage `resume` with missing steering → `auto-onboard`
-- Change complete and ROADMAP.md has pending items → report completion and name pending phases as optional future work; no next lifecycle skill by default
-- Change complete and no pending roadmap items → report completion
+Use `references/recovery-scenarios.md` for the full routing table. The invariant: recommend the next lifecycle skill only when recovered state is incomplete or blocked. For verified completion, report no next lifecycle skill; if ROADMAP.md has pending items, surface them as optional future work, not an automatic `auto-office-hours` handoff.
 
 ## Output
 
@@ -114,7 +87,7 @@ Based on the recovered state:
 
 ### Recovery Scenarios
 
-Read `references/recovery-scenarios.md` for common recovery situations. (~41 lines: 8 state→action pairs covering fresh session, no active change, stale pointers, stale STATUS.md prose, review verdict blocks, scaffold-level steering, multiple changes, and old artifact paths.)
+Read `references/recovery-scenarios.md` for common recovery situations. (~31 lines: state→action pairs covering fresh session, no active change, stale pointers, review verdict blocks, scaffold-level steering, and multiple changes.)
 
 ### Artifact Dependency Order
 

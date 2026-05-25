@@ -5,11 +5,12 @@ import { STAGES } from '../lib/contracts.mjs'
 import { contextSummary, retrievalProfile } from '../lib/retrieval.mjs'
 
 test('retrieval profile covers every contract stage', () => {
-  assert.deepEqual(STAGES, ['frame', 'plan', 'execute', 'verify', 'resume'])
+  assert.deepEqual(STAGES, ['frame', 'plan', 'execute', 'verify', 'verified', 'resume'])
   assert.deepEqual(retrievalProfile('frame'), ['request', 'steering', 'wiki'])
   assert.deepEqual(retrievalProfile('plan'), ['request', 'steering', 'work', 'wiki'])
   assert.deepEqual(retrievalProfile('execute'), ['request', 'work', 'packet'])
   assert.deepEqual(retrievalProfile('verify'), ['request', 'work', 'evidence'])
+  assert.deepEqual(retrievalProfile('verified'), ['request', 'work', 'evidence'])
   assert.deepEqual(retrievalProfile('resume'), ['request', 'steering', 'work', 'state'])
 })
 

@@ -20,7 +20,6 @@ Module graph — files import each other. Called by hooks/plugins, not by skills
 |------|---------|
 | `context.mjs` | `buildSessionContext()` — reads current.json and outputs the cross-host harness reminder |
 | `state.mjs` | `loadCurrentState()` / `saveCurrentState()` — snake↔camel normalization |
-| `status.mjs` | STATUS.md prose-summary read/write |
 | `contracts.mjs` | Loads `contracts-data.json` — stages, prerequisites, review verdicts |
 | `contracts-data.json` | Pure data — the system's schema definition |
 | `validate.mjs` | `validateHandoff()` — L1 checks (stage valid? pointer resolves?) |
@@ -32,7 +31,7 @@ Self-contained — no runtime imports (see DD-007). Called by LLM via bash.
 | File | Purpose |
 |------|---------|
 | `get-context.mjs` | Reads current.json, outputs normalized JSON + diagnostics |
-| `sync-status.mjs` | Ensures STATUS.md has the compact prose-summary shape |
+| `sync-status.mjs` | Validates and updates current.json with state flags |
 
 ## Install Flow
 
@@ -40,16 +39,16 @@ Self-contained — no runtime imports (see DD-007). Called by LLM via bash.
 
 ```
 installProject()                    installHost(claude)
-├─ scaffold .agent/ tree            ├─ copy skills/ → .claude/skills/
-├─ sync runtime/ → .agent/.automaton/ │  (skip _shared/ and per-skill scripts)
-├─ sync shared refs → .agent/.automaton/references/
-├─ sync shared scripts → .agent/.automaton/scripts/
-└─ seed current.json                ├─ generate HOST-TOOLS.md per skill
-                                    ├─ wire hooks in .claude/settings.json
-                                    └─ record in install-manifest.json
+├─ scaffold .agent/ tree            ├─ replace the 9 skill dirs → .claude/skills/
+├─ replace runtime/ → .agent/.automaton/ │  (skip _shared/ and per-skill scripts)
+├─ replace shared refs → .agent/.automaton/references/
+├─ replace shared scripts → .agent/.automaton/scripts/
+└─ seed current.json if missing     ├─ generate HOST-TOOLS.md in auto-execute
+                                    ├─ replace generated hook/plugin implementations
+                                    └─ merge host config when needed
 ```
 
-Manifest tracks every installed file for exact `--uninstall` cleanup.
+Install ownership is deterministic by path: runtime/shared files, Automaton skill dirs, and generated hook/plugin implementations are refreshed from source; durable state and steering are seeded only when missing; host config files such as `.claude/settings.json`, `.codex/config.toml`, and `.codex/hooks.json` are created or merged.
 
 ## Skill ↔ Script Interaction
 
@@ -61,6 +60,7 @@ User invokes /auto-frame
   └─ LLM reads SKILL.md
   └─ Step 1: node .agent/.automaton/scripts/get-context.mjs → JSON state + diagnostics
   └─ LLM works (reads files, writes SPEC.md, etc.)
-  └─ Last step: node .agent/.automaton/scripts/sync-status.mjs → ensures STATUS.md shape
-  └─ Output: "Recommended next: auto-ceo-review"
+  └─ Last step: node .agent/.automaton/scripts/sync-status.mjs --canonical-spec ... --stage frame
+       → validates/writes current.json
+  └─ Output: "Recommended next: auto-plan" or "Optional review: auto-ceo-review"
 ```

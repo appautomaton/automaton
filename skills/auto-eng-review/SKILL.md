@@ -1,15 +1,15 @@
 ---
 name: auto-eng-review
-description: Engineering go/no-go on a plan. Use after auto-plan, before execution.
+description: Optional engineering go/no-go on a plan. Use when execution safety needs review before implementation.
 metadata:
   stage: plan
 ---
 
 # auto-eng-review
 
-Engineering-safety gate. Validates that a plan is safe to execute before implementation begins.
+Optional engineering-safety review. Validates that a plan is safe to execute before implementation begins.
 
-First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding. Read `PLAN.md`; read `DESIGN.md` only when `canonical_design` is set and resolves to a file.
+First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root. If the command fails, briefly troubleshoot the invocation or runtime path. If it runs and returns error diagnostics, report them and stop before writing artifacts. Then read `PLAN.md`; read `DESIGN.md` only when `canonical_design` is set and resolves to a file.
 
 ## Preamble
 
@@ -29,7 +29,7 @@ Before appending the engineering review:
 
 ### Load State
 
-Read `.agent/steering/STATUS.md`. Read the canonical `PLAN.md`. If `canonical_design` is null, missing, or points to a missing file, continue without DESIGN.md and note that the plan intentionally has no design artifact.
+Read the canonical `PLAN.md`. If `canonical_design` is null, missing, or points to a missing file, continue without DESIGN.md and note that the plan intentionally has no design artifact.
 
 ### Restate the Plan
 
@@ -72,9 +72,7 @@ Add a `## Review: Engineering` section to `PLAN.md` using the exact template in 
 
 ### Update State
 
-Run `node .agent/.automaton/scripts/sync-status.mjs` from the project root.
-Update `.agent/.automaton/state/current.json`:
-- `engineering_review` → `<verdict>`
+Run `node .agent/.automaton/scripts/sync-status.mjs --engineering-review "<verdict>"` from the project root. Do not edit `current.json` by hand.
 
 ### Recommend
 
@@ -83,7 +81,7 @@ State the next skill based on the verdict.
 ## Output
 
 - `PLAN.md` with appended `## Review: Engineering` section
-- `.agent/.automaton/state/current.json` updated with `engineering_review`; `stage` is unchanged by this skill
+- `.agent/.automaton/state/current.json` updated through `sync-status.mjs` with `engineering_review`; `stage` is unchanged by this skill
 - Diagnostic handling: `error`-level diagnostics block the review; `warning`-level diagnostics surface to the next stage
 - Recommended next skill, mapped from verdict: `approved` or `approved_with_risks` → `auto-execute`; `needs_correction` → `auto-plan`. The user or host invokes the next skill; auto-eng-review does not chain.
 

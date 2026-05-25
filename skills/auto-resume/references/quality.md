@@ -12,7 +12,7 @@ Load this reference only before producing the recovery summary or next-action re
 
 ## Better Shape
 
-- Prefer `current.json`, STATUS, and canonical artifacts over conversation memory.
+- Prefer `current.json` and canonical artifacts over conversation memory.
 - Report missing or stale pointers plainly.
 - Summarize only what changes the next action.
 - Name the exact next skill and the blocker it resolves.

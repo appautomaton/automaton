@@ -9,7 +9,7 @@ metadata:
 
 Planning controller. Turns approved framing into ordered slices with verification commands.
 
-First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding.
+First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root. If the command fails, briefly troubleshoot the invocation or runtime path. If it runs and returns error diagnostics, report them and stop before writing artifacts.
 
 ## Preamble
 
@@ -32,29 +32,17 @@ Before finalizing `PLAN.md`:
 
 ### Context Loading
 
-Load files in this order. Stop as soon as you have enough to proceed.
-
-```
-1. .agent/.automaton/state/current.json (always, < 50 tokens)
-2. STATUS.md             (always, < 200 tokens)
-3. SPEC.md               (always, < 1000 tokens)
-4. Linked spec detail    (only files named by SPEC.md and needed for planning)
-5. DESIGN.md             (if exists and relevant, < 1000 tokens)
-6. Wiki pages            (only if referenced by spec or plan)
-7. Source files          (read as needed to produce accurate slices)
-```
-
-Read and explore source files when understanding existing code helps produce accurate slices — module structure, current implementations, test patterns, and integration points all inform slice boundaries, verification commands, and dependency ordering. Do not ignore linked `spec/*.md` files when they contain normative requirements, gap IDs, invariants, or acceptance detail.
+Load the canonical SPEC.md, linked spec detail that carries normative requirements, relevant DESIGN.md, and source files needed to choose slice boundaries, dependencies, and verification commands. Do not ignore linked `spec/*.md` files when they contain requirement IDs, gap IDs, invariants, audit questions, migration checkpoints, coverage targets, or acceptance detail.
 
 ### Assess Review State (if reviews exist)
 
-If `product_review` exists in `current.json`, read the `## Review: Product` section from `SPEC.md` and factor its conclusions into the plan. If `product_review: approved_with_risks`, ensure the plan explicitly addresses each risk. If `product_review: descoped` or `needs_clarification`, stop and recommend `auto-frame`.
+If `product_review` exists in `current.json`, read `## Review: Product` in SPEC.md. Address each `approved_with_risks` risk in the plan. Stop and recommend `auto-frame` for `descoped` or `needs_clarification`.
 
 If the engineering approach is complex or risky, recommend `auto-eng-review` before execution.
 
-If SPEC.md contains content fields (Audience, Thesis, Voice, Content Anti-Goals) or the change produces writing, articles, briefs, decks, newsletters, documentation, or proposals, read `references/content-planning.md` (~59 lines: Pass 1 field carry-forward table, Pass 2 dimensions for slice design, content slice template, verification dimensions). Carry content fields into the plan; add channel, source policy, factual risk, and format where they affect execution or verification.
+If SPEC.md contains content fields or produces writing, articles, briefs, decks, newsletters, documentation, or proposals, read `references/content-planning.md`; carry forward channel, source policy, factual risk, and format where they affect execution or verification.
 
-If `SPEC.md` names requirement IDs, gap IDs, invariants, audit questions, migration checkpoints, or coverage targets, preserve those IDs in PLAN.md and attach them to the slices that satisfy them. Do not collapse traceable requirements into untraceable prose.
+If SPEC.md names requirement IDs, gap IDs, invariants, audit questions, migration checkpoints, or coverage targets, preserve them in PLAN.md and attach them to satisfying slices. Do not collapse traceable requirements into untraceable prose.
 
 ### Design Slices
 
@@ -66,7 +54,7 @@ Break work into ordered execution units, not topic buckets. Each slice must be:
 
 For content slices, also name the artifact target, allowed sources, factual-risk gate, and format constraint so `auto-execute` does not invent missing context.
 
-Before writing slices, think ahead to execution topology: which slices must run serially, which checkpoints require human judgment, which use subagents, and whether any parallel-safe groups exist. Continuation is the default after a verified slice; mark a checkpoint only when the agent must pause for human verification, a human decision, or a human action. Parallel-safe means dependencies are independent and write sets are disjoint; default to none. For multi-slice plans, make the topology clear that execution should continue through all approved slices; execution windows are context-management batches, not planned stopping points.
+Before writing slices, choose the execution topology: serial order, subagent routes, checkpoints, and parallel-safe groups. Continuation is the default after a verified slice; mark a checkpoint only when the agent must pause for human verification, a human decision, or a human action. Parallel-safe means dependencies are independent and write sets are disjoint; default to none. For multi-slice plans, make clear that execution should continue through all approved slices; execution windows are context-management batches, not planned stopping points.
 
 Frame each slice with required fields first, then only the overrides the slice needs:
 
@@ -94,25 +82,24 @@ Include when useful:
 Rules:
 - Every material slice must have a verification command.
 - Every material slice must have acceptance criteria; execution cannot verify vibes.
-- Omitted `Execution` means `direct`. State `subagent recommended` when the slice touches > 3 files, crosses subsystem boundaries, modifies shared interfaces or data schemas, or carries review risk. State `subagent required` only when the user asked for multi-agent execution or the slice modifies security-critical paths, production data, or irreversible state.
+- Omitted `Execution` means `direct`. Use `subagent recommended` for broad, cross-subsystem, interface, schema, or review-risk work. Use `subagent required` only for user-requested multi-agent execution or security-critical, production-data, or irreversible-state changes.
 - Omitted `Depends on` means `none`.
 - Continuation is the default. Omitted `Checkpoint after` means `none`, so the next slice may start after verification passes.
 - Verification findings, implementation caveats, downstream consequences, and next-slice recommendations are not checkpoints when the approved plan already names the next slice. Record them as slice evidence or risks and continue.
 - Use `human-verify` only when the result cannot be verified by available commands, tests, host tools, or local inspection.
 - Use `decision` only when the user must choose among named product, architecture, design, or scope options before the next slice can start. The checkpoint reason must include the concrete question and options. Do not use `decision` for reversible engineering judgment, known limitations, validation results, or "next slice should be..." notes.
 - Use `human-action` when progress requires an external action the agent cannot perform, such as 2FA, account approval, or off-machine access.
-- Slices should be small enough to complete in one session.
-- If a coherent slice has extended instructions that make PLAN.md hard to scan, move them to `slices/slice-NNN.md` and keep PLAN.md as the index. Split the slice only when it contains independent outcomes.
+- Keep slices small enough for one session. Move extended instructions to `slices/slice-NNN.md`; split only for independent outcomes.
 
 ### Write PLAN.md
 
 Write the plan to `.agent/work/<change>/PLAN.md`.
 
 **Core** sections (always present):
-- **Goal**: restate *or* reference the bounded goal from SPEC.md — a one-line pointer is sufficient; do not mirror the full SPEC text
-- **Ordered slice sequence**: slices in dependency order, with linked detail files when needed
-- **Execution routing and topology**: default route/checkpoint policy plus explicit overrides and checkpoints, and a **Parallel-safe groups:** line set to `none` or the parallel-safe slice groups
-- **Per-slice verification**: a verification command inline on every material slice
+- **Goal**: one-line bounded goal or SPEC.md pointer; do not mirror the full SPEC text.
+- **Ordered slice sequence**: dependency order, with linked detail files when needed.
+- **Execution routing and topology**: default continuation path, explicit overrides/checkpoints, and a **Parallel-safe groups:** line set to `none` or the slice groups.
+- **Per-slice verification**: one verification command inline on every material slice.
 
 **Conditional** sections — include only when the named trigger applies, otherwise omit or mark "n/a":
 - **Architecture approach** — trigger: introduces a new pattern, non-obvious decision, or cross-system integration. Omit when the design is obvious from SPEC.
@@ -123,7 +110,7 @@ Apply the Artifact Signal Discipline rules from `.agent/.automaton/references/AR
 
 ### Write DESIGN.md (if non-trivial)
 
-If the architecture is non-trivial or new patterns are introduced, write `DESIGN.md` to `.agent/work/<change>/DESIGN.md`. Keep it under 200 lines. If the architecture is obvious from the spec, skip this file.
+Write `.agent/work/<change>/DESIGN.md` only for non-trivial architecture or new patterns. Keep it under 200 lines; skip it when the approach is obvious from SPEC.
 
 <GATE>
 
@@ -137,17 +124,13 @@ If any of these are true, recommend `auto-frame` and stop.
 
 ### Update State
 
-Run `node .agent/.automaton/scripts/sync-status.mjs` from the project root.
-Update `.agent/.automaton/state/current.json`:
-- `canonical_design` → path to DESIGN.md (if written)
-- `canonical_plan` → path to PLAN.md
-- `stage` → `plan`
+Run `node .agent/.automaton/scripts/sync-status.mjs --canonical-plan ".agent/work/<change>/PLAN.md" --stage plan` from the project root. Add `--canonical-design ".agent/work/<change>/DESIGN.md"` when DESIGN.md was written. Do not edit `current.json` by hand.
 
 ## Output
 
 - `PLAN.md`: written to `.agent/work/<change>/PLAN.md`
 - `DESIGN.md`: written to `.agent/work/<change>/DESIGN.md` (if needed)
-- `.agent/.automaton/state/current.json` updated with `canonical_design` (when written), `canonical_plan`, and `stage: plan`
+- `.agent/.automaton/state/current.json`: records `canonical_design` (when written), `canonical_plan`, and `stage: plan` through `sync-status.mjs`
 - Diagnostic handling: `error`-level diagnostics block the plan; `warning`-level diagnostics surface to the next stage
 - Recommended next skill: `auto-eng-review` or `auto-execute`. The user or host invokes the next skill; auto-plan does not chain.
 

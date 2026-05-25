@@ -9,7 +9,7 @@ metadata:
 
 Repository discovery. Builds bounded project truth from evidence, not guessing.
 
-First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root → JSON `{activeChange, stage, canonicalSpec, canonicalDesign, canonicalPlan, productReview, engineeringReview, diagnostics}` (missing state normalizes to `"none"`/`null`). If any diagnostic has level `"error"`, stop and report it before proceeding.
+First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root. If the command fails, briefly troubleshoot the invocation or runtime path. If it runs and returns error diagnostics, report them and stop before writing artifacts.
 
 ## Preamble
 
@@ -28,14 +28,12 @@ Before writing steering artifacts:
 
 ### Detect State
 
-Three cases:
-1. **First-time or scaffold-level.** `get-context.mjs` returned no state or steering files are scaffold placeholders (e.g., `"..."` or template prompts). Proceed to scan.
-2. **Already-onboarded, no update requested.** `.agent/steering/PROJECT.md` contains real project truth and the user did not ask for a refresh. Report what exists and route by state:
-     - Active change with a stage → `auto-resume`
-     - No active change or stage is `none` → `auto-office-hours`
-3. **Already-onboarded, targeted refresh.** Steering exists and the user asks to update it (e.g., "update REQUIREMENTS because we added Postgres"). Focus on the evidence relevant to the update, update only the affected steering file(s), run `node .agent/.automaton/scripts/sync-status.mjs`, and report what changed. Read additional files when needed to produce an accurate update.
+Choose the smallest valid path:
+- First-time or scaffold-level steering: scan and write the starter artifacts.
+- Real steering, no refresh requested: do not rewrite; report what exists and route active work to `auto-resume`, otherwise `auto-office-hours`.
+- Targeted refresh: read only evidence relevant to the requested steering update and rewrite only affected artifacts.
 
-When handling ROADMAP.md during first-time setup, always keep the short placeholder. Do not create roadmap phases on a first run. On refresher runs, write roadmap phases only when strong repo evidence shows an existing or ongoing roadmap and the user confirms importing or refreshing it in chat; then use `.agent/.automaton/references/ROADMAP-CONTRACT.md` (~63 lines: canonical phase format, status values, update rules by skill, matching rule, single-file invariant).
+ROADMAP.md stays restrained. Do not create roadmap phases on a first run. On refresh, write phases only when strong repo evidence shows an existing or ongoing roadmap and the user confirms importing or refreshing it in chat; then use `.agent/.automaton/references/ROADMAP-CONTRACT.md`.
 
 ### Scan Top-Level Files
 
@@ -51,9 +49,7 @@ Read `references/topology-scan.md` (~56 lines: 7-layer read order, budget rules,
 
 ### Ask (if necessary)
 
-If ambiguity affects the steering output, ask ≤ 3 questions. Read `references/question-patterns.md` (~39 lines: 4 good evidence→assumption→decision patterns, 3 anti-patterns) for how to ask. If the answer can be inferred from the repo with one more targeted read, do that instead.
-
-For ROADMAP.md specifically: on first-time onboarding, do not ask and do not create phases. On refresher runs, if strong evidence of an ongoing roadmap exists but user confirmation is missing, ask whether to import/refresh it, leave the current roadmap alone, or route to `auto-office-hours` for a fresh decomposition. If there is no strong evidence, do not ask; keep the placeholder or existing roadmap unchanged.
+Ask only when ambiguity changes steering output. Read `references/question-patterns.md`; if one targeted repo read can answer it, read instead. For ROADMAP.md, never ask on first-time onboarding; on refresh, ask only when strong roadmap evidence exists but confirmation is missing.
 
 ### Write Artifacts
 
@@ -62,11 +58,10 @@ Use `templates/` as scaffolds:
 - `.agent/steering/PROJECT.md`: compact identity record; what this repo owns and why
 - `.agent/steering/REQUIREMENTS.md`: durable constraints only; no generic unknown parking
 - `.agent/steering/ROADMAP.md`: compact placeholder on first run; refresher-only phase updates when strong roadmap evidence exists and the user confirms in chat
-- `.agent/steering/STATUS.md`: current state and next step
 
 ### Update State
 
-Run `node .agent/.automaton/scripts/sync-status.mjs` from the project root.
+Do not overwrite an existing `active_change` or `stage`. `current.json` is initialized by install/scaffold when missing; auto-onboard writes steering truth, not active-change state.
 
 ### Report
 
@@ -93,27 +88,18 @@ Do not guess. Do not proceed.
 
 ## Output
 
-| Artifact | Location | Purpose |
-|----------|----------|---------|
-| REPO-MAP.md | `.agent/wiki/` | Bounded import record: surfaces, stack, boundaries, hotspots |
-| PROJECT.md | `.agent/steering/` | What this repo owns, why it exists, major surfaces |
-| REQUIREMENTS.md | `.agent/steering/` | Constraints, non-goals, risks, evidence anchors |
-| ROADMAP.md | `.agent/steering/` | High-signal placeholder on first run; refresher-only phases after strong roadmap evidence and chat confirmation |
-| STATUS.md | `.agent/steering/` | Current state, what is true now, next step |
-
-- `.agent/.automaton/state/current.json` initialized when missing; auto-onboard does not overwrite an existing `active_change` or `stage`
+- Steering artifacts: `.agent/wiki/REPO-MAP.md`, `.agent/steering/PROJECT.md`, `.agent/steering/REQUIREMENTS.md`, `.agent/steering/ROADMAP.md`
+- `.agent/.automaton/state/current.json` is initialized by install/scaffold when missing; auto-onboard does not overwrite an existing `active_change` or `stage`
 - Diagnostic handling: `error`-level diagnostics block the onboard; `warning`-level findings surface to the steering artifacts
 - Recommended next skill: `auto-office-hours` (when scale or shape is undefined) or `auto-frame` (when the user already has a bounded goal). The user or host invokes the next skill; auto-onboard does not chain.
 
 ## Rules
 
-- **Bounded scan.** Read no more than 10 files total. Summarize, do not transcribe.
-- **Evidence anchors.** Every claim in steering artifacts must cite a file path.
-- **Artifact minimalism.** Do not write speculative questions, confidence labels, or routing chatter into durable artifacts.
-- **Delete empty sections.** Templates are prompts, not required headings.
-- **Progressive loading.** README → config → 1 source file per surface → stop.
-- **No-re-read.** If you read a file once, do not read it again in this session.
-- **Roadmap restraint.** Never create roadmap phases on first-time onboarding. On refresh, change roadmap phases only when both evidence and user confirmation justify it.
+- Read no more than 10 files total; summarize, do not transcribe.
+- Cite a file path for every steering claim.
+- Delete empty template sections; templates are prompts, not required headings.
+- Keep durable artifacts free of speculative questions, confidence labels, and routing chatter.
+- Never create roadmap phases on first-time onboarding. On refresh, change roadmap phases only when evidence and user confirmation justify it.
 
 ## Deep
 

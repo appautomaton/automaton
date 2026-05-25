@@ -95,34 +95,20 @@ test('install command preserves existing durable snake_case current state', () =
   assert.equal(statusResult.stdout, 'active change: existing-change\nstage: execute\n')
 })
 
-test('install command removes manifest-owned legacy runtime bin scripts', () => {
-  const root = mkdtempSync(join(tmpdir(), 'automaton-install-legacy-runtime-'))
+test('install command removes stale runtime bin and install manifest', () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-install-no-manifest-'))
   const legacyBinRoot = join(root, '.agent', '.automaton', 'bin')
-  const legacyFiles = [
-    '.agent/.automaton/bin/sync-status-pointer.mjs',
-    '.agent/.automaton/bin/sync-status.mjs',
-    '.agent/.automaton/bin/update-state.mjs'
-  ]
   const manifestTarget = join(root, '.agent', '.automaton', 'state', 'install-manifest.json')
 
-  spawnSync(process.execPath, [cliPath, 'install', root], { encoding: 'utf8' })
+  mkdirSync(join(root, '.agent', '.automaton', 'state'), { recursive: true })
   mkdirSync(legacyBinRoot, { recursive: true })
-  for (const legacyFile of legacyFiles) {
-    writeFileSync(join(root, legacyFile), '// old runtime bin script\n', 'utf8')
-  }
+  writeFileSync(manifestTarget, '{"project":{"files":[]},"hosts":{}}\n', 'utf8')
+  writeFileSync(join(legacyBinRoot, 'sync-status.mjs'), '// old runtime bin script\n', 'utf8')
 
-  const manifest = JSON.parse(readFileSync(manifestTarget, 'utf8'))
-  manifest.project.files.push(...legacyFiles)
-  writeFileSync(manifestTarget, JSON.stringify(manifest, null, 2) + '\n', 'utf8')
+  const installResult = spawnSync(process.execPath, [cliPath, 'install', root], { encoding: 'utf8' })
 
-  const reinstallResult = spawnSync(process.execPath, [cliPath, 'install', root], { encoding: 'utf8' })
-  const nextManifest = JSON.parse(readFileSync(manifestTarget, 'utf8'))
-
-  assert.equal(reinstallResult.status, 0)
-  for (const legacyFile of legacyFiles) {
-    assert.equal(existsSync(join(root, legacyFile)), false)
-    assert.equal(nextManifest.project.files.includes(legacyFile), false)
-  }
+  assert.equal(installResult.status, 0)
+  assert.equal(existsSync(manifestTarget), false)
   assert.equal(existsSync(legacyBinRoot), false)
 })
 
@@ -236,7 +222,7 @@ test('install --uninstall with no host flags removes Automaton-managed files but
   assert.equal(existsSync(join(root, '.claude')), true)
   assert.equal(existsSync(join(root, '.opencode')), true)
   assert.equal(existsSync(join(root, '.agent', 'steering', 'PROJECT.md')), true)
-  assert.equal(existsSync(join(root, '.agent', 'steering', 'STATUS.md')), true)
+  assert.equal(existsSync(join(root, '.agent', 'steering', 'STATUS.md')), false)
   assert.equal(existsSync(join(root, '.agent', '.automaton')), false)
   assert.equal(existsSync(join(root, '.claude', 'skills', 'auto-frame', 'SKILL.md')), false)
   assert.equal(existsSync(join(root, '.codex', 'skills', 'auto-frame', 'SKILL.md')), false)

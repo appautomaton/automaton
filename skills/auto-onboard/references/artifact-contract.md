@@ -12,10 +12,8 @@
    Durable commitments. This captures what must stay true, what the repo already constrains, and what is explicitly out of scope.
 4. `.agent/steering/ROADMAP.md`
    Roadmap decision surface. It stays short on first-time onboarding; refreshes need strong roadmap evidence and user confirmation.
-5. `.agent/steering/STATUS.md`
-   Current bootstrap pointer and next action. This stays short and operational.
 
-The sequence should read like `why -> what must stay true -> what to do next`.
+The sequence should read like `why -> what must stay true -> what may come next`.
 
 ## Writing Standard
 
@@ -30,6 +28,7 @@ The sequence should read like `why -> what must stay true -> what to do next`.
 - Keep roadmap items evidence-backed and near-term when phases are confirmed. Do not invent distant strategy.
 - Name concrete files, packages, and commands whenever they anchor the truth.
 - Do not let one artifact duplicate the full content of another. Each artifact should narrow the surface area.
+- Do not duplicate canonical artifact paths across steering files. `current.json`, SPEC.md, and PLAN.md own active work pointers.
 
 ## Confidence Model
 
@@ -46,7 +45,7 @@ The sequence should read like `why -> what must stay true -> what to do next`.
 - preserve sources, commands, and only steering-blocking ambiguity
 - make it easy for later skills to avoid re-scanning the whole repo
 - do not include `Open Questions`, `Import Verdict`, steering confidence, or recommended next skill sections
-- put routing and next-action guidance in `STATUS.md` and the chat report, not in `REPO-MAP.md`
+- put routing and next-action guidance in the chat report, not in `REPO-MAP.md`
 
 ### `PROJECT.md`
 
@@ -74,14 +73,6 @@ The sequence should read like `why -> what must stay true -> what to do next`.
 - each confirmed phase must include `status: pending` and an empty `change:` field; see `.agent/.automaton/references/ROADMAP-CONTRACT.md` for the full format
 - each confirmed phase should have an objective, why now, likely outputs, and an exit signal
 - confirmed phases should reflect the current repo, not generic best practices
-
-### `STATUS.md`
-
-- set `bootstrap` and the current stage unless a more specific active change already exists
-- summarize what is now true after onboarding
-- point to one concrete next skill
-- stay operational, not essay-like
-- do not duplicate canonical artifact paths from `current.json`, `SPEC.md`, or `PLAN.md`; name artifact roles instead
 
 ## Work Artifact Integrity
 

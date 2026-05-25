@@ -76,7 +76,7 @@ test('Claude install scaffolds .agent and the Claude skills surface', () => {
   assert.equal(existsSync(join(root, '.claude', 'hooks', 'stop.mjs')), false)
 })
 
-test('reinstalling Claude refreshes manifest-owned hooks and skills', () => {
+test('reinstalling Claude refreshes generated hooks and skills', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-reinstall-claude-'))
   const host = getHost('claude')
   const hookTarget = join(root, '.claude', 'hooks', 'session-start.mjs')
@@ -110,8 +110,8 @@ test('Claude session-start hook reads Automaton state from a nested working dire
   const payload = JSON.parse(result.stdout)
   assert.match(payload.hookSpecificOutput.additionalContext, /^<automaton_reminder> This project has the Automaton stage-gated harness installed\./)
   assert.match(payload.hookSpecificOutput.additionalContext, /State JSON: \.agent\/\.automaton\/state\/current\.json \(change=bootstrap; stage=frame\)\./)
-  assert.match(payload.hookSpecificOutput.additionalContext, /Status summary: \.agent\/steering\/STATUS\.md\./)
   assert.match(payload.hookSpecificOutput.additionalContext, /Work artifacts, when relevant, live under \.agent\/work\//)
+  assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /STATUS\.md|Status summary/)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /\.agent\/work\/bootstrap\//)
   assert.match(payload.hookSpecificOutput.additionalContext, /honor the user's latest request/)
   assert.match(payload.hookSpecificOutput.additionalContext, /<\/automaton_reminder>$/)
@@ -137,6 +137,7 @@ test('Claude session-start hook injects the shared Automaton reminder without st
   const payload = JSON.parse(result.stdout)
   assert.match(payload.hookSpecificOutput.additionalContext, /State JSON: \.agent\/\.automaton\/state\/current\.json \(change=deepen-skills; stage=plan\)\./)
   assert.match(payload.hookSpecificOutput.additionalContext, /canonical artifact pointers are in current\.json\./)
+  assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /STATUS\.md|Status summary/)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /Progress:/)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /Next:/)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /<change>/)
@@ -156,7 +157,7 @@ test('Claude install preserves existing settings while adding Automaton hooks', 
   assert.deepEqual(Object.keys(settings.hooks), ['SessionStart'])
 })
 
-test('Claude reinstall refreshes legacy Automaton settings hooks without duplicating them', () => {
+test('Claude reinstall refreshes Automaton settings hooks without duplicating them', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-install-claude-settings-migrate-'))
   const settingsTarget = join(root, '.claude', 'settings.json')
   mkdirSync(join(root, '.claude'), { recursive: true })
@@ -179,7 +180,7 @@ test('Claude reinstall refreshes legacy Automaton settings hooks without duplica
           hooks: [
             {
               type: 'command',
-              command: 'node "$CLAUDE_PROJECT_DIR"/.claude/hooks/stop.mjs'
+              command: 'node "$CLAUDE_PROJECT_DIR"/.claude/hooks/custom-stop.mjs'
             }
           ]
         }
@@ -192,9 +193,10 @@ test('Claude reinstall refreshes legacy Automaton settings hooks without duplica
   const settings = JSON.parse(readFileSync(settingsTarget, 'utf8'))
 
   assert.equal(settings.env.FOO, 'bar')
-  assert.deepEqual(Object.keys(settings.hooks), ['SessionStart'])
+  assert.deepEqual(Object.keys(settings.hooks), ['SessionStart', 'Stop'])
   assert.equal(settings.hooks.SessionStart.length, 1)
   assert.equal(settings.hooks.SessionStart[0].hooks[0].command.includes(process.execPath), true)
+  assert.equal(settings.hooks.Stop[0].hooks[0].command, 'node "$CLAUDE_PROJECT_DIR"/.claude/hooks/custom-stop.mjs')
 })
 
 test('Claude uninstall preserves unrelated settings while removing Automaton hooks', () => {
@@ -232,7 +234,7 @@ test('Codex install scaffolds config, hooks, and skills', () => {
   assert.equal(existsSync(join(root, '.codex', 'hooks', 'stop.mjs')), false)
 })
 
-test('reinstalling Codex refreshes manifest-owned hooks and skills', () => {
+test('reinstalling Codex refreshes generated hooks and skills', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-reinstall-codex-'))
   const host = getHost('codex')
   const hookTarget = join(root, '.codex', 'hooks', 'session-start.mjs')
@@ -248,7 +250,91 @@ test('reinstalling Codex refreshes manifest-owned hooks and skills', () => {
   assert.equal(readFileSync(skillTarget, 'utf8'), readFileSync(join(sourceRoot, 'skills', 'auto-frame', 'SKILL.md'), 'utf8'))
 })
 
-test('reinstalling Codex refreshes manifest-owned injected shared artifacts', () => {
+test('Codex install preserves existing hooks.json while adding Automaton hook', () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-install-codex-hooks-merge-'))
+  const hooksTarget = join(root, '.codex', 'hooks.json')
+  mkdirSync(join(root, '.codex'), { recursive: true })
+  writeFileSync(hooksTarget, JSON.stringify({
+    metadata: { owner: 'user' },
+    hooks: {
+      SessionStart: [
+        {
+          matcher: 'startup',
+          hooks: [
+            {
+              type: 'command',
+              command: 'node .codex/hooks/user-start.mjs'
+            }
+          ]
+        }
+      ],
+      Stop: [
+        {
+          hooks: [
+            {
+              type: 'command',
+              command: 'node .codex/hooks/user-stop.mjs'
+            }
+          ]
+        }
+      ]
+    }
+  }, null, 2) + '\n', 'utf8')
+
+  installHost(getHost('codex'), { root, sourceRoot })
+
+  const hooks = JSON.parse(readFileSync(hooksTarget, 'utf8'))
+  const sessionStartCommands = hooks.hooks.SessionStart.flatMap((group) => group.hooks.map((hook) => hook.command))
+
+  assert.equal(hooks.metadata.owner, 'user')
+  assert.equal(hooks.hooks.Stop[0].hooks[0].command, 'node .codex/hooks/user-stop.mjs')
+  assert.equal(sessionStartCommands.includes('node .codex/hooks/user-start.mjs'), true)
+  assert.equal(sessionStartCommands.some((command) => command.includes('.codex/hooks/session-start.mjs')), true)
+})
+
+test('Codex reinstall refreshes Automaton hooks.json entry without duplicating it', () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-reinstall-codex-hooks-merge-'))
+  const hooksTarget = join(root, '.codex', 'hooks.json')
+  mkdirSync(join(root, '.codex'), { recursive: true })
+  writeFileSync(hooksTarget, JSON.stringify({
+    hooks: {
+      SessionStart: [
+        {
+          matcher: 'startup|resume|clear',
+          hooks: [
+            {
+              type: 'command',
+              command: 'node /old/path/.codex/hooks/session-start.mjs'
+            }
+          ]
+        },
+        {
+          matcher: 'startup',
+          hooks: [
+            {
+              type: 'command',
+              command: 'node .codex/hooks/user-start.mjs'
+            }
+          ]
+        }
+      ]
+    }
+  }, null, 2) + '\n', 'utf8')
+
+  installHost(getHost('codex'), { root, sourceRoot })
+  installHost(getHost('codex'), { root, sourceRoot })
+
+  const hooks = JSON.parse(readFileSync(hooksTarget, 'utf8'))
+  const sessionStartCommands = hooks.hooks.SessionStart.flatMap((group) => group.hooks.map((hook) => hook.command))
+  const automatonCommands = sessionStartCommands.filter((command) => command.includes('.codex/hooks/session-start.mjs'))
+
+  assert.equal(sessionStartCommands.includes('node .codex/hooks/user-start.mjs'), true)
+  assert.equal(automatonCommands.length, 1)
+  assert.equal(automatonCommands[0].includes(process.execPath), true)
+  assert.doesNotMatch(automatonCommands[0], /old\/path/)
+})
+
+test('reinstalling Codex refreshes shared runtime artifacts and generated HOST-TOOLS', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-reinstall-codex-shared-'))
   const host = getHost('codex')
   const referenceTarget = join(root, '.agent', '.automaton', 'references', 'CONTEXT-BUDGET.md')
@@ -272,37 +358,23 @@ test('reinstalling Codex refreshes manifest-owned injected shared artifacts', ()
   assert.doesNotMatch(readFileSync(hostToolsTarget, 'utf8'), /stale host tools/)
 })
 
-test('reinstalling Codex removes manifest-owned legacy stop hook and per-skill scripts', () => {
-  const root = mkdtempSync(join(tmpdir(), 'automaton-reinstall-codex-legacy-scripts-'))
+test('reinstalling Codex replaces skill folders and removes stale per-skill files', () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-reinstall-codex-stale-skill-files-'))
   const host = getHost('codex')
-  const manifestTarget = join(root, '.agent', '.automaton', 'state', 'install-manifest.json')
-  const stopTarget = join(root, '.codex', 'hooks', 'stop.mjs')
   const legacyScriptTarget = join(root, '.codex', 'skills', 'auto-frame', 'scripts', 'get-context.mjs')
-  const removedScriptTarget = join(root, '.codex', 'skills', 'auto-frame', 'scripts', 'scaffold-agent.mjs')
+  const staleReferenceTarget = join(root, '.codex', 'skills', 'auto-frame', 'references', 'STALE.md')
 
   installHost(host, { root, sourceRoot })
   mkdirSync(join(root, '.codex', 'skills', 'auto-frame', 'scripts'), { recursive: true })
-  writeFileSync(stopTarget, '// old stop hook\n', 'utf8')
+  mkdirSync(join(root, '.codex', 'skills', 'auto-frame', 'references'), { recursive: true })
   writeFileSync(legacyScriptTarget, '// old per-skill script\n', 'utf8')
-  writeFileSync(removedScriptTarget, '// old scaffold script\n', 'utf8')
-
-  const manifest = JSON.parse(readFileSync(manifestTarget, 'utf8'))
-  manifest.hosts.codex.files.push(
-    '.codex/hooks/stop.mjs',
-    '.codex/skills/auto-frame/scripts/get-context.mjs',
-    '.codex/skills/auto-frame/scripts/scaffold-agent.mjs'
-  )
-  writeFileSync(manifestTarget, JSON.stringify(manifest, null, 2) + '\n', 'utf8')
+  writeFileSync(staleReferenceTarget, '# stale reference\n', 'utf8')
 
   installHost(host, { root, sourceRoot })
 
-  const nextManifest = JSON.parse(readFileSync(manifestTarget, 'utf8'))
-  assert.equal(existsSync(stopTarget), false)
   assert.equal(existsSync(legacyScriptTarget), false)
-  assert.equal(existsSync(removedScriptTarget), false)
-  assert.equal(nextManifest.hosts.codex.files.includes('.codex/hooks/stop.mjs'), false)
-  assert.equal(nextManifest.hosts.codex.files.includes('.codex/skills/auto-frame/scripts/get-context.mjs'), false)
-  assert.equal(nextManifest.hosts.codex.files.includes('.codex/skills/auto-frame/scripts/scaffold-agent.mjs'), false)
+  assert.equal(existsSync(staleReferenceTarget), false)
+  assert.equal(existsSync(join(root, '.agent', '.automaton', 'state', 'install-manifest.json')), false)
 })
 
 test('Codex session-start hook reads Automaton state from a nested working directory', () => {
@@ -323,8 +395,8 @@ test('Codex session-start hook reads Automaton state from a nested working direc
   const payload = JSON.parse(result.stdout)
   assert.match(payload.hookSpecificOutput.additionalContext, /^<automaton_reminder> This project has the Automaton stage-gated harness installed\./)
   assert.match(payload.hookSpecificOutput.additionalContext, /State JSON: \.agent\/\.automaton\/state\/current\.json \(change=bootstrap; stage=frame\)\./)
-  assert.match(payload.hookSpecificOutput.additionalContext, /Status summary: \.agent\/steering\/STATUS\.md\./)
   assert.match(payload.hookSpecificOutput.additionalContext, /Work artifacts, when relevant, live under \.agent\/work\//)
+  assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /STATUS\.md|Status summary/)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /\.agent\/work\/bootstrap\//)
   assert.match(payload.hookSpecificOutput.additionalContext, /honor the user's latest request/)
   assert.match(payload.hookSpecificOutput.additionalContext, /<\/automaton_reminder>$/)
@@ -350,94 +422,10 @@ test('Codex session-start hook injects the shared Automaton reminder without sta
   const payload = JSON.parse(result.stdout)
   assert.match(payload.hookSpecificOutput.additionalContext, /State JSON: \.agent\/\.automaton\/state\/current\.json \(change=deepen-skills; stage=plan\)\./)
   assert.match(payload.hookSpecificOutput.additionalContext, /canonical artifact pointers are in current\.json\./)
+  assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /STATUS\.md|Status summary/)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /Progress:/)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /Next:/)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /<change>/)
-})
-
-test('Codex install migrates manifest-owned legacy stage skill names within .codex skills', () => {
-  const root = mkdtempSync(join(tmpdir(), 'automaton-install-codex-migrate-'))
-  const legacySkillTarget = join(root, '.codex', 'skills', 'frame', 'SKILL.md')
-  const manifestTarget = join(root, '.agent', '.automaton', 'state', 'install-manifest.json')
-
-  mkdirSync(join(root, '.codex', 'skills', 'frame'), { recursive: true })
-  mkdirSync(join(root, '.agent', '.automaton', 'state'), { recursive: true })
-  writeFileSync(legacySkillTarget, '# legacy automaton frame\n', 'utf8')
-  writeFileSync(
-    manifestTarget,
-    '{\n  "project": {\n    "files": []\n  },\n  "hosts": {\n    "codex": {\n      "files": [\n        ".codex/skills/frame/SKILL.md"\n      ],\n      "mutations": {\n        "codexHooksInjected": false\n      }\n    }\n  }\n}\n',
-    'utf8'
-  )
-
-  installHost(getHost('codex'), { root, sourceRoot })
-
-  assert.equal(existsSync(legacySkillTarget), false)
-  assert.equal(existsSync(join(root, '.codex', 'skills', 'auto-frame', 'SKILL.md')), true)
-  assert.equal(readFileSync(manifestTarget, 'utf8').includes('.codex/skills/frame/SKILL.md'), false)
-})
-
-test('Codex install removes manifest-owned .agents skill copies while using .codex skills', () => {
-  const root = mkdtempSync(join(tmpdir(), 'automaton-install-codex-agents-migrate-'))
-  const legacySkillTarget = join(root, '.agents', 'skills', 'auto-frame', 'SKILL.md')
-  const manifestTarget = join(root, '.agent', '.automaton', 'state', 'install-manifest.json')
-
-  mkdirSync(join(root, '.agents', 'skills', 'auto-frame'), { recursive: true })
-  mkdirSync(join(root, '.agent', '.automaton', 'state'), { recursive: true })
-  writeFileSync(legacySkillTarget, '# accidental .agents skill\n', 'utf8')
-  writeFileSync(
-    manifestTarget,
-    '{\n  "project": {\n    "files": []\n  },\n  "hosts": {\n    "codex": {\n      "files": [\n        ".agents/skills/auto-frame/SKILL.md"\n      ],\n      "mutations": {\n        "codexHooksInjected": false\n      }\n    }\n  }\n}\n',
-    'utf8'
-  )
-
-  installHost(getHost('codex'), { root, sourceRoot })
-
-  assert.equal(existsSync(legacySkillTarget), false)
-  assert.equal(existsSync(join(root, '.agents')), false)
-  assert.equal(existsSync(join(root, '.codex', 'skills', 'auto-frame', 'SKILL.md')), true)
-  assert.equal(readFileSync(manifestTarget, 'utf8').includes('.agents/skills/auto-frame/SKILL.md'), false)
-})
-
-test('host install removes manifest-owned removed skill folders', () => {
-  const root = mkdtempSync(join(tmpdir(), 'automaton-install-removed-skill-'))
-  const removedSkillTarget = join(root, '.codex', 'skills', 'auto-execute-subagent', 'SKILL.md')
-  const manifestTarget = join(root, '.agent', '.automaton', 'state', 'install-manifest.json')
-
-  mkdirSync(join(root, '.codex', 'skills', 'auto-execute-subagent'), { recursive: true })
-  mkdirSync(join(root, '.agent', '.automaton', 'state'), { recursive: true })
-  writeFileSync(removedSkillTarget, '# stale removed skill\n', 'utf8')
-  writeFileSync(
-    manifestTarget,
-    '{\n  "project": {\n    "files": []\n  },\n  "hosts": {\n    "codex": {\n      "files": [\n        ".codex/skills/auto-execute-subagent/SKILL.md"\n      ],\n      "mutations": {\n        "codexHooksInjected": false\n      }\n    }\n  }\n}\n',
-    'utf8'
-  )
-
-  installHost(getHost('codex'), { root, sourceRoot })
-
-  assert.equal(existsSync(removedSkillTarget), false)
-  assert.equal(existsSync(join(root, '.codex', 'skills', 'auto-execute-subagent')), false)
-  assert.equal(existsSync(join(root, '.codex', 'skills', 'auto-execute', 'SKILL.md')), true)
-  assert.equal(readFileSync(manifestTarget, 'utf8').includes('.codex/skills/auto-execute-subagent/SKILL.md'), false)
-})
-
-test('host install migrates manifest-owned legacy skill names within the current host root', () => {
-  const root = mkdtempSync(join(tmpdir(), 'automaton-install-claude-rename-'))
-  const legacySkillTarget = join(root, '.claude', 'skills', 'frame', 'SKILL.md')
-  const manifestTarget = join(root, '.agent', '.automaton', 'state', 'install-manifest.json')
-
-  mkdirSync(join(root, '.claude', 'skills', 'frame'), { recursive: true })
-  mkdirSync(join(root, '.agent', '.automaton', 'state'), { recursive: true })
-  writeFileSync(legacySkillTarget, '# legacy automaton frame\n', 'utf8')
-  writeFileSync(
-    manifestTarget,
-    '{\n  "project": {\n    "files": []\n  },\n  "hosts": {\n    "claude": {\n      "files": [\n        ".claude/skills/frame/SKILL.md"\n      ],\n      "mutations": {\n        "codexHooksInjected": false,\n        "claudeHooksInjected": false\n      }\n    }\n  }\n}\n',
-    'utf8'
-  )
-
-  installHost(getHost('claude'), { root, sourceRoot })
-
-  assert.equal(existsSync(legacySkillTarget), false)
-  assert.equal(existsSync(join(root, '.claude', 'skills', 'auto-frame', 'SKILL.md')), true)
 })
 
 test('Codex install preserves existing config while ensuring codex hooks are enabled', () => {
@@ -487,10 +475,10 @@ test('Codex uninstall removes Automaton hooks and skills while preserving .agent
   assert.equal(existsSync(join(root, '.codex', 'skills', 'auto-frame', 'SKILL.md')), false)
   assert.equal(existsSync(join(root, '.codex', 'hooks.json')), false)
   assert.equal(existsSync(join(root, '.codex', 'hooks', 'session-start.mjs')), false)
-  assert.equal(existsSync(join(root, '.codex', 'config.toml')), false)
+  assert.equal(readFileSync(join(root, '.codex', 'config.toml'), 'utf8'), '[features]\nmulti_agent = true\n')
 })
 
-test('Codex uninstall preserves unrelated config while removing the Automaton feature flag', () => {
+test('Codex uninstall preserves unrelated config while removing Automaton hook enablement', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-uninstall-codex-config-'))
   const configTarget = join(root, '.codex', 'config.toml')
   mkdirSync(join(root, '.codex'), { recursive: true })
@@ -499,10 +487,52 @@ test('Codex uninstall preserves unrelated config while removing the Automaton fe
   installHost(getHost('codex'), { root, sourceRoot })
   uninstallHost(getHost('codex'), { root, sourceRoot })
 
-  assert.equal(readFileSync(configTarget, 'utf8'), 'model = "gpt-5.4"\n')
+  assert.equal(readFileSync(configTarget, 'utf8'), 'model = "gpt-5.4"\n\n[features]\nmulti_agent = true\n')
 })
 
-test('Codex uninstall preserves user-owned files that predated the install', () => {
+test('Codex uninstall preserves unrelated hooks.json entries', () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-uninstall-codex-hooks-merge-'))
+  const hooksTarget = join(root, '.codex', 'hooks.json')
+  mkdirSync(join(root, '.codex'), { recursive: true })
+  writeFileSync(hooksTarget, JSON.stringify({
+    hooks: {
+      SessionStart: [
+        {
+          matcher: 'startup',
+          hooks: [
+            {
+              type: 'command',
+              command: 'node .codex/hooks/user-start.mjs'
+            }
+          ]
+        }
+      ],
+      Stop: [
+        {
+          hooks: [
+            {
+              type: 'command',
+              command: 'node .codex/hooks/user-stop.mjs'
+            }
+          ]
+        }
+      ]
+    }
+  }, null, 2) + '\n', 'utf8')
+
+  installHost(getHost('codex'), { root, sourceRoot })
+  uninstallHost(getHost('codex'), { root, sourceRoot })
+
+  const hooks = JSON.parse(readFileSync(hooksTarget, 'utf8'))
+  const sessionStartCommands = hooks.hooks.SessionStart.flatMap((group) => group.hooks.map((hook) => hook.command))
+
+  assert.deepEqual(sessionStartCommands, ['node .codex/hooks/user-start.mjs'])
+  assert.equal(hooks.hooks.Stop[0].hooks[0].command, 'node .codex/hooks/user-stop.mjs')
+  assert.equal(sessionStartCommands.some((command) => command.includes('.codex/hooks/session-start.mjs')), false)
+  assert.equal(existsSync(join(root, '.codex', 'hooks', 'session-start.mjs')), false)
+})
+
+test('Codex uninstall preserves unrelated user skill files while hooks.json is generated', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-uninstall-codex-owned-'))
   const skillTarget = join(root, '.codex', 'skills', 'frame', 'SKILL.md')
   const hooksTarget = join(root, '.codex', 'hooks.json')
@@ -515,7 +545,7 @@ test('Codex uninstall preserves user-owned files that predated the install', () 
   uninstallHost(getHost('codex'), { root, sourceRoot })
 
   assert.equal(readFileSync(skillTarget, 'utf8'), '# user frame\n')
-  assert.equal(readFileSync(hooksTarget, 'utf8'), '{"hooks":{}}\n')
+  assert.equal(existsSync(hooksTarget), false)
   assert.equal(existsSync(join(root, '.codex', 'skills', 'auto-frame', 'SKILL.md')), false)
 })
 
@@ -550,7 +580,7 @@ test('OpenCode install scaffolds the OpenCode skills surface', () => {
   assert.doesNotMatch(pluginSource, /showToast/)
 })
 
-test('reinstalling OpenCode refreshes manifest-owned plugin and skills', () => {
+test('reinstalling OpenCode refreshes generated plugin and skills', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-reinstall-opencode-'))
   const host = getHost('opencode')
   const pluginTarget = join(root, '.opencode', 'plugins', 'automaton.js')
@@ -566,18 +596,18 @@ test('reinstalling OpenCode refreshes manifest-owned plugin and skills', () => {
   assert.equal(readFileSync(skillTarget, 'utf8'), readFileSync(join(sourceRoot, 'skills', 'auto-frame', 'SKILL.md'), 'utf8'))
 })
 
-test('reinstalling OpenCode preserves a preexisting user-owned plugin file', () => {
-  const root = mkdtempSync(join(tmpdir(), 'automaton-reinstall-opencode-user-owned-'))
+test('reinstalling OpenCode replaces the generated plugin file', () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-reinstall-opencode-plugin-'))
   const host = getHost('opencode')
   const pluginTarget = join(root, '.opencode', 'plugins', 'automaton.js')
 
   mkdirSync(join(root, '.opencode', 'plugins'), { recursive: true })
-  writeFileSync(pluginTarget, '// user-owned plugin\n', 'utf8')
+  writeFileSync(pluginTarget, '// stale plugin\n', 'utf8')
 
   installHost(host, { root, sourceRoot })
   installHost(host, { root, sourceRoot })
 
-  assert.equal(readFileSync(pluginTarget, 'utf8'), '// user-owned plugin\n')
+  assert.equal(readFileSync(pluginTarget, 'utf8'), host.installFiles({ root })['.opencode/plugins/automaton.js'])
 })
 
 test('Claude SessionStart matcher fires on startup, resume, clear, and compact', () => {
@@ -810,10 +840,9 @@ test('host install generates HOST-TOOLS.md only in the auto-execute skill', () =
   }
 })
 
-test('reinstalling removes manifest-owned stale per-skill HOST-TOOLS copies', () => {
+test('reinstalling removes stale per-skill HOST-TOOLS copies', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-reinstall-host-tools-stale-'))
   const host = getHost('claude')
-  const manifestTarget = join(root, '.agent', '.automaton', 'state', 'install-manifest.json')
   const staleTarget = join(root, '.claude', 'skills', 'auto-frame', 'references', 'HOST-TOOLS.md')
   const keepTarget = join(root, '.claude', 'skills', 'auto-execute', 'references', 'HOST-TOOLS.md')
 
@@ -822,15 +851,10 @@ test('reinstalling removes manifest-owned stale per-skill HOST-TOOLS copies', ()
   // Simulate a prior install that scattered HOST-TOOLS.md into a non-dispatching skill.
   mkdirSync(join(root, '.claude', 'skills', 'auto-frame', 'references'), { recursive: true })
   writeFileSync(staleTarget, '# stale host tools\n', 'utf8')
-  const manifest = JSON.parse(readFileSync(manifestTarget, 'utf8'))
-  manifest.hosts.claude.files.push('.claude/skills/auto-frame/references/HOST-TOOLS.md')
-  writeFileSync(manifestTarget, JSON.stringify(manifest, null, 2) + '\n', 'utf8')
 
   installHost(host, { root, sourceRoot })
 
-  const nextManifest = JSON.parse(readFileSync(manifestTarget, 'utf8'))
   assert.equal(existsSync(staleTarget), false)
   assert.equal(existsSync(keepTarget), true)
-  assert.equal(nextManifest.hosts.claude.files.includes('.claude/skills/auto-frame/references/HOST-TOOLS.md'), false)
-  assert.equal(nextManifest.hosts.claude.files.includes('.claude/skills/auto-execute/references/HOST-TOOLS.md'), true)
+  assert.equal(existsSync(join(root, '.agent', '.automaton', 'state', 'install-manifest.json')), false)
 })
