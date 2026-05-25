@@ -6,7 +6,7 @@
 
 The instinct on seeing duplication is "deduplicate." But the harness's progressive-disclosure design makes most duplication free at runtime, so the cost model decides the priority:
 
-- **Runtime tokens.** Only the *active* skill's references load, on demand via `## Deep` triggers (e.g. `auto-execute/SKILL.md:198-234`). The 9 `quality.md` copies never coexist in one context window. Cross-skill duplication therefore costs ~0 runtime tokens.
+- **Runtime tokens.** Only the *active* skill's references load, on demand via inline conditional triggers (`Read references/X.md when Y`). The 9 `quality.md` copies never coexist in one context window. Cross-skill duplication therefore costs ~0 runtime tokens.
 - **Install footprint.** Every per-skill reference is copied into each host's skill tree (`seedTree`, `lib/install.mjs:193-229`). Duplication here is real bytes on disk and N places to drift.
 - **Correctness.** A contract two skills must agree on. Drift here wastes no tokens; it silently changes behavior.
 

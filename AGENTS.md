@@ -41,7 +41,7 @@ node bin/automaton.mjs context frame
 
 - Edit skills in `skills/` only. Never edit installed copies.
 - Shared references and scripts go in `skills/_shared/`. Install copies them once into `.agent/.automaton/references/` and `.agent/.automaton/scripts/`.
-- Skill entry points should stay clear, concise, high-signal, and platform-agnostic. Detail belongs in `references/` via `## Deep` triggers when progressive disclosure keeps the entry point easier to use.
+- Skill entry points should stay clear, concise, high-signal, and platform-agnostic. Detail belongs in `references/` and is loaded via inline conditional triggers (`Read references/X.md when Y`) when progressive disclosure keeps the entry point easier to use.
 - `current.json` is the machine cursor. `STATUS.md` is the human summary. Don't duplicate pointers.
 - Runtime enforces only L1 validation (stage enum, pointer resolution). L2/L3 live in prompts and tests.
 

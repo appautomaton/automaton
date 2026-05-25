@@ -16,7 +16,7 @@ Layer 3   Work artifacts          Variable       When stage requires
 
 **Layer 0.5** — `.agent/.automaton/scripts/get-context.mjs` runs as each skill's first action. Self-contained (see DD-007), produces normalized JSON with diagnostics. Skills abort on error-level diagnostics before loading anything else.
 
-**Layer 1** — SKILL.md follows: preamble → quality gate → procedure → hard gates → stop conditions → `## Deep` with conditional references. Key pattern: `Read X (~N lines) when [trigger]` — size hint lets the model estimate cost.
+**Layer 1** — SKILL.md follows the canonical skeleton: preamble → quality gate → do (with `<GATE>` and `<STOP>` blocks at hard-stop points) → output → rules. Conditional reference reads are inlined at their procedural trigger points. Pattern: `Read references/X.md when [trigger]`.
 
 **Layer 2** — Per-skill references (domain-specific) and shared references (`.agent/.automaton/references`, see DD-001). Loaded only when trigger fires.
 
