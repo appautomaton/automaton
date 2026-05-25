@@ -27,6 +27,14 @@ Before appending the product review:
 
 ## Do
 
+<GATE>
+
+Do NOT proceed unless:
+- `canonical_spec` is set and `SPEC.md` is readable.
+
+If the spec is missing or unreadable, set verdict to `needs_clarification` and stop.
+</GATE>
+
 ### Load State
 
 Read the canonical `SPEC.md`.
@@ -78,7 +86,6 @@ On a non-blocking verdict (`approved` or `approved_with_risks`), continue inline
 - Be decisive, not theatrical. A sharp verdict is better than a long analysis.
 - Do not turn the review into implementation design. Stay in product bet territory.
 - Verdict vocabulary is strict. Use only the four approved values.
-- If the spec is missing or unreadable, verdict is `needs_clarification`. Do not guess.
 
 ## Deep
 

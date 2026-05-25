@@ -29,7 +29,17 @@ Before producing the recovery summary:
 
 ### Load State
 
-Read `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` for recovery order, stale-pointer handling, and stage handoffs. If `.agent/` or `current.json` is missing, recommend `auto-onboard` and stop. If work is complete or absent, read `.agent/steering/ROADMAP.md` only to surface pending phases as context.
+Read `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` for recovery order, stale-pointer handling, and stage handoffs.
+
+<STOP>
+
+Halt and report when:
+- `.agent/` does not exist or `current.json` is missing.
+
+Recommend `auto-onboard` and stop. Do not attempt recovery without a state file.
+</STOP>
+
+If work is complete or absent, read `.agent/steering/ROADMAP.md` only to surface pending phases as context.
 
 ### Verify Artifact Integrity
 

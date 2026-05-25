@@ -44,6 +44,13 @@ Every skill follows the same contract:
 
 Every skill ships `references/quality.md` with three sections: anti-patterns, better shape, and prose hygiene. Read it when the skill's output drifts toward vagueness, theater, or inflation. The Quality Gate in each SKILL.md names the skill-specific trigger.
 
+## Hard Stop Tags
+
+Two tags mark hard stops in skill procedures. Scan for them before reading the full `## Do` section.
+
+- **`<GATE>`** — prerequisite block. Do NOT proceed past this point unless all listed conditions are met. Used before an artifact write or a state mutation.
+- **`<STOP>`** — runtime halt. Halt immediately and report when any listed condition is true. Used when continuation would produce incorrect or unsafe output.
+
 ## Handoff Model
 
 Two moves at every lifecycle edge:

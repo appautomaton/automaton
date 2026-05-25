@@ -27,6 +27,14 @@ Before appending the engineering review:
 
 ## Do
 
+<GATE>
+
+Do NOT proceed unless:
+- `canonical_plan` is set and `PLAN.md` is readable.
+
+If the plan is missing or unreadable, set verdict to `needs_correction` and stop.
+</GATE>
+
 ### Load State
 
 Read the canonical `PLAN.md`. If `canonical_design` is null, missing, or points to a missing file, continue without DESIGN.md and note that the plan intentionally has no design artifact.
@@ -92,7 +100,6 @@ State the next skill based on the verdict.
 - Do not broaden scope just to feel thorough.
 - Do not emit the full risk matrix when all dimensions are acceptable; keep the durable review to the 5-field template.
 - Verdict vocabulary is strict. Use only the three approved values.
-- If the plan is missing or unreadable, verdict is `needs_correction`. Do not guess.
 - Missing DESIGN.md is not a blocker when `canonical_design` is null, absent, or intentionally skipped by the plan.
 
 ## Deep
