@@ -37,18 +37,18 @@ Determine three internal axes:
 - **Work scale:** bug-sized, feature-sized, capability-sized, or roadmap-sized. Do not equate "large" with roadmap-sized. Capability-sized work remains one spec when it serves one coherent outcome; roadmap-sized means multiple independently valuable outcomes that need decomposition through `ROADMAP.md`.
 - **Work shape:** feature, refactor, parity, audit, migration, coverage, content, or mixed.
 
-Hold this classification internally to steer questioning. Confirm the read in plain language grounded in the user's words, not by naming the taxonomy. If the user corrects any dimension, adjust before continuing. For bug-sized goals with a known fix, consider whether `auto-frame` is the better entry point. For Content mode, read `references/content-intake.md`; for roadmap-sized goals, read `.agent/.automaton/references/ROADMAP-CONTRACT.md`.
+Hold this classification internally to steer questioning. Confirm the read in plain language grounded in the user's words, not by naming the taxonomy. If the user corrects any dimension, adjust before continuing. For bug-sized goals with a known fix, consider whether `auto-frame` is the better entry point. For Startup or Builder mode, read `references/operating-principles.md` for doctrine; for Content mode, read `references/content-intake.md`; for roadmap-sized goals, read `.agent/.automaton/references/ROADMAP-CONTRACT.md`.
 
 ### Run Diagnostic
 
 Ask only questions that make the objective frameable. Use the active reference:
-- Startup Mode: read `references/startup-diagnostic.md` when demand, user, market, or customer evidence matters.
+- Startup Mode: read `references/startup-diagnostic.md` when demand, user, market, or customer evidence matters; read `references/landscape-awareness.md` when market, ecosystem, competitor, or current-state evidence would change the frame.
 - Builder Mode: read `references/builder-diagnostic.md` when the work is personal, exploratory, open-source, or design-partner shaped.
 - Content Mode: read `references/content-intake.md` when the deliverable is writing, article, brief, deck, newsletter, documentation, or other prose.
 
 When the shape is not feature, shape-specific questions take priority: parity needs a reference system and gap-closure target; audit needs questions and decision use; refactor needs invariants and blast radius; migration needs source/target state and rollback; coverage needs risk areas and verification target; mixed work needs the highest-priority question from each shape.
 
-Follow up when an answer changes scope, reveals a constraint, contradicts earlier context, or stays abstract. Ask for a concrete correction or choice, not a generic reaction. If the answer is polished but vague, push until it names concrete evidence, a specific stakeholder, or an observable workaround.
+Follow up when an answer changes scope, reveals a constraint, contradicts earlier context, or stays abstract. Ask for a concrete correction or choice, not a generic reaction. If the answer is polished but vague, push until it names concrete evidence, a specific stakeholder, or an observable workaround. Read `references/diagnostic-calibration.md` when the diagnostic feels soft or agreeable rather than evidence-backed.
 
 ### Request Coverage
 
@@ -130,11 +130,3 @@ If the user does not approve an approach, output a short discussion summary, why
 - Ask follow-up questions when they matter; do not bank them for a later checklist.
 - State the decision basis; name what evidence supports, what it does not support, and what would change the recommendation.
 - Keep INTAKE compact; omit empty sections and analysis nobody downstream needs.
-
-## Deep
-
-- Read `references/operating-principles.md` for Startup and Builder doctrine.
-- Read `references/diagnostic-calibration.md` when questions drift soft or generic, answers stay vague, or the response risks agreeable validation instead of evidence-backed assessment.
-- Read `references/alternatives-format.md` before presenting approaches.
-- Read `references/landscape-awareness.md` when market, ecosystem, competitor, or current-state evidence would change the frame.
-- Read `references/intake-template.md` before writing INTAKE.md.

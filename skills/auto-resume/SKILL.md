@@ -15,7 +15,7 @@ First action: run `node .agent/.automaton/scripts/get-context.mjs` from the proj
 
 auto-resume rebuilds context from durable artifacts, not from the user's description or the agent's training data. It does not modify artifacts, advance the stage, or start new work. It loads canonical artifacts in dependency order (spec first, then design, then plan) and reports what it found, what was blocked, and what comes next.
 
-Loading discipline: start with artifacts needed for the current stage. Read project files when understanding the codebase helps rebuild accurate context for the next action.
+Loading discipline: start with artifacts needed for the current stage. Read project files when understanding the codebase helps rebuild accurate context for the next action. Read `.agent/.automaton/references/CONTEXT-BUDGET.md` when wider reads threaten context pressure.
 
 ## Quality Gate
 
@@ -92,9 +92,3 @@ Use `references/recovery-scenarios.md` for the full routing table. The invariant
 - Load artifacts in dependency order: spec first, not plan first.
 - If steering is scaffold-only, report it plainly and recommend `auto-onboard`.
 - Do not turn a completed verified change into an automatic `auto-office-hours` handoff.
-
-## Deep
-
-- Read `references/recovery-scenarios.md` for common recovery situations.
-- Read `references/artifact-order.md` for the full artifact dependency graph.
-- Read `.agent/.automaton/references/CONTEXT-BUDGET.md` for progressive loading and degradation tiers.

@@ -45,9 +45,11 @@ In engineering terms: what is being built, what systems does it touch, and what 
 
 ### Evaluate Risks
 
-Use this matrix as an internal checklist. In chat, summarize only the verdict-driving dimensions unless the user asks for the full matrix.
+Use this matrix as an internal checklist. In chat, summarize only the verdict-driving dimensions unless the user asks for the full matrix. Apply standards from `references/prime-directives.md` while evaluating.
 
 ### Risk Matrix
+
+Read `references/risk-examples.md` for sample matrix scoring.
 
 | Dimension | Rating (0–10) | What a 10 looks like |
 |-----------|---------------|----------------------|
@@ -58,11 +60,11 @@ Use this matrix as an internal checklist. In chat, summarize only the verdict-dr
 | Rollback safety | | Can revert without data loss or downtime |
 | Dependency risk | | No new critical dependencies; existing ones are stable |
 
-A score ≤ 3 in any dimension is a blocking concern. Surface it explicitly.
+A score ≤ 3 in any dimension is a blocking concern. Surface it explicitly. Read `references/engineering-sections.md` only when the plan carries non-trivial engineering risk.
 
 ### Render Verdict
 
-Use exactly one of the three approved values.
+Use exactly one of the three approved values. Read `references/implementation-alternatives.md` only when PLAN.md lacks an approach rationale, the user asks for alternatives, or the verdict depends on comparing safer execution paths.
 
 ### Verdict Values
 
@@ -101,11 +103,3 @@ State the next skill based on the verdict.
 - Do not emit the full risk matrix when all dimensions are acceptable; keep the durable review to the 5-field template.
 - Verdict vocabulary is strict. Use only the three approved values.
 - Missing DESIGN.md is not a blocker when `canonical_design` is null, absent, or intentionally skipped by the plan.
-
-## Deep
-
-- Read `references/review-template.md` for the exact markdown format.
-- Read `references/risk-examples.md` for sample risk matrices.
-- Read `references/prime-directives.md` for 9 non-negotiable standards and preferences.
-- Read `references/engineering-sections.md` only when the plan carries non-trivial engineering risk.
-- Read `references/implementation-alternatives.md` only when PLAN.md lacks an approach rationale, the user asks for alternatives, or the review verdict depends on comparing safer execution paths.

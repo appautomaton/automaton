@@ -53,7 +53,7 @@ Ask only when ambiguity changes steering output. Read `references/question-patte
 
 ### Write Artifacts
 
-Use `templates/` as scaffolds:
+Apply `references/artifact-contract.md` for exact format and required sections. Use `templates/` as scaffolds:
 - `.agent/wiki/REPO-MAP.md`: bounded evidence index; no open-question parking, confidence verdict, or recommended next skill
 - `.agent/steering/PROJECT.md`: compact identity record; what this repo owns and why
 - `.agent/steering/REQUIREMENTS.md`: durable constraints only; no generic unknown parking
@@ -100,9 +100,3 @@ Do not guess. Do not proceed.
 - Delete empty template sections; templates are prompts, not required headings.
 - Keep durable artifacts free of speculative questions, confidence labels, and routing chatter.
 - Never create roadmap phases on first-time onboarding. On refresh, change roadmap phases only when evidence and user confirmation justify it.
-
-## Deep
-
-- Read `references/topology-scan.md` for runtime surfaces, package boundaries, stack conventions.
-- Read `references/artifact-contract.md` for exact format and required sections.
-- Read `references/question-patterns.md` for good and bad follow-up questions.

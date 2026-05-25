@@ -24,8 +24,9 @@ Quality Gate    — checks before finalizing; each skill ships a quality.md refe
 Do              — skill-specific procedure
 Output          — artifacts produced, state changes, diagnostic handling, handoff
 Rules           — guardrails
-Deep            — progressive disclosure triggers for references
 ```
+
+Conditional reference reads (`Read references/X.md when Y`) appear inline at their procedural trigger points.
 
 ## State Contract
 

@@ -15,7 +15,7 @@ First action: run `node .agent/.automaton/scripts/get-context.mjs` from the proj
 
 auto-plan builds the smallest plan that makes execution safe while preserving the approved scope. It does not write code or broaden scope beyond the approved spec.
 
-Loading discipline: hold SPEC.md, review state, and source files needed for accurate slices. Read wider project files when understanding existing code informs slice boundaries or verification commands.
+Loading discipline: hold SPEC.md, review state, and source files needed for accurate slices. Read wider project files when understanding existing code informs slice boundaries or verification commands. Read `.agent/.automaton/references/CONTEXT-BUDGET.md` when wider reads threaten context pressure.
 
 Artifact discipline: `PLAN.md` is the reloadable execution index, not the whole implementation dossier. Keep PLAN.md compact enough to re-read. For large coherent work, summarize slices in PLAN.md and link optional detail files under `.agent/work/<change>/slices/`. Split only for independent outcomes, not because one coherent plan has many requirements.
 
@@ -51,6 +51,8 @@ Break work into ordered execution units, not topic buckets. Each slice must be:
 - Bounded: it can be executed and verified without loading unrelated slices.
 - Independent: it can be executed without loading slices that come after it.
 - Checkpointed only for human input: it marks a pause only when a human must act or choose before the next approved slice can start.
+
+Read `references/slice-examples.md` when uncertain whether a slice is well-designed.
 
 For content slices, also name the artifact target, allowed sources, factual-risk gate, and format constraint so `auto-execute` does not invent missing context.
 
@@ -139,9 +141,3 @@ Run `node .agent/.automaton/scripts/sync-status.mjs --canonical-plan ".agent/wor
 - Do not broaden scope to cover hypothetical future work.
 - Preserve review sections on refresh unless the user explicitly requests consolidation.
 - Every material slice must have acceptance criteria and an explicit verification command.
-
-## Deep
-
-- Read `references/slice-examples.md` for well-designed vs. poorly-designed slices.
-- Read `.agent/.automaton/references/CONTEXT-BUDGET.md` for progressive loading and context pressure tiers.
-- Read `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` when handoff rules or state pointer boundaries need clarification.

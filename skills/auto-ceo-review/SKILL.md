@@ -41,11 +41,11 @@ Read the canonical `SPEC.md`.
 
 ### Restate the Bet
 
-In one sentence: "We are betting that [specific user] will [specific action] because [specific reason], and the risk is [specific risk]."
+In one sentence: "We are betting that [specific user] will [specific action] because [specific reason], and the risk is [specific risk]." Read `references/bet-framing.md` for crisp-vs-vague bet examples.
 
 ### Evaluate
 
-Assess differentiation, user value, generic or mis-scoped elements, and shippability. Ground each in evidence from the spec.
+Choose a review posture per `references/review-modes.md`. Assess differentiation, user value, generic or mis-scoped elements, and shippability — ground each in evidence from the spec. Read `references/product-checklist.md` for structured checks and `references/cognitive-patterns.md` for thinking patterns that surface blind spots.
 
 ### Render Verdict
 
@@ -86,11 +86,3 @@ On a non-blocking verdict (`approved` or `approved_with_risks`), continue inline
 - Be decisive, not theatrical. A sharp verdict is better than a long analysis.
 - Do not turn the review into implementation design. Stay in product bet territory.
 - Verdict vocabulary is strict. Use only the four approved values.
-
-## Deep
-
-- Read `references/review-template.md` for the exact markdown format.
-- Read `references/bet-framing.md` for 10x check, platonic ideal, dream state mapping.
-- Read `references/review-modes.md` for four scope postures and mode selection defaults.
-- Read `references/product-checklist.md` for premise challenge, differentiation, scope calibration.
-- Read `references/cognitive-patterns.md` for 18 thinking instincts.

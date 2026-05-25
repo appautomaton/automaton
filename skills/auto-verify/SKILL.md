@@ -65,7 +65,7 @@ Build the full criterion checklist internally. Use `references/verification-temp
 ### On Fail
 
 Annotate failed slices in `PLAN.md` with structured gap blocks, then run `node .agent/.automaton/scripts/sync-status.mjs --stage execute` from the project root so re-entry resumes gap fixing.
-Each gap block needs `VERIFY-GAP`, evidence, and a fix objective. Recommend `auto-execute`; it reads these annotations on re-entry.
+Each gap block needs `VERIFY-GAP`, evidence, and a fix objective. Apply append-replace discipline from `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md`: replace prior `VERIFY-GAP` blocks for the same slice rather than stacking. Recommend `auto-execute`; it reads these annotations on re-entry.
 
 ## Output
 
@@ -81,10 +81,5 @@ Each gap block needs `VERIFY-GAP`, evidence, and a fix objective. Recommend `aut
 - Fresh evidence only. Do not rely on execution-session memory or prior verification results.
 - Binary evaluation. Partial evidence is FAIL for the plan.
 - Verify the full plan: all slices, all criteria. Derive missing commands from acceptance criteria and document them.
+- Verify what the plan requires; flag an unmentioned common gap (input validation, concurrency, security, etc.) only when obviously critical to the change.
 - Do not print a long pass transcript. Expand only failures, skipped checks, derived commands, or user-requested detail.
-
-## Deep
-
-- Read `references/verification-template.md` for extended format guidance.
-- The LLM already knows common verification gaps (input validation, error handling, concurrency, security, observability). Verify what the plan requires; flag an unmentioned gap only when it is obviously critical to the change.
-- Read `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` when state pointer or handoff rules need clarification.

@@ -15,7 +15,7 @@ First action: run `node .agent/.automaton/scripts/get-context.mjs` from the proj
 
 auto-execute owns execute-stage orchestration, route selection, state, and scope. Direct implementation and subagent implementation are two routes inside this skill. It does not reopen product scope or modify the approved plan's intent. Execute and verify one approved slice at a time inside the selected execution window. Continuation is the default after a verified slice; checkpoints and STOP conditions are the exceptions. An execution window is a context-management batch, not a completion boundary.
 
-Loading discipline: keep the active slice, execution-window metadata, acceptance criteria, route metadata, verification commands, and active files in context. Load linked detail files and traceability IDs for the active slice only; read wider project files only when implementation correctness requires it.
+Loading discipline: keep the active slice, execution-window metadata, acceptance criteria, route metadata, verification commands, and active files in context. Load linked detail files and traceability IDs for the active slice only; read wider project files only when implementation correctness requires it. Read `.agent/.automaton/references/CONTEXT-BUDGET.md` when wider reads threaten context pressure.
 
 ## Quality Gate
 
@@ -140,6 +140,8 @@ Halt immediately and report to the user when:
 5. The user asks for work outside the current slice.
 6. Context pressure reaches DEGRADING or EMERGENCY.
 7. The plan requires subagents but the host cannot dispatch them.
+
+Read `references/stop-examples.md` when uncertain whether a situation qualifies for STOP.
 </STOP>
 
 <GATE>
@@ -171,13 +173,3 @@ Do NOT write code unless:
 - Do not silently redefine the plan; record corrections transparently.
 - Keep durable evidence in `PLAN.md` or linked `slices/slice-NNN.md`, not new evidence files by default.
 - Before fixing, investigate. No fixes without root cause.
-
-## Deep
-
-- Read `.agent/.automaton/references/SUBAGENT-PROTOCOL.md` only when subagent route is selected.
-- Read `references/HOST-TOOLS.md` only when dispatching subagents.
-- Read `references/implementer-prompt.md`, `references/spec-reviewer-prompt.md`, and `references/code-quality-reviewer-prompt.md` for subagent role prompts.
-- Read `references/stop-examples.md` when deciding whether to halt or push through uncertainty.
-- Read `references/debug-protocol.md` for root-cause patterns after bounded diagnosis.
-- Read `.agent/.automaton/references/CONTEXT-BUDGET.md` for context pressure tiers.
-- Read `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` when state pointer conflicts or progressive disclosure rules need clarification.

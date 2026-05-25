@@ -107,16 +107,8 @@ After writing SPEC.md, run `node .agent/.automaton/scripts/sync-status.mjs --act
 
 - **SPEC.md is mandatory for frame completion.**
 - **INTAKE.md is optional.** Use it when present, but a clear current request can be framed without it.
+- If the user tries to skip spec writing, write the smallest useful SPEC and ask them to confirm or edit it.
 - Ask at most three framing questions, or at most five for capability-sized goals without office-hours context; more than that belongs in office-hours.
+- Match SPEC shape to the work shape; do not force every SPEC into a feature template.
 - Preserve review sections on refresh.
 - Keep notes operational: the SPEC is a contract, not an essay.
-
-## Deep
-
-- Read `references/lens-selection.md` for full lens examples.
-- Read `references/spec-shape.md` before writing SPEC.md.
-- Read `references/content-framing.md` for content-aware SPEC fields and anti-slop checks.
-- Read `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` when state pointers, stage handoffs, or artifact layout need clarification.
-- Edge case: if the user tries to skip spec writing, write the smallest useful SPEC and ask them to confirm or edit it.
-- Edge case: if the request names unrelated outcomes, ask which one to frame first; if multiple files or subsystems serve one coherent outcome, keep them in one SPEC.
-- Work shapes live in `references/spec-shape.md`; do not force every SPEC into a feature template.
