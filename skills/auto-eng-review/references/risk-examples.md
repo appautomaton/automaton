@@ -2,8 +2,8 @@
 
 ## Example 1: API Migration
 
-| Dimension | Rating | What a 10 looks like |
-|-----------|--------|----------------------|
+| Dimension | Rating | Notes |
+|-----------|--------|-------|
 | Architecture fit | 8 | Uses existing service layer; no new abstractions |
 | Data flow clarity | 6 | Most flows traced; one batch job path is unclear |
 | Edge case coverage | 4 | Timeout and retry handled; partial failure not modeled |
@@ -15,8 +15,8 @@
 
 ## Example 2: New Feature with External Service
 
-| Dimension | Rating | What a 10 looks like |
-|-----------|--------|----------------------|
+| Dimension | Rating | Notes |
+|-----------|--------|-------|
 | Architecture fit | 5 | New service boundary; overlaps with existing notification system |
 | Data flow clarity | 7 | Webhook flow documented; retry logic specified |
 | Edge case coverage | 3 | External service downtime not handled; rate limiting unknown |
@@ -25,16 +25,3 @@
 | Dependency risk | 2 | New third-party service with no SLA; no fallback defined |
 
 **Verdict:** `needs_correction`. Dependency risk and edge case coverage are blocking.
-
-## Example 3: Refactoring with No Behavior Change
-
-| Dimension | Rating | What a 10 looks like |
-|-----------|--------|----------------------|
-| Architecture fit | 9 | Pure rename and extract; no logic change |
-| Data flow clarity | 10 | No data flow changes |
-| Edge case coverage | 10 | No new edge cases introduced |
-| Test strategy | 8 | Existing tests pass; one test updated for new names |
-| Rollback safety | 9 | Pure refactoring; trivial to revert |
-| Dependency risk | 10 | No dependency changes |
-
-**Verdict:** `approved`. Low risk, high confidence.

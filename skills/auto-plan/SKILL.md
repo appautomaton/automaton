@@ -80,7 +80,7 @@ Include when useful:
 ```
 
 Rules:
-- Every material slice must have a verification command.
+- Every material slice must have a verification command. Verify the exact behavior, not the absence of errors. Include rollback verification for migrations.
 - Every material slice must have acceptance criteria; execution cannot verify vibes.
 - Omitted `Execution` means `direct`. Use `subagent recommended` for broad, cross-subsystem, interface, schema, or review-risk work. Use `subagent required` only for user-requested multi-agent execution or security-critical, production-data, or irreversible-state changes.
 - Omitted `Depends on` means `none`.
@@ -143,6 +143,5 @@ Run `node .agent/.automaton/scripts/sync-status.mjs --canonical-plan ".agent/wor
 ## Deep
 
 - Read `references/slice-examples.md` for well-designed vs. poorly-designed slices.
-- Read `references/verification-patterns.md` for common verification commands by stack.
 - Read `.agent/.automaton/references/CONTEXT-BUDGET.md` for progressive loading and context pressure tiers.
 - Read `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` when handoff rules or state pointer boundaries need clarification.

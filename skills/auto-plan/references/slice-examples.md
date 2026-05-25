@@ -14,13 +14,6 @@
 **Verification:** `npm test -- auth.middleware.test.js` passes; `curl -H "Authorization: Bearer invalid" /api/protected` returns 401.
 ```
 
-Why this works:
-- Objective is specific and testable.
-- Acceptance criteria state observable behavior.
-- Touches names the expected work area.
-- Produces a specific artifact.
-- Verification is a concrete command with expected output.
-
 ## Poorly-Designed Slice
 
 ```markdown
@@ -29,34 +22,6 @@ Why this works:
 **Objective:** Make the API secure.
 **Produces:** Working authentication.
 **Verification:** Tests pass.
-```
-
-Why this fails:
-- "Make the API secure" is not actionable.
-- No acceptance criteria.
-- No specific artifact named.
-- "Tests pass" is not a specific command.
-- Scope is too broad to execute safely.
-
-## Another Good Example
-
-```markdown
-### Slice 2: Add database migration for user preferences
-
-**Objective:** Create migration that adds `preferences` JSONB column to `users` table.
-**Touches:** `migrations/`, schema tests.
-**Produces:** `migrations/20240115_add_user_preferences.sql` plus rollback script.
-**Verification:** `npm run db:migrate` succeeds; `npm run db:rollback` reverts cleanly; schema inspection confirms column exists.
-```
-
-## Another Bad Example
-
-```markdown
-### Slice 2: Database stuff
-
-**Objective:** Update the database.
-**Produces:** Database changes.
-**Verification:** Check the database.
 ```
 
 ## Subagent-Routed Slice
@@ -94,12 +59,6 @@ Parallel-safe groups:
 Checkpoints:
 - Slice 6: human-verify (visual layout review, not automatable)
 ```
-
-Why this works:
-- Default covers most slices in one line.
-- Overrides name only the slices that deviate, with rationale.
-- Parallel-safe groups name the slices and why their write sets are disjoint.
-- Checkpoints name the human dependency, not engineering judgment.
 
 ## Rule of Thumb
 
