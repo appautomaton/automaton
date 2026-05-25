@@ -321,7 +321,7 @@ These sharpen output without changing system behavior.
 
 ---
 
-### Q2. Review skills lack verdict calibration in preamble
+### Q2. Review skills lack verdict calibration in preamble ✅
 
 *Retained*
 
@@ -602,7 +602,7 @@ Sorted by impact ÷ effort, ready for execution.
 | # | Item | Effort |
 |---|------|--------|
 | 11 | Q1 — Make auto-plan quality trigger observable | XS |
-| 12 | Q2 — Verdict calibration in review preambles | XS |
+| 12 | ~~Q2 — Verdict calibration in review preambles~~ | ✅ |
 | 13 | Q3 — auto-onboard pre-flight GATE | XS |
 | 14 | Q4 — Quick Scan in engineering-sections.md | XS |
 | 15 | ~~Q5 — Symmetric handoff explanations on both review skills~~ | ✅ |
