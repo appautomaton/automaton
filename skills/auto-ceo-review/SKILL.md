@@ -78,7 +78,7 @@ On a non-blocking verdict (`approved` or `approved_with_risks`), continue inline
 
 - `SPEC.md` with appended `## Review: Product` section
 - `.agent/.automaton/state/current.json` updated through `sync-status.mjs` with `product_review`; `stage` is unchanged by this skill
-- Next handoff, mapped from verdict: `approved` or `approved_with_risks` → continue inline into `auto-plan`; `needs_clarification` → stop, recommend `auto-frame` or `auto-office-hours`; `descoped` → stop, recommend `auto-office-hours` or halt.
+- Next handoff, mapped from verdict: `approved` or `approved_with_risks` → continue inline into `auto-plan` (planning produces a markdown artifact, not code changes; no re-authorization needed); `needs_clarification` → stop, recommend `auto-frame` or `auto-office-hours`; `descoped` → stop, recommend `auto-office-hours` or halt.
 
 ## Rules
 
