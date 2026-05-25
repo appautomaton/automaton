@@ -1,8 +1,8 @@
 # Roadmap
 
-No roadmap phases yet.
+No active roadmap.
 
-First-time onboarding does not create roadmap phases. On refresh, update phases only after strong roadmap evidence and user confirmation in chat.
+First-time onboarding does not create roadmap phases. Refresh imports require strong roadmap evidence and user confirmation in chat.
 
 ## Deferred or Not Now
 

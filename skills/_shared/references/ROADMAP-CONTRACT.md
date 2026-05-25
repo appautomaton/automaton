@@ -1,6 +1,24 @@
 # Roadmap Contract
 
-This reference defines the format, status model, and update rules for `.agent/steering/ROADMAP.md`. Load it when writing, updating, or reading roadmap phases.
+Compact format and update rules for `.agent/steering/ROADMAP.md`. Load when writing, updating, or reading roadmap phases.
+
+## Empty Roadmap Shape
+
+Use when no active or pending roadmap remains:
+
+```md
+# Roadmap
+
+No active roadmap.
+
+First-time onboarding does not create roadmap phases. Refresh imports require strong roadmap evidence and user confirmation in chat.
+
+## Deferred or Not Now
+
+- None recorded.
+```
+
+Reset to this shape instead of deleting ROADMAP.md.
 
 ## Canonical Phase Format
 
@@ -22,9 +40,9 @@ Field order is normative. `status` and `change` appear first.
 
 | Status | Meaning | Set by |
 |--------|---------|--------|
-| `pending` | Not yet started; queued for future work | `auto-onboard` (initial creation), `auto-office-hours` (decomposition) |
-| `active` | Currently being framed, planned, or executed | `auto-office-hours` (when framing the first spec from a decomposed request) |
-| `done` | All slices verified; phase complete | `auto-verify` (when the final slice of the matching change passes) |
+| `pending` | Queued for future work | `auto-onboard` (confirmed refresh/import only), `auto-office-hours`, `auto-frame` |
+| `active` | Current framed/planned/executed phase | `auto-office-hours` for the first spec in an approved decomposition |
+| `done` | Verified complete | `auto-verify` |
 
 Status progression is one-directional: `pending` → `active` → `done`. Do not reverse.
 
@@ -32,11 +50,11 @@ Status progression is one-directional: `pending` → `active` → `done`. Do not
 
 | Skill | Action | When |
 |-------|--------|------|
-| `auto-onboard` | Keeps ROADMAP.md as a short placeholder on first-time setup; on refresh, writes phases only when strong repo evidence shows an ongoing roadmap and the user confirms importing or refreshing it | First-time setup and targeted refresh |
-| `auto-office-hours` | Replaces ROADMAP.md content with the approved decomposition; sets the first spec to `status: active` with its `change:` slug | Scale is roadmap-sized and user approves an approach |
-| `auto-frame` | Appends deferred scope as new `status: pending` phases | Spec is narrower than the user's stated goal |
-| `auto-verify` | Sets matching phase to `status: done` | Final slice of the plan passes all criteria |
-| `auto-resume` | Reads ROADMAP.md to surface pending items during re-entry or recovery | User or host invokes resume after interruption, compaction, stale state, or an explicit recovery request |
+| `auto-onboard` | Empty shape on first setup; confirmed refresh may import `pending` phases only | First-time setup or targeted refresh |
+| `auto-office-hours` | Replaces content with approved decomposition; first spec is `status: active` with its `change:` slug; may reset inactive roadmap first | Roadmap-sized work and user-approved approach |
+| `auto-frame` | Appends deferred scope as `status: pending` phases; may reset inactive roadmap first | SPEC is narrower than the user's stated goal |
+| `auto-verify` | Marks matching phase `status: done`; resets to empty shape if no active/pending phases or deferred items remain | Final slice passes all criteria |
+| `auto-resume` | Reads pending items as context during re-entry or recovery | Resume, compaction, stale state, or explicit recovery |
 
 ## Matching Rule
 
@@ -46,22 +64,26 @@ Status progression is one-directional: `pending` → `active` → `done`. Do not
 
 - There is exactly one roadmap file: `.agent/steering/ROADMAP.md`. Do not create parallel roadmap files.
 - ROADMAP.md is a steering artifact. It is NOT a canonical pointer in `current.json`.
-- ROADMAP.md is forward-looking. Work evidence lives in `.agent/work/<change>/`; the roadmap does not need to preserve completed-work history beyond `status: done` markers.
-- When `auto-office-hours` produces a user-approved decomposition, it replaces existing roadmap content. A user-approved roadmap supersedes a speculative onboard roadmap.
+- ROADMAP.md is forward-looking. Work evidence lives in `.agent/work/<change>/`; ROADMAP.md is not a completed-work history log.
+- A user-approved `auto-office-hours` roadmap replaces existing roadmap content and supersedes a speculative onboard roadmap.
 - `auto-onboard` must not create roadmap phases during first-time onboarding.
 - `auto-onboard` must not synthesize roadmap phases from repo evidence alone during refresh.
+- `auto-onboard` must not create `status: active` phases.
 - At most one phase has `status: active` at any time.
 - A phase with `status: active` must have a non-empty `change:` field.
 - Deferred scope appended by `auto-frame` starts as `status: pending` with empty `change:`.
 - The `## Deferred or Not Now` section at the bottom holds items explicitly excluded from the roadmap.
+- Inactive means every phase is `done` and `## Deferred or Not Now` is empty or `None recorded`; writer skills may reset inactive roadmaps to the empty shape.
 
 ## Anti-Patterns
 
 - Creating parallel roadmap files (e.g., `ROADMAP-<name>.md`) instead of updating `ROADMAP.md`.
 - Creating roadmap phases during first-time onboarding.
 - Using onboarding to create speculative roadmap phases without user confirmation.
+- Using onboarding to create active roadmap phases.
 - Adding ROADMAP.md as a canonical pointer in `current.json`.
 - Setting multiple phases to `status: active` simultaneously.
 - Skipping `pending` and writing phases directly as `active` without user approval.
 - Reversing status (e.g., `done` back to `active`).
+- Preserving done-only roadmap history after all roadmap items are complete.
 - Adding fields to phase format without updating this contract.
