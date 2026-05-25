@@ -25,14 +25,16 @@ Before marking a slice complete:
 - Record verification evidence before advancing or selecting the next slice.
 - Read `references/quality.md` when the diff looks clever, defensive, or broader than the plan requires.
 
-## Prerequisites
-
-Before using this skill:
-- `canonical_plan` in `.agent/.automaton/state/current.json` must point to an approved `PLAN.md`.
-- The next executable slice must have an objective, acceptance criteria, and verification command.
-- If `engineering_review` is `needs_correction`, stop and return to `auto-plan`.
-
 ## Do
+
+<GATE>
+
+Do NOT write code unless:
+- `PLAN.md` is approved and `canonical_plan` in `.agent/.automaton/state/current.json` is set.
+- The next executable slice has an objective, acceptance criteria, and verification command.
+- `engineering_review` is not `needs_correction` (otherwise stop and return to `auto-plan`).
+- The route is direct, or the subagent route has passed its host capability check.
+</GATE>
 
 ### Load State
 
@@ -144,15 +146,6 @@ Halt immediately and report to the user when:
 Read `references/stop-examples.md` when uncertain whether a situation qualifies for STOP.
 </STOP>
 
-<GATE>
-
-Do NOT write code unless:
-- `PLAN.md` is approved and `canonical_plan` is set.
-- The current slice has explicit acceptance criteria.
-- The route is direct, or the subagent route has passed its host capability check.
-- If the user asks for a quick fix outside the plan, reframe through `auto-frame`; do not bypass the plan.
-</GATE>
-
 ## Output
 
 - Slice(s) executed and route used: direct, subagent recommended, or subagent required.
@@ -171,5 +164,5 @@ Do NOT write code unless:
 - Build an execution window, but execute and verify one slice at a time.
 - Serial execution is the default; parallel cross-slice dispatch requires explicit plan approval and disjoint write sets.
 - Do not silently redefine the plan; record corrections transparently.
+- If the user asks for a quick fix outside the plan, reframe through `auto-frame`; do not bypass the plan.
 - Keep durable evidence in `PLAN.md` or linked `slices/slice-NNN.md`, not new evidence files by default.
-- Before fixing, investigate. No fixes without root cause.

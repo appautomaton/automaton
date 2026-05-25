@@ -9,7 +9,7 @@ metadata:
 
 Optional engineering-safety review. Validates that a plan is safe to execute before implementation begins.
 
-First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root. Then read `PLAN.md`; read `DESIGN.md` only when `canonical_design` is set and resolves to a file.
+First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root.
 
 ## Preamble
 
@@ -37,7 +37,7 @@ If the plan is missing or unreadable, set verdict to `needs_correction` and stop
 
 ### Load State
 
-Read the canonical `PLAN.md`. If `canonical_design` is null, missing, or points to a missing file, continue without DESIGN.md and note that the plan intentionally has no design artifact.
+Read the canonical `PLAN.md`. Read `DESIGN.md` only when `canonical_design` is set and resolves to a file; otherwise continue without it and note that the plan intentionally has no design artifact.
 
 ### Restate the Plan
 

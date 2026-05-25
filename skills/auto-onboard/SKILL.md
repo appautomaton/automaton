@@ -41,7 +41,7 @@ Read `README.md`, `package.json` or equivalent, and up to 3 config files (e.g., 
 
 ### Map Topology
 
-Read `references/topology-scan.md` (~56 lines: 7-layer read order, budget rules, REPO-MAP.md output requirements) for the scan protocol. Identify:
+Read `references/topology-scan.md` for the scan protocol. Identify:
 - Runtime surfaces (CLI, API, UI, worker)
 - Package boundaries (apps, packages, modules)
 - Stack (language, framework, build tool, test runner)

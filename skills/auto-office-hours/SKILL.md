@@ -9,7 +9,7 @@ metadata:
 
 Pre-frame conversation. Turns a vague idea into a sharp objective before framing begins.
 
-First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root. Then detect mode, work scale, and work shape from the user's language.
+First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root.
 
 ## Preamble
 
