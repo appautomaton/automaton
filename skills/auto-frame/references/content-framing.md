@@ -47,22 +47,7 @@ Concrete examples of what the content must not sound like. Name specific pattern
 
 ## Anti-Slop Checklist
 
-Before finalizing a content-oriented SPEC.md, verify the spec itself does not exhibit these patterns. A spec that tells the implementer to avoid slop but is itself sloppy undermines the direction.
-
-| # | Pattern | What to check |
-| --- | --- | --- |
-| 1 | Significance inflation | No "pivotal," "testament," "crucial," "vital," "key moment" unless quoting a source. |
-| 2 | Promotional language | No "vibrant," "groundbreaking," "nestled," "stunning," "breathtaking." |
-| 3 | Superficial -ing analysis | No "highlighting," "underscoring," "emphasizing," "showcasing" as sentence padding. |
-| 4 | Vague attribution | No "experts say," "industry observers note" without named sources. |
-| 5 | Em dash overuse | Rewrite with commas, periods, or parentheses unless the dash adds genuine rhythm. |
-| 6 | Rule of three | Do not force ideas into groups of three for rhetorical effect. |
-| 7 | Sycophantic artifacts | No "Great question!", "Certainly!", "I hope this helps!" in any artifact. |
-| 8 | Generic conclusions | No "the future looks bright," "exciting times ahead." End with a concrete next action. |
-| 9 | Copula avoidance | Use "is" / "are" / "has" instead of "serves as" / "stands as" / "boasts." |
-| 10 | Signposting | No "Let's dive in," "Here's what you need to know." Start with the content. |
-
-This checklist is adapted from the Wikipedia AI-writing-tell taxonomy. It covers the 10 most common patterns; the full taxonomy has 29.
+Before finalizing a content-oriented SPEC.md, scan the spec itself against `.agent/.automaton/references/ANTI-SLOP.md`. A spec that tells the implementer to avoid slop but models sloppy prose undermines the direction.
 
 ## Lens Interaction
 
@@ -74,7 +59,7 @@ Content framing adds a content lens to the standard lens set. It does not replac
 
 ## Pass 2 Dimensions (Deferred)
 
-These are not captured in Pass 1 framing. They affect drafting and verification, not intake and scoping:
+Capture these when the user already supplied them or when they materially affect scope. Otherwise leave them for planning as explicit assumptions or blocking questions:
 
 - **Channel:** where the content will be published (blog, docs site, newsletter, social).
 - **Source policy:** what can be cited, linked, or assumed as common knowledge.

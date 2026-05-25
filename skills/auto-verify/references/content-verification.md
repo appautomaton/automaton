@@ -19,20 +19,7 @@ Evaluate each check as PASS, FAIL, or PARTIAL with evidence. Do not collapse con
 
 ## Anti-Slop Pattern Scan
 
-Scan the final artifact for:
-
-- significance inflation
-- promotional language
-- superficial "-ing" analysis
-- vague attribution
-- em dash overuse
-- forced rule of three
-- sycophantic artifacts
-- generic conclusions
-- copula avoidance
-- signposting
-
-Each hit is FAIL unless it is quoted source text or intentionally justified.
+Scan the final artifact against `.agent/.automaton/references/ANTI-SLOP.md`. Each hit is FAIL unless it is quoted source text, required by the approved voice sample, or intentionally justified.
 
 ## Source And Fact Checks
 

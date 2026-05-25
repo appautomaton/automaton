@@ -38,20 +38,7 @@ For high factual risk, draft only from provided or freshly verified sources. If 
 
 ## Anti-Slop Pass
 
-Scan for these execution-time patterns:
-
-- significance inflation
-- promotional adjectives
-- vague attribution
-- forced rule-of-three structure
-- em-dash-heavy connective tissue
-- "Let's dive in" signposting
-- sycophantic openers or closers
-- "serves as" / "stands as" padding
-- generic future-facing conclusions
-- unsupported specificity
-
-Fix the pattern directly, or record why it is intentionally kept.
+Scan against `.agent/.automaton/references/ANTI-SLOP.md`. Fix each hit directly, or record why it is quoted source text, required by the approved voice sample, or intentionally kept.
 
 ## Output Discipline
 

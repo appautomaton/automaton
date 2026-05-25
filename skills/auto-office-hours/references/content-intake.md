@@ -48,14 +48,4 @@ After content intake, the diagnostic output feeds into:
 
 ## Anti-Slop Calibration
 
-When discussing content quality, use concrete pattern names from the anti-slop taxonomy rather than vague quality language:
-
-| Say this | Not this |
-| --- | --- |
-| "Watch for significance inflation, phrases like 'pivotal moment' or 'stands as a testament'" | "Make sure the writing is high quality" |
-| "Cut the em-dash lists and rule-of-three patterns" | "Vary your sentence structure" |
-| "No promotional language: 'vibrant,' 'nestled,' 'groundbreaking'" | "Keep the tone neutral" |
-| "Replace vague attributions with named sources" | "Be more specific" |
-| "Drop the sycophantic openers: 'Great question!', 'Certainly!'" | "Sound more natural" |
-
-These patterns are adapted from the Wikipedia AI-writing-tell taxonomy. Name the specific tell, not the abstract goal.
+When discussing content quality, use concrete pattern names from `.agent/.automaton/references/ANTI-SLOP.md` rather than vague goals like "high quality," "engaging," or "natural." Name the specific tell the user wants to avoid, then carry it into Content Anti-Goals.

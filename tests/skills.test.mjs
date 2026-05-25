@@ -22,6 +22,19 @@ const authoredSkills = [
 const namePattern = /^[a-z0-9]+(-[a-z0-9]+)*$/
 const perSkillScriptCommand = /`scripts\/(?:get-context|sync-status)\.mjs`/
 const contentDimensions = ['Audience', 'Thesis', 'Voice', 'Content Anti-Goals', 'Channel', 'Source Policy', 'Factual Risk', 'Format']
+const antiSlopPatterns = [
+  'Significance inflation',
+  'Promotional language',
+  'Superficial `-ing` analysis',
+  'Vague attribution',
+  'Em-dash overuse',
+  'Forced rule of three',
+  'Sycophantic artifacts',
+  'Generic conclusions',
+  'Copula padding',
+  'Signposting',
+  'Unsupported specificity'
+]
 
 function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
@@ -234,10 +247,23 @@ test('auto-execute subagent prompts preserve hardened subagent invariants', () =
   assert.match(qualityReviewer, /ISSUES: none/)
 })
 
-test('shared references include subagent protocol but no host-specific generated mapping', () => {
+test('shared references include protocol references but no host-specific generated mapping', () => {
   assert.equal(existsSync(join(skillsRoot, '_shared', 'references', 'SUBAGENT-PROTOCOL.md')), true)
   assert.equal(existsSync(join(skillsRoot, '_shared', 'references', 'ARTIFACT-LIFECYCLE.md')), true)
+  assert.equal(existsSync(join(skillsRoot, '_shared', 'references', 'ANTI-SLOP.md')), true)
   assert.equal(existsSync(join(skillsRoot, '_shared', 'references', 'HOST-TOOLS.md')), false)
+})
+
+test('shared anti-slop reference is the canonical content pattern taxonomy', () => {
+  const antiSlop = readFileSync(join(skillsRoot, '_shared', 'references', 'ANTI-SLOP.md'), 'utf8')
+
+  for (const pattern of antiSlopPatterns) {
+    assert.match(antiSlop, new RegExp(escapeRegExp(pattern)))
+  }
+
+  assert.match(antiSlop, /quoted source text/)
+  assert.match(antiSlop, /approved voice sample/)
+  assert.match(antiSlop, /intentionally justified/)
 })
 
 test('artifact lifecycle reference defines stage handoffs and canonical pointers', () => {
@@ -738,8 +764,7 @@ test('auto-frame ships content-framing reference with anti-slop checklist', () =
   assert.match(contentFraming, /Audience/)
   assert.match(contentFraming, /Thesis/)
   assert.match(contentFraming, /Anti-Slop Checklist/)
-  assert.match(contentFraming, /Significance inflation/)
-  assert.match(contentFraming, /Promotional language/)
+  assert.match(contentFraming, /\.agent\/\.automaton\/references\/ANTI-SLOP\.md/)
   assert.match(skill, /content lens/)
   assert.match(skill, /references\/content-framing\.md/)
 })
@@ -761,6 +786,14 @@ test('content mode detection is consistent across office-hours and frame skills'
   for (const signal of contentSignals) {
     assert.match(officeHours, new RegExp(signal), `office-hours must detect content signal: ${signal}`)
     assert.match(frame, new RegExp(signal), `frame must detect content signal: ${signal}`)
+  }
+})
+
+test('content lens lexicon names the canonical content dimensions', () => {
+  const lexicon = readFileSync(join(skillsRoot, '_shared', 'authoring', 'LEXICON.md'), 'utf8')
+
+  for (const dimension of contentDimensions) {
+    assert.match(lexicon, new RegExp(escapeRegExp(dimension), 'i'))
   }
 })
 
@@ -791,6 +824,7 @@ test('auto-execute ships content-execution reference with source and factual gua
     assert.match(contentExecution, new RegExp(escapeRegExp(dimension)))
   }
   assert.match(contentExecution, /Anti-Slop Pass/)
+  assert.match(contentExecution, /\.agent\/\.automaton\/references\/ANTI-SLOP\.md/)
   assert.match(skill, /references\/content-execution\.md/)
 })
 
@@ -805,7 +839,25 @@ test('auto-verify ships content-verification reference with evidence checks', ()
   assert.match(contentVerification, /Evidence requirement/)
   assert.match(contentVerification, /PASS, FAIL, or PARTIAL/)
   assert.match(contentVerification, /Anti-Slop Pattern Scan/)
+  assert.match(contentVerification, /\.agent\/\.automaton\/references\/ANTI-SLOP\.md/)
   assert.match(skill, /references\/content-verification\.md/)
+})
+
+test('content references defer anti-slop taxonomy to the shared reference', () => {
+  const contentRefs = [
+    readFileSync(join(skillsRoot, 'auto-office-hours', 'references', 'content-intake.md'), 'utf8'),
+    readFileSync(join(skillsRoot, 'auto-frame', 'references', 'content-framing.md'), 'utf8'),
+    readFileSync(join(skillsRoot, 'auto-execute', 'references', 'content-execution.md'), 'utf8'),
+    readFileSync(join(skillsRoot, 'auto-verify', 'references', 'content-verification.md'), 'utf8')
+  ]
+
+  for (const source of contentRefs) {
+    assert.match(source, /\.agent\/\.automaton\/references\/ANTI-SLOP\.md/)
+  }
+
+  const combinedLocalRefs = contentRefs.join('\n')
+  assert.doesNotMatch(combinedLocalRefs, /Unsupported specificity/)
+  assert.doesNotMatch(combinedLocalRefs, /Superficial `-ing` analysis/)
 })
 
 test('pass 2 content references stay local and do not duplicate pass 1 references', () => {
@@ -848,6 +900,8 @@ test('pass 2 content mode gates are consistent across lifecycle skills', () => {
 test('codex install copies content-aware skill surfaces from source', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-content-install-codex-'))
   const result = spawnSync(process.execPath, [cliPath, 'install', '--codex', root], { encoding: 'utf8' })
+  const installedAntiSlop = join(root, '.agent', '.automaton', 'references', 'ANTI-SLOP.md')
+  const sourceAntiSlop = join(skillsRoot, '_shared', 'references', 'ANTI-SLOP.md')
   const expectedReferences = {
     'auto-office-hours': 'content-intake.md',
     'auto-frame': 'content-framing.md',
@@ -858,6 +912,7 @@ test('codex install copies content-aware skill surfaces from source', () => {
 
   assert.equal(result.status, 0)
   assert.equal(result.stderr, '')
+  assert.equal(readFileSync(installedAntiSlop, 'utf8'), readFileSync(sourceAntiSlop, 'utf8'), 'shared anti-slop reference must be installed')
 
   for (const [skillName, referenceFile] of Object.entries(expectedReferences)) {
     const installedSkill = join(root, '.codex', 'skills', skillName, 'SKILL.md')

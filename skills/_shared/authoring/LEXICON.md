@@ -54,7 +54,7 @@ Canonical vocabulary for Automaton skills. Use these terms exactly. Do not subst
 | design | UI, UX | Interaction, visual, information architecture. |
 | security | auth, safety | Threat model, attack surface, secrets, compliance. |
 | runtime | ops, deploy | Performance, observability, infrastructure, cost. |
-| content | writing, article, brief | Audience, thesis, voice, channel, source policy, factual risk. |
+| content | writing, article, brief | Audience, thesis, voice, content anti-goals, channel, source policy, factual risk, format. |
 
 ## Prohibited Phrases
 
