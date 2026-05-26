@@ -471,7 +471,7 @@ test('plan execute and verify preserve linked detail and traceability IDs', () =
 })
 
 test('read-only skills do not include the state-write template', () => {
-  for (const skillName of ['auto-resume']) {
+  for (const skillName of ['auto-resume', 'auto-onboard']) {
     const source = readFileSync(join(skillsRoot, skillName, 'SKILL.md'), 'utf8')
 
     assert.doesNotMatch(

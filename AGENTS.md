@@ -7,7 +7,7 @@ Portable, stage-gated agentic-AI harness for Claude Code, Codex, and OpenCode.
 - **Copy-based install.** Skills and shared runtime files are inspectable after install. `_shared/` installs once under `.agent/.automaton/` where host skills can reference it (see `docs/design-decisions.md` DD-001).
 - **Skills are pure markdown.** `SKILL.md` + `references/` + optional `templates/`. Shared helper scripts live in `skills/_shared/scripts/`.
 - **Three hosts.** Claude, Codex, OpenCode — each wires startup context through host hooks/plugins and maps subagent tools.
-- **Five stages.** `frame → plan → execute → verify → resume`. Prerequisites enforced in `runtime/lib/contracts-data.json`.
+- **Five lifecycle stages plus resume.** `frame → plan → execute → verify → verified`; `resume` re-enters from durable state. Prerequisites enforced in `runtime/lib/contracts-data.json`.
 - **No mandatory nested invocation.** Skills hand off through durable artifacts; clean same-session continuation is allowed when the lifecycle contract says it is safe.
 
 ## Layout
