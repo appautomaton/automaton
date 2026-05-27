@@ -234,7 +234,8 @@ test('auto-execute subagent prompts preserve hardened subagent invariants', () =
   assert.match(implementer, /BLOCKED/)
   assert.match(implementer, /Before you begin:/)
   assert.match(implementer, /Self-review|self-review/)
-  assert.match(implementer, /Do not commit, amend, branch, or push unless/)
+  assert.match(implementer, /Do not run any `git` write command/)
+  assert.match(implementer, /subagents never touch history/)
   assert.doesNotMatch(implementer, /Commit your work/)
 
   assert.match(specReviewer, /Do not trust the implementer report/)

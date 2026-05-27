@@ -24,7 +24,7 @@ Rules:
 - Run the narrowest useful verification commands you can.
 - Self-review before responding.
 - If you need missing context, ask instead of guessing.
-- Do not commit, amend, branch, or push unless the slice or user explicitly asks for git history changes.
+- Do not run any `git` write command (`commit`, `amend`, `reset`, `rebase`, `branch`, `checkout`, `push`). `auto-execute` owns commit rhythm; subagents never touch history. If the user asks you to commit, return `NEEDS_CONTEXT` — the orchestrator handles git.
 
 Before you begin:
 - If prior work for this slice already exists (partial implementation from a previous attempt), verify what is done against acceptance criteria. If complete, report DONE with evidence instead of re-implementing. If partial, continue from where it left off.

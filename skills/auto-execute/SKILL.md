@@ -48,6 +48,29 @@ If the current slice involves prose, read `references/content-execution.md`. If 
 
 After the canonical `PLAN.md` resolves and before changing code or project artifacts, run `node .agent/.automaton/scripts/sync-status.mjs --stage execute` from the project root. This records that the active change has entered execution while preserving the existing `canonical_plan`.
 
+### Git Rhythm
+
+Commit per verified slice when the working directory is a git repo. The verification gate is the authorization; do not pause to ask.
+
+**Detect once at entry.** After `Mark Execute Stage` resolves, run `git rev-parse --git-dir` and `git status --porcelain`. The rhythm is inactive — silently, for the rest of the run — when:
+
+- the directory is not a git repo;
+- the user has told this run not to use git;
+- the repo is mid-rebase, mid-merge, mid-cherry-pick, mid-bisect, or on detached HEAD.
+
+**Pre-existing dirt.** If `git status` reports uncommitted changes at entry, announce once in the conversation that slice 1's commit will sweep them in, then proceed without asking. The rhythm matches what `git add -A && git commit` would do manually; recovery (`git reset HEAD~`) is in the user's normal toolkit.
+
+**Commit per verified slice.** After slice verification passes in `Verify And Advance`, run `git add -A` followed by one of:
+
+- `git commit -m "slice N: <objective>"` for a fresh slice (objective from `PLAN.md`).
+- `git commit -m "slice N gap-fix: <fix objective>"` for a slice re-entered after `auto-verify` FAIL (fix objective from the `VERIFY-GAP` block).
+
+**Strictly additive.** `git commit` only. Never `amend`, `reset`, `rebase`, `branch`, `checkout`, or `push`. Subagents on the implementer route never run any git command — the implementer prompt enforces this; the orchestrator owns history.
+
+If the commit operation itself fails (pre-commit hook rejection, signing failure, repo entering an interrupted state mid-run), STOP and surface the failure verbatim. Do not retry with workarounds; do not silently skip the rhythm to keep going.
+
+See `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Git Rhythm) for the cross-skill contract.
+
 ### Select Execution Window
 
 The next slice is selected from `PLAN.md`. Build the smallest safe execution window:
@@ -114,6 +137,8 @@ Use this compact evidence shape:
 
 Append-replace the evidence block. Do not paste transcripts, full command logs, or source excerpts unless needed to explain a blocker.
 
+After evidence is recorded, run the per-slice commit when the **Git Rhythm** is active. A failed commit is a STOP condition, not a step to skip.
+
 The next slice is selected from `PLAN.md`; do not invent slice cursor or checkpoint fields in `.agent/.automaton/state/current.json`. Change state only through `node .agent/.automaton/scripts/sync-status.mjs` when stage, active change, review state, or canonical artifact pointers change.
 
 If the completed slice has a checkpoint, validate that it actually requires human input per the checkpoint definitions (`human-verify`, `decision`, `human-action`) in `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Checkpoint Semantics): a checkpoint holds only when its defined condition is met.
@@ -153,6 +178,7 @@ Read `references/stop-examples.md` when uncertain whether a situation qualifies 
 - Commands run and results.
 - Subagent statuses and review verdicts when used.
 - Slice evidence updated in place: inline slice in `PLAN.md`, or linked detail file plus compact `PLAN.md` pointer.
+- Per-slice commits when the Git Rhythm is active: `slice N: <objective>` for fresh slices, `slice N gap-fix: <fix objective>` for re-entries after a verify FAIL.
 - Execute stage recorded through `sync-status.mjs` when execution begins; no slice cursor field is added to current.json.
 - Execution window checkpoint or stop reason when continuation pauses; if approved slices remain, name the valid blocker that prevents continuing.
 - Verification report when all slices complete and continuation is safe; otherwise recommended next skill: `auto-execute` (slices remain), `auto-verify` (execution complete but continuation blocked), or `auto-plan` (structural failure).
@@ -163,5 +189,6 @@ Read `references/stop-examples.md` when uncertain whether a situation qualifies 
 - Build an execution window, but execute and verify one slice at a time.
 - Serial execution is the default; parallel cross-slice dispatch requires explicit plan approval and disjoint write sets.
 - Do not silently redefine the plan; record corrections transparently.
+- auto-execute owns all `git commit` operations for Automaton; the rhythm is strictly additive (no `amend`, `reset`, `rebase`, `branch`, `checkout`, `push`), and subagents never run git.
 - If the user asks for a quick fix outside the plan, reframe through `auto-frame`; do not bypass the plan.
 - Keep durable evidence in `PLAN.md` or linked `slices/slice-NNN.md`, not new evidence files by default.

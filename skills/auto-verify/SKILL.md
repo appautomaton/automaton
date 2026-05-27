@@ -42,6 +42,8 @@ Gather every acceptance criterion and verification command from every slice in P
 <GATE>
 
 Do NOT modify source code, tests, or project artifacts during verification. Verify reads and runs commands; it does not fix.
+
+Do NOT run any `git` write command (`commit`, `amend`, `reset`, `rebase`, `branch`, `checkout`, `push`). The commit rhythm is owned by `auto-execute`. Markdown writes that verify produces — `VERIFY-GAP` blocks on FAIL, the ROADMAP phase update on PASS — sit in the working tree; `auto-execute` sweeps them up on re-entry, or the user closes them after a terminal pass.
 </GATE>
 
 ### Run Verification
@@ -59,7 +61,7 @@ Build the full criterion checklist internally. Use `references/verification-temp
 ### On Pass
 
 - Run `node .agent/.automaton/scripts/sync-status.mjs --stage verified` from the project root.
-- If `.agent/steering/ROADMAP.md` exists, mark the matching `change:` phase `status: done` per `.agent/.automaton/references/ROADMAP-CONTRACT.md`; skip empty or non-matching phases.
+- If `.agent/steering/ROADMAP.md` exists, mark the matching `change:` phase `status: done` per `.agent/.automaton/references/ROADMAP-CONTRACT.md`; skip empty or non-matching phases. The ROADMAP edit lands in the working tree as a markdown leftover; do not commit it. The user closes it in their own rhythm.
 - End the report with `Change status: complete` and a separate `New objective` line pointing to `auto-office-hours` for future work. Do not print a `Recommended next skill` line on PASS. Use `auto-resume` only for later re-entry or recovery.
 
 ### On Fail
@@ -82,4 +84,5 @@ Each gap block needs `VERIFY-GAP`, evidence, and a fix objective. Apply append-r
 - Binary evaluation. Partial evidence is FAIL for the plan.
 - Verify the full plan: all slices, all criteria. Derive missing commands from acceptance criteria and document them.
 - Verify what the plan requires; flag an unmentioned common gap (input validation, concurrency, security, etc.) only when obviously critical to the change.
+- No git writes. `auto-verify` never runs `git commit` or any history-modifying command; markdown writes (`VERIFY-GAP`, ROADMAP phase update) sit in the working tree until `auto-execute` re-entry sweeps them up on FAIL or the user closes them on PASS.
 - Do not print a long pass transcript. Expand only failures, skipped checks, derived commands, or user-requested detail.

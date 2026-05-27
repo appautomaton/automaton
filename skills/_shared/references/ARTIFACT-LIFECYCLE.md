@@ -76,6 +76,26 @@ Each handoff carries five durable elements:
 
 Verification findings, implementation caveats, downstream consequences, and recommendations for an already-approved next slice are not checkpoints. Record them as slice evidence or risks and continue.
 
+## Git Rhythm
+
+Per-slice commits are owned by `auto-execute`. This reference pins the contract so the skill prompts cannot drift.
+
+**Single owner.** `auto-execute` runs every `git commit` Automaton produces. `auto-verify` never invokes any git write command — its read-only-on-code gate extends to git history. Subagents on the implementer route never invoke any git command; the orchestrator owns history.
+
+**Trigger.** The rhythm is active when, at execute-stage entry, the working directory is a git repo, the run has no "skip git" instruction, and the repo is not in an interrupted state (mid-rebase, mid-merge, mid-cherry-pick, mid-bisect, or detached HEAD). When active, a commit fires after each slice's verification passes — the verification gate is the authorization, no separate prompt.
+
+**Commit shape.** `git add -A` followed by `git commit -m "slice N: <objective>"` for fresh slices, or `slice N gap-fix: <fix objective>` for gap-fix slices re-entered after `auto-verify` FAIL. Add scope defers to the user's `.gitignore`; the harness does not curate paths.
+
+**Strictly additive.** `git commit` only. Never `amend`, `reset`, `rebase`, `branch`, `checkout`, or `push`. The harness never rewrites history a user might already have inspected.
+
+**Pre-existing dirt.** If the working tree is already dirty at execute-stage entry, `auto-execute` announces once that slice 1's commit will sweep in the pre-existing changes, then proceeds. No question is asked; recovery (`git reset HEAD~`) is in the user's normal toolkit.
+
+**auto-verify leftovers.** Markdown writes from `auto-verify` are not committed by the producing skill. `VERIFY-GAP` blocks added to PLAN.md on FAIL fold into the next `auto-execute` gap-fix commit on re-entry. The one-line ROADMAP phase update on PASS sits in the working tree as a terminal-state note; the user closes it in their own cadence.
+
+**Rhythm STOP conditions.** Commit failure (pre-commit hook rejection, signing failure, etc.) or the repo entering an interrupted state mid-run is STOP-and-surface. The agent does not silently skip the rhythm to keep going, and does not retry with workarounds.
+
+Validation tier: L3 (prompt prose plus `tests/skills.test.mjs` regression). No runtime enforcement; the rhythm is portable across hosts because it lives entirely in skill prompts.
+
 ## Review Verdict Routing
 
 `auto-ceo-review` and `auto-eng-review` are optional lifecycle checks, not stage prerequisites. Use them when product direction or execution safety needs review. Downstream skills must respect any review verdict in `current.json`.
