@@ -224,7 +224,7 @@ test('Codex install scaffolds config, hooks, and skills', () => {
   assert.equal(readFileSync(join(root, '.codex', 'config.toml'), 'utf8'), '[features]\nhooks = true\nmulti_agent = true\n')
   const hostTools = readFileSync(join(root, '.codex', 'skills', 'auto-execute', 'references', 'HOST-TOOLS.md'), 'utf8')
   assert.match(hostTools, /spawn_agent/)
-  assert.match(hostTools, /custom agent defined as TOML/)
+  assert.match(hostTools, /named custom agent/, 'Codex HOST-TOOLS dispatch line must point at the named custom agents')
   assert.deepEqual(Object.keys(hooks.hooks), ['SessionStart'])
   assert.doesNotMatch(hooks.hooks.SessionStart[0].hooks[0].command, /sh -lc|git rev-parse --show-toplevel/)
   assert.match(hooks.hooks.SessionStart[0].hooks[0].command, /\.codex\/hooks\/session-start\.mjs/)
@@ -1055,4 +1055,41 @@ test('OpenCode uninstall removes generated automaton agent files and prunes empt
     assert.equal(existsSync(join(root, '.opencode', 'agents', `${agentName}.md`)), false)
   }
   assert.equal(existsSync(join(root, '.opencode', 'agents')), false, 'empty .opencode/agents/ must be pruned on uninstall')
+})
+
+test('generated HOST-TOOLS.md names the three automaton subagents on every host', () => {
+  // Slice 3 acceptance: each host's HOST-TOOLS.md must point coordinators at named
+  // Automaton agents rather than generic worker/explorer prose. The Automaton Subagents
+  // section is sourced from the same SUBAGENT_ROLES list installHost() iterates, so
+  // adding a fourth role would land here automatically.
+  for (const hostId of ['claude', 'codex', 'opencode']) {
+    const root = mkdtempSync(join(tmpdir(), `automaton-host-tools-named-${hostId}-`))
+    installHost(getHost(hostId), { root, sourceRoot })
+
+    const hostToolsPath = join(root, `.${hostId}`, 'skills', 'auto-execute', 'references', 'HOST-TOOLS.md')
+    const hostTools = readFileSync(hostToolsPath, 'utf8')
+
+    assert.match(hostTools, /## Automaton Subagents/m, `${hostId} HOST-TOOLS.md must include the Automaton Subagents section`)
+    for (const agentName of AUTOMATON_AGENT_NAMES) {
+      assert.match(hostTools, new RegExp(`\`${agentName}\``), `${hostId} HOST-TOOLS.md must name ${agentName}`)
+    }
+    // No fallback to role-body prompt injection.
+    assert.match(hostTools, /Dispatch only by named agent/, `${hostId} HOST-TOOLS.md must require named-agent dispatch`)
+    assert.match(hostTools, /Do not fall back to runtime-curated prompt injection/, `${hostId} HOST-TOOLS.md must forbid runtime prompt-injection fallback`)
+    // The legacy generic guidance must be gone.
+    assert.doesNotMatch(hostTools, /recommend the non-subagent fallback skill/, `${hostId} HOST-TOOLS.md must not advertise a generic fallback recommendation`)
+  }
+})
+
+test('generated OpenCode HOST-TOOLS.md surfaces permission.task as a dispatch precondition', () => {
+  // PLAN slice 3 acceptance: the primary agent's permission.task must allow
+  // automaton-* for Task-tool named-agent dispatch to work. HOST-TOOLS.md must
+  // surface that as a precondition rather than letting dispatch fail silently.
+  const root = mkdtempSync(join(tmpdir(), 'automaton-host-tools-opencode-precondition-'))
+  installHost(getHost('opencode'), { root, sourceRoot })
+
+  const hostTools = readFileSync(join(root, '.opencode', 'skills', 'auto-execute', 'references', 'HOST-TOOLS.md'), 'utf8')
+  assert.match(hostTools, /^- precondition: /m, 'OpenCode HOST-TOOLS.md must include a precondition bullet')
+  assert.match(hostTools, /permission\.task/, 'OpenCode HOST-TOOLS.md must reference permission.task')
+  assert.match(hostTools, /automaton-implementer/, 'OpenCode HOST-TOOLS.md precondition must name automaton-implementer')
 })

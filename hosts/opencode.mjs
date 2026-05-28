@@ -212,10 +212,11 @@ export const opencodeHost = {
   skillRoot: '.opencode/skills',
   instructionsFile: 'opencode.json',
   toolMapping: {
-    subagents: 'Use OpenCode native subagent routing, including @mention-style dispatch where available. Provide the complete curated prompt to the selected subagent.',
+    subagents: 'Use the Task tool (or `@mention` where supported) to invoke `automaton-implementer`, `automaton-spec-reviewer`, or `automaton-quality-reviewer` by name. Pass the per-call dispatch packet (slice, constraints, acceptance criteria, implementation summary) as the task body; the role body is in the markdown file under `.opencode/agents/` and every Automaton subagent denies `permission.task` so it cannot fan out to another subagent.',
     wait: 'Wait for the OpenCode subagent response before dispatching dependent reviews.',
     cleanup: 'No Automaton cleanup step is required; follow OpenCode session conventions.',
     tracking: 'Use todowrite for session-local progress tracking when useful.',
+    precondition: 'The primary agent\'s `permission.task` configuration must allow `automaton-implementer`, `automaton-spec-reviewer`, and `automaton-quality-reviewer` for Task-tool named-agent dispatch to work. If any of those three names is denied or filtered out, treat dispatch as unavailable and stop under SUBAGENT-PROTOCOL.md\'s "Host does not expose subagent support" condition rather than pasting a role body into a generic agent.',
     unavailable: false
   },
   installFiles() {

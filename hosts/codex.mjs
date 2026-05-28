@@ -61,11 +61,11 @@ export const codexHost = {
   legacySkillRoots: ['.agents/skills'],
   instructionsFile: 'AGENTS.md',
   toolMapping: {
-    subagents: 'Use spawn_agent with a complete task message. Prefer built-in agent_type="worker" for implementation, agent_type="explorer" for read-only discovery, or a project custom agent defined as TOML with name, description, and developer_instructions.',
+    subagents: 'Use `spawn_agent` with the named custom agent set to `automaton-implementer`, `automaton-spec-reviewer`, or `automaton-quality-reviewer`. Pass the per-call dispatch packet (slice, constraints, acceptance criteria, implementation summary) as the task message; the role body is in the TOML file under `.codex/agents/`, and each TOML carries `[features].multi_agent = false` so the subagent cannot nest another subagent.',
     wait: 'Use wait to collect subagent results before continuing review or integration.',
     cleanup: 'Use close_agent after each completed subagent to free the slot.',
     tracking: 'Use update_plan for session-local progress tracking when useful.',
-    configuration: 'Requires [features].multi_agent = true in .codex/config.toml.',
+    configuration: 'Requires [features].multi_agent = true in the primary `.codex/config.toml` so the coordinator can spawn the named subagents.',
     unavailable: false
   },
   installFiles({ root = '.' } = {}) {

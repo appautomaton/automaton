@@ -103,9 +103,9 @@ Use this route only when route selection permits direct execution. Change code a
 
 ### Subagent Route
 
-Use this route when `Execution` is `subagent required`, when `subagent recommended` is justified, or when the user requested multi-agent execution. Before dispatching, read `.agent/.automaton/references/SUBAGENT-PROTOCOL.md` and `references/HOST-TOOLS.md`; then use `references/implementer-prompt.md`, `references/spec-reviewer-prompt.md`, and `references/quality-reviewer-prompt.md`.
+Use this route when `Execution` is `subagent required`, when `subagent recommended` is justified, or when the user requested multi-agent execution. Before dispatching, read `.agent/.automaton/references/SUBAGENT-PROTOCOL.md` and `references/HOST-TOOLS.md`. Dispatch only the named host-native agents listed in `HOST-TOOLS.md` — `automaton-implementer`, `automaton-spec-reviewer`, and `automaton-quality-reviewer` — and fill the per-call slots from `references/implementer-prompt.md`, `references/spec-reviewer-prompt.md`, and `references/quality-reviewer-prompt.md`. The static role bodies live in the host-native agent definitions; do not paste a role body into a generic worker or explorer agent.
 
-If host tools say subagents are unavailable, fall back from `subagent recommended` to direct execution only when the slice remains safe. For `subagent required`, stop and recommend `auto-plan` or a host/configuration change.
+If `HOST-TOOLS.md` says subagents are unavailable, fall back from `subagent recommended` to direct execution only when the slice remains safe. For `subagent required`, stop and recommend `auto-plan` or a host/configuration change. If a named agent is configured out of the host (Codex `[features].multi_agent` disabled, OpenCode `permission.task` denied for `automaton-*`, Claude agent file missing), treat the host as not exposing subagent support and stop — do not fall back to runtime-curated prompt injection into a generic agent.
 
 Run the per-slice protocol:
 1. Build a dispatch packet from the current slice only.

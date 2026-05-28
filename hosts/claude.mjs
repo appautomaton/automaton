@@ -54,7 +54,7 @@ export const claudeHost = {
   skillRoot: '.claude/skills',
   instructionsFile: 'CLAUDE.md',
   toolMapping: {
-    subagents: 'Use the Agent tool to dispatch host-native subagents. Task remains a documented alias in existing Claude Code configurations. Provide a short description, the full curated prompt, and the most specific available subagent type.',
+    subagents: 'Use the Agent tool with `subagent_type` set to `automaton-implementer`, `automaton-spec-reviewer`, or `automaton-quality-reviewer`. Pass the per-call dispatch packet (slice, constraints, acceptance criteria, implementation summary) as the prompt; the static role body is already installed under `.claude/agents/` and Claude Code blocks the Agent tool inside subagent sessions so recursion is structurally impossible.',
     wait: 'Agent tool calls return their result to the coordinator when complete; no separate wait command is needed.',
     cleanup: 'No explicit close step is needed after an Agent result is returned.',
     tracking: 'Use TodoWrite for session-local progress tracking when useful.',

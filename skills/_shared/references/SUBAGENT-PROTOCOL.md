@@ -1,15 +1,15 @@
 # Subagent Protocol
 
-Use this protocol when `auto-execute` chooses the subagent route for one approved plan slice. It defines shared semantics only; host-specific tool calls live in `HOST-TOOLS.md`.
+Use this protocol when `auto-execute` chooses the subagent route for one approved plan slice. It defines shared semantics only; host-specific tool calls live in `HOST-TOOLS.md`, and static role bodies live in the host-native agent definitions sourced from `automaton/skills/auto-execute/references/*-role.md`. This file does not author role system prompts.
 
 ## Roles
 
-| Role | Responsibility |
-|------|----------------|
-| Coordinator | `auto-execute`; owns scope, state, route selection, dispatch packets, loop limits, integration, and final artifacts. |
-| Implementer | Implements exactly one plan slice from coordinator-provided context and returns evidence. |
-| Spec reviewer | Checks actual implementation against the slice, SPEC, and PLAN; rejects missing or extra scope. |
-| Quality reviewer | Checks maintainability, tests, and regression risk only after spec review passes. |
+| Role | Host-native agent | Responsibility |
+|------|-------------------|----------------|
+| Coordinator | (primary agent running `auto-execute`) | Owns scope, state, route selection, dispatch packets, loop limits, integration, and final artifacts. |
+| Implementer | `automaton-implementer` | Implements exactly one plan slice from coordinator-provided context and returns evidence. |
+| Spec reviewer | `automaton-spec-reviewer` | Checks actual implementation against the slice, SPEC, and PLAN; rejects missing or extra scope. |
+| Quality reviewer | `automaton-quality-reviewer` | Checks maintainability, tests, and regression risk only after spec review passes. |
 
 The coordinator does not outsource scope ownership. Subagents receive curated slice context, not the full `PLAN.md`, full conversation, or unrelated work history.
 
@@ -34,12 +34,14 @@ Do not ask a subagent to rediscover the whole project unless exploration is the 
 
 - Use subagents only when `auto-execute` selects the subagent route.
 - Enter this protocol from `auto-execute`; do not make framing, resume, or product review multi-agent by default.
+- Dispatch only by named host-native agent (`automaton-implementer`, `automaton-spec-reviewer`, `automaton-quality-reviewer`). Do not paste a role body into a generic worker, explorer, or other host agent at runtime; the named agent's installed definition already carries the role body.
 - The coordinator provides full task text for the current slice and relevant constraints. Do not make subagents rediscover the whole plan.
 - Dispatch implementers sequentially by default. Cross-slice parallel dispatch is allowed only when `PLAN.md` explicitly marks slices parallel-safe, dependencies are independent, and write sets are disjoint.
 - On Codex, pass `fork_turns="none"` when spawning subagents to prevent child agents from inheriting the parent transcript and self-deadlocking on wait.
 - Review order is mandatory: spec compliance first, code quality second.
 - The coordinator does not implement directly while host-native subagent execution is viable.
 - If the host mapping is unclear, follow `HOST-TOOLS.md`. Do not invent a universal SDK or CLI.
+- If the host cannot expose one of the named agents (configuration disabled, permission denied, capability missing), stop under the "Host does not expose subagent support" condition below. Do not fall back to runtime-curated prompt injection.
 
 ## Review Rules
 

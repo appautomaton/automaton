@@ -627,6 +627,18 @@ test('subagent protocol defines dispatch packets and bounded review loops', () =
   assert.match(protocol, /one targeted correction/)
   assert.match(protocol, /reviewer requests changes twice/)
   assert.match(protocol, /Do not invent a universal SDK or CLI/)
+
+  // Slice 3: the protocol names host-native agents and forbids role-body prompt injection.
+  assert.match(protocol, /This file does not author role system prompts/, 'protocol must declare it does not author static role bodies')
+  assert.match(protocol, /Host-native agent/, 'Roles table must include a Host-native agent column')
+  for (const agentName of ['automaton-implementer', 'automaton-spec-reviewer', 'automaton-quality-reviewer']) {
+    assert.match(protocol, new RegExp(`\`${agentName}\``), `protocol must name ${agentName}`)
+  }
+  assert.match(protocol, /Dispatch only by named host-native agent/, 'protocol must require named-agent dispatch')
+  assert.match(protocol, /Do not paste a role body into a generic worker/, 'protocol must forbid runtime role-body pasting')
+  assert.match(protocol, /Do not fall back to runtime-curated prompt injection/, 'protocol must forbid runtime prompt-injection fallback')
+  // Retain the host-unavailable stop condition.
+  assert.match(protocol, /Host does not expose subagent support/, 'protocol must retain the host-unavailable STOP condition')
 })
 
 test('auto-plan defines lean slice defaults without dropping execution safety', () => {
@@ -711,6 +723,12 @@ test('auto-execute owns route selection and execution-window continuation', () =
   assert.match(source, /return to \*\*Select Execution Window\*\* immediately/)
   assert.match(source, /"N slices remain" is progress state, not a stop reason/)
   assert.match(source, /Remaining approved slices require another execution-window pass/)
+  // Slice 3: subagent route names host-native agents and forbids prompt-injection fallback.
+  for (const agentName of ['automaton-implementer', 'automaton-spec-reviewer', 'automaton-quality-reviewer']) {
+    assert.match(source, new RegExp(`\`${agentName}\``), `auto-execute must name ${agentName} in the Subagent Route`)
+  }
+  assert.match(source, /do not paste a role body into a generic worker or explorer agent/, 'auto-execute must forbid runtime role-body pasting')
+  assert.match(source, /do not fall back to runtime-curated prompt injection/, 'auto-execute must forbid runtime prompt-injection fallback')
 })
 
 test('auto-execute stop examples require bounded diagnostics before halting on uncertainty', () => {
