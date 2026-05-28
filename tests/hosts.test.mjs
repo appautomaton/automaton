@@ -6,7 +6,7 @@ import { tmpdir } from 'node:os'
 import { join, dirname } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
-import { installHost, uninstallHost } from '../lib/install.mjs'
+import { installHost, uninstallHost, SUBAGENT_ROLES } from '../lib/install.mjs'
 import { HOSTS, detectHosts, getHost } from '../hosts/index.mjs'
 
 const sourceRoot = fileURLToPath(new URL('..', import.meta.url))
@@ -859,7 +859,25 @@ test('reinstalling removes stale per-skill HOST-TOOLS copies', () => {
   assert.equal(existsSync(join(root, '.agent', '.automaton', 'state', 'install-manifest.json')), false)
 })
 
-const AUTOMATON_AGENT_NAMES = ['automaton-implementer', 'automaton-spec-reviewer', 'automaton-quality-reviewer']
+// Derived from the single source of truth so this list can never drift from the
+// roles installHost()/uninstallHost() actually act on.
+const AUTOMATON_AGENT_NAMES = SUBAGENT_ROLES.map((role) => role.agentName)
+
+test('automaton agent role ids are append-only — shipped ids are never renamed or removed (DD-008)', () => {
+  // DD-008: a newer uninstaller cleans an older install only because its role-id list
+  // is a superset of every earlier version's. Renaming or removing a shipped id breaks
+  // that guarantee and strands files. New roles may be appended freely; when one ships,
+  // add it to SHIPPED_ROLE_IDS. Never delete from this list.
+  const SHIPPED_ROLE_IDS = ['implementer', 'spec-reviewer', 'quality-reviewer']
+  const currentIds = SUBAGENT_ROLES.map((role) => role.id)
+  for (const id of SHIPPED_ROLE_IDS) {
+    assert.ok(
+      currentIds.includes(id),
+      `shipped role id "${id}" must remain present — ids are append-only (DD-008); ` +
+      `renaming or removing a shipped id breaks cross-version uninstall`
+    )
+  }
+})
 
 test('Claude install generates three host-native automaton subagent definitions', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-install-claude-agents-'))
