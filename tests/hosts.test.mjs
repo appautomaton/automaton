@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { join } from 'node:path'
+import { join, dirname } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
 import { installHost, uninstallHost } from '../lib/install.mjs'
@@ -1092,4 +1092,141 @@ test('generated OpenCode HOST-TOOLS.md surfaces permission.task as a dispatch pr
   assert.match(hostTools, /^- precondition: /m, 'OpenCode HOST-TOOLS.md must include a precondition bullet')
   assert.match(hostTools, /permission\.task/, 'OpenCode HOST-TOOLS.md must reference permission.task')
   assert.match(hostTools, /automaton-implementer/, 'OpenCode HOST-TOOLS.md precondition must name automaton-implementer')
+})
+
+test('install and uninstall preserve every user-owned file across the realistic config surface', () => {
+  // Regression lockdown: the install logic targets files by name (`automaton-*`,
+  // `session-start.mjs`, `automaton.js`, `HOST-TOOLS.md`), by directory prefix
+  // (`.<host>/skills/auto-*`, `.agent/.automaton/`), and by content-block (specific
+  // hook entries inside JSON configs, specific feature lines inside config.toml).
+  // Anything outside that footprint must survive an install→uninstall cycle untouched.
+  //
+  // This test seeds every realistic user-owned config-file type the three hosts
+  // support and asserts byte-identity (for unmanaged files) or semantic preservation
+  // (for the three files install merges into). Any future change that widens the
+  // surface should fail here rather than silently mutate user content.
+
+  const root = mkdtempSync(join(tmpdir(), 'automaton-user-surface-'))
+
+  // Unmanaged: install/uninstall must leave these byte-identical.
+  const unmanagedUserFiles = {
+    // detection markers Automaton inspects but must never edit
+    'CLAUDE.md': '# Project Instructions for Claude\n',
+    'AGENTS.md': '# AGENTS.md\nProject-level agent instructions.\n',
+    'opencode.json': '{\n  "$schema": "https://opencode.ai/config.json",\n  "theme": "dracula"\n}\n',
+    // .claude/ user surface
+    '.claude/settings.local.json': '{\n  "permissions": { "allow": ["Bash(pnpm:*)"] }\n}\n',
+    '.claude/.mcp.json': '{\n  "mcpServers": { "linear": { "command": "npx" } }\n}\n',
+    '.claude/commands/deploy.md': '---\ndescription: Deploy\n---\nDeploy.\n',
+    '.claude/commands/team/audit.md': '---\ndescription: Audit\n---\nAudit.\n',
+    '.claude/output-styles/concise.md': '---\nname: concise\n---\nBe terse.\n',
+    '.claude/agents/code-reviewer.md': '---\nname: code-reviewer\n---\nReview code.\n',
+    '.claude/skills/team-style/SKILL.md': '# Team Style\n',
+    '.claude/hooks/user-pre-tool.mjs': '#!/usr/bin/env node\n// user hook\n',
+    // .codex/ user surface (incl. synthetic auth.json so secrets-handling is explicit)
+    '.codex/auth.json': '{ "OPENAI_API_KEY": "sk-fake-test-key" }\n',
+    '.codex/prompts/refactor.toml': 'name = "refactor"\n',
+    '.codex/skills/team-style/SKILL.md': '# Team Style\n',
+    '.codex/agents/my-helper.toml': 'name = "my-helper"\n',
+    '.codex/hooks/user-start.mjs': '// user start hook\n',
+    '.codex/hooks/user-stop.mjs': '// user stop hook\n',
+    // .opencode/ user surface
+    '.opencode/commands/format.md': '---\ndescription: Format\n---\nFormat.\n',
+    '.opencode/mcp/linear.json': '{ "name": "linear" }\n',
+    '.opencode/skills/team-style/SKILL.md': '# Team Style\n',
+    '.opencode/agents/code-reviewer.md': '---\nmode: subagent\n---\nReview.\n',
+    '.opencode/plugins/user-helper.js': '// user plugin\n'
+  }
+
+  // Merged: install necessarily edits these; user content must survive semantically.
+  const mergedUserFiles = {
+    '.claude/settings.json': {
+      content: '{\n  "env": { "EDITOR": "nvim" },\n  "permissions": { "allow": ["Read", "Edit"] }\n}\n',
+      userInvariants: [/"EDITOR"/, /"nvim"/, /"Read"/, /"Edit"/]
+    },
+    '.codex/config.toml': {
+      content: 'model = "gpt-5.4"\nprofile = "personal"\n\n[features]\nsome_user_flag = true\n\n[mcp_servers.linear]\ncommand = "npx"\nargs = ["-y", "@modelcontextprotocol/server-linear"]\n',
+      userInvariants: [/^model = "gpt-5\.4"$/m, /^profile = "personal"$/m, /^some_user_flag = true$/m, /\[mcp_servers\.linear\]/, /@modelcontextprotocol\/server-linear/]
+    },
+    '.codex/hooks.json': {
+      content: '{\n  "metadata": { "owner": "user" },\n  "hooks": {\n    "Stop": [{ "hooks": [{ "type": "command", "command": "node .codex/hooks/user-stop.mjs" }]}]\n  }\n}\n',
+      userInvariants: [/"owner":\s*"user"/, /user-stop\.mjs/]
+    }
+  }
+
+  const seed = (relPath, content) => {
+    const abs = join(root, relPath)
+    mkdirSync(dirname(abs), { recursive: true })
+    writeFileSync(abs, content, 'utf8')
+  }
+  for (const [relPath, content] of Object.entries(unmanagedUserFiles)) {
+    seed(relPath, content)
+  }
+  for (const [relPath, { content }] of Object.entries(mergedUserFiles)) {
+    seed(relPath, content)
+  }
+
+  // ──── INSTALL ────
+  for (const host of HOSTS) {
+    installHost(host, { root, sourceRoot })
+  }
+
+  // Post-install: every unmanaged file is byte-identical to its seed.
+  for (const [relPath, originalContent] of Object.entries(unmanagedUserFiles)) {
+    assert.equal(
+      readFileSync(join(root, relPath), 'utf8'),
+      originalContent,
+      `install must not modify unmanaged user file: ${relPath}`
+    )
+  }
+  // Post-install: every merged file still carries the user content invariants.
+  for (const [relPath, { userInvariants }] of Object.entries(mergedUserFiles)) {
+    const current = readFileSync(join(root, relPath), 'utf8')
+    for (const pattern of userInvariants) {
+      assert.match(current, pattern, `install must preserve user content matching ${pattern} in ${relPath}`)
+    }
+  }
+
+  // ──── UNINSTALL ────
+  for (const host of HOSTS) {
+    uninstallHost(host, { root, sourceRoot })
+  }
+
+  // Post-uninstall: every unmanaged file STILL byte-identical to its seed.
+  for (const [relPath, originalContent] of Object.entries(unmanagedUserFiles)) {
+    assert.equal(
+      readFileSync(join(root, relPath), 'utf8'),
+      originalContent,
+      `uninstall must not modify unmanaged user file: ${relPath}`
+    )
+  }
+  // Post-uninstall: merged files (if still present) preserve user content; if they
+  // were removed it can only be because they became empty after our content left,
+  // which would mean user invariants couldn't have been there in the first place.
+  for (const [relPath, { userInvariants }] of Object.entries(mergedUserFiles)) {
+    const abs = join(root, relPath)
+    assert.equal(existsSync(abs), true, `uninstall must keep ${relPath} because it carried user content`)
+    const current = readFileSync(abs, 'utf8')
+    for (const pattern of userInvariants) {
+      assert.match(current, pattern, `uninstall must preserve user content matching ${pattern} in ${relPath}`)
+    }
+  }
+
+  // Post-uninstall: Automaton's merged-content additions are gone (except the
+  // intentionally-preserved `multi_agent = true` line in .codex/config.toml).
+  const codexConfig = readFileSync(join(root, '.codex/config.toml'), 'utf8')
+  assert.doesNotMatch(codexConfig, /^hooks = true$/m, 'uninstall must remove hooks = true from .codex/config.toml')
+  assert.match(codexConfig, /^multi_agent = true$/m, '.codex/config.toml retains multi_agent = true as the documented useful-flag gift')
+
+  const claudeSettings = JSON.parse(readFileSync(join(root, '.claude/settings.json'), 'utf8'))
+  const claudeAutomatonHooks = (claudeSettings.hooks?.SessionStart ?? [])
+    .flatMap((group) => group.hooks ?? [])
+    .filter((hook) => typeof hook.command === 'string' && hook.command.includes('.claude/hooks/session-start.mjs'))
+  assert.equal(claudeAutomatonHooks.length, 0, 'uninstall must remove the Automaton SessionStart hook from .claude/settings.json')
+
+  const codexHooksJson = JSON.parse(readFileSync(join(root, '.codex/hooks.json'), 'utf8'))
+  const codexAutomatonHooks = (codexHooksJson.hooks?.SessionStart ?? [])
+    .flatMap((group) => group.hooks ?? [])
+    .filter((hook) => typeof hook.command === 'string' && hook.command.includes('.codex/hooks/session-start.mjs'))
+  assert.equal(codexAutomatonHooks.length, 0, 'uninstall must remove the Automaton SessionStart hook from .codex/hooks.json')
 })
