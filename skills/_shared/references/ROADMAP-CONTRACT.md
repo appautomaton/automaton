@@ -40,7 +40,7 @@ Field order is normative. `status` and `change` appear first.
 
 | Status | Meaning | Set by |
 |--------|---------|--------|
-| `pending` | Queued for future work | `auto-onboard` (confirmed refresh/import only), `auto-office-hours`, `auto-frame` |
+| `pending` | Queued for future work | `auto-onboard` (confirmed refresh/import only), `auto-office-hours` (user-approved decomposition) |
 | `active` | Current framed/planned/executed phase | `auto-office-hours` for the first spec in an approved decomposition |
 | `done` | Verified complete | `auto-verify` |
 
@@ -51,8 +51,8 @@ Status progression is one-directional: `pending` → `active` → `done`. Do not
 | Skill | Action | When |
 |-------|--------|------|
 | `auto-onboard` | Empty shape on first setup; confirmed refresh may import `pending` phases only | First-time setup or targeted refresh |
-| `auto-office-hours` | Replaces content with approved decomposition; first spec is `status: active` with its `change:` slug; may reset inactive roadmap first | Roadmap-sized work and user-approved approach |
-| `auto-frame` | Appends deferred scope as `status: pending` phases; may reset inactive roadmap first | SPEC is narrower than the user's stated goal |
+| `auto-office-hours` | Replaces content with approved decomposition; first spec is `status: active` with its `change:` slug; may reset inactive roadmap first | Roadmap-sized work and a user-approved phased decomposition |
+| `auto-frame` | Does not create roadmap phases; records narrowed scope as a `Deferred / Not in scope` note in the change's SPEC | SPEC is narrower than the user's stated goal |
 | `auto-verify` | Marks matching phase `status: done`; resets to empty shape if no active/pending phases or deferred items remain | Final slice passes all criteria |
 | `auto-resume` | Reads pending items as context during re-entry or recovery | Resume, compaction, stale state, or explicit recovery |
 
@@ -71,7 +71,7 @@ Status progression is one-directional: `pending` → `active` → `done`. Do not
 - `auto-onboard` must not create `status: active` phases.
 - At most one phase has `status: active` at any time.
 - A phase with `status: active` must have a non-empty `change:` field.
-- Deferred scope appended by `auto-frame` starts as `status: pending` with empty `change:`.
+- `auto-frame` does not create roadmap phases. When a SPEC is narrower than the user's goal, frame records the deferred scope as a `Deferred / Not in scope` note in the change's SPEC; phases come only from a user-approved `auto-office-hours` decomposition.
 - The `## Deferred or Not Now` section at the bottom holds items explicitly excluded from the roadmap.
 - Inactive means every phase is `done` and `## Deferred or Not Now` is empty or `None recorded`; writer skills may reset inactive roadmaps to the empty shape.
 

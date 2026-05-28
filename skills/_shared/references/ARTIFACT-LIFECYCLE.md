@@ -32,7 +32,7 @@ Allowed active-change layout:
 - Execute and verify load only detail files linked to the active slice or requirement IDs.
 - Execute writes slice evidence in place: inline slices update `PLAN.md`; linked detail slices update `slices/slice-NNN.md`; `orchestration/*.md` is supporting evidence, not the default write target.
 - Split a change only for independent outcomes. Do not split or narrow one coherent outcome solely because the spec or plan has many files, gaps, constraints, or scenarios.
-- If a skill narrows the user's stated scope, it must name the narrowing, explain why, and record the deferred scope in `.agent/steering/ROADMAP.md` following the format in `ROADMAP-CONTRACT.md`, or ask for confirmation.
+- If a skill narrows the user's stated scope, it must name the narrowing, explain why, and then widen the scope, ask the user to confirm, or record the deferred scope as a `Deferred / Not in scope` note inside the current change's SPEC. A narrowed scope must not be promoted into a `ROADMAP.md` phase: roadmap phases come only from a user-approved `auto-office-hours` decomposition, never as a side effect of a skill writing a smaller spec.
 
 ## Stage Handoffs
 
