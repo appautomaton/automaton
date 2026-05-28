@@ -858,3 +858,201 @@ test('reinstalling removes stale per-skill HOST-TOOLS copies', () => {
   assert.equal(existsSync(keepTarget), true)
   assert.equal(existsSync(join(root, '.agent', '.automaton', 'state', 'install-manifest.json')), false)
 })
+
+const AUTOMATON_AGENT_NAMES = ['automaton-implementer', 'automaton-spec-reviewer', 'automaton-quality-reviewer']
+
+test('Claude install generates three host-native automaton subagent definitions', () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-install-claude-agents-'))
+
+  installHost(getHost('claude'), { root, sourceRoot })
+
+  for (const agentName of AUTOMATON_AGENT_NAMES) {
+    const target = join(root, '.claude', 'agents', `${agentName}.md`)
+    assert.equal(existsSync(target), true, `${agentName}.md must be installed`)
+    const content = readFileSync(target, 'utf8')
+    assert.match(content, new RegExp(`^---\\nname: ${agentName}\\n`), `${agentName}.md must declare its name in YAML frontmatter`)
+    assert.match(content, /^description: /m, `${agentName}.md must declare a description`)
+  }
+
+  // Role body content flows verbatim into the generated agent.
+  const implementer = readFileSync(join(root, '.claude', 'agents', 'automaton-implementer.md'), 'utf8')
+  assert.match(implementer, /Only `auto-execute`.*dispatches Automaton subagents/, 'implementer agent must carry the recursion guard from the role body')
+  assert.match(implementer, /STATUS: DONE \| DONE_WITH_CONCERNS \| NEEDS_CONTEXT \| BLOCKED/, 'implementer agent must carry the status envelope from the role body')
+  assert.match(implementer, /Do not run any `git` write command/, 'implementer agent must carry the no-git boundary from the role body')
+
+  // Reviewer agents are restricted to read-only tools so a host runtime cannot mutate
+  // project files even if the role body's no-edit intent is bypassed.
+  const specReviewer = readFileSync(join(root, '.claude', 'agents', 'automaton-spec-reviewer.md'), 'utf8')
+  const qualityReviewer = readFileSync(join(root, '.claude', 'agents', 'automaton-quality-reviewer.md'), 'utf8')
+  for (const reviewer of [specReviewer, qualityReviewer]) {
+    assert.match(reviewer, /^tools: Read, Grep, Glob$/m, 'reviewer agent must restrict tools to read-only')
+    assert.match(reviewer, /Do not edit code, tests, or any project artifacts/, 'reviewer role body must restate no-edit intent')
+  }
+  // Implementer inherits default tools (no explicit restriction line).
+  assert.doesNotMatch(implementer, /^tools: Read, Grep, Glob$/m, 'implementer agent must not restrict tools')
+})
+
+test('Codex install generates three host-native automaton subagent definitions', () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-install-codex-agents-'))
+
+  installHost(getHost('codex'), { root, sourceRoot })
+
+  for (const agentName of AUTOMATON_AGENT_NAMES) {
+    const target = join(root, '.codex', 'agents', `${agentName}.toml`)
+    assert.equal(existsSync(target), true, `${agentName}.toml must be installed`)
+    const content = readFileSync(target, 'utf8')
+    assert.match(content, new RegExp(`^name = "${agentName}"`), `${agentName}.toml must declare its name`)
+    assert.match(content, /^description = ".+"$/m, `${agentName}.toml must declare a description`)
+    assert.match(content, /^\[features\]$/m, `${agentName}.toml must include a [features] block`)
+    assert.match(content, /^multi_agent = false$/m, `${agentName}.toml must disable nested subagent spawning`)
+    assert.doesNotMatch(content, /multi_agent_v2/, `${agentName}.toml must not use the unverified multi_agent_v2 key`)
+    assert.match(content, /^developer_instructions = '''/m, `${agentName}.toml must use a literal multi-line string for developer_instructions`)
+  }
+
+  const implementer = readFileSync(join(root, '.codex', 'agents', 'automaton-implementer.toml'), 'utf8')
+  assert.match(implementer, /Only `auto-execute`.*dispatches Automaton subagents/, 'implementer agent must carry the recursion guard from the role body')
+  assert.match(implementer, /STATUS: DONE \| DONE_WITH_CONCERNS \| NEEDS_CONTEXT \| BLOCKED/)
+  assert.match(implementer, /^sandbox_mode = "workspace-write"$/m, 'implementer agent must request workspace-write sandbox')
+
+  // TOML scoping: top-level keys (name/description/sandbox_mode/developer_instructions)
+  // must appear before any [table] declaration. Otherwise they'd be scoped into [features]
+  // and the agent would have no developer_instructions at top level.
+  for (const agentName of AUTOMATON_AGENT_NAMES) {
+    const content = readFileSync(join(root, '.codex', 'agents', `${agentName}.toml`), 'utf8')
+    const featuresIndex = content.indexOf('[features]')
+    const devInstrIndex = content.indexOf('developer_instructions')
+    assert.ok(featuresIndex > 0, `${agentName}.toml must include a [features] table`)
+    assert.ok(devInstrIndex > 0, `${agentName}.toml must include developer_instructions`)
+    assert.ok(devInstrIndex < featuresIndex, `${agentName}.toml must place developer_instructions before [features] (TOML table scoping)`)
+  }
+
+  const specReviewer = readFileSync(join(root, '.codex', 'agents', 'automaton-spec-reviewer.toml'), 'utf8')
+  const qualityReviewer = readFileSync(join(root, '.codex', 'agents', 'automaton-quality-reviewer.toml'), 'utf8')
+  for (const reviewer of [specReviewer, qualityReviewer]) {
+    assert.match(reviewer, /^sandbox_mode = "read-only"$/m, 'reviewer agent must request read-only sandbox')
+    assert.match(reviewer, /Do not edit code, tests, or any project artifacts/, 'reviewer role body must restate no-edit intent')
+  }
+})
+
+test('OpenCode install generates three host-native automaton subagent definitions', () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-install-opencode-agents-'))
+
+  installHost(getHost('opencode'), { root, sourceRoot })
+
+  for (const agentName of AUTOMATON_AGENT_NAMES) {
+    const target = join(root, '.opencode', 'agents', `${agentName}.md`)
+    assert.equal(existsSync(target), true, `${agentName}.md must be installed`)
+    const content = readFileSync(target, 'utf8')
+    assert.match(content, /^---\nmode: subagent\n/, `${agentName}.md must declare mode: subagent`)
+    assert.match(content, /^description: /m, `${agentName}.md must declare a description`)
+    assert.match(content, /^permission:/m, `${agentName}.md must declare a permission block`)
+    // `permission.write` is not a valid OpenCode permission key; write/edit/apply_patch
+    // are gated by `permission.edit` in the current docs schema.
+    assert.doesNotMatch(content, /^\s+write:/m, `${agentName}.md must not use the non-existent permission.write key`)
+    // Portable recursion guard: subagents deny the Task tool so they cannot fan out.
+    assert.match(content, /^\s+task: deny$/m, `${agentName}.md must deny the Task tool as a portable recursion guard`)
+  }
+
+  const implementer = readFileSync(join(root, '.opencode', 'agents', 'automaton-implementer.md'), 'utf8')
+  assert.match(implementer, /Only `auto-execute`.*dispatches Automaton subagents/, 'implementer agent must carry the recursion guard from the role body')
+  assert.match(implementer, /STATUS: DONE \| DONE_WITH_CONCERNS \| NEEDS_CONTEXT \| BLOCKED/)
+  assert.match(implementer, /^\s+edit: allow$/m, 'implementer agent must allow edit')
+  assert.match(implementer, /^\s+bash: allow$/m, 'implementer agent must allow bash')
+
+  const specReviewer = readFileSync(join(root, '.opencode', 'agents', 'automaton-spec-reviewer.md'), 'utf8')
+  const qualityReviewer = readFileSync(join(root, '.opencode', 'agents', 'automaton-quality-reviewer.md'), 'utf8')
+  for (const reviewer of [specReviewer, qualityReviewer]) {
+    assert.match(reviewer, /^\s+edit: deny$/m, 'reviewer agent must deny edit')
+    assert.match(reviewer, /^\s+bash: deny$/m, 'reviewer agent must deny bash')
+    assert.match(reviewer, /Do not edit code, tests, or any project artifacts/, 'reviewer role body must restate no-edit intent')
+  }
+})
+
+test('reinstalling refreshes stale generated subagent definitions', () => {
+  // Generated agent files are derived install outputs; a stale local edit must be
+  // overwritten on reinstall so durable role authoring stays in skills/auto-execute/references/*-role.md.
+  const root = mkdtempSync(join(tmpdir(), 'automaton-reinstall-agents-stale-'))
+  const host = getHost('claude')
+  const target = join(root, '.claude', 'agents', 'automaton-implementer.md')
+
+  installHost(host, { root, sourceRoot })
+  writeFileSync(target, '# stale generated agent\n', 'utf8')
+
+  installHost(host, { root, sourceRoot })
+
+  const refreshed = readFileSync(target, 'utf8')
+  assert.doesNotMatch(refreshed, /^# stale generated agent$/m)
+  assert.match(refreshed, /^name: automaton-implementer$/m)
+})
+
+test('uninstall removes generated automaton agents but preserves unrelated user agent files', () => {
+  // Explicit regression case for PLAN slice 2: seed an unrelated user agent in the
+  // same directory and confirm uninstallHost leaves it alone while removing the three
+  // automaton-* files we generated.
+  const root = mkdtempSync(join(tmpdir(), 'automaton-uninstall-agents-preserve-'))
+  const host = getHost('claude')
+  const userAgentTarget = join(root, '.claude', 'agents', 'my-other-agent.md')
+  const userContent = '---\nname: my-other-agent\n---\n\n# user agent\n'
+
+  mkdirSync(join(root, '.claude', 'agents'), { recursive: true })
+  writeFileSync(userAgentTarget, userContent, 'utf8')
+
+  installHost(host, { root, sourceRoot })
+
+  for (const agentName of AUTOMATON_AGENT_NAMES) {
+    assert.equal(existsSync(join(root, '.claude', 'agents', `${agentName}.md`)), true, `${agentName}.md must exist after install`)
+  }
+  assert.equal(existsSync(userAgentTarget), true, 'user agent must still exist after install')
+
+  uninstallHost(host, { root, sourceRoot })
+
+  for (const agentName of AUTOMATON_AGENT_NAMES) {
+    assert.equal(existsSync(join(root, '.claude', 'agents', `${agentName}.md`)), false, `${agentName}.md must be removed by uninstall`)
+  }
+  assert.equal(readFileSync(userAgentTarget, 'utf8'), userContent, 'unrelated user agent must be preserved by uninstall')
+  assert.equal(existsSync(join(root, '.claude', 'agents')), true, '.claude/agents/ must remain because the user agent is still there')
+})
+
+test('uninstall prunes empty .<host>/agents/ directories', () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-uninstall-agents-prune-'))
+  const host = getHost('claude')
+
+  installHost(host, { root, sourceRoot })
+  uninstallHost(host, { root, sourceRoot })
+
+  assert.equal(existsSync(join(root, '.claude', 'agents')), false, 'empty .claude/agents/ must be pruned on uninstall')
+})
+
+test('Codex uninstall removes generated automaton agent files and prunes empty .codex/agents/', () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-uninstall-codex-agents-'))
+  const host = getHost('codex')
+
+  installHost(host, { root, sourceRoot })
+  for (const agentName of AUTOMATON_AGENT_NAMES) {
+    assert.equal(existsSync(join(root, '.codex', 'agents', `${agentName}.toml`)), true)
+  }
+
+  uninstallHost(host, { root, sourceRoot })
+
+  for (const agentName of AUTOMATON_AGENT_NAMES) {
+    assert.equal(existsSync(join(root, '.codex', 'agents', `${agentName}.toml`)), false)
+  }
+  assert.equal(existsSync(join(root, '.codex', 'agents')), false, 'empty .codex/agents/ must be pruned on uninstall')
+})
+
+test('OpenCode uninstall removes generated automaton agent files and prunes empty .opencode/agents/', () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-uninstall-opencode-agents-'))
+  const host = getHost('opencode')
+
+  installHost(host, { root, sourceRoot })
+  for (const agentName of AUTOMATON_AGENT_NAMES) {
+    assert.equal(existsSync(join(root, '.opencode', 'agents', `${agentName}.md`)), true)
+  }
+
+  uninstallHost(host, { root, sourceRoot })
+
+  for (const agentName of AUTOMATON_AGENT_NAMES) {
+    assert.equal(existsSync(join(root, '.opencode', 'agents', `${agentName}.md`)), false)
+  }
+  assert.equal(existsSync(join(root, '.opencode', 'agents')), false, 'empty .opencode/agents/ must be pruned on uninstall')
+})

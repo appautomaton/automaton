@@ -29,6 +29,26 @@ function renderClaudeSettings() {
   ) + '\n'
 }
 
+// Render a host-native subagent definition for Claude Code. The static role body
+// (identity, boundaries, status envelope) is provided by the caller from the
+// `*-role.md` source file; this function only wraps it in YAML frontmatter.
+// Reviewers are restricted to read-only tools so a misuse cannot edit project files
+// even when the role body's no-edit intent is somehow bypassed.
+function renderClaudeAgentDefinition(role, roleBody) {
+  const lines = [
+    '---',
+    `name: ${role.agentName}`,
+    `description: ${role.description}`
+  ]
+
+  if (role.intent === 'review') {
+    lines.push('tools: Read, Grep, Glob')
+  }
+
+  lines.push('---', '', roleBody.trim(), '')
+  return lines.join('\n')
+}
+
 export const claudeHost = {
   id: 'claude',
   skillRoot: '.claude/skills',
@@ -46,6 +66,10 @@ export const claudeHost = {
       '.claude/hooks/session-start.mjs': renderSessionStartHook()
     }
   },
+  agentRelativePath(role) {
+    return `.claude/agents/${role.agentName}.md`
+  },
+  renderAgentDefinition: renderClaudeAgentDefinition,
   detect(root) {
     return existsSync(join(root, '.claude')) || existsSync(join(root, 'CLAUDE.md'))
   }
