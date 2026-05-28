@@ -986,9 +986,47 @@ test('OpenCode install generates three host-native automaton subagent definition
   }
 })
 
+test('install compiles role bodies into agent files without shipping role sources', () => {
+  // Q1 redundancy guard: a role body must reach the target only as the compiled
+  // host-native agent file — never duplicated into the installed skill as a source
+  // file. role-sources/ is a build input skipped on copy; references/ keeps only the
+  // runtime dispatch slots.
+  const root = mkdtempSync(join(tmpdir(), 'automaton-install-no-role-dup-'))
+  installHost(getHost('claude'), { root, sourceRoot })
+
+  for (const agentName of AUTOMATON_AGENT_NAMES) {
+    assert.equal(
+      existsSync(join(root, '.claude', 'agents', `${agentName}.md`)),
+      true,
+      `${agentName}.md must be installed as the host-native agent (the live role body)`
+    )
+  }
+
+  const installedExecute = join(root, '.claude', 'skills', 'auto-execute')
+  assert.equal(
+    existsSync(join(installedExecute, 'role-sources')),
+    false,
+    'role-sources/ is a build input and must not ship into the installed skill'
+  )
+  for (const roleFile of ['implementer-role.md', 'spec-reviewer-role.md', 'quality-reviewer-role.md']) {
+    assert.equal(
+      existsSync(join(installedExecute, 'references', roleFile)),
+      false,
+      `${roleFile} must not be duplicated into the installed references/`
+    )
+  }
+
+  // The per-call dispatch slots (the only role-adjacent runtime references) still ship.
+  assert.equal(
+    existsSync(join(installedExecute, 'references', 'implementer-prompt.md')),
+    true,
+    'dispatch prompt slots must still ship into references/'
+  )
+})
+
 test('reinstalling refreshes stale generated subagent definitions', () => {
   // Generated agent files are derived install outputs; a stale local edit must be
-  // overwritten on reinstall so durable role authoring stays in skills/auto-execute/references/*-role.md.
+  // overwritten on reinstall so durable role authoring stays in skills/auto-execute/role-sources/*-role.md.
   const root = mkdtempSync(join(tmpdir(), 'automaton-reinstall-agents-stale-'))
   const host = getHost('claude')
   const target = join(root, '.claude', 'agents', 'automaton-implementer.md')

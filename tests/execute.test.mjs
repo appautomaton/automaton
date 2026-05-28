@@ -5,12 +5,12 @@ import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { skillsRoot } from './support/skill-helpers.mjs'
 
-test('auto-execute ships subagent role definitions and dispatch prompts', () => {
+test('auto-execute provides subagent role sources and dispatch prompts', () => {
   const skillRoot = join(skillsRoot, 'auto-execute')
   const expectedFiles = [
-    'references/implementer-role.md',
-    'references/spec-reviewer-role.md',
-    'references/quality-reviewer-role.md',
+    'role-sources/implementer-role.md',
+    'role-sources/spec-reviewer-role.md',
+    'role-sources/quality-reviewer-role.md',
     'references/implementer-prompt.md',
     'references/spec-reviewer-prompt.md',
     'references/quality-reviewer-prompt.md'
@@ -18,6 +18,16 @@ test('auto-execute ships subagent role definitions and dispatch prompts', () => 
 
   for (const relativePath of expectedFiles) {
     assert.equal(existsSync(join(skillRoot, relativePath)), true, `${relativePath} must exist`)
+  }
+
+  // Role bodies are build inputs compiled into host-native agent files, not runtime
+  // references. They live under role-sources/ and must never be duplicated into references/.
+  for (const roleFile of ['implementer-role.md', 'spec-reviewer-role.md', 'quality-reviewer-role.md']) {
+    assert.equal(
+      existsSync(join(skillRoot, 'references', roleFile)),
+      false,
+      `${roleFile} must not live in references/ (it is a role-sources/ build input)`
+    )
   }
 
   // The legacy code-quality-reviewer-prompt.md was renamed to quality-reviewer-prompt.md
@@ -31,9 +41,9 @@ test('auto-execute ships subagent role definitions and dispatch prompts', () => 
 
 test('auto-execute role files declare static role contracts', () => {
   const skillRoot = join(skillsRoot, 'auto-execute')
-  const implementer = readFileSync(join(skillRoot, 'references', 'implementer-role.md'), 'utf8')
-  const specReviewer = readFileSync(join(skillRoot, 'references', 'spec-reviewer-role.md'), 'utf8')
-  const qualityReviewer = readFileSync(join(skillRoot, 'references', 'quality-reviewer-role.md'), 'utf8')
+  const implementer = readFileSync(join(skillRoot, 'role-sources', 'implementer-role.md'), 'utf8')
+  const specReviewer = readFileSync(join(skillRoot, 'role-sources', 'spec-reviewer-role.md'), 'utf8')
+  const qualityReviewer = readFileSync(join(skillRoot, 'role-sources', 'quality-reviewer-role.md'), 'utf8')
   const roles = { implementer, specReviewer, qualityReviewer }
 
   // Each role carries the portable recursion guard. Recursion is also structurally blocked
