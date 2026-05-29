@@ -131,7 +131,7 @@ Run `node .agent/.automaton/scripts/sync-status.mjs --canonical-plan ".agent/wor
 - `PLAN.md`: written to `.agent/work/<change>/PLAN.md`
 - `DESIGN.md`: written to `.agent/work/<change>/DESIGN.md` (if needed)
 - `.agent/.automaton/state/current.json`: records `canonical_design` (when written), `canonical_plan`, and `stage: plan` through `sync-status.mjs`
-- Next handoff: stop and recommend `auto-eng-review` (optional engineering review) or `auto-execute`. `auto-plan` does not continue inline — the optional review is user-invoked, and entering `auto-execute` starts code changes a human authorizes.
+- Handoff (always stops): `Next: auto-eng-review` (optional review) or `Next: auto-execute`.
 
 ## Rules
 

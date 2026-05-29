@@ -94,7 +94,7 @@ State the next skill based on the verdict.
 
 - `PLAN.md` with appended `## Review: Engineering` section
 - `.agent/.automaton/state/current.json` updated through `sync-status.mjs` with `engineering_review`; `stage` is unchanged by this skill
-- Next handoff, mapped from verdict: `approved` or `approved_with_risks` → stop, recommend `auto-execute`; `needs_correction` → stop, recommend `auto-plan`. Entering `auto-execute` starts code changes, so the user or host invokes it.
+- Handoff (verdict-mapped, always stops): `approved`/`approved_with_risks` → `Next: auto-execute`; `needs_correction` → `Next: auto-plan`.
 
 ## Rules
 

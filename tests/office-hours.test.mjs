@@ -65,7 +65,7 @@ test('auto-office-hours persists approved intake without pre-approval writes', (
   assert.match(source, /`stage: frame`/)
   assert.match(source, /shared state validator/)
   assert.match(source, /`INTAKE\.md` is guaranteed only for an approved office-hours session/)
-  assert.match(source, /Approved, complete intake should flow into `auto-frame` without another user prompt/)
+  assert.match(source, /Approved, complete intake continues inline into `auto-frame` without another user prompt/)
   assert.match(source, /write `\.agent\/work\/<change>\/SPEC\.md`/)
   assert.match(source, /no file writes before the user picks an approach/)
   assert.match(template, /Write the approved intake to `\.agent\/work\/<change-name>\/INTAKE\.md`/)

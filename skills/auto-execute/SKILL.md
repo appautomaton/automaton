@@ -181,7 +181,8 @@ Read `references/stop-examples.md` when uncertain whether a situation qualifies 
 - Per-slice commits when the Git Rhythm is active: `slice N: <objective>` for fresh slices, `slice N gap-fix: <fix objective>` for re-entries after a verify FAIL.
 - Execute stage recorded through `sync-status.mjs` when execution begins; no slice cursor field is added to current.json.
 - Execution window checkpoint or stop reason when continuation pauses; if approved slices remain, name the valid blocker that prevents continuing.
-- Verification report when all slices complete and continuation is safe; otherwise recommended next skill: `auto-execute` (slices remain), `auto-verify` (execution complete but continuation blocked), or `auto-plan` (structural failure).
+- Verification report when all slices complete and continuation is safe.
+- Handoff when continuation is blocked: `Next: auto-execute` (slices remain), `Next: auto-verify` (execution complete, continuation blocked), or `Next: auto-plan` (structural failure).
 
 ## Rules
 

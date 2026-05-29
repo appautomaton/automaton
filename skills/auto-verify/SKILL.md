@@ -62,12 +62,12 @@ Build the full criterion checklist internally. Use `references/verification-temp
 
 - Run `node .agent/.automaton/scripts/sync-status.mjs --stage verified` from the project root.
 - If `.agent/steering/ROADMAP.md` exists, mark the matching `change:` phase `status: done` per `.agent/.automaton/references/ROADMAP-CONTRACT.md`; skip empty or non-matching phases. The ROADMAP edit lands in the working tree as a markdown leftover; do not commit it. The user closes it in their own rhythm.
-- End the report with `Change status: complete` and a separate `New objective` line pointing to `auto-office-hours` for future work. Do not print a `Recommended next skill` line on PASS. Use `auto-resume` only for later re-entry or recovery.
+- End the report with `Change status: complete` and a separate `New objective` line pointing to `auto-office-hours` for future work. Do not print a `Next:` line on PASS. Use `auto-resume` only for later re-entry or recovery.
 
 ### On Fail
 
 Annotate failed slices in `PLAN.md` with structured gap blocks, then run `node .agent/.automaton/scripts/sync-status.mjs --stage execute` from the project root so re-entry resumes gap fixing.
-Each gap block needs `VERIFY-GAP`, evidence, and a fix objective. Apply append-replace discipline from `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md`: replace prior `VERIFY-GAP` blocks for the same slice rather than stacking. Recommend `auto-execute`; it reads these annotations on re-entry.
+Each gap block needs `VERIFY-GAP`, evidence, and a fix objective. Apply append-replace discipline from `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md`: replace prior `VERIFY-GAP` blocks for the same slice rather than stacking. Hand off with `Next: auto-execute`; it reads these annotations on re-entry.
 
 ## Output
 
@@ -75,8 +75,8 @@ Each gap block needs `VERIFY-GAP`, evidence, and a fix objective. Apply append-r
 - State recorded in `current.json` through `sync-status.mjs`: `stage: verify` when verification starts, `stage: verified` on pass, or `stage: execute` on fail
 - `.agent/steering/ROADMAP.md` phase marked done on pass when applicable
 - Warning-level findings surface to the verification report.
-- PASS closeout: report `Change status: complete` and `New objective: use auto-office-hours`; do not emit `Recommended next skill`
-- FAIL closeout: stop and recommend `auto-execute` — gap-fixing re-enters code changes, so the user or host invokes it.
+- PASS closeout: report `Change status: complete` and `New objective: use auto-office-hours`; no `Next:` line
+- FAIL closeout: `Next: auto-execute` — gap-fix re-enters code.
 
 ## Rules
 

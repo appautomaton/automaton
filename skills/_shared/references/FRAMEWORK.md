@@ -53,6 +53,8 @@ Two moves at every lifecycle edge:
 - **Continue inline** — load and follow the next stage's contract in the same session. Default when the exit gate passes, reviews are non-blocking, and context is healthy.
 - **Stop and hand off** — end the turn with a recommendation. Required at three edges: entry into `execute` (code changes need human authorization), entry into an optional review (`auto-ceo-review`, `auto-eng-review`), and verify outcomes (pass closes, fail returns to execute).
 
+**Form.** Continue-inline emits no handoff line — the next contract's output speaks for it. A stop ends the turn with one line: `Next: <skill> — <reason, ≤8 words>`. Terminal completion instead reports `Change status: complete` and a `New objective:` line, with no `Next:`. The reason names the trigger, not the rule — each mandatory stop's *why* is fixed above, so skills do not restate it.
+
 ## Loading Discipline
 
 - Context is finite. Load progressively: smallest artifact first, more only when needed.
