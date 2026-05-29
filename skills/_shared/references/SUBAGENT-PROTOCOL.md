@@ -13,7 +13,7 @@ Use this protocol when `auto-execute` chooses the subagent route for one approve
 
 The coordinator does not outsource scope ownership. Subagents receive curated slice context, not the full `PLAN.md`, full conversation, or unrelated work history.
 
-This protocol is per-slice. `auto-execute` owns execute-stage orchestration across slices; this protocol owns only the implementer and reviewer loop for the selected slice.
+This protocol is per-slice. `auto-execute` owns execute-stage orchestration across slices; this protocol owns only the implementer and reviewer loop for the selected slice. The `automaton-librarian` is deliberately not in the roster above: it is a cross-stage, read-only one-shot lookup governed by `LIBRARIAN.md`, so the dispatch rules below name only the three execute-stage agents.
 
 ## Dispatch Packet
 
@@ -37,7 +37,6 @@ Do not ask a subagent to rediscover the whole project unless exploration is the 
 - Dispatch only by named host-native agent (`automaton-implementer`, `automaton-spec-reviewer`, `automaton-quality-reviewer`). Do not paste a role body into a generic worker, explorer, or other host agent at runtime; the named agent's installed definition already carries the role body.
 - The coordinator provides full task text for the current slice and relevant constraints. Do not make subagents rediscover the whole plan.
 - Dispatch implementers sequentially by default. Cross-slice parallel dispatch is allowed only when `PLAN.md` explicitly marks slices parallel-safe, dependencies are independent, and write sets are disjoint.
-- On Codex, pass `fork_turns="none"` when spawning subagents to prevent child agents from inheriting the parent transcript and self-deadlocking on wait.
 - Review order is mandatory: spec compliance first, code quality second.
 - The coordinator does not implement directly while host-native subagent execution is viable.
 - If the host mapping is unclear, follow `HOST-TOOLS.md`. Do not invent a universal SDK or CLI.

@@ -247,6 +247,29 @@ test('Codex install scaffolds config, hooks, and skills', () => {
   assert.equal(existsSync(join(root, '.codex', 'hooks', 'stop.mjs')), false)
 })
 
+test('Codex HOST-TOOLS carries the fork_turns dispatch directive; other hosts do not', () => {
+  // fork_turns="none" is a Codex-specific spawn_agent argument: it stops a child agent
+  // from inheriting the parent transcript and self-deadlocking on wait. It must ride in
+  // the generated Codex HOST-TOOLS dispatch line (from codex toolMapping.subagents) and
+  // must NOT leak into the host-agnostic protocol or the other hosts' HOST-TOOLS.
+  const root = mkdtempSync(join(tmpdir(), 'automaton-fork-turns-'))
+
+  for (const host of HOSTS) {
+    installHost(host, { root, sourceRoot })
+  }
+
+  const hostToolsFor = (hostId) =>
+    readFileSync(join(root, `.${hostId}`, 'skills', 'auto-execute', 'references', 'HOST-TOOLS.md'), 'utf8')
+
+  assert.match(hostToolsFor('codex'), /fork_turns="none"/, 'Codex HOST-TOOLS.md must carry the fork_turns directive')
+  assert.doesNotMatch(hostToolsFor('claude'), /fork_turns/, 'Claude HOST-TOOLS.md must not carry the Codex-only fork_turns directive')
+  assert.doesNotMatch(hostToolsFor('opencode'), /fork_turns/, 'OpenCode HOST-TOOLS.md must not carry the Codex-only fork_turns directive')
+
+  // The shared protocol must stay host-agnostic: the directive lives in HOST-TOOLS, not here.
+  const protocol = readFileSync(join(root, '.agent', '.automaton', 'references', 'SUBAGENT-PROTOCOL.md'), 'utf8')
+  assert.doesNotMatch(protocol, /fork_turns/, 'SUBAGENT-PROTOCOL.md must not carry host-specific dispatch arguments')
+})
+
 test('reinstalling Codex refreshes generated hooks and skills', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-reinstall-codex-'))
   const host = getHost('codex')
