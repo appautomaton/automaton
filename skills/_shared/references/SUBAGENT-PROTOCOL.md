@@ -25,6 +25,7 @@ Every subagent call should include a compact packet:
 - relevant constraints and anti-goals
 - named files or areas to inspect
 - edit scope: files or directories the implementer may modify (unlisted paths are read-only)
+- requested changes from the prior review when the implementer is being re-dispatched after `CHANGES_REQUESTED`
 - expected output structure
 - stop conditions for missing context, ambiguity, or unsafe scope expansion
 
@@ -65,7 +66,7 @@ Reviewers return exactly one status:
 | Status | Meaning | Coordinator action |
 |--------|---------|--------------------|
 | `APPROVED` | Review passed. | Continue to next review or finish. |
-| `CHANGES_REQUESTED` | Fixes are required. | Send issues to implementer, then re-review. |
+| `CHANGES_REQUESTED` | Fixes are required. | Pass the issues to the implementer in the `<requested-changes>` slot, then re-review. |
 | `BLOCKED` | Reviewer cannot evaluate with available evidence. | Stop and report missing evidence. |
 
 ## Artifact Expectations

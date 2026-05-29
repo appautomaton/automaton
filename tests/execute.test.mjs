@@ -111,6 +111,8 @@ test('auto-execute dispatch prompts contain only per-call slots', () => {
   assert.match(prompts.implementer, /<slice>[\s\S]*<\/slice>/)
   assert.match(prompts.implementer, /<constraints>[\s\S]*<\/constraints>/)
   assert.match(prompts.implementer, /<acceptance-criteria>[\s\S]*<\/acceptance-criteria>/)
+  // The implementer also carries a re-dispatch feedback slot for the CHANGES_REQUESTED loop.
+  assert.match(prompts.implementer, /<requested-changes>[\s\S]*<\/requested-changes>/)
   assert.match(prompts.specReviewer, /<slice>[\s\S]*<\/slice>/)
   assert.match(prompts.specReviewer, /<acceptance-criteria>[\s\S]*<\/acceptance-criteria>/)
   assert.match(prompts.specReviewer, /<implementation-summary>[\s\S]*<\/implementation-summary>/)

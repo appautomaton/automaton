@@ -113,7 +113,7 @@ Run the per-slice protocol:
 3. Provide at most one targeted context correction for `NEEDS_CONTEXT`.
 4. Verify expected file changes before spec review.
 5. Run spec review before code-quality review.
-6. Send concrete reviewer issues to an implementer once, then re-review.
+6. Pass the concrete reviewer issues to the implementer once in the `<requested-changes>` slot, then re-review.
 7. Record a compact orchestration summary under `.agent/work/<change>/orchestration/` only when subagent/review details are needed later. The slice status still updates in place.
 
 Do not mark the slice complete unless implementation status is acceptable, spec review is `APPROVED`, quality review is `APPROVED`, and slice verification evidence exists.
