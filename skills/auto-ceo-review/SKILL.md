@@ -74,7 +74,7 @@ Run `node .agent/.automaton/scripts/sync-status.mjs --product-review "<verdict>"
 
 ### Recommend
 
-On a non-blocking verdict (`approved` or `approved_with_risks`), continue inline into `auto-plan`. On `needs_clarification` or `descoped`, stop and recommend the mapped skill.
+Continue inline on a non-blocking verdict; stop and hand off on a blocking one. The verdict→skill map is in Output.
 
 ## Output
 
