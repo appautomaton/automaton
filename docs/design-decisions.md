@@ -28,7 +28,7 @@ Shared scripts are self-contained but no longer copied into every skill folder.
 
 ## DD-003: No nested skill invocation
 
-**Why:** Prevents recursive context cascading. Each skill starts with `get-context.mjs` — a bounded entry point. Also host-agnostic: invocation mechanisms differ across Claude/Codex/OpenCode.
+**Why:** Prevents recursive context cascading. Each skill starts with `get-context.mjs`, a bounded entry point. Also host-agnostic: invocation mechanisms differ across Claude/Codex/OpenCode.
 
 ---
 
@@ -70,8 +70,8 @@ Every skill's first action runs `node .agent/.automaton/scripts/get-context.mjs`
 
 ## DD-008: Agent role ids are append-only; uninstall removes by exact name
 
-The canonical list of Automaton subagent roles lives in `SUBAGENT_ROLES` (`lib/install.mjs`). A shipped id is never renamed or removed — new roles may only be appended. `uninstallHost()` removes each generated agent file by its exact role-derived name, not by an `automaton-*` namespace glob.
+The canonical list of Automaton subagent roles lives in `SUBAGENT_ROLES` (`lib/install.mjs`). A shipped id is never renamed or removed. New roles may only be appended. `uninstallHost()` removes each generated agent file by its exact role-derived name, not by an `automaton-*` namespace glob.
 
-**Why:** Under append-only ids, every version's role list is a superset of every earlier version's, so a newer uninstaller names — and cleanly removes — every agent file an older install wrote; cross-version uninstall stays complete without scanning the namespace. Exact-name removal also leaves unrelated user-authored agents in `.<host>/agents/` untouched, whereas a namespace glob could delete a user file that happens to start with `automaton-`. Renames and removals — the one case exact-match cannot reconcile across version skew — are ruled out by the invariant rather than worked around in code.
+**Why:** Under append-only ids, every version's role list is a superset of every earlier version's, so a newer uninstaller names (and cleanly removes) every agent file an older install wrote; cross-version uninstall stays complete without scanning the namespace. Exact-name removal also leaves unrelated user-authored agents in `.<host>/agents/` untouched, whereas a namespace glob could delete a user file that happens to start with `automaton-`. Renames and removals (the one case exact-match cannot reconcile across version skew) are ruled out by the invariant rather than worked around in code.
 
 **See:** `lib/install.mjs` (`SUBAGENT_ROLES`, `uninstallHost`), `tests/hosts.test.mjs` (append-only role-id guard).

@@ -14,19 +14,19 @@ Developer       →  CLI                   →  npx @appautomaton/automaton
 
 ### Runtime lib (`.agent/.automaton/lib/`)
 
-Module graph — files import each other. Called by hooks/plugins, not by skills.
+Module graph. Files import each other. Called by hooks/plugins, not by skills.
 
 | File | Purpose |
 |------|---------|
-| `context.mjs` | `buildSessionContext()` — reads current.json and outputs the cross-host harness reminder |
-| `state.mjs` | `loadCurrentState()` / `saveCurrentState()` — snake↔camel normalization |
-| `contracts.mjs` | Loads `contracts-data.json` — stages, prerequisites, review verdicts |
-| `contracts-data.json` | Pure data — the system's schema definition |
-| `validate.mjs` | `validateHandoff()` — L1 checks (stage valid? pointer resolves?) |
+| `context.mjs` | `buildSessionContext()` -> reads current.json and outputs the cross-host harness reminder |
+| `state.mjs` | `loadCurrentState()` / `saveCurrentState()` -> snake↔camel normalization |
+| `contracts.mjs` | Loads `contracts-data.json` -> stages, prerequisites, review verdicts |
+| `contracts-data.json` | Pure data -> the system's schema definition |
+| `validate.mjs` | `validateHandoff()` -> L1 checks (stage valid? pointer resolves?) |
 
 ### Shared skill scripts (`.agent/.automaton/scripts/`)
 
-Self-contained — no runtime imports (see DD-007). Called by LLM via bash.
+Self-contained. No runtime imports (see DD-007). Called by LLM via bash.
 
 | File | Purpose |
 |------|---------|
