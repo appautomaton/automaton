@@ -188,7 +188,7 @@ test('auto-execute owns route selection and execution-window continuation', () =
     assert.match(source, new RegExp(`\`${agentName}\``), `auto-execute must name ${agentName} in the Subagent Route`)
   }
   assert.match(source, /do not paste a role body into a generic worker or explorer agent/, 'auto-execute must forbid runtime role-body pasting')
-  assert.match(source, /do not fall back to runtime-curated prompt injection/, 'auto-execute must forbid runtime prompt-injection fallback')
+  assert.match(source, /Do not fall back to runtime-curated prompt injection/, 'auto-execute must forbid runtime prompt-injection fallback')
 })
 
 test('auto-execute stop examples require bounded diagnostics before halting on uncertainty', () => {

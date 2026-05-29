@@ -24,7 +24,7 @@ export const contentDimensions = ['Audience', 'Thesis', 'Voice', 'Content Anti-G
 export const antiSlopPatterns = [
   'Significance inflation',
   'Promotional language',
-  'Superficial `-ing` analysis',
+  'Superficial `-ing` padding',
   'Vague attribution',
   'Em-dash overuse',
   'Forced rule of three',

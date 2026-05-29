@@ -20,7 +20,7 @@ test('shared anti-slop reference is the canonical content pattern taxonomy', () 
   }
 
   assert.match(antiSlop, /quoted source text/)
-  assert.match(antiSlop, /approved voice sample/)
+  assert.match(antiSlop, /approved voice/)
   assert.match(antiSlop, /intentionally justified/)
 })
 
