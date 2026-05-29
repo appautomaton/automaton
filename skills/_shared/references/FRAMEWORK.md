@@ -37,7 +37,7 @@ Conditional reference reads (`Read references/X.md when Y`) appear inline at the
 
 ## Quality Gate
 
-Every skill ships `references/quality.md` with three sections: anti-patterns, better shape, and prose hygiene. Read it when the skill's output drifts toward vagueness, theater, or inflation. The Quality Gate in each SKILL.md names the skill-specific trigger.
+Every skill ships `references/quality.md` with three sections: anti-patterns, better shape, and prose hygiene. Read it when the skill's output drifts toward vagueness, theater, or inflation. The Quality Gate in each SKILL.md names the skill-specific trigger. All artifacts must pass `.agent/.automaton/references/ANTI-SLOP.md`.
 
 ## Hard Stop Tags
 

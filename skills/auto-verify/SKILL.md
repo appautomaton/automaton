@@ -13,7 +13,7 @@ First action: run `node .agent/.automaton/scripts/get-context.mjs` from the proj
 
 ## Preamble
 
-Independent audit. Re-read the plan, run proof commands, and compare fresh results to acceptance criteria. It does not trust execute's self-assessment or fix what it finds. When continuing inline from execute, re-derive from fresh command output — execute's reasoning is context, not evidence.
+Independent audit. Re-read the plan, run proof commands, and compare fresh results to acceptance criteria. It does not trust execute's self-assessment or fix what it finds. When continuing inline from execute, re-derive from fresh command output; execute's reasoning is context, not evidence.
 
 Loading discipline: one PLAN.md read + verification commands per criterion. Read source files when verifying correctness requires inspecting the actual changes, not just command output.
 
@@ -43,7 +43,7 @@ Gather every acceptance criterion and verification command from every slice in P
 
 Do NOT modify source code, tests, or project artifacts during verification. Verify reads and runs commands; it does not fix.
 
-Do NOT run any `git` write command (`commit`, `amend`, `reset`, `rebase`, `branch`, `checkout`, `push`). The commit rhythm is owned by `auto-execute`. Markdown writes that verify produces — `VERIFY-GAP` blocks on FAIL, the ROADMAP phase update on PASS — sit in the working tree; `auto-execute` sweeps them up on re-entry, or the user closes them after a terminal pass.
+Do NOT run any `git` write command (`commit`, `amend`, `reset`, `rebase`, `branch`, `checkout`, `push`). The commit rhythm is owned by `auto-execute`. Markdown writes that verify produces (`VERIFY-GAP` blocks on FAIL, the ROADMAP phase update on PASS) sit in the working tree; `auto-execute` sweeps them up on re-entry, or the user closes them after a terminal pass.
 </GATE>
 
 ### Run Verification
@@ -76,7 +76,7 @@ Each gap block needs `VERIFY-GAP`, evidence, and a fix objective. Apply append-r
 - `.agent/steering/ROADMAP.md` phase marked done on pass when applicable
 - Warning-level findings surface to the verification report.
 - PASS closeout: report `Change status: complete` and `New objective: use auto-office-hours`; no `Next:` line
-- FAIL closeout: `Next: auto-execute` — gap-fix re-enters code.
+- FAIL closeout: **Next:** auto-execute, gap-fix re-enters code.
 
 ## Rules
 

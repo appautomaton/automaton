@@ -17,7 +17,7 @@ Product bet review. Restates the objective as one crisp bet, identifies differen
 
 A good review names the bet in one sentence, identifies the weakest assumption, and renders a verdict in under 150 words. A bad review restates the spec.
 
-Loading discipline: one SPEC.md read, one review paragraph, one verdict. Read project files when understanding the codebase helps ground the review — verify that spec claims reflect what actually exists before approving or rejecting.
+Loading discipline: one SPEC.md read, one review paragraph, one verdict. Read project files when understanding the codebase helps ground the review. Verify that spec claims reflect what actually exists before approving or rejecting.
 
 ## Quality Gate
 
@@ -47,7 +47,7 @@ In one sentence: "We are betting that [specific user] will [specific action] bec
 
 ### Evaluate
 
-Choose a review posture per `references/review-modes.md`. Assess differentiation, user value, generic or mis-scoped elements, and shippability — ground each in evidence from the spec. Read `references/product-checklist.md` for structured checks and `references/cognitive-patterns.md` for thinking patterns that surface blind spots.
+Choose a review posture per `references/review-modes.md`. Assess differentiation, user value, generic or mis-scoped elements, and shippability. Ground each in evidence from the spec. Read `references/product-checklist.md` for structured checks and `references/cognitive-patterns.md` for thinking patterns that surface blind spots.
 
 ### Render Verdict
 
