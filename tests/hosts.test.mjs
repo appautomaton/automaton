@@ -121,12 +121,12 @@ test('Claude session-start hook reads Automaton state from a nested working dire
   assert.equal(result.status, 0)
   assert.equal(result.stderr, '')
   const payload = JSON.parse(result.stdout)
-  assert.match(payload.hookSpecificOutput.additionalContext, /^<automaton_reminder> This project has the Automaton stage-gated harness installed\./)
-  assert.match(payload.hookSpecificOutput.additionalContext, /State JSON: \.agent\/\.automaton\/state\/current\.json \(change=bootstrap; stage=frame\)\./)
-  assert.match(payload.hookSpecificOutput.additionalContext, /Work artifacts, when relevant, live under \.agent\/work\//)
+  assert.match(payload.hookSpecificOutput.additionalContext, /^<automaton_reminder>\nAutomaton is installed for this project as a stage-gated workflow\./)
+  assert.match(payload.hookSpecificOutput.additionalContext, /Current state: \.agent\/\.automaton\/state\/current\.json \(change=bootstrap; stage=frame\)\./)
+  assert.match(payload.hookSpecificOutput.additionalContext, /Work artifacts live under \.agent\/work\/ when they matter/)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /STATUS\.md|Status summary/)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /\.agent\/work\/bootstrap\//)
-  assert.match(payload.hookSpecificOutput.additionalContext, /honor the user's latest request/)
+  assert.match(payload.hookSpecificOutput.additionalContext, /The user's latest request stays in charge/)
   assert.match(payload.hookSpecificOutput.additionalContext, /<\/automaton_reminder>$/)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /<change>/)
 })
@@ -148,8 +148,8 @@ test('Claude session-start hook injects the shared Automaton reminder without st
   assert.equal(result.status, 0)
   assert.equal(result.stderr, '')
   const payload = JSON.parse(result.stdout)
-  assert.match(payload.hookSpecificOutput.additionalContext, /State JSON: \.agent\/\.automaton\/state\/current\.json \(change=deepen-skills; stage=plan\)\./)
-  assert.match(payload.hookSpecificOutput.additionalContext, /canonical artifact pointers are in current\.json\./)
+  assert.match(payload.hookSpecificOutput.additionalContext, /Current state: \.agent\/\.automaton\/state\/current\.json \(change=deepen-skills; stage=plan\)\./)
+  assert.match(payload.hookSpecificOutput.additionalContext, /Canonical artifact pointers live in current\.json\./)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /STATUS\.md|Status summary/)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /Progress:/)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /Next:/)
@@ -429,12 +429,12 @@ test('Codex session-start hook reads Automaton state from a nested working direc
   assert.equal(result.status, 0)
   assert.equal(result.stderr, '')
   const payload = JSON.parse(result.stdout)
-  assert.match(payload.hookSpecificOutput.additionalContext, /^<automaton_reminder> This project has the Automaton stage-gated harness installed\./)
-  assert.match(payload.hookSpecificOutput.additionalContext, /State JSON: \.agent\/\.automaton\/state\/current\.json \(change=bootstrap; stage=frame\)\./)
-  assert.match(payload.hookSpecificOutput.additionalContext, /Work artifacts, when relevant, live under \.agent\/work\//)
+  assert.match(payload.hookSpecificOutput.additionalContext, /^<automaton_reminder>\nAutomaton is installed for this project as a stage-gated workflow\./)
+  assert.match(payload.hookSpecificOutput.additionalContext, /Current state: \.agent\/\.automaton\/state\/current\.json \(change=bootstrap; stage=frame\)\./)
+  assert.match(payload.hookSpecificOutput.additionalContext, /Work artifacts live under \.agent\/work\/ when they matter/)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /STATUS\.md|Status summary/)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /\.agent\/work\/bootstrap\//)
-  assert.match(payload.hookSpecificOutput.additionalContext, /honor the user's latest request/)
+  assert.match(payload.hookSpecificOutput.additionalContext, /The user's latest request stays in charge/)
   assert.match(payload.hookSpecificOutput.additionalContext, /<\/automaton_reminder>$/)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /<change>/)
 })
@@ -456,8 +456,8 @@ test('Codex session-start hook injects the shared Automaton reminder without sta
   assert.equal(result.status, 0)
   assert.equal(result.stderr, '')
   const payload = JSON.parse(result.stdout)
-  assert.match(payload.hookSpecificOutput.additionalContext, /State JSON: \.agent\/\.automaton\/state\/current\.json \(change=deepen-skills; stage=plan\)\./)
-  assert.match(payload.hookSpecificOutput.additionalContext, /canonical artifact pointers are in current\.json\./)
+  assert.match(payload.hookSpecificOutput.additionalContext, /Current state: \.agent\/\.automaton\/state\/current\.json \(change=deepen-skills; stage=plan\)\./)
+  assert.match(payload.hookSpecificOutput.additionalContext, /Canonical artifact pointers live in current\.json\./)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /STATUS\.md|Status summary/)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /Progress:/)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /Next:/)
@@ -688,8 +688,8 @@ test('OpenCode plugin injects session context, dedups, and re-injects after comp
   const output1 = { messages: [{ info: { role: 'user' }, parts: [{ type: 'text', text: 'hi' }] }] }
   await plugin['experimental.chat.messages.transform']({}, output1)
   assert.equal(output1.messages[0].parts.length, 2)
-  assert.match(output1.messages[0].parts[0].text, /^<automaton_reminder> This project has the Automaton stage-gated harness installed\./)
-  assert.match(output1.messages[0].parts[0].text, /State JSON: \.agent\/\.automaton\/state\/current\.json \(change=deepen-skills; stage=plan\)\./)
+  assert.match(output1.messages[0].parts[0].text, /^<automaton_reminder>\nAutomaton is installed for this project as a stage-gated workflow\./)
+  assert.match(output1.messages[0].parts[0].text, /Current state: \.agent\/\.automaton\/state\/current\.json \(change=deepen-skills; stage=plan\)\./)
   assert.equal(output1.messages[0].parts[1].text, 'hi')
 
   // Behavior 2: re-running the transform on the same output does NOT double-inject.
@@ -700,13 +700,13 @@ test('OpenCode plugin injects session context, dedups, and re-injects after comp
   await plugin.event({ event: { type: 'session.compacted', properties: {} } })
   const output2 = { messages: [{ info: { role: 'user' }, parts: [{ type: 'text', text: 'hi' }] }] }
   await plugin['experimental.chat.messages.transform']({}, output2)
-  assert.match(output2.messages[0].parts[0].text, /Context compacted/)
+  assert.match(output2.messages[0].parts[0].text, /This session was compacted/)
 
   // Behavior 4: the compacted flag is one-shot — subsequent transforms revert to the default variant.
   const output3 = { messages: [{ info: { role: 'user' }, parts: [{ type: 'text', text: 'hi' }] }] }
   await plugin['experimental.chat.messages.transform']({}, output3)
   assert.match(output3.messages[0].parts[0].text, /^<automaton_reminder>/)
-  assert.doesNotMatch(output3.messages[0].parts[0].text, /Context compacted/)
+  assert.doesNotMatch(output3.messages[0].parts[0].text, /This session was compacted/)
 })
 
 test('OpenCode plugin persists session context with noReply and dedups existing context', async () => {
@@ -750,8 +750,8 @@ test('OpenCode plugin persists session context with noReply and dedups existing 
   assert.equal(promptCalls.length, 1)
   assert.equal(promptCalls[0].path.id, 'session-1')
   assert.equal(promptCalls[0].body.noReply, true)
-  assert.match(promptCalls[0].body.parts[0].text, /^<automaton_reminder> This project has the Automaton stage-gated harness installed\./)
-  assert.match(promptCalls[0].body.parts[0].text, /State JSON: \.agent\/\.automaton\/state\/current\.json \(change=persist-opencode; stage=frame\)\./)
+  assert.match(promptCalls[0].body.parts[0].text, /^<automaton_reminder>\nAutomaton is installed for this project as a stage-gated workflow\./)
+  assert.match(promptCalls[0].body.parts[0].text, /Current state: \.agent\/\.automaton\/state\/current\.json \(change=persist-opencode; stage=frame\)\./)
 
   await plugin['chat.message'](
     { sessionID: 'session-1' },
@@ -834,7 +834,7 @@ test('OpenCode plugin persists compacted context when session id is available', 
   assert.equal(promptCalls.length, 1)
   assert.equal(promptCalls[0].path.id, 'session-3')
   assert.equal(promptCalls[0].body.noReply, true)
-  assert.match(promptCalls[0].body.parts[0].text, /Context compacted/)
+  assert.match(promptCalls[0].body.parts[0].text, /This session was compacted/)
 })
 
 test('OpenCode plugin transform is a no-op when no user message is present', async () => {

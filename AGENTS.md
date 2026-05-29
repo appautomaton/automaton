@@ -1,4 +1,4 @@
-# AGENTS.md — automaton
+# AGENTS.md: automaton
 
 Portable, stage-gated agentic-AI harness for Claude Code, Codex, and OpenCode.
 
@@ -6,9 +6,9 @@ Portable, stage-gated agentic-AI harness for Claude Code, Codex, and OpenCode.
 
 - **Copy-based install.** Skills and shared runtime files are inspectable after install. `_shared/` installs once under `.agent/.automaton/` where host skills can reference it (see `docs/design-decisions.md` DD-001).
 - **Skills are pure markdown.** `SKILL.md` + `references/` + optional `templates/`. Shared helper scripts live in `skills/_shared/scripts/`.
-- **Three hosts.** Claude, Codex, OpenCode — each wires startup context through host hooks/plugins and maps subagent tools.
-- **Five lifecycle stages plus resume.** `frame → plan → execute → verify → verified`; `resume` re-enters from durable state. Prerequisites enforced in `runtime/lib/contracts-data.json`.
-- **No mandatory nested invocation.** Skills hand off through durable artifacts; clean same-session continuation is allowed when the lifecycle contract says it is safe.
+- **Three hosts.** Claude, Codex, and OpenCode. Each wires startup context through host hooks/plugins and maps subagent tools.
+- **Five lifecycle stages plus resume.** Stages: `frame`, `plan`, `execute`, `verify`, `verified`. `resume` re-enters from durable state. Prerequisites are enforced in `runtime/lib/contracts-data.json`.
+- **No mandatory nested invocation.** Skills hand off through durable artifacts. Clean same-session continuation is allowed when the lifecycle contract says it is safe.
 
 ## Layout
 
@@ -17,7 +17,7 @@ bin/        CLI (install, status, validate, context)
 hosts/      Host adapters (Claude, Codex, OpenCode)
 lib/        CLI + install library (re-exports runtime)
 runtime/    Installed into target projects (state, context, validation)
-skills/     Skill sources — edit here, not in installed copies
+skills/     Skill sources, edit here, not in installed copies
   _shared/  Shared refs + scripts (installed) and authoring guides (not installed)
   auto-*/   Individual skills
 tests/      node --test tests/*.test.mjs
@@ -47,5 +47,5 @@ node bin/automaton.mjs context frame
 
 ## Design Documentation
 
-- [`docs/design-decisions.md`](docs/design-decisions.md) — architectural choices with rationale
-- [`docs/progressive-disclosure.md`](docs/progressive-disclosure.md) — four-layer progressive disclosure model
+- [`docs/design-decisions.md`](docs/design-decisions.md): architectural choices with rationale
+- [`docs/progressive-disclosure.md`](docs/progressive-disclosure.md): four-layer progressive disclosure model
