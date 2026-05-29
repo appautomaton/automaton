@@ -824,32 +824,40 @@ test('OpenCode plugin transform is a no-op when no user message is present', asy
   assert.equal(assistantOnly.messages[0].parts[0].text, 'reply')
 })
 
-test('host install generates HOST-TOOLS.md only in the auto-execute skill', () => {
-  const root = mkdtempSync(join(tmpdir(), 'automaton-install-host-tools-single-'))
+test('host install generates HOST-TOOLS.md in every dispatching skill and nowhere else', () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-install-host-tools-'))
 
   installHost(getHost('claude'), { root, sourceRoot })
 
   const skillsRoot = join(root, '.claude', 'skills')
-  assert.equal(existsSync(join(skillsRoot, 'auto-execute', 'references', 'HOST-TOOLS.md')), true)
-  for (const skill of ['auto-frame', 'auto-plan', 'auto-verify', 'auto-resume', 'auto-onboard', 'auto-office-hours', 'auto-ceo-review', 'auto-eng-review']) {
+  // Skills that may dispatch an agent get HOST-TOOLS.md: auto-execute (implementer +
+  // reviewers) and the planning skills that may dispatch the read-only librarian.
+  for (const skill of ['auto-execute', 'auto-office-hours', 'auto-frame', 'auto-plan']) {
+    assert.equal(
+      existsSync(join(skillsRoot, skill, 'references', 'HOST-TOOLS.md')),
+      true,
+      `${skill} dispatches an agent and must carry HOST-TOOLS.md`
+    )
+  }
+  for (const skill of ['auto-verify', 'auto-resume', 'auto-onboard', 'auto-ceo-review', 'auto-eng-review']) {
     assert.equal(
       existsSync(join(skillsRoot, skill, 'references', 'HOST-TOOLS.md')),
       false,
-      `${skill} must not carry a HOST-TOOLS.md copy`
+      `${skill} dispatches no agent and must not carry HOST-TOOLS.md`
     )
   }
 })
 
-test('reinstalling removes stale per-skill HOST-TOOLS copies', () => {
+test('reinstalling removes stale HOST-TOOLS copies from non-dispatching skills', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-reinstall-host-tools-stale-'))
   const host = getHost('claude')
-  const staleTarget = join(root, '.claude', 'skills', 'auto-frame', 'references', 'HOST-TOOLS.md')
+  const staleTarget = join(root, '.claude', 'skills', 'auto-verify', 'references', 'HOST-TOOLS.md')
   const keepTarget = join(root, '.claude', 'skills', 'auto-execute', 'references', 'HOST-TOOLS.md')
 
   installHost(host, { root, sourceRoot })
 
   // Simulate a prior install that scattered HOST-TOOLS.md into a non-dispatching skill.
-  mkdirSync(join(root, '.claude', 'skills', 'auto-frame', 'references'), { recursive: true })
+  mkdirSync(join(root, '.claude', 'skills', 'auto-verify', 'references'), { recursive: true })
   writeFileSync(staleTarget, '# stale host tools\n', 'utf8')
 
   installHost(host, { root, sourceRoot })
@@ -879,7 +887,7 @@ test('automaton agent role ids are append-only — shipped ids are never renamed
   }
 })
 
-test('Claude install generates three host-native automaton subagent definitions', () => {
+test('Claude install generates host-native automaton subagent definitions for every role', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-install-claude-agents-'))
 
   installHost(getHost('claude'), { root, sourceRoot })
@@ -906,11 +914,16 @@ test('Claude install generates three host-native automaton subagent definitions'
     assert.match(reviewer, /^tools: Read, Grep, Glob$/m, 'reviewer agent must restrict tools to read-only')
     assert.match(reviewer, /Do not edit code, tests, or any project artifacts/, 'reviewer role body must restate no-edit intent')
   }
+  // The librarian is read-only like reviewers, and pinned to the light model tier.
+  const librarian = readFileSync(join(root, '.claude', 'agents', 'automaton-librarian.md'), 'utf8')
+  assert.match(librarian, /^tools: Read, Grep, Glob$/m, 'librarian agent must be read-only')
+  assert.match(librarian, /^model: haiku$/m, 'librarian agent must pin the light model (haiku) on Claude')
+
   // Implementer inherits default tools (no explicit restriction line).
   assert.doesNotMatch(implementer, /^tools: Read, Grep, Glob$/m, 'implementer agent must not restrict tools')
 })
 
-test('Codex install generates three host-native automaton subagent definitions', () => {
+test('Codex install generates host-native automaton subagent definitions for every role', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-install-codex-agents-'))
 
   installHost(getHost('codex'), { root, sourceRoot })
@@ -950,9 +963,13 @@ test('Codex install generates three host-native automaton subagent definitions',
     assert.match(reviewer, /^sandbox_mode = "read-only"$/m, 'reviewer agent must request read-only sandbox')
     assert.match(reviewer, /Do not edit code, tests, or any project artifacts/, 'reviewer role body must restate no-edit intent')
   }
+
+  const librarian = readFileSync(join(root, '.codex', 'agents', 'automaton-librarian.toml'), 'utf8')
+  assert.match(librarian, /^sandbox_mode = "read-only"$/m, 'librarian agent must request read-only sandbox')
+  assert.match(librarian, /^model_reasoning_effort = "low"$/m, 'librarian agent must use low reasoning effort as the light tier')
 })
 
-test('OpenCode install generates three host-native automaton subagent definitions', () => {
+test('OpenCode install generates host-native automaton subagent definitions for every role', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-install-opencode-agents-'))
 
   installHost(getHost('opencode'), { root, sourceRoot })
@@ -983,6 +1000,24 @@ test('OpenCode install generates three host-native automaton subagent definition
     assert.match(reviewer, /^\s+edit: deny$/m, 'reviewer agent must deny edit')
     assert.match(reviewer, /^\s+bash: deny$/m, 'reviewer agent must deny bash')
     assert.match(reviewer, /Do not edit code, tests, or any project artifacts/, 'reviewer role body must restate no-edit intent')
+  }
+
+  const librarian = readFileSync(join(root, '.opencode', 'agents', 'automaton-librarian.md'), 'utf8')
+  assert.match(librarian, /^\s+edit: deny$/m, 'librarian agent must deny edit')
+  assert.match(librarian, /^\s+bash: deny$/m, 'librarian agent must deny bash')
+  assert.match(librarian, /^\s+task: deny$/m, 'librarian agent must deny task (recursion guard)')
+})
+
+test('HOST-TOOLS.md reaches every dispatching skill and marks the librarian any-stage', () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-install-hosttools-'))
+  installHost(getHost('claude'), { root, sourceRoot })
+
+  for (const skill of ['auto-execute', 'auto-office-hours', 'auto-frame', 'auto-plan']) {
+    const target = join(root, '.claude', 'skills', skill, 'references', 'HOST-TOOLS.md')
+    assert.equal(existsSync(target), true, `${skill} must receive HOST-TOOLS.md`)
+    const content = readFileSync(target, 'utf8')
+    assert.match(content, /automaton-librarian.*any stage/, 'HOST-TOOLS.md must list the librarian as an any-stage agent')
+    assert.match(content, /automaton-implementer.*execute stage/, 'HOST-TOOLS.md must mark the implementer execute-stage')
   }
 })
 

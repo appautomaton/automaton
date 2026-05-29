@@ -168,23 +168,19 @@ function renderAutomatonPlugin() {
 // live under `.opencode/agents/` with the filename as the agent name; the body acts
 // as the subagent's system prompt. Permission keys come from the current OpenCode
 // docs schema (read/edit/glob/grep/list/bash/task/...). `write` is intentionally not
-// a valid key — write/edit/apply_patch are gated by `edit`. Reviewer roles deny
-// `edit` and `bash` so a host-side misuse cannot mutate project files even if the
-// role body's no-edit intent is somehow bypassed. All roles deny `task` as the
-// portable recursion guard; this is the only host where the prose guard is
+// a valid key — write/edit/apply_patch are gated by `edit`. Read-only roles (reviewers,
+// librarian) deny `edit` and `bash` so a host-side misuse cannot mutate project files
+// even if the role body's no-edit intent is somehow bypassed. All roles deny `task` as
+// the portable recursion guard; this is the only host where the prose guard is
 // load-bearing because OpenCode subagents can be granted Task access elsewhere.
+const OPENCODE_TIER_MODELS = {
+  // OpenCode model ids are provider-specific (provider/model). There is no safe universal
+  // light id, so the light tier is left unset by default; a deployment may map it here.
+}
+
 function renderOpenCodeAgentDefinition(role, roleBody) {
-  const permissions = role.intent === 'review'
+  const permissions = role.intent === 'edit'
     ? {
-        read: 'allow',
-        glob: 'allow',
-        grep: 'allow',
-        list: 'allow',
-        edit: 'deny',
-        bash: 'deny',
-        task: 'deny'
-      }
-    : {
         read: 'allow',
         edit: 'allow',
         glob: 'allow',
@@ -193,13 +189,26 @@ function renderOpenCodeAgentDefinition(role, roleBody) {
         bash: 'allow',
         task: 'deny'
       }
+    : {
+        read: 'allow',
+        glob: 'allow',
+        grep: 'allow',
+        list: 'allow',
+        edit: 'deny',
+        bash: 'deny',
+        task: 'deny'
+      }
 
   const lines = [
     '---',
     'mode: subagent',
-    `description: ${role.description}`,
-    'permission:'
+    `description: ${role.description}`
   ]
+  const model = role.modelTier ? OPENCODE_TIER_MODELS[role.modelTier] : undefined
+  if (model) {
+    lines.push(`model: ${model}`)
+  }
+  lines.push('permission:')
   for (const [key, value] of Object.entries(permissions)) {
     lines.push(`  ${key}: ${value}`)
   }

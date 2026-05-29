@@ -39,12 +39,28 @@ function renderCodexHooksConfig(root) {
 //
 // Top-level keys MUST appear before any `[table]` declaration; otherwise TOML scopes them
 // into the table. The `[features]` table is rendered last for that reason.
+// Tier → Codex cheapness levers. Per-agent `model` and `model_reasoning_effort` are
+// supported in custom-agent TOML. Model slugs are account-specific, so the portable
+// light-tier lever is low reasoning effort; a deployment may also pin a model slug here.
+const CODEX_TIER = {
+  light: { model_reasoning_effort: 'low' }
+}
+
 function renderCodexAgentDefinition(role, roleBody) {
-  const sandboxMode = role.intent === 'review' ? 'read-only' : 'workspace-write'
-  return [
+  const sandboxMode = role.intent === 'edit' ? 'workspace-write' : 'read-only'
+  const lines = [
     `name = "${role.agentName}"`,
     `description = "${role.description}"`,
-    `sandbox_mode = "${sandboxMode}"`,
+    `sandbox_mode = "${sandboxMode}"`
+  ]
+  const tier = role.modelTier ? CODEX_TIER[role.modelTier] : undefined
+  if (tier?.model) {
+    lines.push(`model = "${tier.model}"`)
+  }
+  if (tier?.model_reasoning_effort) {
+    lines.push(`model_reasoning_effort = "${tier.model_reasoning_effort}"`)
+  }
+  lines.push(
     `developer_instructions = '''`,
     roleBody.trim(),
     `'''`,
@@ -52,7 +68,8 @@ function renderCodexAgentDefinition(role, roleBody) {
     '[features]',
     'multi_agent = false',
     ''
-  ].join('\n')
+  )
+  return lines.join('\n')
 }
 
 export const codexHost = {

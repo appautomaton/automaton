@@ -29,11 +29,15 @@ function renderClaudeSettings() {
   ) + '\n'
 }
 
+// Tier → Claude model alias. Claude agent frontmatter accepts model aliases, so the
+// light tier maps to haiku. Tiers with no safe model for a host are left unset.
+const CLAUDE_TIER_MODELS = { light: 'haiku' }
+
 // Render a host-native subagent definition for Claude Code. The static role body
 // (identity, boundaries, status envelope) is provided by the caller from the
 // `*-role.md` source file; this function only wraps it in YAML frontmatter.
-// Reviewers are restricted to read-only tools so a misuse cannot edit project files
-// even when the role body's no-edit intent is somehow bypassed.
+// Every non-edit role (reviewers, librarian) is restricted to read-only tools so a
+// misuse cannot edit project files even when the role body's no-edit intent is bypassed.
 function renderClaudeAgentDefinition(role, roleBody) {
   const lines = [
     '---',
@@ -41,8 +45,13 @@ function renderClaudeAgentDefinition(role, roleBody) {
     `description: ${role.description}`
   ]
 
-  if (role.intent === 'review') {
+  if (role.intent !== 'edit') {
     lines.push('tools: Read, Grep, Glob')
+  }
+
+  const model = role.modelTier ? CLAUDE_TIER_MODELS[role.modelTier] : undefined
+  if (model) {
+    lines.push(`model: ${model}`)
   }
 
   lines.push('---', '', roleBody.trim(), '')
