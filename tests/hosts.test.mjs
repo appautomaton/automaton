@@ -15,6 +15,19 @@ test('host registry exposes claude, codex, and opencode stubs', () => {
   assert.deepEqual(HOSTS.map((host) => host.id), ['claude', 'codex', 'opencode'])
 })
 
+test('every host dispatch mapping names the librarian and its question packet', () => {
+  // The dispatch string is the most operational "how to call it" instruction. It must
+  // stay coherent with the agent roster: it has to name every dispatchable agent,
+  // including the cross-stage librarian, and route it to the right per-call packet.
+  for (const host of HOSTS) {
+    const dispatch = host.toolMapping?.subagents ?? ''
+    assert.match(dispatch, /automaton-librarian/, `${host.id} dispatch mapping must name the librarian`)
+    assert.match(dispatch, /LIBRARIAN\.md/, `${host.id} dispatch mapping must route the librarian to its question packet`)
+    // The execute-stage packet must still be named so the implementer/reviewer path is intact.
+    assert.match(dispatch, /slice, constraints, acceptance criteria/, `${host.id} dispatch mapping must keep the execute-stage packet`)
+  }
+})
+
 test('detectHosts identifies a Claude-style workspace', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-hosts-'))
   mkdirSync(join(root, '.claude'), { recursive: true })
