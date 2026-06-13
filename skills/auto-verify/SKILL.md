@@ -43,7 +43,7 @@ Gather every acceptance criterion and verification command from every slice in P
 
 Do NOT modify source code, tests, or project artifacts during verification. Verify reads and runs commands; it does not fix.
 
-Do NOT run any `git` write command (`commit`, `amend`, `reset`, `rebase`, `branch`, `checkout`, `push`). The commit rhythm is owned by `auto-execute` (see `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md`, Git Rhythm). Markdown writes that verify produces (`VERIFY-GAP` blocks on FAIL, the ROADMAP phase update on PASS, one-line `LEARNINGS.md` facts) sit in the working tree; `auto-execute` sweeps them up on re-entry, or the user closes them after a terminal pass.
+Do NOT run any `git` write command (`commit`, `amend`, `reset`, `rebase`, `branch`, `checkout`, `worktree`, `push`). The commit rhythm is owned by `auto-execute` (see `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md`, Git Rhythm). Markdown writes that verify produces (`VERIFY-GAP` blocks on FAIL, the `## Verification` section and ROADMAP phase update on PASS, one-line `LEARNINGS.md` facts) sit in the working tree; `auto-execute` sweeps them up on re-entry, or the user closes them after a terminal pass.
 </GATE>
 
 ### Run Verification

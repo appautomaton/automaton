@@ -47,10 +47,10 @@ Automaton is copy-based: installed skills are local plain markdown files that ar
 ## Workflow
 
 ```text
-office-hours -> frame -> product review -> plan -> engineering review -> execute -> verify -> resume
+office-hours -> frame -> product review -> plan -> engineering review -> execute -> verify -> verified
 ```
 
-Most changes start at `auto-frame`, move through `auto-plan`, then continue with `auto-execute` and `auto-verify`. Use `auto-onboard` when project steering is missing or stale, and `auto-office-hours` when the objective is still too broad.
+Most changes start at `auto-frame`, move through `auto-plan`, then continue with `auto-execute` and `auto-verify`. A full verification pass closes the change as `verified` (terminal). Use `auto-onboard` when project steering is missing or stale, `auto-office-hours` when the objective is still too broad, and `auto-resume` to re-enter existing work from a fresh session at any point.
 
 ## Useful Commands
 

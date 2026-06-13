@@ -69,6 +69,6 @@ Automaton artifacts are read by future skills and humans. Every section must cha
 2. **Index over transcript** -> aggregate tables (traceability, verification rollups, slice summaries) earn their place only at ≥ 3 entries. For 1–2 entries, inline the information where it is used.
 3. **Core versus conditional sections** -> lifecycle SKILL.md required-section lists distinguish core (always present) from conditional (include only when the named trigger applies). Each conditional section names its trigger.
 4. **Append-replace, not stack** -> review sections and gap blocks on artifacts are replaced on re-run for the same change, not stacked.
-5. **Inline default for transient reports** -> verification reports, status summaries, and intermediate audit output live in the conversation only. Write to disk only when a future skill or human will read it again.
+5. **Inline default for transient reports** -> status summaries and intermediate audit output live in the conversation only. Write to disk only when a future skill or human will read it again: the terminal `## Verification` section on PLAN.md (pass) and `VERIFY-GAP` blocks (fail) are the named exceptions because re-entry and audit consume them.
 
 **Deletion test for any section:** if this section were removed, what downstream skill or human loses information? If nothing, drop it.

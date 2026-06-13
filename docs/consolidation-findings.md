@@ -17,7 +17,7 @@ The instinct on seeing duplication is "deduplicate." But the harness's progressi
 Two layers, confirmed by inspection:
 
 1. **Install-time host mutations** wire coordination per host. Claude: `.claude/settings.json` SessionStart hook (`hosts/claude.mjs:10-48`); Codex: `.codex/config.toml` `[features] hooks=true, multi_agent=true` plus a merged `.codex/hooks.json` SessionStart hook (`hosts/codex.mjs:45-51`); OpenCode: a context-injecting plugin (`hosts/opencode.mjs`). Orchestration is **not skills-only.**
-2. **Skill-time protocol** is host-agnostic (`SUBAGENT-PROTOCOL.md`) plus a per-host tool map (`HOST-TOOLS.md`). Both are read by **`auto-execute` only.**
+2. **Skill-time protocol** is host-agnostic (`SUBAGENT-PROTOCOL.md`) plus a per-host tool map (`HOST-TOOLS.md`). Both are read by **`auto-execute` only.** *(Superseded: `HOST-TOOLS.md` now also installs into `auto-office-hours`, `auto-frame`, and `auto-plan` so any stage can dispatch the read-only `automaton-librarian`. This document records the state at the time of the consolidation change.)*
 
 Parallelism is deliberately confined: **`auto-plan` emits declarative labels** (`Execution:`, `Parallel-safe groups:`), **`auto-execute` enacts them**, and **`auto-frame` is unaware**. The division is sound, but it makes the plan↔execute vocabulary a load-bearing contract (C1).
 

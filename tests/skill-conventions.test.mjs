@@ -335,3 +335,42 @@ test('no skill uses <HARD-GATE>', () => {
     )
   }
 })
+
+test('every reference pointer in skills and role sources resolves to a real file', () => {
+  // Stale-pointer guard: a `references/X.md` or `.agent/.automaton/references/X.md`
+  // mention that resolves to nothing sends an agent on a dead read. This walks every
+  // skill entry point, per-skill reference, and role source so the class stays retired.
+  const skillDirs = readdirSync(skillsRoot, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory() && entry.name.startsWith('auto-'))
+    .map((entry) => entry.name)
+
+  const sourcesFor = (skillName) => {
+    const dir = join(skillsRoot, skillName)
+    const files = [join(dir, 'SKILL.md')]
+    for (const sub of ['references', 'role-sources', 'templates']) {
+      const subDir = join(dir, sub)
+      if (existsSync(subDir)) {
+        files.push(...readdirSync(subDir).filter((f) => f.endsWith('.md')).map((f) => join(subDir, f)))
+      }
+    }
+    return files
+  }
+
+  for (const skillName of skillDirs) {
+    for (const file of sourcesFor(skillName)) {
+      const source = readFileSync(file, 'utf8')
+      for (const match of source.matchAll(/(?<!\.automaton\/)references\/([a-z0-9-]+\.md)/g)) {
+        assert.ok(
+          existsSync(join(skillsRoot, skillName, 'references', match[1])),
+          `${file} points at references/${match[1]} which does not exist`
+        )
+      }
+      for (const match of source.matchAll(/\.agent\/\.automaton\/references\/([A-Z-]+\.md)/g)) {
+        assert.ok(
+          existsSync(join(skillsRoot, '_shared', 'references', match[1])),
+          `${file} points at shared reference ${match[1]} which does not exist`
+        )
+      }
+    }
+  }
+})

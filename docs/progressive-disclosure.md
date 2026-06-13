@@ -1,6 +1,6 @@
 # Progressive Disclosure Architecture
 
-How Automaton manages progressive loading across four layers. Each layer gates the next; nothing loads speculatively.
+How Automaton manages progressive loading across its layers (Layer 0 through Layer 3, plus the 0.5 state probe). Each layer gates the next; nothing loads speculatively.
 
 ## Layers
 
