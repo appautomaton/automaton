@@ -39,6 +39,8 @@ Determine three internal axes:
 
 Hold this classification internally to steer questioning. Confirm the read in plain language grounded in the user's words, not by naming the taxonomy. If the user corrects any dimension, adjust before continuing. For bug-sized goals with a known fix, consider whether `auto-frame` is the better entry point. For Startup or Builder mode, read `references/operating-principles.md` for doctrine; for Content mode, read `references/content-intake.md`; for roadmap-sized goals, read `.agent/.automaton/references/ROADMAP-CONTRACT.md`.
 
+Read `.agent/wiki/LEARNINGS.md` when it exists: known project facts sharpen scope and feasibility questions before the diagnostic asks them.
+
 ### Run Diagnostic
 
 Ask only questions that make the objective frameable. Use the active reference:

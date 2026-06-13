@@ -1,9 +1,12 @@
+// Runtime behavior: contracts-data.json is the single source for every exported vocabulary (DD-004).
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 
 import {
+  ARTIFACT_LABELS,
   ARTIFACT_LAYOUT,
+  ARTIFACT_LINT,
   CANONICAL_POINTER_CHECKS,
   CHECKPOINT_TYPES,
   CONTRACTS_DATA,
@@ -14,6 +17,8 @@ import {
   PRODUCT_REVIEW_VERDICTS,
   STAGE_PREREQUISITES,
   STAGES,
+  SUBAGENT_STATUSES,
+  VERDICT_ROUTING,
   isValidCheckpointType,
   isValidEngineeringReview,
   isValidExecutionRoute,
@@ -38,6 +43,40 @@ test('kernel contracts are driven by the checked-in contract manifest', () => {
   assert.deepEqual(ENGINEERING_REVIEW_VERDICTS, contractsManifest.reviewVerdicts.engineering)
   assert.deepEqual(PREREQUISITE_DIAGNOSTIC_CODES, contractsManifest.prerequisiteDiagnosticCodes)
   assert.deepEqual(CANONICAL_POINTER_CHECKS, contractsManifest.canonicalPointerChecks)
+  assert.deepEqual(VERDICT_ROUTING, contractsManifest.verdictRouting)
+  assert.deepEqual(ARTIFACT_LINT, contractsManifest.artifactLint)
+  assert.deepEqual(SUBAGENT_STATUSES, contractsManifest.subagentStatuses)
+  assert.deepEqual(ARTIFACT_LABELS, contractsManifest.artifactLabels)
+})
+
+test('verdict routing covers every review verdict with known skills', () => {
+  assert.deepEqual(Object.keys(VERDICT_ROUTING.product).sort(), PRODUCT_REVIEW_VERDICTS.slice().sort())
+  assert.deepEqual(Object.keys(VERDICT_ROUTING.engineering).sort(), ENGINEERING_REVIEW_VERDICTS.slice().sort())
+
+  const knownSkills = new Set([
+    'auto-office-hours', 'auto-frame', 'auto-ceo-review', 'auto-plan',
+    'auto-eng-review', 'auto-execute', 'auto-verify', 'auto-resume', 'auto-onboard'
+  ])
+  for (const routing of [VERDICT_ROUTING.product, VERDICT_ROUTING.engineering]) {
+    for (const [verdict, skills] of Object.entries(routing)) {
+      assert.ok(skills.length > 0, `${verdict} must route somewhere`)
+      for (const skill of skills) {
+        assert.ok(knownSkills.has(skill), `${verdict} routes to unknown skill ${skill}`)
+      }
+    }
+  }
+})
+
+test('artifact lint vocabulary is well-formed', () => {
+  for (const check of ARTIFACT_LINT.spec) {
+    assert.ok(check.code && check.pattern && check.message)
+    assert.doesNotThrow(() => new RegExp(check.pattern, 'i'))
+  }
+  assert.doesNotThrow(() => new RegExp(ARTIFACT_LINT.planSliceHeading, 'm'))
+  for (const field of ARTIFACT_LINT.planSliceFields) {
+    assert.ok(field.code && field.label)
+  }
+  assert.ok(ARTIFACT_LINT.planMissingSlices.code)
 })
 
 test('kernel contracts expose stable stage, lens, and artifact layout values', () => {
@@ -67,12 +106,15 @@ test('kernel contracts expose stable execution-route and checkpoint vocabularies
 })
 
 test('kernel contracts expose stable stage prerequisites', () => {
+  // The spec chain holds end to end: every stage from execute onward carries
+  // both pointers, so cold resume can always load artifacts in dependency
+  // order (spec first, then plan).
   assert.deepEqual(STAGE_PREREQUISITES, {
     frame: [],
     plan: ['canonicalSpec'],
-    execute: ['canonicalPlan'],
-    verify: ['canonicalPlan'],
-    verified: ['canonicalPlan'],
+    execute: ['canonicalSpec', 'canonicalPlan'],
+    verify: ['canonicalSpec', 'canonicalPlan'],
+    verified: ['canonicalSpec', 'canonicalPlan'],
     resume: []
   })
 })

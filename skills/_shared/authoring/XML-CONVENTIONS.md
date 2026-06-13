@@ -9,7 +9,7 @@ Three tags. No more.
 | Tag | Purpose | Shape |
 |-----|---------|-------|
 | `<GATE>` | Absolute prohibition | Starts with "Do NOT". Lists conditions. Includes an escape hatch. |
-| `<STOP>` | Halt conditions | Lists exact conditions. Ends with "Do not guess. Do not proceed." |
+| `<STOP>` | Halt conditions | Lists exact conditions. Ends with the concrete recovery action (report, recommend a skill), or with "Do not guess. Do not proceed." when there is none. |
 | `<INTERVIEW>` | Behavioral branch: ask vs. skip | States question budget and grouping. |
 
 ## Tag Syntax
@@ -34,8 +34,8 @@ Not every skill needs tags. Match tag density to the skill's decision surface.
 | Tier | Tags | Examples |
 |------|------|----------|
 | Heavy | `<GATE>` + `<STOP>` + optional `<INTERVIEW>` | auto-execute, auto-frame, auto-office-hours |
-| Medium | One tag, typically `<GATE>` or `<STOP>` | auto-plan, auto-onboard |
-| Light | No tags. Blocking conditions live in Rules as "Do not guess." sentences. | auto-ceo-review, auto-eng-review, auto-resume, auto-verify |
+| Medium | One tag, typically `<GATE>` or `<STOP>` | auto-plan, auto-onboard, auto-verify, auto-resume |
+| Light | No tags. Blocking conditions live in Rules as "Do not guess." sentences. | auto-ceo-review, auto-eng-review |
 
 ## Signal Scarcity
 

@@ -3,7 +3,12 @@
 ## Scenario 1: Fresh Session, Active Change Exists
 
 **State:** `current.json` has `active_change: "feature-x"`, `stage: "execute"`.
-**Action:** Load SPEC.md, DESIGN.md, PLAN.md. Identify current slice. Summarize; `Next: auto-execute`.
+**Action:** Load SPEC.md, DESIGN.md, PLAN.md. Identify the current slice from PLAN.md evidence, then reconcile against the execution ledger (`git log --oneline -15`, `git status --porcelain`): the last `slice N:` commit is the last verified slice, and a dirty tree on top of it is in-flight work for the next slice. Summarize; `Next: auto-execute`.
+
+## Scenario 1b: Mid-Slice Interruption
+
+**State:** Stage `execute`; the last slice commit is `slice 4: ...` but the working tree is dirty and PLAN.md shows slice 5 without completion evidence.
+**Action:** Slice 5 was in flight when the session died. Name the uncommitted files, note that slice 5 resumes from partial work (the next slice commit sweeps it in), and `Next: auto-execute`. Do not commit, revert, or clean anything: resume is read-only.
 
 ## Scenario 2: Fresh Session, No Active Change
 

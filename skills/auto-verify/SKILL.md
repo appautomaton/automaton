@@ -43,7 +43,7 @@ Gather every acceptance criterion and verification command from every slice in P
 
 Do NOT modify source code, tests, or project artifacts during verification. Verify reads and runs commands; it does not fix.
 
-Do NOT run any `git` write command (`commit`, `amend`, `reset`, `rebase`, `branch`, `checkout`, `push`). The commit rhythm is owned by `auto-execute`. Markdown writes that verify produces (`VERIFY-GAP` blocks on FAIL, the ROADMAP phase update on PASS) sit in the working tree; `auto-execute` sweeps them up on re-entry, or the user closes them after a terminal pass.
+Do NOT run any `git` write command (`commit`, `amend`, `reset`, `rebase`, `branch`, `checkout`, `push`). The commit rhythm is owned by `auto-execute` (see `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md`, Git Rhythm). Markdown writes that verify produces (`VERIFY-GAP` blocks on FAIL, the ROADMAP phase update on PASS, one-line `LEARNINGS.md` facts) sit in the working tree; `auto-execute` sweeps them up on re-entry, or the user closes them after a terminal pass.
 </GATE>
 
 ### Run Verification
@@ -60,23 +60,30 @@ Build the full criterion checklist internally. Use `references/verification-temp
 
 ### On Pass
 
+- Append a compact `## Verification` section to the canonical `PLAN.md` (append-replace, never stack): per-slice criterion rollup, commands run, derived or skipped checks named, and the PASS verdict. Use the durable-record shape in `references/verification-template.md`. This is the record a future change or auditor reads; the inline report evaporates with the conversation.
 - Run `node .agent/.automaton/scripts/sync-status.mjs --stage verified` from the project root.
 - If `.agent/steering/ROADMAP.md` exists, mark the matching `change:` phase `status: done` per `.agent/.automaton/references/ROADMAP-CONTRACT.md`; skip empty or non-matching phases. The ROADMAP edit lands in the working tree as a markdown leftover; do not commit it. The user closes it in their own rhythm.
 - End the report with `Change status: complete` and a separate `New objective` line pointing to `auto-office-hours` for future work. Do not print a `Next:` line on PASS. Use `auto-resume` only for later re-entry or recovery.
 
 ### On Fail
 
-Annotate failed slices in `PLAN.md` with structured gap blocks, then run `node .agent/.automaton/scripts/sync-status.mjs --stage execute` from the project root so re-entry resumes gap fixing.
-Each gap block needs `VERIFY-GAP`, evidence, and a fix objective. Apply append-replace discipline from `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md`: replace prior `VERIFY-GAP` blocks for the same slice rather than stacking. Hand off with `Next: auto-execute`; it reads these annotations on re-entry.
+Before annotating, check each failing criterion for an existing `VERIFY-GAP` block from a prior verification of this change. A repeat means the gap-fix cycle did not close it: the plan or spec is the suspect, not the implementation.
+
+- First failure: annotate failed slices in `PLAN.md` with structured gap blocks, run `node .agent/.automaton/scripts/sync-status.mjs --stage execute` from the project root so re-entry resumes gap fixing, and hand off with `Next: auto-execute`, which reads these annotations on re-entry.
+- Repeated failure of the same criterion: annotate, run `node .agent/.automaton/scripts/sync-status.mjs --stage plan` from the project root, and hand off with `Next: auto-plan`, naming the repeated criterion.
+
+Each gap block needs `VERIFY-GAP`, evidence, and a fix objective. Append-replace (`FRAMEWORK.md`, Artifact Signal Discipline): replace prior `VERIFY-GAP` blocks for the same slice rather than stacking.
+
+When gap diagnosis reveals durable project truth beyond this change, append a one-line evidence-cited fact to `.agent/wiki/LEARNINGS.md` per `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Learned Truth).
 
 ## Output
 
-- Inline verification report; `PLAN.md` annotated with `VERIFY-GAP` blocks on failure
-- State recorded in `current.json` through `sync-status.mjs`: `stage: verify` when verification starts, `stage: verified` on pass, or `stage: execute` on fail
+- Inline verification report; `PLAN.md` annotated with `VERIFY-GAP` blocks on failure, or closed with a durable `## Verification` section on pass
+- State recorded in `current.json` through `sync-status.mjs`: `stage: verify` when verification starts, `stage: verified` on pass, `stage: execute` on fail, or `stage: plan` on a repeated fail of the same criterion
 - `.agent/steering/ROADMAP.md` phase marked done on pass when applicable
 - Warning-level findings surface to the verification report.
 - PASS closeout: report `Change status: complete` and `New objective: use auto-office-hours`; no `Next:` line
-- FAIL closeout: **Next:** auto-execute, gap-fix re-enters code.
+- FAIL closeout: **Next:** auto-execute, gap-fix re-enters code. A repeated failure of the same criterion escalates to **Next:** auto-plan instead.
 
 ## Rules
 

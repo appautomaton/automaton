@@ -49,6 +49,10 @@ Check that `canonical_spec`, `canonical_design`, and `canonical_plan` resolve wh
 
 Treat `current.json` as the only source for active change, stage, and canonical artifact pointers. Load artifacts in dependency order and stop at the current stage; read `references/artifact-order.md` for the full stage table.
 
+### Reconcile Execution Ledger
+
+When stage is `execute` or `verify` and the project is a git repo, read the execution ledger before summarizing: `git log --oneline -15` and `git status --porcelain`. Per-slice commits (`slice N: ...`, `slice N gap-fix: ...`) mark verified slices; match them against `PLAN.md` slice evidence. A dirty tree on top of the last slice commit is in-flight work for the next slice, not noise: name the touched files. When commits and `PLAN.md` evidence disagree, trust the commits and report the mismatch.
+
 ### Surface Review State
 
 If `current.json` contains `product_review` or `engineering_review`, read the corresponding `## Review:` sections from canonical artifacts and include them in the resume summary.
@@ -64,6 +68,7 @@ Produce a concise summary under 200 tokens:
 **What was done:** [1-2 sentences]
 **What was blocked:** [1-2 sentences, or "nothing"]
 **What comes next:** [specific next action, or "none - change complete"]
+**Execution ledger:** [last slice commit + in-flight files, "clean", or "n/a"]
 **Review verdicts:** [product: X, engineering: Y, or "none"]
 **Missing state:** [list or "none"]
 **Roadmap:** [N pending / M total, or "not tracked"]

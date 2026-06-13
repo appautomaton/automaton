@@ -1,3 +1,4 @@
+// Runtime behavior: L1 validation blocks with error diagnostics (DD-004, DD-005).
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { execFileSync, spawnSync } from 'node:child_process'
@@ -49,18 +50,24 @@ test('validateState returns error when execute stage is missing canonicalPlan', 
   assert.equal(result.diagnostics[0].code, 'missing_canonical_plan')
 })
 
-test('validateState returns error when verify stage is missing canonicalPlan', () => {
+test('validateState returns errors when verify stage is missing both pointers', () => {
   const result = validateState({ activeChange: 'my-change', stage: 'verify' })
 
   assert.equal(result.valid, false)
-  assert.equal(result.diagnostics[0].code, 'missing_canonical_plan')
+  assert.deepEqual(
+    result.diagnostics.map((item) => item.code).sort(),
+    ['missing_canonical_plan', 'missing_canonical_spec']
+  )
 })
 
-test('validateState returns error when verified stage is missing canonicalPlan', () => {
+test('validateState returns errors when verified stage is missing both pointers', () => {
   const result = validateState({ activeChange: 'my-change', stage: 'verified' })
 
   assert.equal(result.valid, false)
-  assert.equal(result.diagnostics[0].code, 'missing_canonical_plan')
+  assert.deepEqual(
+    result.diagnostics.map((item) => item.code).sort(),
+    ['missing_canonical_plan', 'missing_canonical_spec']
+  )
 })
 
 test('validateState returns no diagnostics for resume stage without canonical pointers', () => {

@@ -15,7 +15,7 @@ First action: run `node .agent/.automaton/scripts/get-context.mjs` from the proj
 
 auto-execute owns execute-stage orchestration, route selection, state, and scope. Direct implementation and subagent implementation are two routes inside this skill. It does not reopen product scope or modify the approved plan's intent. Execute and verify one approved slice at a time inside the selected execution window. Continuation is the default after a verified slice; checkpoints and STOP conditions are the exceptions. An execution window is a context-management batch, not a completion boundary.
 
-Loading discipline: keep the active slice, execution-window metadata, acceptance criteria, route metadata, verification commands, and active files in context. Load linked detail files and traceability IDs for the active slice only; read wider project files only when implementation correctness requires it. Read `.agent/.automaton/references/CONTEXT-BUDGET.md` when wider reads threaten context pressure.
+Loading discipline: keep the active slice, execution-window metadata, acceptance criteria, route metadata, verification commands, and active files in context. Load linked detail files and traceability IDs for the active slice only; read wider project files only when implementation correctness requires it. Read `.agent/.automaton/references/CONTEXT-BUDGET.md` when wider reads threaten context pressure. When locating code or tracing a flow would otherwise pull wide reads into context, you may dispatch the read-only `automaton-librarian` for a one-shot lookup (see `.agent/.automaton/references/LIBRARIAN.md`); it returns evidence, you keep the decision.
 
 ## Quality Gate
 
@@ -44,32 +44,22 @@ If `engineering_review` is `approved_with_risks`, surface the rationale before s
 
 If the current slice involves prose, read `references/content-execution.md`. If it links `slices/slice-NNN.md` or requirement IDs in `spec/*.md`, load those linked files for the active slice and preserve their traceability IDs.
 
+Read `.agent/wiki/LEARNINGS.md` when it exists: one-line facts earlier changes paid to learn.
+
 ### Mark Execute Stage
 
 After the canonical `PLAN.md` resolves and before changing code or project artifacts, run `node .agent/.automaton/scripts/sync-status.mjs --stage execute` from the project root. This records that the active change has entered execution while preserving the existing `canonical_plan`.
 
 ### Git Rhythm
 
-Commit per verified slice when the working directory is a git repo. The verification gate is the authorization; do not pause to ask.
+Commit per verified slice when the working directory is a git repo. The verification gate is the authorization; do not pause to ask. Read `references/git-rhythm.md` once at execute entry for detection, pre-existing dirt, and commit-failure handling, then run its entry check.
 
-**Detect once at entry.** After `Mark Execute Stage` resolves, run `git rev-parse --git-dir` and `git status --porcelain`. The rhythm is silently inactive for the rest of the run when:
-
-- the directory is not a git repo;
-- the user has told this run not to use git;
-- the repo is mid-rebase, mid-merge, mid-cherry-pick, mid-bisect, or on detached HEAD.
-
-**Pre-existing dirt.** If `git status` reports uncommitted changes at entry, announce once in the conversation that slice 1's commit will sweep them in, then proceed without asking. The rhythm matches what `git add -A && git commit` would do manually; recovery (`git reset HEAD~`) is in the user's normal toolkit.
-
-**Commit per verified slice.** After slice verification passes in `Verify And Advance`, run `git add -A` followed by one of:
+After slice verification passes in `Verify And Advance`, run `git add -A` followed by one of:
 
 - `git commit -m "slice N: <objective>"` for a fresh slice (objective from `PLAN.md`).
 - `git commit -m "slice N gap-fix: <fix objective>"` for a slice re-entered after `auto-verify` FAIL (fix objective from the `VERIFY-GAP` block).
 
-**Strictly additive.** `git commit` only. Never `amend`, `reset`, `rebase`, `branch`, `checkout`, or `push`. Subagents on the implementer route never run any git command. The implementer prompt enforces this; the orchestrator owns history.
-
-If the commit operation itself fails (pre-commit hook rejection, signing failure, repo entering an interrupted state mid-run), STOP and surface the failure verbatim. Do not retry with workarounds; do not silently skip the rhythm to keep going.
-
-See `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Git Rhythm) for the cross-skill contract.
+**Strictly additive.** `git commit` only. Never `amend`, `reset`, `rebase`, `branch`, `checkout`, or `push`. Subagents on the implementer route never run any git command; the orchestrator owns history. A failed commit is a STOP, not a step to skip. Cross-skill contract: `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Git Rhythm).
 
 ### Select Execution Window
 
@@ -103,18 +93,16 @@ Use this route only when route selection permits direct execution. Change code a
 
 ### Subagent Route
 
-Use this route when `Execution` is `subagent required`, when `subagent recommended` is justified, or when the user requested multi-agent execution. Before dispatching, read `.agent/.automaton/references/SUBAGENT-PROTOCOL.md` and `references/HOST-TOOLS.md`. Dispatch only the named host-native agents listed in `HOST-TOOLS.md` (`automaton-implementer`, `automaton-spec-reviewer`, `automaton-quality-reviewer`) and fill the per-call slots from `references/implementer-prompt.md`, `references/spec-reviewer-prompt.md`, and `references/quality-reviewer-prompt.md`. The static role bodies live in the host-native agent definitions; do not paste a role body into a generic worker or explorer agent.
+Use this route when `Execution` is `subagent required`, when `subagent recommended` is justified, or when the user requested multi-agent execution. Before the first dispatch, read `.agent/.automaton/references/SUBAGENT-PROTOCOL.md` and `references/HOST-TOOLS.md`: dispatch-by-name rules, role boundaries, status vocabulary, and host availability live there. Dispatch only the named host-native agents (`automaton-implementer`, `automaton-spec-reviewer`, `automaton-quality-reviewer`) and fill the per-call slots from `references/implementer-prompt.md`, `references/spec-reviewer-prompt.md`, and `references/quality-reviewer-prompt.md`. The installed agent definitions carry the role bodies; do not paste a role body into a generic worker or explorer agent.
 
-If `HOST-TOOLS.md` says subagents are unavailable, fall back from `subagent recommended` to direct execution only when the slice remains safe. For `subagent required`, stop and recommend `auto-plan` or a host/configuration change. If a named agent is configured out of the host (Codex `[features].multi_agent` disabled, OpenCode `permission.task` denied for `automaton-*`, Claude agent file missing), treat the host as not exposing subagent support and stop. Do not fall back to runtime-curated prompt injection into a generic agent.
+If the host does not expose the named agents, fall back from `subagent recommended` to direct execution only when the slice remains safe. For `subagent required`, stop under the protocol's host-support condition and recommend `auto-plan` or a host change. Do not fall back to runtime-curated prompt injection.
 
 Run the per-slice protocol:
 1. Build a dispatch packet from the current slice only.
-2. Dispatch the implementer.
-3. Provide at most one targeted context correction for `NEEDS_CONTEXT`.
-4. Verify expected file changes before spec review.
-5. Run spec review before code-quality review.
-6. Pass the concrete reviewer issues to the implementer once in the `<requested-changes>` slot, then re-review.
-7. Record a compact orchestration summary under `.agent/work/<change>/orchestration/` only when subagent/review details are needed later. The slice status still updates in place.
+2. Dispatch the implementer; provide at most one targeted context correction for `NEEDS_CONTEXT`.
+3. Verify expected file changes, then spec review, then code-quality review.
+4. Pass the concrete reviewer issues to the implementer once in the `<requested-changes>` slot, then re-review.
+5. Record a compact orchestration summary under `.agent/work/<change>/orchestration/` only when subagent/review details are needed later. The slice status still updates in place.
 
 Do not mark the slice complete unless implementation status is acceptable, spec review is `APPROVED`, quality review is `APPROVED`, and slice verification evidence exists.
 
@@ -157,6 +145,8 @@ If all slices are complete and no STOP condition applies, ensure slice evidence 
 
 If implementation reveals a real mismatch between plan and reality, record the correction in `PLAN.md` on the current slice. Do not silently redefine the plan.
 
+When a correction reveals durable project truth beyond this change, append a one-line evidence-cited fact to `.agent/wiki/LEARNINGS.md` per `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Learned Truth).
+
 <STOP>
 
 Halt immediately and report to the user when:
@@ -165,7 +155,7 @@ Halt immediately and report to the user when:
 3. A plan instruction is ambiguous or contradictory and cannot be resolved with one clarifying question.
 4. The approved slice no longer matches the codebase state.
 5. The user asks for work outside the current slice.
-6. Context pressure reaches DEGRADING or EMERGENCY.
+6. Context degradation signals persist after conserving (response procedure: `.agent/.automaton/references/CONTEXT-BUDGET.md`, Conserve Then Checkpoint).
 7. The plan requires subagents but the host cannot dispatch them.
 
 Read `references/stop-examples.md` when uncertain whether a situation qualifies for STOP.

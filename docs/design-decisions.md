@@ -12,7 +12,7 @@ Shared scripts are self-contained but no longer copied into every skill folder.
 
 **Why:** `.agent/` is the one common root across Claude, Codex, and OpenCode installs, so shared reference docs and scripts can live there without per-skill duplication.
 
-**See:** `lib/install.mjs` (`installProject`, `installHost`, `syncHostSkills`).
+**See:** `lib/install.mjs` (`installProject`, `installHost`, `syncHostSkills`). Guarded by `tests/scaffold.test.mjs`, `tests/hosts.test.mjs`.
 
 ---
 
@@ -22,13 +22,15 @@ Shared scripts are self-contained but no longer copied into every skill folder.
 
 **Why:** JSON parsing is deterministic across LLM providers; markdown summaries drift and cost prompt tokens. State mutations go to JSON. Human-readable context comes from canonical artifacts (`INTAKE.md`, `SPEC.md`, `PLAN.md`, review sections, and roadmap items) or from generated command output.
 
-**See:** `runtime/lib/state.mjs`, `runtime/lib/context.mjs`.
+**See:** `runtime/lib/state.mjs`, `runtime/lib/context.mjs`. Guarded by `tests/state.test.mjs`, `tests/skill-conventions.test.mjs` (state writes route through sync-status).
 
 ---
 
 ## DD-003: No nested skill invocation
 
 **Why:** Prevents recursive context cascading. Each skill starts with `get-context.mjs`, a bounded entry point. Also host-agnostic: invocation mechanisms differ across Claude/Codex/OpenCode.
+
+**See:** Guarded by `tests/skill-conventions.test.mjs` (no mandatory nested invocation) and the recursion guards in `tests/execute.test.mjs` role assertions.
 
 ---
 
@@ -38,7 +40,7 @@ Stage prerequisites declared in `contracts-data.json`. Plan requires `canonicalS
 
 **Why:** LLMs comply inconsistently with soft guidance under user pressure. Data-driven prerequisites are enforced by `validate.mjs` regardless of prompt.
 
-**See:** `runtime/lib/contracts-data.json:13-18`.
+**See:** `runtime/lib/contracts-data.json:13-18`. Guarded by `tests/contracts.test.mjs`, `tests/validate.test.mjs`, and the both-ends contract tests (`tests/execution-contract.test.mjs`, `tests/verdict-routing.test.mjs`).
 
 ---
 
@@ -48,6 +50,8 @@ L1 (state invariants) in runtime. L2 (artifact shape) in consuming skill. L3 (pr
 
 **Why:** Runtime must stay portable across three hosts. Only L1 can be enforced identically. L2 is context-dependent. L3 is subjective.
 
+**See:** Guarded by `tests/validate.test.mjs` (L1 errors block), `tests/artifact-lint.test.mjs` (L2 warnings never block). Layer map: `docs/testing.md`.
+
 ---
 
 ## DD-006: Session bootstrap via host startup integration, not skill
@@ -55,6 +59,8 @@ L1 (state invariants) in runtime. L2 (artifact shape) in consuming skill. L3 (pr
 Host startup integration produces a short reminder before any skill runs.
 
 **Why:** Instant orientation without invoking a skill or summarizing progress prose. The message identifies Automaton as an installed harness, points to `current.json` and the work-artifact tree, and reminds the agent that the user's latest request remains authoritative. Claude and Codex use SessionStart hooks; OpenCode uses its plugin event/chat hooks, including compaction handling.
+
+**See:** Guarded by `tests/hosts.test.mjs`, `tests/cli-context.test.mjs`.
 
 ---
 
@@ -64,7 +70,7 @@ Every skill's first action runs `node .agent/.automaton/scripts/get-context.mjs`
 
 **Why:** Shared skill scripts run from installed project runtime state where package source imports may not resolve. Self-containment keeps them usable across host surfaces and package/source layouts.
 
-**See:** `skills/_shared/scripts/get-context.mjs:44` (comment).
+**See:** `skills/_shared/scripts/get-context.mjs:44` (comment). Guarded by the shared-script tests in `tests/state.test.mjs` and `tests/artifact-lint.test.mjs` (both run the scripts from temp roots where package imports cannot resolve).
 
 ---
 
@@ -75,3 +81,49 @@ The canonical list of Automaton subagent roles lives in `SUBAGENT_ROLES` (`lib/i
 **Why:** Under append-only ids, every version's role list is a superset of every earlier version's, so a newer uninstaller names (and cleanly removes) every agent file an older install wrote; cross-version uninstall stays complete without scanning the namespace. Exact-name removal also leaves unrelated user-authored agents in `.<host>/agents/` untouched, whereas a namespace glob could delete a user file that happens to start with `automaton-`. Renames and removals (the one case exact-match cannot reconcile across version skew) are ruled out by the invariant rather than worked around in code.
 
 **See:** `lib/install.mjs` (`SUBAGENT_ROLES`, `uninstallHost`), `tests/hosts.test.mjs` (append-only role-id guard).
+
+---
+
+## DD-009: L2 artifact-shape checks are script-surfaced warnings, not prose vigilance
+
+`get-context.mjs` and `sync-status.mjs` lint the canonical SPEC and PLAN against the `artifactLint` vocabulary in `contracts-data.json` (acceptance criteria and anti-goals present in SPEC, objective/acceptance criteria/verification present per plan slice). Findings are `warning`-level diagnostics in the JSON every skill already reads as its first action.
+
+**Why:** Asking the consuming skill to notice missing artifact shape was the most expensive and least reliable validator in the system: it costs model attention on every stage entry and is exactly the kind of check that gets skipped under context pressure. The slice format is already a pinned vocabulary, so a deterministic parser can surface the gaps for free. Warnings keep judgment with the model (a "material slice" decision stays an LLM call), and L1 remains the only error-level gate, so the harness does not get more rigid.
+
+**See:** `runtime/lib/contracts-data.json` (`artifactLint`), `skills/_shared/scripts/get-context.mjs` (`lintArtifacts`), `tests/artifact-lint.test.mjs`.
+
+---
+
+## DD-010: Cross-change memory is a bounded wiki file, not new machinery
+
+`.agent/wiki/LEARNINGS.md` carries one-line, evidence-cited project facts that execution paid to learn. `auto-execute` (plan corrections) and `auto-verify` (gap diagnosis) append; `auto-plan` and `auto-execute` read it when present. The format contract lives once in `ARTIFACT-LIFECYCLE.md` (Learned Truth).
+
+**Why:** The harness had no channel for execution-learned truth to survive a change: a gotcha discovered in slice 3 evaporated with the session unless it happened to land in slice evidence. A plain markdown file with the existing artifact disciplines (one line per fact, evidence cited, deletion when falsified) makes change N+1 smarter with zero orchestration spread and full human inspectability.
+
+**See:** `skills/_shared/references/ARTIFACT-LIFECYCLE.md` (Learned Truth), `tests/learnings.test.mjs`.
+
+---
+
+## DD-011: Install writes a receipt; uninstall and upgrade act on it
+
+`installProject()` and `installHost()` record what only the install moment can observe into `.agent/.automaton/state/install-manifest.json`: every file written (with an LF-normalized sha256 hash), every directory created because it did not exist before, and the exact fragments merged into shared host configs (hook script references, codex feature lines actually added). Entries are tagged per owner (`project`, `claude`, `codex`, `opencode`). Uninstall removes exactly the recorded set, prunes only recorded-as-created directories when they end up empty, and reverts only the recorded merge fragments. Reinstall over an older receipt safe-deletes orphans (recorded files this version no longer writes) when their content still matches the recorded hash, keeps user-modified ones with a warning, and strips merge fragments the previous install recorded that this version no longer ships, so a retired hook never leaves a dangling config entry. Installs that pre-date the receipt fall back to the old source-recompute removal; a valid receipt with no entries for a host makes that host's uninstall a no-op instead, because the receipt is authoritative about what was never installed (automaton-named traces it cannot account for are reported, not deleted). Receipt entries are validated at the load boundary: absolute or traversal paths are discarded, so a corrupt manifest can never delete outside the project root. Two honest limits: shared-config preservation is semantic rather than byte-exact (merged JSON and TOML are reparsed and reserialized, so user entries survive but formatting is normalized), and a user file that collides with an automaton-owned name is replaced by the install with a warning rather than preserved.
+
+Two asymmetric rules ride on the hashes. Host materials are pure machinery: uninstall removes them even when locally modified, with a warning, because the user asked for the harness to go. Files under `.agent/` are potential project history: uninstall removes a scaffolded steering placeholder only while it is hash-identical to what install wrote, so anything the user or onboarding touched stays as record, and `work/` and `wiki/` are never tracked for removal at all.
+
+**Why:** This reverses part of the post-DD-008 position that invariants should replace install bookkeeping, and the boundary is principled: invariants derive what is derivable, the receipt records what is observable only once. No invariant can answer "did `.claude/` exist before us", "did the user already have `multi_agent = true`", or "was this installed copy edited afterwards", and recompute-from-source strands orphans whenever a future version renames or retires a file. DD-008 stands unchanged for agent role ids (the belt); the receipt is the accounting for everything else (the suspenders). The runtime root `.agent/.automaton/` stays namespace-owned and untracked: it is replaced on install and removed whole on uninstall, so the receipt only carries entries for territory Automaton shares with the user.
+
+**See:** `lib/receipt.mjs`, `lib/install.mjs`, `tests/install-receipt.test.mjs`.
+
+## DD-012: Continuation state is derived from durable evidence, not a new cursor
+
+A staff-level audit (June 2026) found the weakest long-horizon link was cold mid-execute recovery: slice progress lived only in PLAN.md prose, the recovery path had no git awareness, verification evidence evaporated on PASS, and the state cursor could silently lag a repo that moved outside the harness. The fixes derive continuation state from evidence that already exists instead of adding cursor fields to `current.json`:
+
+- `auto-resume` reconciles the execution ledger on cold re-entry: per-slice commits (`slice N:`) mark verified slices, and a dirty tree on top of the last slice commit is in-flight work for the next slice. The git rhythm's commit trail doubles as the durable execution cursor, read-only.
+- `auto-verify` writes a terminal `## Verification` section to PLAN.md on PASS (append-replace), so the audit record outlives the conversation.
+- `get-context.mjs` emits L2 drift hints (`state_drift`, `dirty_tree_at_verified`) when repo evidence shows movement after `current.json` was last touched, and a review-verdict integrity warning when a verdict field has no matching `## Review:` section on its artifact. Warnings never block and degrade silently without git.
+- Stage prerequisites carry `canonicalSpec` from execute onward, so dependency-order loading (spec first) always resolves on resume.
+
+**Why:** The post-DD-011 boundary applies here too: derive what is derivable. A slice cursor field would duplicate what PLAN.md evidence and the commit trail already record, and would drift from both. Reading the ledger costs two read-only git commands at resume time; no new state, no new files, no portability loss for non-git projects (every git-derived signal degrades to silence).
+
+**See:** `skills/auto-resume/SKILL.md` (Reconcile Execution Ledger), `skills/auto-verify/SKILL.md` (On Pass), `skills/_shared/scripts/get-context.mjs`, `tests/artifact-lint.test.mjs`, `tests/learnings.test.mjs`.
+

@@ -1,9 +1,14 @@
 // auto-execute: route selection, subagent roles/prompts, execution windows.
+// Failure story: execute is the only skill that mutates code, so its ownership rules (routes,
+// windows, git rhythm, role and prompt separation) are where confusion costs the most. Role
+// bodies live in role-sources/ and dispatch prompts carry only per-call slots so role tokens
+// are not paid twice per dispatch.
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { skillsRoot } from './support/skill-helpers.mjs'
+import { SUBAGENT_STATUSES } from '../lib/contracts.mjs'
 
 test('auto-execute provides subagent role sources and dispatch prompts', () => {
   const skillRoot = join(skillsRoot, 'auto-execute')
@@ -80,13 +85,14 @@ test('auto-execute role files declare static role contracts', () => {
   assert.match(qualityReviewer, /minor/)
   assert.match(qualityReviewer, /ISSUES: none/)
 
-  // Status envelope vocabulary lives in role files, not in dispatch prompts.
-  assert.match(implementer, /STATUS: DONE \| DONE_WITH_CONCERNS \| NEEDS_CONTEXT \| BLOCKED/)
+  // Status envelope vocabulary lives in role files, not in dispatch prompts, and is driven
+  // by contracts-data.json (subagentStatuses) so it cannot drift from the protocol tables.
+  assert.ok(implementer.includes(`STATUS: ${SUBAGENT_STATUSES.implementer.join(' | ')}`))
   assert.match(implementer, /FILES_CHANGED:/)
   assert.match(implementer, /SELF_REVIEW:/)
-  assert.match(specReviewer, /STATUS: APPROVED \| CHANGES_REQUESTED \| BLOCKED/)
+  assert.ok(specReviewer.includes(`STATUS: ${SUBAGENT_STATUSES.reviewer.join(' | ')}`))
   assert.match(specReviewer, /EVIDENCE:/)
-  assert.match(qualityReviewer, /STATUS: APPROVED \| CHANGES_REQUESTED \| BLOCKED/)
+  assert.ok(qualityReviewer.includes(`STATUS: ${SUBAGENT_STATUSES.reviewer.join(' | ')}`))
   assert.match(qualityReviewer, /EVIDENCE:/)
 
   // Role files must not carry per-call XML slot placeholders; those live in *-prompt.md.

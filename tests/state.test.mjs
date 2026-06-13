@@ -1,3 +1,4 @@
+// Runtime behavior: current.json round-trips, normalization, shared-script state writes (DD-002, DD-007).
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { execFileSync, spawnSync } from 'node:child_process'
@@ -7,6 +8,21 @@ import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import { loadCurrentState, saveCurrentState } from '../lib/state.mjs'
+
+// Well-shaped artifact fixtures: these tests assert exact-empty diagnostics, so the
+// fixtures must satisfy the L2 artifact lint as well as the L1 pointer checks.
+const LINT_CLEAN_SPEC = '# Spec\n\n## Acceptance Criteria\n- check passes\n\n## Anti-Goals\n- none\n'
+const LINT_CLEAN_PLAN = [
+  '# Plan',
+  '',
+  '### Slice 1: Do the thing',
+  '',
+  '**Objective:** do the thing',
+  '**Acceptance criteria:**',
+  '- thing observable',
+  '**Verification:** node --test',
+  ''
+].join('\n')
 
 test('current state round-trips through .agent/.automaton/state/current.json', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-state-'))
@@ -210,8 +226,9 @@ test('shared get-context script normalizes durable state and preserves extra key
     custom_flag: true
   })
   mkdirSync(join(root, 'docs'), { recursive: true })
-  writeFileSync(join(root, 'docs', 'spec.md'), '# Spec\n', 'utf8')
-  writeFileSync(join(root, 'docs', 'plan.md'), '# Plan\n', 'utf8')
+  writeFileSync(join(root, 'docs', 'spec.md'), LINT_CLEAN_SPEC, 'utf8')
+  // The verdict in state needs its section on the artifact or lint warns.
+  writeFileSync(join(root, 'docs', 'plan.md'), `${LINT_CLEAN_PLAN}\n## Review: Engineering\n\nVerdict: approved_with_risks\n`, 'utf8')
 
   const output = execFileSync(process.execPath, [script, target], { encoding: 'utf8' })
 
@@ -263,8 +280,8 @@ test('shared sync-status script updates current state through validated flags', 
   const planPath = '.agent/work/my-change/PLAN.md'
 
   mkdirSync(join(root, '.agent', 'work', 'my-change'), { recursive: true })
-  writeFileSync(join(root, specPath), '# Spec\n', 'utf8')
-  writeFileSync(join(root, planPath), '# Plan\n', 'utf8')
+  writeFileSync(join(root, specPath), LINT_CLEAN_SPEC, 'utf8')
+  writeFileSync(join(root, planPath), LINT_CLEAN_PLAN, 'utf8')
 
   const frameOutput = JSON.parse(execFileSync(process.execPath, [
     script,
