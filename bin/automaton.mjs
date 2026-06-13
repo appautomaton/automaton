@@ -6,6 +6,7 @@ import { join, resolve } from 'node:path'
 
 import { installHosts, installProject, uninstallHosts, uninstallProject } from '../lib/install.mjs'
 import { automatonPaths } from '../lib/paths.mjs'
+import { loadReceipt, receiptOwners } from '../lib/receipt.mjs'
 import { contextSummary } from '../lib/retrieval.mjs'
 import { loadCurrentState, normalizeCurrentState } from '../lib/state.mjs'
 import { validateHandoff } from '../lib/validate.mjs'
@@ -73,6 +74,30 @@ function parseInstallArgs(argv) {
   }
 }
 
+function printWarnings(results) {
+  const seen = new Set()
+  for (const result of results) {
+    for (const warning of result.warnings ?? []) {
+      if (seen.has(warning.message)) {
+        continue
+      }
+      seen.add(warning.message)
+      console.error(`warning: ${warning.message}`)
+    }
+  }
+}
+
+// True when the install receipt shows no host installation left after this
+// uninstall, so the shared `.agent` runtime no longer serves anything.
+function noHostsRemain(root) {
+  const receipt = loadReceipt(root)
+  if (!receipt) {
+    return false
+  }
+  const owners = receiptOwners(receipt)
+  return !HOSTS.some((host) => owners.has(host.id))
+}
+
 function run(argv) {
   const [command, ...rest] = argv
 
@@ -137,17 +162,22 @@ function run(argv) {
 
       removed.push(...uninstallHosts(hosts, { root: options.root, sourceRoot }))
 
-      if (!options.hasHostSelection || options.all) {
+      // A host-scoped uninstall still removes the shared runtime when it took
+      // out the last installed host: machinery with no host serves nothing,
+      // while `.agent` project history is preserved either way.
+      if (!options.hasHostSelection || options.all || noHostsRemain(options.root)) {
         removed.push(uninstallProject(options.root))
       }
 
       console.log(removed.map((entry) => entry.id).join('\n'))
+      printWarnings(removed)
       return
     }
 
     const installed = [installProject(options.root, { sourceRoot }), ...installHosts(options.hosts, { root: options.root, sourceRoot })]
 
     console.log(installed.map((entry) => entry.id).join('\n'))
+    printWarnings(installed)
     return
   }
 
