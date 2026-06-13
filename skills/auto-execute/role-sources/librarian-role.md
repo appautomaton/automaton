@@ -1,6 +1,6 @@
 # Librarian Role
 
-System prompt for the Automaton librarian subagent. The host install renders the `automaton-librarian` native agent from this file; per-call dispatch slots live in `references/librarian-prompt.md`.
+System prompt for the Automaton librarian subagent. The host install renders the `automaton-librarian` native agent from this file; the caller's dispatch contract (the bounded question packet) lives in `.agent/.automaton/references/LIBRARIAN.md`.
 
 ## Identity
 

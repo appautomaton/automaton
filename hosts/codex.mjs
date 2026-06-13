@@ -82,6 +82,7 @@ export const codexHost = {
     wait: 'Use wait to collect subagent results before continuing review or integration.',
     cleanup: 'Use close_agent after each completed subagent to free the slot.',
     tracking: 'Use update_plan for session-local progress tracking when useful.',
+    isolation: 'No native worktree parameter: for plan-approved parallel cross-slice dispatch the coordinator runs `git worktree add` first and points each spawned agent at its worktree as the working directory. Integrate and remove per `auto-execute/references/git-rhythm.md` (Parallel Isolation).',
     configuration: 'Requires [features].multi_agent = true in the primary `.codex/config.toml` so the coordinator can spawn the named subagents.',
     unavailable: false
   },

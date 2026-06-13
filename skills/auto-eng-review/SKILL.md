@@ -78,6 +78,10 @@ Use strict vocabulary. No synonyms.
 | `approved_with_risks` | Implementation is safe but carries known risks. Document them. | `auto-execute` |
 | `needs_correction` | Plan is flawed or unsafe. Return to planning. | `auto-plan` |
 
+### Outside Voice
+
+Optional. When a second model is reachable from this session and the plan carries non-trivial risk, read `references/outside-voice.md` after rendering the verdict: a bounded cross-model pass that surfaces tension to the user and never auto-applies anything.
+
 ### Append Review
 
 Add a `## Review: Engineering` section to `PLAN.md` using the exact template in `references/review-template.md`.

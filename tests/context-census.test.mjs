@@ -17,7 +17,10 @@ const SHARED_CEILINGS = {
   '_shared/references/FRAMEWORK.md': 800,
   '_shared/references/ARTIFACT-LIFECYCLE.md': 2000,
   '_shared/references/CONTEXT-BUDGET.md': 750,
-  '_shared/references/SUBAGENT-PROTOCOL.md': 1100,
+  // Raised 1100 -> 1350 for DD-013: evidence-over-signal completion, BLOCKED
+  // triage, and parallel worktree isolation are new coordination capability,
+  // not restated prose.
+  '_shared/references/SUBAGENT-PROTOCOL.md': 1350,
   '_shared/references/LIBRARIAN.md': 450,
   '_shared/references/ANTI-SLOP.md': 300,
   '_shared/references/ROADMAP-CONTRACT.md': 800
@@ -31,7 +34,9 @@ const SKILL_CEILINGS = {
   'auto-verify/SKILL.md': 1000,
   'auto-onboard/SKILL.md': 800,
   'auto-eng-review/SKILL.md': 750,
-  'auto-resume/SKILL.md': 700,
+  // Raised 700 -> 750 for DD-012/DD-013: the execution-ledger reconciliation
+  // (slice commits, in-flight dirt, stray worktrees) is new recovery capability.
+  'auto-resume/SKILL.md': 750,
   'auto-ceo-review/SKILL.md': 600
 }
 

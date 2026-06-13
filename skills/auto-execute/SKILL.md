@@ -31,6 +31,7 @@ Before marking a slice complete:
 
 Do NOT write code unless:
 - `PLAN.md` is approved and `canonical_plan` in `.agent/.automaton/state/current.json` is set.
+- `canonical_spec` still resolves: the spec chain holds end to end so cold resume can always load spec first.
 - The next executable slice has an objective, acceptance criteria, and verification command.
 - `engineering_review` is not `needs_correction` (otherwise stop and return to `auto-plan`).
 - The route is direct, or the subagent route has passed its host capability check.
@@ -66,7 +67,7 @@ After slice verification passes in `Verify And Advance`, run `git add -A` follow
 The next slice is selected from `PLAN.md`. Build the smallest safe execution window:
 - Always include the next uncompleted slice.
 - Add following slices only while `Checkpoint after: none` is present or defaulted, dependencies are met, verification is explicit, and no STOP condition, slice-blocking review risk, or context pressure appears.
-- Execute the window serially by default. Cross-slice parallel dispatch is allowed only when `PLAN.md`'s **Parallel-safe groups:** line names the slices and write sets are disjoint.
+- Execute the window serially by default. Cross-slice parallel dispatch is allowed only when `PLAN.md`'s **Parallel-safe groups:** line names the slices and write sets are disjoint, and in a git repo it runs under worktree isolation (`.agent/.automaton/references/SUBAGENT-PROTOCOL.md`, Parallel Isolation; mechanics in `references/git-rhythm.md`).
 
 Slice defaults:
 - Missing `Execution` means `direct`.

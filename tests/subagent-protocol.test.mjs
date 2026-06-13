@@ -86,3 +86,42 @@ test('subagent status vocabulary is the same set on every end', () => {
     )
   }
 })
+
+// DD-013 coordination doctrine: evidence over signals, triaged blockers, and
+// structurally isolated parallel writes. These are the rules that keep a
+// multi-agent run recoverable when a host drops a signal or a plan's
+// parallel-safe claim turns out wrong.
+test('protocol pins evidence-over-signal completion and BLOCKED triage', () => {
+  const protocol = readFileSync(join(skillsRoot, '_shared', 'references', 'SUBAGENT-PROTOCOL.md'), 'utf8')
+
+  assert.match(protocol, /## Completion Is Evidence, Not Signal/)
+  assert.match(protocol, /working tree is the authority/)
+  assert.match(protocol, /instead of blocking on the signal/, 'a dropped signal with a verifiable deliverable must not block')
+  assert.match(protocol, /never re-dispatch unchanged work/i, 'BLOCKED triage must forbid hope-driven retries')
+  assert.match(protocol, /returns to `auto-plan` to split/, 'too-large slices route back to planning')
+})
+
+test('parallel dispatch requires worktree isolation with serial integration', () => {
+  const protocol = readFileSync(join(skillsRoot, '_shared', 'references', 'SUBAGENT-PROTOCOL.md'), 'utf8')
+  const rhythm = readFileSync(join(skillsRoot, 'auto-execute', 'references', 'git-rhythm.md'), 'utf8')
+  const lifecycle = readFileSync(join(skillsRoot, '_shared', 'references', 'ARTIFACT-LIFECYCLE.md'), 'utf8')
+
+  assert.match(protocol, /## Parallel Isolation/)
+  assert.match(protocol, /one worktree per parallel implementer/)
+  assert.match(rhythm, /scratch isolation, not a branching strategy/)
+  assert.match(rhythm, /plan's parallel-safe claim was wrong/, 'apply conflicts escalate to a plan correction, never a hand-merge')
+  // The carve-out must live next to the additive rule it qualifies, so the two
+  // cannot drift into contradiction.
+  assert.match(lifecycle, /Never `amend`, `reset`, `rebase`, `branch`, `checkout`, or `push`(.|\n)*worktree add(.|\n)*never switched/)
+})
+
+test('role bodies carry identity affirmation, escalation permission, and the harness boundary', () => {
+  const roleDir = join(skillsRoot, 'auto-execute', 'role-sources')
+  for (const role of ['implementer-role.md', 'spec-reviewer-role.md', 'quality-reviewer-role.md']) {
+    const body = readFileSync(join(roleDir, role), 'utf8')
+    assert.match(body, /You are already the dispatched/, `${role} must use identity affirmation for its recursion guard`)
+    assert.match(body, /installed harness machinery/, `${role} must carry the harness-internals boundary`)
+  }
+  const implementer = readFileSync(join(roleDir, 'implementer-role.md'), 'utf8')
+  assert.match(implementer, /Bad work is worse than no work/, 'the implementer must have explicit permission to escalate')
+})

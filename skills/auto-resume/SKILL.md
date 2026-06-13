@@ -51,7 +51,7 @@ Treat `current.json` as the only source for active change, stage, and canonical 
 
 ### Reconcile Execution Ledger
 
-When stage is `execute` or `verify` and the project is a git repo, read the execution ledger before summarizing: `git log --oneline -15` and `git status --porcelain`. Per-slice commits (`slice N: ...`, `slice N gap-fix: ...`) mark verified slices; match them against `PLAN.md` slice evidence. A dirty tree on top of the last slice commit is in-flight work for the next slice, not noise: name the touched files. When commits and `PLAN.md` evidence disagree, trust the commits and report the mismatch.
+When stage is `execute` or `verify` and the project is a git repo, read the execution ledger before summarizing: `git log --oneline -15` and `git status --porcelain`. Per-slice commits (`slice N: ...`, `slice N gap-fix: ...`) mark verified slices; match them against `PLAN.md` slice evidence. A dirty tree on top of the last slice commit is in-flight work for the next slice, not noise: name the touched files. When commits and `PLAN.md` evidence disagree, trust the commits and report the mismatch. Also run `git worktree list`: a stray worktree is the fingerprint of an interrupted parallel dispatch. Report it; do not remove it.
 
 ### Surface Review State
 

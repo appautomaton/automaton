@@ -225,6 +225,7 @@ export const opencodeHost = {
     wait: 'Wait for the OpenCode subagent response before dispatching dependent reviews.',
     cleanup: 'No Automaton cleanup step is required; follow OpenCode session conventions.',
     tracking: 'Use todowrite for session-local progress tracking when useful.',
+    isolation: 'No native worktree parameter: for plan-approved parallel cross-slice dispatch the coordinator runs `git worktree add` first and scopes each task to its worktree directory. Integrate and remove per `auto-execute/references/git-rhythm.md` (Parallel Isolation).',
     precondition: 'The primary agent\'s `permission.task` configuration must allow `automaton-implementer`, `automaton-spec-reviewer`, `automaton-quality-reviewer`, and `automaton-librarian` for Task-tool named-agent dispatch to work. If any of those four names is denied or filtered out, treat dispatch of that agent as unavailable and stop under SUBAGENT-PROTOCOL.md\'s "Host does not expose subagent support" condition rather than pasting a role body into a generic agent.',
     unavailable: false
   },

@@ -56,10 +56,12 @@ test('auto-execute role files declare static role contracts', () => {
   // can be granted permission.task, so the prose guard is load-bearing there and harmless
   // elsewhere.
   for (const [name, source] of Object.entries(roles)) {
+    // Identity affirmation ("you are already the dispatched X") guards recursion
+    // better than prohibition alone (DD-013); the explicit ban stays as backstop.
     assert.match(
       source,
-      /Only `auto-execute`.*dispatches Automaton subagents/,
-      `${name} role must state coordinator-only dispatch`
+      /You are already the dispatched/,
+      `${name} role must affirm its dispatched identity`
     )
     assert.match(
       source,

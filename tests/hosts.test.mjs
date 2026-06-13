@@ -941,7 +941,7 @@ test('Claude install generates host-native automaton subagent definitions for ev
 
   // Role body content flows verbatim into the generated agent.
   const implementer = readFileSync(join(root, '.claude', 'agents', 'automaton-implementer.md'), 'utf8')
-  assert.match(implementer, /Only `auto-execute`.*dispatches Automaton subagents/, 'implementer agent must carry the recursion guard from the role body')
+  assert.match(implementer, /You are already the dispatched implementer/, 'implementer agent must carry the identity-affirmation recursion guard from the role body')
   assert.match(implementer, /STATUS: DONE \| DONE_WITH_CONCERNS \| NEEDS_CONTEXT \| BLOCKED/, 'implementer agent must carry the status envelope from the role body')
   assert.match(implementer, /Do not run any `git` write command/, 'implementer agent must carry the no-git boundary from the role body')
 
@@ -980,7 +980,7 @@ test('Codex install generates host-native automaton subagent definitions for eve
   }
 
   const implementer = readFileSync(join(root, '.codex', 'agents', 'automaton-implementer.toml'), 'utf8')
-  assert.match(implementer, /Only `auto-execute`.*dispatches Automaton subagents/, 'implementer agent must carry the recursion guard from the role body')
+  assert.match(implementer, /You are already the dispatched implementer/, 'implementer agent must carry the identity-affirmation recursion guard from the role body')
   assert.match(implementer, /STATUS: DONE \| DONE_WITH_CONCERNS \| NEEDS_CONTEXT \| BLOCKED/)
   assert.match(implementer, /^sandbox_mode = "workspace-write"$/m, 'implementer agent must request workspace-write sandbox')
 
@@ -1028,7 +1028,7 @@ test('OpenCode install generates host-native automaton subagent definitions for 
   }
 
   const implementer = readFileSync(join(root, '.opencode', 'agents', 'automaton-implementer.md'), 'utf8')
-  assert.match(implementer, /Only `auto-execute`.*dispatches Automaton subagents/, 'implementer agent must carry the recursion guard from the role body')
+  assert.match(implementer, /You are already the dispatched implementer/, 'implementer agent must carry the identity-affirmation recursion guard from the role body')
   assert.match(implementer, /STATUS: DONE \| DONE_WITH_CONCERNS \| NEEDS_CONTEXT \| BLOCKED/)
   assert.match(implementer, /^\s+edit: allow$/m, 'implementer agent must allow edit')
   assert.match(implementer, /^\s+bash: allow$/m, 'implementer agent must allow bash')
@@ -1361,4 +1361,26 @@ test('install and uninstall preserve every user-owned file across the realistic 
     .flatMap((group) => group.hooks ?? [])
     .filter((hook) => typeof hook.command === 'string' && hook.command.includes('.codex/hooks/session-start.mjs'))
   assert.equal(codexAutomatonHooks.length, 0, 'uninstall must remove the Automaton SessionStart hook from .codex/hooks.json')
+})
+
+test('every host HOST-TOOLS carries a worktree isolation mapping for parallel dispatch', () => {
+  // DD-013: parallel cross-slice dispatch requires worktree isolation. Each host names
+  // its own mechanics (Claude has a native isolation parameter; Codex and OpenCode get
+  // coordinator-created worktrees), and every mapping points at the shared integration
+  // recipe so the per-host lines cannot drift from the git-rhythm contract.
+  const root = mkdtempSync(join(tmpdir(), 'automaton-isolation-'))
+
+  for (const host of HOSTS) {
+    installHost(host, { root, sourceRoot })
+  }
+
+  const hostToolsFor = (hostId) =>
+    readFileSync(join(root, `.${hostId}`, 'skills', 'auto-execute', 'references', 'HOST-TOOLS.md'), 'utf8')
+
+  assert.match(hostToolsFor('claude'), /- isolation: .*isolation: "worktree"/, 'Claude maps to its native Agent worktree parameter')
+  assert.match(hostToolsFor('codex'), /- isolation: .*git worktree add/, 'Codex maps to coordinator-created worktrees')
+  assert.match(hostToolsFor('opencode'), /- isolation: .*git worktree add/, 'OpenCode maps to coordinator-created worktrees')
+  for (const hostId of ['claude', 'codex', 'opencode']) {
+    assert.match(hostToolsFor(hostId), /git-rhythm\.md/, `${hostId} isolation mapping must point at the shared integration recipe`)
+  }
 })

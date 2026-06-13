@@ -63,3 +63,13 @@ test('auto-eng-review treats DESIGN.md as optional canonical context', () => {
   assert.match(source, /DESIGN\.md` only when `canonical_design` is set and resolves to a file/)
   assert.match(source, /Missing DESIGN\.md is not a blocker/)
 })
+
+test('the outside voice is optional, bounded, and never auto-applies (DD-013)', () => {
+  const engReview = readFileSync(join(skillsRoot, 'auto-eng-review', 'SKILL.md'), 'utf8')
+  const voice = readFileSync(join(skillsRoot, 'auto-eng-review', 'references', 'outside-voice.md'), 'utf8')
+
+  assert.match(engReview, /references\/outside-voice\.md/, 'eng-review must trigger the outside voice behind a conditional read')
+  assert.match(voice, /not permission to act: the user decides/, 'cross-model agreement must not become an auto-apply')
+  assert.match(voice, /Never edit the verdict, the plan, or the review section/, 'outside-voice findings need a user decision to land')
+  assert.match(voice, /continue without it and say so in one line/, 'a missing second model must degrade gracefully')
+})

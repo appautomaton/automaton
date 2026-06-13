@@ -36,7 +36,7 @@ Shared scripts are self-contained but no longer copied into every skill folder.
 
 ## DD-004: Prerequisites as data, not code
 
-Stage prerequisites declared in `contracts-data.json`. Plan requires `canonicalSpec`; execute, verify, and verified require `canonicalPlan`.
+Stage prerequisites declared in `contracts-data.json`. Plan requires `canonicalSpec`; execute, verify, and verified require both `canonicalSpec` and `canonicalPlan`, so the spec chain holds end to end (DD-012).
 
 **Why:** LLMs comply inconsistently with soft guidance under user pressure. Data-driven prerequisites are enforced by `validate.mjs` regardless of prompt.
 
@@ -126,4 +126,19 @@ A staff-level audit (June 2026) found the weakest long-horizon link was cold mid
 **Why:** The post-DD-011 boundary applies here too: derive what is derivable. A slice cursor field would duplicate what PLAN.md evidence and the commit trail already record, and would drift from both. Reading the ledger costs two read-only git commands at resume time; no new state, no new files, no portability loss for non-git projects (every git-derived signal degrades to silence).
 
 **See:** `skills/auto-resume/SKILL.md` (Reconcile Execution Ledger), `skills/auto-verify/SKILL.md` (On Pass), `skills/_shared/scripts/get-context.mjs`, `tests/artifact-lint.test.mjs`, `tests/learnings.test.mjs`.
+
+## DD-013: Multi-agent coordination trusts evidence, isolates parallel writes, and keeps users sovereign over cross-model tension
+
+A survey of seven vendored harnesses (June 2026) found the field converging on the fundamentals Automaton already had (curated dispatch packets, closed status vocabularies, orchestrator-owned scope and history) and contributed four adoptions:
+
+- **Completion is evidence, not signal.** A subagent's completion signal is an event; the working tree is the authority. `DONE` with no matching changes is a failure; a verifiable deliverable with a dropped signal is a success. Never block on a missing signal.
+- **`BLOCKED` triage.** The coordinator diagnoses the cause before reacting: context gap (one correction, redispatch), capability gap (fall back to the direct route), too-large slice (return to plan), wrong plan (stop for the user). Never redispatch unchanged work.
+- **Parallel dispatch isolates in worktrees.** Plan-declared disjoint write sets remain required, and a worktree per parallel implementer makes the claim structural instead of hoped. Worktrees are scratch isolation, not branching: the user's branch is never switched, results land as normal additive slice commits, and an apply conflict proves the plan's parallel-safe claim wrong (STOP and correct the plan, never hand-merge). This is the one carve-out to the strictly-additive git rule.
+- **Optional cross-model outside voice.** After an engineering verdict, a second model may review the plan content alone, terse and adversarial. Tension is surfaced to the user with both positions; cross-model agreement is a strong signal, not permission to act. Non-blocking, degrades to one line when no second model exists.
+
+Role bodies also gained three proven phrasings: identity affirmation over prohibition for recursion guards, explicit permission to escalate (bad work is worse than no work), and a boundary against reading harness machinery.
+
+**Why deliberate rejections are recorded too:** message buses, resident supervisors, and milestone-message protocols substitute machinery for model judgment; per-window adaptive prompt thinning solves a small-context problem this harness does not have (it targets SOTA-class models and pins prompt weight in the census instead); mandatory double-review on trivial slices is ceremony the route decision already prevents.
+
+**See:** `skills/_shared/references/SUBAGENT-PROTOCOL.md`, `skills/auto-execute/references/git-rhythm.md` (Parallel Isolation), `skills/auto-eng-review/references/outside-voice.md`, `skills/auto-execute/role-sources/*-role.md`, `tests/subagent-protocol.test.mjs`.
 
