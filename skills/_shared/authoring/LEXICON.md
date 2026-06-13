@@ -34,7 +34,7 @@ Canonical vocabulary for Automaton skills. Use these terms exactly. Do not subst
 | loading discipline | context budget field, token allocation | Internal guidance for loading only artifacts needed by the current stage or slice. |
 | context pressure | time estimate, percent budget | A real stop condition when loaded context risks dropping material state; report only when it blocks continuation. |
 | progressive loading | full scan, read everything | Loading only the files needed for the current slice, in dependency order. |
-| no-re-read | re-read, check again | A rule: do not re-read a file already loaded in this session unless it changed, the user asks, or verification requires fresh evidence. |
+| re-read rule | no-re-read, check again | Default: recall a loaded file from memory. Re-read when it changed, the user asks, verification requires fresh evidence, or recall is uncertain (for example after compaction). |
 
 ## Agent Actions
 
@@ -55,6 +55,16 @@ Canonical vocabulary for Automaton skills. Use these terms exactly. Do not subst
 | security | auth, safety | Threat model, attack surface, secrets, compliance. |
 | runtime | ops, deploy | Performance, observability, infrastructure, cost. |
 | content | writing, article, brief | Audience, thesis, voice, content anti-goals, channel, source policy, factual risk, format. |
+
+## Instruction Posture
+
+The harness exists to let the model use its full capability safely, not to fence it in. Hold every instruction to these rules:
+
+- **Restrictions guard boundaries, not capability.** Before writing "do not X", name the boundary it protects: git history, code mutation authorization, user-approved scope, or evidence integrity. If it protects none of these, write an affirmative default instead.
+- **GATE and STOP items are conditions, not procedures.** A gate or stop names what must be true or what halts. The response procedure lives in one referenced home, never inline next to "halt immediately".
+- **One home per contract.** State a rule once and point to it everywhere else. Tests guard the single home. Restating a contract in two files is not robustness, it is a future contradiction.
+- **Never key behavior to quantities the model cannot observe.** No self-measured token counts, percentages, or wall-clock estimates. Key behavior to observable signals (output quality, skipped steps) or to host-reported data, explicitly marked as such.
+- **Defaults with named escapes beat hard caps.** "Default budget: 10 files, extend while X remains unidentified and say why" preserves boundedness without capping capability. A bare numeric ceiling does not.
 
 ## Prohibited Phrases
 

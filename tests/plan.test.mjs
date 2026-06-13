@@ -1,4 +1,7 @@
 // auto-plan: lean slice defaults and requirement traceability.
+// Failure story: PLAN.md is the reloadable execution index. If defaults bloat into per-slice
+// boilerplate or traceable IDs collapse into prose, execute loses its contract (slice field
+// labels are pinned in contracts-data.json, see artifact-lint.test.mjs).
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'

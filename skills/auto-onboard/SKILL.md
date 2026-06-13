@@ -37,7 +37,7 @@ ROADMAP.md stays restrained. Do not create roadmap phases on a first run. On ref
 
 ### Scan Top-Level Files
 
-Read `README.md`, `package.json` or equivalent, and up to 3 config files (e.g., `.gitignore`, `tsconfig.json`, `Makefile`). Stop at 5 files.
+Read `README.md`, `package.json` or equivalent, and up to 3 config files (e.g., `.gitignore`, `tsconfig.json`, `Makefile`). Stop at 5 files for this step. The overall scan budget lives in Rules.
 
 ### Map Topology
 
@@ -95,7 +95,7 @@ Do not guess. Do not proceed.
 
 ## Rules
 
-- Read no more than 10 files total; summarize, do not transcribe.
+- Default scan budget: 10 files. Summarize, do not transcribe. Extend in small increments only while runtime surfaces, package boundaries, stack, or working commands remain unidentified, and name the overrun reason in the report.
 - Cite a file path for every steering claim.
 - Delete empty template sections; templates are prompts, not required headings.
 - Keep durable artifacts free of speculative questions, confidence labels, and routing chatter.

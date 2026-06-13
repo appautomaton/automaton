@@ -1,3 +1,4 @@
+// Install-host behavior: host adapters, agent definitions, append-only role ids, uninstall (DD-001, DD-006, DD-008).
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
@@ -410,7 +411,8 @@ test('reinstalling Codex replaces skill folders and removes stale per-skill file
 
   assert.equal(existsSync(legacyScriptTarget), false)
   assert.equal(existsSync(staleReferenceTarget), false)
-  assert.equal(existsSync(join(root, '.agent', '.automaton', 'state', 'install-manifest.json')), false)
+  // Reinstall refreshes the install receipt in place (DD-011).
+  assert.match(readFileSync(join(root, '.agent', '.automaton', 'state', 'install-manifest.json'), 'utf8'), /"schema": 1/)
 })
 
 test('Codex session-start hook reads Automaton state from a nested working directory', () => {
@@ -506,12 +508,10 @@ test('Codex uninstall removes Automaton hooks and skills while preserving .agent
 
   assert.equal(result.id, 'codex')
   assert.equal(existsSync(join(root, '.agent', 'steering', 'PROJECT.md')), true)
-  assert.equal(existsSync(join(root, '.codex')), true)
+  // Automaton created .codex on this pristine root, so uninstall takes the
+  // whole directory back out (receipt provenance, DD-011).
+  assert.equal(existsSync(join(root, '.codex')), false)
   assert.equal(existsSync(join(root, '.agents')), false)
-  assert.equal(existsSync(join(root, '.codex', 'skills', 'auto-frame', 'SKILL.md')), false)
-  assert.equal(existsSync(join(root, '.codex', 'hooks.json')), false)
-  assert.equal(existsSync(join(root, '.codex', 'hooks', 'session-start.mjs')), false)
-  assert.equal(readFileSync(join(root, '.codex', 'config.toml'), 'utf8'), '[features]\nmulti_agent = true\n')
 })
 
 test('Codex uninstall preserves unrelated config while removing Automaton hook enablement', () => {
@@ -523,7 +523,9 @@ test('Codex uninstall preserves unrelated config while removing Automaton hook e
   installHost(getHost('codex'), { root, sourceRoot })
   uninstallHost(getHost('codex'), { root, sourceRoot })
 
-  assert.equal(readFileSync(configTarget, 'utf8'), 'model = "gpt-5.4"\n\n[features]\nmulti_agent = true\n')
+  // Both feature lines were Automaton's additions to this user file, so both
+  // leave and the user's config returns to its pre-install shape.
+  assert.equal(readFileSync(configTarget, 'utf8'), 'model = "gpt-5.4"\n')
 })
 
 test('Codex uninstall preserves unrelated hooks.json entries', () => {
@@ -900,7 +902,8 @@ test('reinstalling removes stale HOST-TOOLS copies from non-dispatching skills',
 
   assert.equal(existsSync(staleTarget), false)
   assert.equal(existsSync(keepTarget), true)
-  assert.equal(existsSync(join(root, '.agent', '.automaton', 'state', 'install-manifest.json')), false)
+  // Reinstall refreshes the install receipt in place (DD-011).
+  assert.match(readFileSync(join(root, '.agent', '.automaton', 'state', 'install-manifest.json'), 'utf8'), /"schema": 1/)
 })
 
 // Derived from the single source of truth so this list can never drift from the
@@ -1339,11 +1342,13 @@ test('install and uninstall preserve every user-owned file across the realistic 
     }
   }
 
-  // Post-uninstall: Automaton's merged-content additions are gone (except the
-  // intentionally-preserved `multi_agent = true` line in .codex/config.toml).
+  // Post-uninstall: Automaton's merged-content additions are gone. The receipt
+  // recorded that Automaton added BOTH feature lines to this user's config
+  // (the seed had neither), so both leave with the harness; a user-owned line
+  // is covered by the dedicated owned-multi_agent test above.
   const codexConfig = readFileSync(join(root, '.codex/config.toml'), 'utf8')
   assert.doesNotMatch(codexConfig, /^hooks = true$/m, 'uninstall must remove hooks = true from .codex/config.toml')
-  assert.match(codexConfig, /^multi_agent = true$/m, '.codex/config.toml retains multi_agent = true as the documented useful-flag gift')
+  assert.doesNotMatch(codexConfig, /^multi_agent = true$/m, 'uninstall must remove the multi_agent line Automaton added (receipt provenance, DD-011)')
 
   const claudeSettings = JSON.parse(readFileSync(join(root, '.claude/settings.json'), 'utf8'))
   const claudeAutomatonHooks = (claudeSettings.hooks?.SessionStart ?? [])

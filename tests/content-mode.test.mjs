@@ -1,4 +1,6 @@
 // Content-mode references and cross-skill content consistency.
+// Failure story: the content track spans five skills by design (consolidation-findings C5).
+// These pins keep the five stage references consistent and local without a shared catalog.
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync, mkdtempSync } from 'node:fs'

@@ -7,10 +7,12 @@ How Automaton manages progressive loading across four layers. Each layer gates t
 ```
 Layer 0   Startup integration     ~100 tokens    Every session
 Layer 0.5 get-context.mjs         ~50 tokens     Every skill invocation
-Layer 1   SKILL.md entry point    105-234 lines  When skill invoked
-Layer 2   references/*.md         21-180 lines   When trigger fires
+Layer 1   SKILL.md entry point    census-capped  When skill invoked
+Layer 2   references/*.md         census-capped  When trigger fires
 Layer 3   Work artifacts          Variable       When stage requires
 ```
+
+Layer 1 and 2 sizes are regression-guarded by `tests/context-census.test.mjs`, which pins per-file and per-stage word ceilings. That test is the source of truth for current sizes; this doc does not restate numbers that rot.
 
 **Layer 0** -> `buildSessionContext()` reads only `current.json` for change/stage and emits a short harness reminder. It points to `current.json` and the work-artifact directory without summarizing progress prose.
 
@@ -23,11 +25,6 @@ Layer 3   Work artifacts          Variable       When stage requires
 **Layer 3** -> Artifacts load in order with stop-as-soon-as-you-can:
 `current.json (50 tok) → SPEC.md (1k tok) → PLAN.md (1k tok) → wiki → source files`
 
-## Degradation Tiers
+## Degradation Handling
 
-| Tier | Usage | Rule |
-|------|-------|------|
-| PEAK | 0-30% | Full operations |
-| GOOD | 30-50% | Frontmatter reads, delegate aggressively |
-| DEGRADING | 50-70% | Minimal inlining, warn user |
-| EMERGENCY | 70%+ | Halt, checkpoint immediately |
+Context pressure is detected behaviorally, not by percentage tiers: the model cannot reliably measure its own usage. `CONTEXT-BUDGET.md` defines the signals (silent partial completion, increasing vagueness, skipped steps, lost conclusions) and the two responses in order: conserve, then checkpoint. Host-reported usage, where a host surfaces it, is corroboration only.

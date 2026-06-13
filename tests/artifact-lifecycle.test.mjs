@@ -1,4 +1,7 @@
-// ARTIFACT-LIFECYCLE.md: stage handoffs, verdict routing, signal discipline.
+// ARTIFACT-LIFECYCLE.md: stage handoffs, verdict routing, signal discipline, learned truth.
+// Failure story: lifecycle contracts restated in two files drift apart silently (it happened
+// to checkpoint semantics, see execution-contract.test.mjs). These pins keep each contract in
+// its single home and keep handoff edges consistent with the skills that walk them (DD-010).
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
@@ -81,17 +84,37 @@ test('artifact lifecycle reference defines handoff contract and validation tiers
   assert.match(lifecycle, /runtime\/lib\/validate\.mjs/)
 })
 
-test('artifact lifecycle reference defines artifact signal discipline', () => {
+test('FRAMEWORK.md is the single home for artifact signal discipline', () => {
+  const framework = readFileSync(join(skillsRoot, '_shared', 'references', 'FRAMEWORK.md'), 'utf8')
   const lifecycle = readFileSync(join(skillsRoot, '_shared', 'references', 'ARTIFACT-LIFECYCLE.md'), 'utf8')
 
-  assert.match(lifecycle, /^## Artifact Signal Discipline$/m)
+  assert.match(framework, /^## Artifact Signal Discipline$/m)
   // Five rules — match the rule names rather than exact prose so wording can evolve.
-  assert.match(lifecycle, /[Mm]irror section/)
-  assert.match(lifecycle, /[Ii]ndex over transcript/)
-  assert.match(lifecycle, /[Cc]ore versus conditional/)
-  assert.match(lifecycle, /[Aa]ppend-replace/)
-  assert.match(lifecycle, /[Ii]nline default/)
+  assert.match(framework, /[Mm]irror section/)
+  assert.match(framework, /[Ii]ndex over transcript/)
+  assert.match(framework, /[Cc]ore versus conditional/)
+  assert.match(framework, /[Aa]ppend-replace/)
+  assert.match(framework, /[Ii]nline default/)
   // Deletion test framing so contributors can apply it section-by-section.
-  assert.match(lifecycle, /[Dd]eletion test/)
-  assert.match(lifecycle, /loses information/)
+  assert.match(framework, /[Dd]eletion test/)
+  assert.match(framework, /loses information/)
+
+  // The lifecycle reference points at the single home instead of redefining the rules,
+  // so the two files cannot drift. Distinctive definition fragments stay FRAMEWORK-only.
+  assert.match(lifecycle, /FRAMEWORK\.md` \(Artifact Signal Discipline\)/)
+  for (const fragment of ['earn their place only at', 'loses information']) {
+    assert.ok(framework.includes(fragment), `FRAMEWORK.md must hold the fragment: ${fragment}`)
+    assert.ok(!lifecycle.includes(fragment), `ARTIFACT-LIFECYCLE.md must not redefine: ${fragment}`)
+  }
+})
+
+test('artifact lifecycle defines the learned-truth wiki channel', () => {
+  const lifecycle = readFileSync(join(skillsRoot, '_shared', 'references', 'ARTIFACT-LIFECYCLE.md'), 'utf8')
+
+  assert.match(lifecycle, /^## Learned Truth$/m)
+  assert.match(lifecycle, /\.agent\/wiki\/LEARNINGS\.md/)
+  assert.match(lifecycle, /one-line project facts/i)
+  assert.match(lifecycle, /Evidence: path or command/)
+  assert.match(lifecycle, /no transcripts, no speculation/)
+  assert.match(lifecycle, /delete a line it proves false/)
 })

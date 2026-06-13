@@ -1,3 +1,5 @@
+// Install-host behavior: full-tree install from arbitrary locations. Slow by design (copies the
+// whole source tree). Keep scenarios minimal, cheap walks belong in lifecycle-walk.test.mjs.
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { mkdtempSync, cpSync, symlinkSync } from 'node:fs'

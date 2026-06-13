@@ -1,3 +1,4 @@
+// Runtime behavior: CLI install, status, and context commands against temp roots (DD-006).
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
@@ -95,7 +96,7 @@ test('install command preserves existing durable snake_case current state', () =
   assert.equal(statusResult.stdout, 'active change: existing-change\nstage: execute\n')
 })
 
-test('install command removes stale runtime bin and install manifest', () => {
+test('install command removes stale runtime bin and replaces a pre-receipt manifest', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-install-no-manifest-'))
   const legacyBinRoot = join(root, '.agent', '.automaton', 'bin')
   const manifestTarget = join(root, '.agent', '.automaton', 'state', 'install-manifest.json')
@@ -108,7 +109,9 @@ test('install command removes stale runtime bin and install manifest', () => {
   const installResult = spawnSync(process.execPath, [cliPath, 'install', root], { encoding: 'utf8' })
 
   assert.equal(installResult.status, 0)
-  assert.equal(existsSync(manifestTarget), false)
+  // The unrecognized pre-receipt manifest format is discarded and a schema-1
+  // receipt takes its place (DD-011).
+  assert.match(readFileSync(manifestTarget, 'utf8'), /"schema": 1/)
   assert.equal(existsSync(legacyBinRoot), false)
 })
 
@@ -182,7 +185,7 @@ test('install command provisions all host surfaces with --all', () => {
   assert.equal(existsSync(join(root, '.opencode', 'skills', 'auto-frame', 'SKILL.md')), true)
 })
 
-test('install --uninstall with a host flag removes only that host surface', () => {
+test('install --uninstall with a host flag removes the runtime too when it was the last host', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-uninstall-codex-'))
 
   const installResult = spawnSync(process.execPath, [cliPath, 'install', root, '--codex'], { encoding: 'utf8' })
@@ -195,15 +198,15 @@ test('install --uninstall with a host flag removes only that host surface', () =
 
   assert.equal(uninstallResult.status, 0)
   assert.equal(uninstallResult.stderr, '')
-  assert.equal(uninstallResult.stdout, 'codex\n')
-  assert.equal(existsSync(join(root, '.agent', 'steering', 'PROJECT.md')), true)
-  assert.equal(existsSync(join(root, '.codex')), true)
+  // Codex was the only installed host, so the shared runtime leaves with it
+  // and a pristine project returns to zero trace (DD-011).
+  assert.equal(uninstallResult.stdout, 'codex\nagent\n')
+  assert.equal(existsSync(join(root, '.codex')), false)
   assert.equal(existsSync(join(root, '.agents')), false)
-  assert.equal(existsSync(join(root, '.codex', 'skills', 'auto-frame', 'SKILL.md')), false)
-  assert.equal(existsSync(join(root, '.codex', 'hooks.json')), false)
+  assert.equal(existsSync(join(root, '.agent')), false)
 })
 
-test('install --uninstall with no host flags removes Automaton-managed files but leaves root folders', () => {
+test('install --uninstall with no host flags returns a pristine project to zero trace', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-uninstall-all-'))
 
   const installResult = spawnSync(process.execPath, [cliPath, 'install', root, '--claude', '--opencode'], { encoding: 'utf8' })
@@ -218,15 +221,13 @@ test('install --uninstall with no host flags removes Automaton-managed files but
   assert.equal(uninstallResult.status, 0)
   assert.equal(uninstallResult.stderr, '')
   assert.equal(uninstallResult.stdout, 'claude\ncodex\nopencode\nagent\n')
-  assert.equal(existsSync(join(root, '.agent')), true)
-  assert.equal(existsSync(join(root, '.claude')), true)
-  assert.equal(existsSync(join(root, '.opencode')), true)
-  assert.equal(existsSync(join(root, '.agent', 'steering', 'PROJECT.md')), true)
-  assert.equal(existsSync(join(root, '.agent', 'steering', 'STATUS.md')), false)
-  assert.equal(existsSync(join(root, '.agent', '.automaton')), false)
-  assert.equal(existsSync(join(root, '.claude', 'skills', 'auto-frame', 'SKILL.md')), false)
-  assert.equal(existsSync(join(root, '.codex', 'skills', 'auto-frame', 'SKILL.md')), false)
-  assert.equal(existsSync(join(root, '.opencode', 'skills', 'auto-frame', 'SKILL.md')), false)
+  // Nothing on this root predated Automaton and nothing was touched after
+  // install, so uninstall leaves no trace: directories it created are pruned
+  // and hash-pristine steering placeholders carry no project history (DD-011).
+  assert.equal(existsSync(join(root, '.agent')), false)
+  assert.equal(existsSync(join(root, '.claude')), false)
+  assert.equal(existsSync(join(root, '.opencode')), false)
+  assert.equal(existsSync(join(root, '.codex')), false)
 
   const statusResult = spawnSync(process.execPath, [cliPath, 'status', root], { encoding: 'utf8' })
 

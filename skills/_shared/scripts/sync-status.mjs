@@ -206,6 +206,55 @@ function diagnoseState(state, projectRoot) {
   return diagnostics
 }
 
+// L2 artifact-shape lint. Warning-level only: it surfaces gaps for the writing
+// skill to judge, it never blocks a sync. L1 stage/pointer checks above stay the
+// only error-level gate.
+function lintArtifacts(state, projectRoot) {
+  const lint = contracts?.artifactLint
+  if (!lint) {
+    return []
+  }
+
+  const diagnostics = []
+
+  if (state.canonicalSpec) {
+    const specPath = join(projectRoot, state.canonicalSpec)
+    if (existsSync(specPath)) {
+      const spec = readFileSync(specPath, 'utf8')
+      for (const check of lint.spec ?? []) {
+        if (!new RegExp(check.pattern, 'i').test(spec)) {
+          diagnostics.push(diagnostic('warning', check.code, check.message))
+        }
+      }
+    }
+  }
+
+  if (state.canonicalPlan && lint.planSliceHeading) {
+    const planPath = join(projectRoot, state.canonicalPlan)
+    if (existsSync(planPath)) {
+      const plan = readFileSync(planPath, 'utf8')
+      const headings = [...plan.matchAll(new RegExp(lint.planSliceHeading, 'gm'))]
+
+      if (headings.length === 0 && lint.planMissingSlices) {
+        diagnostics.push(diagnostic('warning', lint.planMissingSlices.code, lint.planMissingSlices.message))
+      }
+
+      for (let i = 0; i < headings.length; i += 1) {
+        const end = i + 1 < headings.length ? headings[i + 1].index : plan.length
+        const body = plan.slice(headings[i].index, end)
+        for (const field of lint.planSliceFields ?? []) {
+          if (!body.includes(field.label)) {
+            const fieldName = field.label.replaceAll('*', '').replace(':', '')
+            diagnostics.push(diagnostic('warning', field.code, `slice ${headings[i][1]} lacks ${fieldName}`))
+          }
+        }
+      }
+    }
+  }
+
+  return diagnostics
+}
+
 function loadExistingState(statePath) {
   if (!existsSync(statePath)) {
     return { state: {}, exists: false, diagnostics: [] }
@@ -294,7 +343,10 @@ if (args.changed.length > 0) {
   const nextState = applyStatePatch(loaded.state, args.patch)
   const diagnostics = loaded.diagnostics.length > 0
     ? loaded.diagnostics
-    : diagnoseState(nextState, resolve(root))
+    : [
+        ...diagnoseState(nextState, resolve(root)),
+        ...lintArtifacts(nextState, resolve(root))
+      ]
   const hasError = diagnostics.some((item) => item.level === 'error')
 
   result.statePath = statePath

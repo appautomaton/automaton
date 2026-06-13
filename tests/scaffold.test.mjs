@@ -1,3 +1,4 @@
+// Runtime behavior: .agent scaffolding seeds durable state only when missing (DD-001).
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'

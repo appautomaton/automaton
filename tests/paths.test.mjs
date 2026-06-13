@@ -1,3 +1,4 @@
+// Runtime behavior: path resolution helpers for the .agent layout.
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { mkdtempSync } from 'node:fs'

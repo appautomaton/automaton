@@ -1,4 +1,8 @@
-// Cross-skill structural conventions every authored skill must satisfy.
+// Cross-skill structural conventions every authored skill must satisfy (FRAMEWORK.md skeleton).
+// Failure story: a skill that drifts from the shared skeleton, or routes state writes around
+// sync-status.mjs, breaks every downstream consumer that assumes the contract (DD-002, DD-003).
+// A failing pin here is a decision point: fix the edit, or change the contract, its rationale,
+// and this guard together (docs/testing.md, authoring rule 5).
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { existsSync, readFileSync, readdirSync } from 'node:fs'
@@ -15,12 +19,12 @@ test('authored skills use valid portable frontmatter and concise bodies', () => 
     assert.ok(fields.description.length > 0)
     assert.ok(fields.description.length <= 1024)
     assert.ok(fields.description.length > 10, `${skillName} description too short`)
-    assert.ok(source.includes('metadata:\n  stage:'))
-    assert.match(body, /## Do\n/)
-    assert.match(body, /## Output\n/)
-    assert.match(body, /## Rules\n/)
-    assert.ok(body.trim().split('\n').length >= 12)
-    assert.ok(source.split('\n').length <= 500)
+    assert.ok(source.includes('metadata:\n  stage:'), `${skillName} frontmatter must declare its lifecycle stage (hosts and tests route by it)`)
+    assert.match(body, /## Do\n/, `${skillName} must keep the shared skeleton section ## Do (FRAMEWORK.md, Skill Structure)`)
+    assert.match(body, /## Output\n/, `${skillName} must keep the shared skeleton section ## Output (FRAMEWORK.md, Skill Structure)`)
+    assert.match(body, /## Rules\n/, `${skillName} must keep the shared skeleton section ## Rules (FRAMEWORK.md, Skill Structure)`)
+    assert.ok(body.trim().split('\n').length >= 12, `${skillName} body is too thin to be a real contract`)
+    assert.ok(source.split('\n').length <= 500, `${skillName} exceeds 500 lines: entry points stay lean, move detail to references/ behind a trigger (word ceilings: context-census.test.mjs)`)
   }
 })
 
@@ -113,7 +117,7 @@ test('lifecycle controller skills load the artifact lifecycle contract', () => {
   for (const skillName of ['auto-frame', 'auto-plan', 'auto-execute', 'auto-verify', 'auto-resume']) {
     const source = readFileSync(join(skillsRoot, skillName, 'SKILL.md'), 'utf8')
 
-    assert.match(source, /\.agent\/\.automaton\/references\/ARTIFACT-LIFECYCLE\.md/, 'skill must load artifact lifecycle contract')
+    assert.match(source, /\.agent\/\.automaton\/references\/ARTIFACT-LIFECYCLE\.md/, `${skillName} must reference the artifact lifecycle contract: controllers that stop citing it re-derive stage handoffs from memory and drift`)
   }
 })
 

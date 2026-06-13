@@ -1,4 +1,6 @@
 // auto-office-hours: scope clarity, request coverage, intake, diagnostics.
+// Failure story: office-hours is conversational, so its failure mode is writing files before
+// the user approves an approach, or dropping parts of the request without a recorded decision.
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { existsSync, readFileSync } from 'node:fs'

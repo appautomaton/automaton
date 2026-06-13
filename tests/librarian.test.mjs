@@ -1,4 +1,6 @@
 // automaton-librarian: a read-only, cross-stage codebase explorer compiled as a 4th role.
+// Failure story: without a structurally read-only lookup, wide exploration lands in the
+// coordinator's context window or, worse, in an agent that can edit (LIBRARIAN.md, DD-008).
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
@@ -39,8 +41,11 @@ test('LIBRARIAN.md defines a one-shot read-only lookup contract', () => {
   assert.match(doc, /automaton-librarian/)
 })
 
-test('planning skills offer the librarian as an opt-in read-only lookup', () => {
-  for (const skill of ['auto-office-hours', 'auto-frame', 'auto-plan']) {
+test('lifecycle skills offer the librarian as an opt-in read-only lookup', () => {
+  // LIBRARIAN.md grants dispatch to all four stages that risk wide reads.
+  // Execute is included: tracing a flow before editing is exactly where
+  // exploration would otherwise blow up the coordinator's context.
+  for (const skill of ['auto-office-hours', 'auto-frame', 'auto-plan', 'auto-execute']) {
     const source = readFileSync(join(skillsRoot, skill, 'SKILL.md'), 'utf8')
     assert.match(source, /automaton-librarian/, `${skill} must mention the librarian`)
     assert.match(source, /references\/LIBRARIAN\.md/, `${skill} must point to LIBRARIAN.md`)

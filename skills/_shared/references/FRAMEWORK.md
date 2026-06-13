@@ -51,12 +51,24 @@ Two tags mark hard stops in skill procedures. Scan for them before reading the f
 Two moves at every lifecycle edge:
 
 - **Continue inline:** load and follow the next stage's contract in the same session. Default when the exit gate passes, reviews are non-blocking, and context is healthy.
-- **Stop and hand off:** end the turn with a recommendation. Required at three edges: entry into `execute` (code changes need human authorization), entry into an optional review (`auto-ceo-review`, `auto-eng-review`), and verify outcomes (pass closes, fail returns to execute).
+- **Stop and hand off:** end the turn with a recommendation. Required at three edges: entry into `execute` (code changes need human authorization), entry into an optional review (`auto-ceo-review`, `auto-eng-review`), and verify outcomes (pass closes, fail returns to execute, a repeated failure of the same criterion returns to plan).
 
 **Form.** Continue-inline emits no handoff line. The next contract's output speaks for it. A stop ends the turn with one line: `**Next:** <skill>, <reason in ≤8 words>`. Terminal completion reports `Change status: complete` and a `New objective:` line, with no `Next:`. The reason names the trigger, not the rule. Each mandatory stop's *why* is fixed above, so skills do not restate it.
 
 ## Loading Discipline
 
 - Context is finite. Load progressively: smallest artifact first, more only when needed.
-- Once a file is read in a session, do not re-read it unless it changed or verification requires fresh evidence.
+- Do not re-read a file you can still accurately recall. Re-read when it changed, when verification requires fresh evidence, or when recall is uncertain (for example after compaction).
 - Artifacts (`SPEC.md`, `PLAN.md`) are reloadable contracts, not dossiers. Link detail under `spec/` or `slices/` instead of inlining everything.
+
+## Artifact Signal Discipline
+
+Automaton artifacts are read by future skills and humans. Every section must change a downstream decision.
+
+1. **No mirror sections** -> one concept per section. If two sections answer the same question, delete one or reframe them.
+2. **Index over transcript** -> aggregate tables (traceability, verification rollups, slice summaries) earn their place only at ≥ 3 entries. For 1–2 entries, inline the information where it is used.
+3. **Core versus conditional sections** -> lifecycle SKILL.md required-section lists distinguish core (always present) from conditional (include only when the named trigger applies). Each conditional section names its trigger.
+4. **Append-replace, not stack** -> review sections and gap blocks on artifacts are replaced on re-run for the same change, not stacked.
+5. **Inline default for transient reports** -> verification reports, status summaries, and intermediate audit output live in the conversation only. Write to disk only when a future skill or human will read it again.
+
+**Deletion test for any section:** if this section were removed, what downstream skill or human loses information? If nothing, drop it.

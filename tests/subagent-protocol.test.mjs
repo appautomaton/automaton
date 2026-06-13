@@ -1,9 +1,13 @@
 // SUBAGENT-PROTOCOL.md dispatch contract and the shared ANTI-SLOP taxonomy.
+// Failure story: a protocol that lets a coordinator paste role bodies into generic agents
+// bypasses the installed read-only and no-git role boundaries (DD-008). Named-agent dispatch
+// and curated packets are the load-bearing rules here.
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { skillsRoot, antiSlopPatterns, escapeRegExp } from './support/skill-helpers.mjs'
+import { SUBAGENT_STATUSES } from '../lib/contracts.mjs'
 
 test('shared references include protocol references but no host-specific generated mapping', () => {
   assert.equal(existsSync(join(skillsRoot, '_shared', 'references', 'SUBAGENT-PROTOCOL.md')), true)
@@ -52,4 +56,33 @@ test('subagent protocol defines dispatch packets and bounded review loops', () =
   assert.match(protocol, /Do not fall back to runtime-curated prompt injection/, 'protocol must forbid runtime prompt-injection fallback')
   // Retain the host-unavailable stop condition.
   assert.match(protocol, /Host does not expose subagent support/, 'protocol must retain the host-unavailable STOP condition')
+})
+
+test('subagent status vocabulary is the same set on every end', () => {
+  // The coordinator routes on these exact strings: the protocol tables tell it what each
+  // status means, and the role envelopes tell subagents what they may return. If either end
+  // renames a status, the coordinator's routing silently stops matching, so both ends are
+  // asserted from the single vocabulary in contracts-data.json (subagentStatuses).
+  const protocol = readFileSync(join(skillsRoot, '_shared', 'references', 'SUBAGENT-PROTOCOL.md'), 'utf8')
+  const roleSources = join(skillsRoot, 'auto-execute', 'role-sources')
+  const implementerRole = readFileSync(join(roleSources, 'implementer-role.md'), 'utf8')
+  const reviewerRoles = [
+    readFileSync(join(roleSources, 'spec-reviewer-role.md'), 'utf8'),
+    readFileSync(join(roleSources, 'quality-reviewer-role.md'), 'utf8')
+  ]
+
+  for (const status of [...SUBAGENT_STATUSES.implementer, ...SUBAGENT_STATUSES.reviewer]) {
+    assert.match(protocol, new RegExp(`\\|\\s*\`${status}\``), `protocol status tables must define ${status}`)
+  }
+
+  assert.ok(
+    implementerRole.includes(`STATUS: ${SUBAGENT_STATUSES.implementer.join(' | ')}`),
+    'implementer role envelope must offer exactly the implementer status vocabulary'
+  )
+  for (const role of reviewerRoles) {
+    assert.ok(
+      role.includes(`STATUS: ${SUBAGENT_STATUSES.reviewer.join(' | ')}`),
+      'reviewer role envelopes must offer exactly the reviewer status vocabulary'
+    )
+  }
 })

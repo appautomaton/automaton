@@ -1,4 +1,6 @@
 // auto-resume: recovery from durable state, no invented continuity.
+// Failure story: resume that narrates from memory instead of artifacts, or auto-chains a
+// finished change into new work, takes direction away from the user.
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'

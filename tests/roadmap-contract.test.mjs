@@ -1,4 +1,6 @@
 // ROADMAP-CONTRACT.md: roadmap phase authorship invariants.
+// Failure story: a narrowed SPEC promoted into roadmap phases legitimizes scope loss as
+// planning. Phase authorship stays with user-approved office-hours decomposition only.
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'

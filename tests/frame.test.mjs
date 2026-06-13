@@ -1,4 +1,7 @@
 // auto-frame: scope preservation and adaptive SPEC shape.
+// Failure story: silent narrowing is the frame-stage failure class. A SPEC quietly smaller
+// than the user's stated goal ships the wrong change with full ceremony (ROADMAP-CONTRACT.md
+// pins where deferred scope may live).
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'

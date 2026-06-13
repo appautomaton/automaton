@@ -1,4 +1,6 @@
 // auto-ceo-review / auto-eng-review: optional review contracts.
+// Failure story: review output that restates the spec or emits full matrices drowns the one
+// signal a review exists to produce, the verdict and its strongest risk.
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { existsSync, readFileSync } from 'node:fs'

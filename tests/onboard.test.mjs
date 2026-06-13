@@ -1,4 +1,7 @@
 // auto-onboard: progressive-disclosure support docs and templates.
+// Failure story: onboarding that parks open questions, confidence labels, or speculative
+// roadmap phases in steering turns durable project truth into a scratchpad other skills
+// then trust (ROADMAP-CONTRACT.md invariants).
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { existsSync, readFileSync } from 'node:fs'

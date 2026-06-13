@@ -34,6 +34,8 @@ Before finalizing `PLAN.md`:
 
 Load the canonical SPEC.md, linked spec detail that carries normative requirements, relevant DESIGN.md, and source files needed to choose slice boundaries, dependencies, and verification commands. Do not ignore linked `spec/*.md` files when they contain requirement IDs, gap IDs, invariants, audit questions, migration checkpoints, coverage targets, or acceptance detail.
 
+Read `.agent/wiki/LEARNINGS.md` when it exists: one-line facts earlier changes paid to learn, often constraints slices must respect.
+
 ### Assess Review State (if reviews exist)
 
 If `product_review` exists in `current.json`, read `## Review: Product` in SPEC.md. Address each `approved_with_risks` risk in the plan. Stop and recommend `auto-frame` for `descoped` or `needs_clarification`.
@@ -106,7 +108,7 @@ Write the plan to `.agent/work/<change>/PLAN.md`.
 - **Requirement traceability:** SPEC names gap IDs, invariant IDs, audit questions, migration checkpoints, or coverage targets. Omit when the SPEC has no traceable IDs.
 - **Aggregate verification commands table:** ≥ 3 slices or commands not captured per-slice. Per-slice inline suffices for smaller plans (index over transcript).
 
-Apply the Artifact Signal Discipline rules from `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` while writing: no mirror sections, index over transcript, append-replace not stack. Replace prior `## Review:` sections on re-run for the same change. Do not stack reviews.
+Apply the Artifact Signal Discipline rules from `.agent/.automaton/references/FRAMEWORK.md` while writing. Replace prior `## Review:` sections on re-run for the same change.
 
 ### Write DESIGN.md (if non-trivial)
 
