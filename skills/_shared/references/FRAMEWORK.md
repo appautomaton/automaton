@@ -51,7 +51,7 @@ Two tags mark hard stops in skill procedures. Scan for them before reading the f
 Two moves at every lifecycle edge:
 
 - **Continue inline:** load and follow the next stage's contract in the same session. Default when the exit gate passes, reviews are non-blocking, and context is healthy.
-- **Stop and hand off:** end the turn with a recommendation. Required at three edges: entry into `execute` (code changes need human authorization), entry into an optional review (`auto-ceo-review`, `auto-eng-review`), and verify outcomes (pass closes, fail returns to execute, a repeated failure of the same criterion returns to plan).
+- **Stop and hand off:** end the turn with a recommendation. Required at four edges: frame's exit (the user approves SPEC.md, which is the product review), entry into `execute` (code changes need human authorization), entry into the optional `auto-eng-review`, and verify outcomes (pass closes, fail returns to execute, a repeated failure of the same criterion returns to plan).
 
 **Form.** Continue-inline emits no handoff line. The next contract's output speaks for it. A stop ends the turn with one line: `**Next:** <skill>, <reason in ≤8 words>`. Terminal completion reports `Change status: complete` and a `New objective:` line, with no `Next:`. The reason names the trigger, not the rule. Each mandatory stop's *why* is fixed above, so skills do not restate it.
 
@@ -68,7 +68,7 @@ Automaton artifacts are read by future skills and humans. Every section must cha
 1. **No mirror sections** -> one concept per section. If two sections answer the same question, delete one or reframe them.
 2. **Index over transcript** -> aggregate tables (traceability, verification rollups, slice summaries) earn their place only at ≥ 3 entries. For 1–2 entries, inline the information where it is used.
 3. **Core versus conditional sections** -> lifecycle SKILL.md required-section lists distinguish core (always present) from conditional (include only when the named trigger applies). Each conditional section names its trigger.
-4. **Append-replace, not stack** -> review sections and gap blocks on artifacts are replaced on re-run for the same change, not stacked.
+4. **Append-replace, not stack** -> the skill that owns a review section or gap block replaces its own prior block on re-run for the same change, not stacked. A producing skill that refreshes SPEC.md or PLAN.md preserves every existing `## Review:` section.
 5. **Inline default for transient reports** -> status summaries and intermediate audit output live in the conversation only. Write to disk only when a future skill or human will read it again: the terminal `## Verification` section on PLAN.md (pass) and `VERIFY-GAP` blocks (fail) are the named exceptions because re-entry and audit consume them.
 
 **Deletion test for any section:** if this section were removed, what downstream skill or human loses information? If nothing, drop it.

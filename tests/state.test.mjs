@@ -4,7 +4,7 @@ import assert from 'node:assert/strict'
 import { execFileSync, spawnSync } from 'node:child_process'
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { join } from 'node:path'
+import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import { loadCurrentState, saveCurrentState } from '../lib/state.mjs'
@@ -156,7 +156,6 @@ test('saveCurrentState writes durable snake_case review keys and loadCurrentStat
     stage: 'plan',
     canonicalSpec: 'docs/spec.md',
     canonicalPlan: 'docs/plan.md',
-    productReview: 'approved_with_risks',
     engineeringReview: 'needs_correction'
   }
 
@@ -164,9 +163,34 @@ test('saveCurrentState writes durable snake_case review keys and loadCurrentStat
 
   assert.equal(
     readFileSync(target, 'utf8'),
-    '{\n  "active_change": "automaton-v1-foundation",\n  "stage": "plan",\n  "canonical_spec": "docs/spec.md",\n  "canonical_plan": "docs/plan.md",\n  "product_review": "approved_with_risks",\n  "engineering_review": "needs_correction"\n}\n'
+    '{\n  "active_change": "automaton-v1-foundation",\n  "stage": "plan",\n  "canonical_spec": "docs/spec.md",\n  "canonical_plan": "docs/plan.md",\n  "engineering_review": "needs_correction"\n}\n'
   )
   assert.deepEqual(loadCurrentState(target), state)
+})
+
+// Migration guard: projects installed before the product review removal may carry a
+// product_review field in current.json. The loader must tolerate it as an inert unknown
+// key (no error, no data loss to other fields) so upgrade never bricks recovery.
+test('legacy product_review field loads and round-trips as an inert unknown key', () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-state-legacy-product-'))
+  const target = join(root, '.agent', '.automaton', 'state', 'current.json')
+
+  mkdirSync(dirname(target), { recursive: true })
+  writeFileSync(
+    target,
+    '{\n  "active_change": "pre-upgrade-change",\n  "stage": "plan",\n  "canonical_spec": "docs/spec.md",\n  "product_review": "approved",\n  "engineering_review": "approved"\n}\n',
+    'utf8'
+  )
+
+  const loaded = loadCurrentState(target)
+  assert.equal(loaded.activeChange, 'pre-upgrade-change')
+  assert.equal(loaded.engineeringReview, 'approved')
+  assert.equal(loaded.product_review, 'approved', 'legacy key must survive verbatim, not normalize')
+
+  saveCurrentState(target, loaded)
+  const reloaded = loadCurrentState(target)
+  assert.equal(reloaded.product_review, 'approved')
+  assert.equal(reloaded.engineeringReview, 'approved')
 })
 
 test('saveCurrentState accepts durable snake_case review input and loadCurrentState normalizes it', () => {
@@ -175,7 +199,6 @@ test('saveCurrentState accepts durable snake_case review input and loadCurrentSt
   const state = {
     active_change: 'existing-change',
     stage: 'verify',
-    product_review: 'approved',
     engineering_review: 'approved_with_risks'
   }
 
@@ -183,12 +206,11 @@ test('saveCurrentState accepts durable snake_case review input and loadCurrentSt
 
   assert.equal(
     readFileSync(target, 'utf8'),
-    '{\n  "active_change": "existing-change",\n  "stage": "verify",\n  "product_review": "approved",\n  "engineering_review": "approved_with_risks"\n}\n'
+    '{\n  "active_change": "existing-change",\n  "stage": "verify",\n  "engineering_review": "approved_with_risks"\n}\n'
   )
   assert.deepEqual(loadCurrentState(target), {
     activeChange: 'existing-change',
     stage: 'verify',
-    productReview: 'approved',
     engineeringReview: 'approved_with_risks'
   })
 })
@@ -206,7 +228,6 @@ test('shared get-context script returns deterministic camelCase JSON when state 
     canonicalSpec: null,
     canonicalDesign: null,
     canonicalPlan: null,
-    productReview: null,
     engineeringReview: null,
     diagnostics: []
   })
@@ -238,7 +259,6 @@ test('shared get-context script normalizes durable state and preserves extra key
     canonicalSpec: 'docs/spec.md',
     canonicalDesign: null,
     canonicalPlan: 'docs/plan.md',
-    productReview: null,
     engineeringReview: 'approved_with_risks',
     custom_flag: true,
     diagnostics: []
@@ -346,7 +366,6 @@ test('shared sync-status script resets change-scoped state when active change ch
     stage: 'verify',
     canonicalSpec: '.agent/work/old-change/SPEC.md',
     canonicalPlan: '.agent/work/old-change/PLAN.md',
-    productReview: 'approved',
     engineeringReview: 'approved'
   })
 

@@ -37,7 +37,6 @@ const STATE_FIELDS = [
   { camel: 'canonicalSpec', snake: 'canonical_spec', flag: '--canonical-spec' },
   { camel: 'canonicalDesign', snake: 'canonical_design', flag: '--canonical-design' },
   { camel: 'canonicalPlan', snake: 'canonical_plan', flag: '--canonical-plan' },
-  { camel: 'productReview', snake: 'product_review', flag: '--product-review' },
   { camel: 'engineeringReview', snake: 'engineering_review', flag: '--engineering-review' }
 ]
 
@@ -156,7 +155,6 @@ function diagnoseState(state, projectRoot) {
 
   const diagnostics = []
   const validStages = new Set(contracts.stages ?? [])
-  const productVerdicts = new Set(contracts.reviewVerdicts?.product ?? [])
   const engineeringVerdicts = new Set(contracts.reviewVerdicts?.engineering ?? [])
   let invalidStage = false
   let stageIsValid = false
@@ -179,12 +177,6 @@ function diagnoseState(state, projectRoot) {
       if (state[field] === undefined || state[field] === null) {
         const code = contracts.prerequisiteDiagnosticCodes?.[field] ?? `missing_${field}`
         diagnostics.push(diagnostic('error', code, `${state.stage} stage requires ${field}`))
-      }
-    }
-
-    if (state.productReview !== undefined && state.productReview !== null) {
-      if (!productVerdicts.has(state.productReview)) {
-        diagnostics.push(diagnostic('error', 'invalid_product_review', `unrecognized product_review verdict: ${state.productReview}`))
       }
     }
 
@@ -299,7 +291,6 @@ function applyStatePatch(currentState, patch) {
       'canonicalSpec',
       'canonicalDesign',
       'canonicalPlan',
-      'productReview',
       'engineeringReview'
     ])
   }
@@ -308,7 +299,6 @@ function applyStatePatch(currentState, patch) {
     clearUnlessPatched(nextState, patch, [
       'canonicalDesign',
       'canonicalPlan',
-      'productReview',
       'engineeringReview'
     ])
   }

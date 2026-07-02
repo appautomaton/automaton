@@ -22,16 +22,9 @@
     "resume": []
   },
   "reviewVerdicts": {
-    "product": ["approved", "approved_with_risks", "needs_clarification", "descoped"],
     "engineering": ["approved", "approved_with_risks", "needs_correction"]
   },
   "verdictRouting": {
-    "product": {
-      "approved": ["auto-plan"],
-      "approved_with_risks": ["auto-plan"],
-      "needs_clarification": ["auto-frame", "auto-office-hours"],
-      "descoped": ["auto-office-hours"]
-    },
     "engineering": {
       "approved": ["auto-execute"],
       "approved_with_risks": ["auto-execute"],
@@ -69,13 +62,6 @@
       "message": "PLAN.md has no slice headings"
     },
     "reviewSections": [
-      {
-        "verdictField": "productReview",
-        "artifactField": "canonicalSpec",
-        "heading": "## Review: Product",
-        "code": "product_review_section_missing",
-        "message": "product_review verdict is set but SPEC.md has no '## Review: Product' section"
-      },
       {
         "verdictField": "engineeringReview",
         "artifactField": "canonicalPlan",

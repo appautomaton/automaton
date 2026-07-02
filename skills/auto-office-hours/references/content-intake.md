@@ -4,7 +4,7 @@ Load this reference when the user's request is about content creation: writing, 
 
 ## Content-Mode Diagnostic
 
-Ask these one at a time, after mode detection (Startup or Builder). These replace the mode-specific questions only when the user's goal is a content deliverable, not a product or feature.
+Ask these one at a time, after mode classification, when the mode is Content. Content is a peer mode alongside Startup and Builder. These questions replace the Startup or Builder diagnostic when the user's goal is a content deliverable, not a product or feature.
 
 ### Q1: Audience
 

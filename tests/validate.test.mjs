@@ -91,19 +91,12 @@ test('validateState reports missing active change', () => {
   assert.equal(result.diagnostics[0].code, 'missing_active_change')
 })
 
-test('validateState accepts valid product review verdicts', () => {
-  for (const verdict of ['approved', 'approved_with_risks', 'needs_clarification', 'descoped']) {
-    const result = validateState({ activeChange: 'x', stage: 'frame', productReview: verdict })
-    assert.equal(result.diagnostics.filter(d => d.code === 'invalid_product_review').length, 0)
-  }
-})
-
-test('validateState rejects invalid product review verdict', () => {
+// Migration guard: a legacy productReview value is no longer part of the state
+// vocabulary and must be ignored, never rejected. Upgraded projects may carry it.
+test('validateState ignores a legacy product review field', () => {
   const result = validateState({ activeChange: 'x', stage: 'frame', productReview: 'good' })
-
-  assert.equal(result.valid, false)
-  assert.equal(result.diagnostics[0].code, 'invalid_product_review')
-  assert.match(result.diagnostics[0].message, /good/)
+  assert.equal(result.valid, true)
+  assert.deepEqual(result.diagnostics, [])
 })
 
 test('validateState accepts valid engineering review verdicts', () => {
@@ -286,13 +279,13 @@ test('get-context script reports invalid review verdict', () => {
   saveCurrentState(target, {
     activeChange: 'my-change',
     stage: 'frame',
-    productReview: 'thumbs_up'
+    engineeringReview: 'thumbs_up'
   })
 
   const output = execFileSync(process.execPath, [script, target], { encoding: 'utf8' })
   const parsed = JSON.parse(output)
 
-  const verdictDiag = parsed.diagnostics.find(d => d.code === 'invalid_product_review')
+  const verdictDiag = parsed.diagnostics.find(d => d.code === 'invalid_engineering_review')
   assert.ok(verdictDiag)
   assert.match(verdictDiag.message, /thumbs_up/)
 })
@@ -452,13 +445,13 @@ test('get-context and validateHandoff produce same codes for invalid verdict', (
   const target = join(root, '.agent', '.automaton', 'state', 'current.json')
   const script = fileURLToPath(new URL('../skills/_shared/scripts/get-context.mjs', import.meta.url))
 
-  saveCurrentState(target, { activeChange: 'my-change', stage: 'frame', productReview: 'nope' })
+  saveCurrentState(target, { activeChange: 'my-change', stage: 'frame', engineeringReview: 'nope' })
 
   const contextOutput = JSON.parse(
     execFileSync(process.execPath, [script, target], { encoding: 'utf8' })
   )
   const validateResult = validateHandoff(
-    { activeChange: 'my-change', stage: 'frame', productReview: 'nope' },
+    { activeChange: 'my-change', stage: 'frame', engineeringReview: 'nope' },
     root
   )
 
@@ -503,14 +496,14 @@ test('get-context skips file diagnostics when path is non-canonical', () => {
     active_change: 'my-change',
     stage: 'plan',
     canonical_spec: '.agent/work/my-change/SPEC.md',
-    product_review: 'nope'
+    engineering_review: 'nope'
   }), 'utf8')
 
   const contextOutput = JSON.parse(
     execFileSync(process.execPath, [script, target], { encoding: 'utf8' })
   )
 
-  assert.ok(contextOutput.diagnostics.some(d => d.code === 'invalid_product_review'))
+  assert.ok(contextOutput.diagnostics.some(d => d.code === 'invalid_engineering_review'))
   assert.ok(!contextOutput.diagnostics.some(d => d.code === 'stale_canonical_spec'))
 })
 

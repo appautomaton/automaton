@@ -7,7 +7,7 @@ Append exactly this format to `PLAN.md`:
 
 - Verdict: <approved|approved_with_risks|needs_correction>
 - Strength: <one sentence>
-- Concern: <one sentence>
+- Concern: <one sentence, or for approved_with_risks one line per risk>
 - Action: <one sentence>
 - Verified: <what was checked, or "pending">
 ```
@@ -15,7 +15,8 @@ Append exactly this format to `PLAN.md`:
 ## Rules
 
 - Verdict must be one of the three approved values. No synonyms.
-- Strength and Concern must each be exactly one sentence.
+- Strength must be exactly one sentence.
+- Concern is exactly one sentence, except for `approved_with_risks`: one line per documented risk, each naming the slice it affects when known, so `auto-execute` can surface the right risk before each slice.
 - Action must be a concrete next step, not a strategy.
 - Verified must list what was actually checked (e.g., "data flow traced", "edge cases enumerated"), or "pending" if nothing was checked.
 - Do not add extra fields or commentary outside this format.

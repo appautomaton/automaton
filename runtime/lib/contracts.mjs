@@ -34,8 +34,6 @@ export function isValidCheckpointType(checkpoint) {
 
 export const STAGE_PREREQUISITES = CONTRACTS_DATA.stagePrerequisites
 
-export const PRODUCT_REVIEW_VERDICTS = CONTRACTS_DATA.reviewVerdicts.product
-
 export const ENGINEERING_REVIEW_VERDICTS = CONTRACTS_DATA.reviewVerdicts.engineering
 
 export const VERDICT_ROUTING = CONTRACTS_DATA.verdictRouting
@@ -49,10 +47,6 @@ export const ARTIFACT_LABELS = CONTRACTS_DATA.artifactLabels
 export const PREREQUISITE_DIAGNOSTIC_CODES = CONTRACTS_DATA.prerequisiteDiagnosticCodes
 
 export const CANONICAL_POINTER_CHECKS = CONTRACTS_DATA.canonicalPointerChecks
-
-export function isValidProductReview(verdict) {
-  return PRODUCT_REVIEW_VERDICTS.includes(verdict)
-}
 
 export function isValidEngineeringReview(verdict) {
   return ENGINEERING_REVIEW_VERDICTS.includes(verdict)

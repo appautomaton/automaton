@@ -190,6 +190,43 @@ test('upgrade removes pristine orphans from the previous receipt and keeps modif
   assert.equal(next.files.some((entry) => entry.path === pristine), false)
 })
 
+// Upgrade proof for a retired skill: when a whole skill directory the previous
+// version shipped (auto-ceo-review, removed 2026-07) is absent from the new
+// source, re-install must prune every pristine file it owned and the emptied
+// directories, leaving no trace in the tree or the receipt.
+test('upgrade prunes a whole skill directory the source no longer ships', () => {
+  const root = tempRoot('retired-skill')
+
+  installHost(getHost('claude'), { root, sourceRoot })
+
+  const receipt = loadReceipt(root)
+  const retired = [
+    '.claude/skills/auto-retired-review/SKILL.md',
+    '.claude/skills/auto-retired-review/references/checklist.md',
+    '.claude/skills/auto-retired-review/references/quality.md'
+  ]
+  mkdirSync(join(root, '.claude', 'skills', 'auto-retired-review', 'references'), { recursive: true })
+  for (const path of retired) {
+    writeFileSync(join(root, path), 'shipped by a previous version\n', 'utf8')
+    receipt.files.push({ path, hash: hashContent('shipped by a previous version\n'), owner: 'claude' })
+  }
+  saveReceipt(root, receipt)
+
+  installHost(getHost('claude'), { root, sourceRoot })
+
+  assert.equal(
+    existsSync(join(root, '.claude', 'skills', 'auto-retired-review')),
+    false,
+    'the retired skill directory must be fully pruned on upgrade'
+  )
+  const next = loadReceipt(root)
+  assert.equal(
+    next.files.some((entry) => entry.path.includes('auto-retired-review')),
+    false,
+    'the receipt must carry no entries for the retired skill'
+  )
+})
+
 test('a receipt with no entries for a host makes that host uninstall a no-op', () => {
   const root = tempRoot('absent-host')
 

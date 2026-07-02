@@ -20,7 +20,7 @@ Shared scripts are self-contained but no longer copied into every skill folder.
 
 `current.json` is the only source for active change, stage, canonical artifact pointers, and review verdicts. Maintained prose summaries are intentionally not part of the lifecycle contract.
 
-**Why:** JSON parsing is deterministic across LLM providers; markdown summaries drift and cost prompt tokens. State mutations go to JSON. Human-readable context comes from canonical artifacts (`INTAKE.md`, `SPEC.md`, `PLAN.md`, review sections, and roadmap items) or from generated command output.
+**Why:** JSON parsing is deterministic across LLM providers; markdown summaries drift and cost prompt tokens. State mutations go to JSON. Human-readable context comes from canonical artifacts (`SPEC.md`, `PLAN.md`, review sections, and roadmap items) or from generated command output.
 
 **See:** `runtime/lib/state.mjs`, `runtime/lib/context.mjs`. Guarded by `tests/state.test.mjs`, `tests/skill-conventions.test.mjs` (state writes route through sync-status).
 
@@ -142,3 +142,17 @@ Role bodies also gained three proven phrasings: identity affirmation over prohib
 
 **See:** `skills/_shared/references/SUBAGENT-PROTOCOL.md`, `skills/auto-execute/references/git-rhythm.md` (Parallel Isolation), `skills/auto-eng-review/references/outside-voice.md`, `skills/auto-execute/role-sources/*-role.md`, `tests/subagent-protocol.test.mjs`.
 
+## DD-014: Product judgment stays with the human, so the pipeline has one dialogue stage and one artifact stage
+
+A language model does not hold product judgment, so `auto-ceo-review` was removed (July 2026). Every lean harness surveyed converged on the same shape: superpowers and OpenSpec gate the spec on a human approval, and grill-me inverts the review direction entirely, interrogating the human until intent is locked instead of pronouncing verdicts at them. Model-run review earns its tokens only where ground truth exists, which is the engineering level.
+
+The replacement is structural, not a thinner review:
+
+- **Dialogue lives in office-hours, automation lives in frame.** Office-hours is the human-bandwidth stage: optional, opt-in, and now carrying the grill contract (one question per message with a recommended answer, explore-before-ask, and a user-invoked or offered grill mode that walks dependent decisions to resolution and never self-escalates). Frame is the automation lane: repo evidence replaces discovery questions, and one blocking needs-decision question is its whole interview.
+- **Frame's exit is a mandatory stop edge.** The user reads and approves SPEC.md before planning begins. The human reading the spec is the product review. The salvage from ceo-review lives in the artifact: a `**Bet:**` line opens every SPEC, and frame's quality card runs a four-scan self-review (placeholder, contradiction, bundling, ambiguity) before presenting it.
+- **One accreting artifact.** Office-hours' approval seeds the SPEC.md skeleton and frame completes the same file, replacing the INTAKE.md handoff copy. `canonical_spec` set only by frame marks completion. The pointer, not a status field, distinguishes skeleton from spec.
+- **The outside voice carries the cross-model challenge.** Bounded rounds, arbitered findings with logged reasons, honest deadlock. Product direction has no model gate anywhere.
+
+**Migration:** upgrade is re-install. The receipt prunes the removed skill's files, a legacy `product_review` state field loads as an inert unknown key, and a legacy `INTAKE.md` remains optional framing context.
+
+**See:** `skills/_shared/references/FRAMEWORK.md` (Handoff Model), `skills/_shared/references/ARTIFACT-LIFECYCLE.md` (Handoff Contract), `skills/auto-office-hours/references/spec-skeleton.md`, `skills/auto-frame/references/quality.md`, `skills/auto-eng-review/references/outside-voice.md`, `tests/verdict-routing.test.mjs`, `tests/install-receipt.test.mjs`.

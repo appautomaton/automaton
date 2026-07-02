@@ -165,27 +165,23 @@ test('auto-plan emits every slice field label the lint checks for', () => {
 test('a review verdict without its artifact section surfaces a warning', () => {
   const { currentPath } = scaffold({ spec: COMPLETE_SPEC, plan: COMPLETE_PLAN })
   const state = JSON.parse(readFileSync(currentPath, 'utf8'))
-  state.product_review = 'approved'
   state.engineering_review = 'approved'
   writeFileSync(currentPath, JSON.stringify(state, null, 2) + '\n', 'utf8')
 
   const codes = runGetContext(currentPath).diagnostics.map((item) => item.code)
-  assert.ok(codes.includes('product_review_section_missing'))
   assert.ok(codes.includes('engineering_review_section_missing'))
 })
 
 test('a review verdict with its artifact section in place is silent', () => {
   const { root, currentPath } = scaffold({
-    spec: `${COMPLETE_SPEC}\n## Review: Product\n\nVerdict: approved\n`,
+    spec: COMPLETE_SPEC,
     plan: `${COMPLETE_PLAN}\n## Review: Engineering\n\nVerdict: approved\n`
   })
   const state = JSON.parse(readFileSync(currentPath, 'utf8'))
-  state.product_review = 'approved'
   state.engineering_review = 'approved'
   writeFileSync(currentPath, JSON.stringify(state, null, 2) + '\n', 'utf8')
 
   const codes = runGetContext(currentPath).diagnostics.map((item) => item.code)
-  assert.equal(codes.includes('product_review_section_missing'), false)
   assert.equal(codes.includes('engineering_review_section_missing'), false)
 })
 

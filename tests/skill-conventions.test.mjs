@@ -71,7 +71,6 @@ test('authored skills ship compact local quality cards', () => {
     'auto-verify': /VERIFY Anti-Patterns|Completion theater/,
     'auto-resume': /Resume Anti-Patterns|Invented continuity/,
     'auto-office-hours': /Office-Hours Quality|Sycophantic validation/,
-    'auto-ceo-review': /Product Review Anti-Patterns|Rubber-stamp approval/,
     'auto-eng-review': /Engineering Review Anti-Patterns|Generic risk language/
   }
   const contents = []
@@ -156,7 +155,6 @@ test('controller prompts route current state writes through sync-status', () => 
     'auto-plan': /sync-status\.mjs --canonical-plan/,
     'auto-execute': /sync-status\.mjs --stage execute/,
     'auto-verify': /sync-status\.mjs --stage verify/,
-    'auto-ceo-review': /sync-status\.mjs --product-review "<verdict>"/,
     'auto-eng-review': /sync-status\.mjs --engineering-review "<verdict>"/
   }
 
@@ -185,7 +183,9 @@ test('prompt references define canonical tags and verification context exception
 
   assert.match(xml, /Use the canonical name exactly/)
   assert.match(xml, /Use `<STOP>` for halt conditions/)
-  assert.match(xml, /Decision checkpoints require a concrete question and named options/)
+  // Checkpoint definitions moved to their single home. XML-CONVENTIONS keeps a pointer only
+  // (see artifact-lifecycle.test.mjs for the single-home guard).
+  assert.match(xml, /ARTIFACT-LIFECYCLE\.md` \(Checkpoint Semantics\)/)
   assert.match(xml, /`<GATE>`/)
   assert.doesNotMatch(xml, /HARD-GATE/)
   assert.match(contextBudget, /verification pass/)
@@ -274,7 +274,7 @@ test('every skill with a preamble contains a loading discipline sentence', () =>
 })
 
 test('only allowed XML tags appear in SKILL.md files', () => {
-  const allowed = new Set(['GATE', 'STOP', 'INTERVIEW'])
+  const allowed = new Set(['GATE', 'STOP'])
 
   for (const skillName of authoredSkills) {
     const source = readFileSync(join(skillsRoot, skillName, 'SKILL.md'), 'utf8')

@@ -60,7 +60,7 @@ After slice verification passes in `Verify And Advance`, run `git add -A` follow
 - `git commit -m "slice N: <objective>"` for a fresh slice (objective from `PLAN.md`).
 - `git commit -m "slice N gap-fix: <fix objective>"` for a slice re-entered after `auto-verify` FAIL (fix objective from the `VERIFY-GAP` block).
 
-**Strictly additive.** `git commit` only. Never `amend`, `reset`, `rebase`, `branch`, `checkout`, or `push`. Subagents on the implementer route never run any git command; the orchestrator owns history. A failed commit is a STOP, not a step to skip. Cross-skill contract: `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Git Rhythm).
+**Strictly additive.** `git commit` only. Never `amend`, `reset`, `rebase`, `branch`, `checkout`, or `push`. One carve-out: coordinator-managed `git worktree add`/`remove` for parallel slice isolation, defined in `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Git Rhythm). Subagents on the implementer route never run any git command; the orchestrator owns history. A failed commit is a STOP, not a step to skip. Cross-skill contract: `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Git Rhythm).
 
 ### Select Execution Window
 
@@ -77,7 +77,7 @@ Slice defaults:
 
 For each slice in the window, extract objective, dependencies, touched files or subsystems, constraints and anti-goals, acceptance criteria, verification commands, checkpoint metadata, route metadata, and linked detail files and traceability IDs. If a material slice is missing acceptance criteria or verification, stop and recommend `auto-plan`.
 
-For content slices, also extract artifact target, audience, thesis, voice, content anti-goals, channel, source policy, factual risk, and format. If the slice needs a missing source or factual-risk decision, stop with `NEEDS_CONTEXT`.
+For content slices, also extract artifact target, audience, thesis, voice, content anti-goals, channel, source policy, factual risk, and format. If the slice needs a missing source or factual-risk decision, stop and report the missing source or unresolved factual-risk decision.
 
 ### Route Selection
 
@@ -152,7 +152,7 @@ When a correction reveals durable project truth beyond this change, append a one
 
 Halt immediately and report to the user when:
 1. A dependency is missing and cannot be installed or resolved.
-2. A test fails repeatedly (> 3 attempts) with the same error.
+2. A test fails 3 times with the same error.
 3. A plan instruction is ambiguous or contradictory and cannot be resolved with one clarifying question.
 4. The approved slice no longer matches the codebase state.
 5. The user asks for work outside the current slice.
@@ -181,6 +181,6 @@ Read `references/stop-examples.md` when uncertain whether a situation qualifies 
 - Build an execution window, but execute and verify one slice at a time.
 - Serial execution is the default; parallel cross-slice dispatch requires explicit plan approval and disjoint write sets.
 - Do not silently redefine the plan; record corrections transparently.
-- auto-execute owns all `git commit` operations for Automaton; the rhythm is strictly additive (no `amend`, `reset`, `rebase`, `branch`, `checkout`, `push`), and subagents never run git.
+- auto-execute owns all `git commit` operations for Automaton; the rhythm is strictly additive (no `amend`, `reset`, `rebase`, `branch`, `checkout`, `push`, with the coordinator-managed worktree carve-out in ARTIFACT-LIFECYCLE.md), and subagents never run git.
 - If the user asks for a quick fix outside the plan, reframe through `auto-frame`; do not bypass the plan.
 - Keep durable evidence in `PLAN.md` or linked `slices/slice-NNN.md`, not new evidence files by default.

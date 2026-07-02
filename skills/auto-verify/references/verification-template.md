@@ -34,7 +34,9 @@ FAIL summary:
 **Passed:** [N] of [M] criteria
 **Remaining gaps:** [list]
 **Change status:** incomplete
-**Recommended next skill:** auto-execute, or auto-plan when the same criterion failed a prior verification
+**Next:** auto-execute, [reason in 8 words or fewer]
+
+When the same criterion failed a prior verification, close with `**Next:** auto-plan, [repeated criterion]` instead.
 ```
 
 ## Rules
@@ -44,4 +46,4 @@ FAIL summary:
 - PARTIAL means some sub-conditions pass and some fail. Still counts as FAIL for the plan.
 - If overall is FAIL, list every gap across all slices, not just the first found. Expand failures, skipped checks, and derived commands.
 - Write `VERIFY-GAP` annotations into PLAN.md for each failed criterion so the next skill finds them on re-entry. Check for a prior `VERIFY-GAP` on the same criterion before replacing it: a repeat escalates the handoff to auto-plan.
-- If overall is PASS, do not print a `Recommended next skill` line; use the `New objective` line for future work instead.
+- If overall is PASS, do not print a `Next:` line; use the `New objective` line for future work instead.

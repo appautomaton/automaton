@@ -36,8 +36,7 @@ const SKILL_CEILINGS = {
   'auto-eng-review/SKILL.md': 750,
   // Raised 700 -> 750 for DD-012/DD-013: the execution-ledger reconciliation
   // (slice commits, in-flight dirt, stray worktrees) is new recovery capability.
-  'auto-resume/SKILL.md': 750,
-  'auto-ceo-review/SKILL.md': 600
+  'auto-resume/SKILL.md': 750
 }
 
 test('shared references stay under their word ceilings', () => {

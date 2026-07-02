@@ -1,6 +1,6 @@
 # Office-Hours Quality
 
-Load this reference only before presenting alternatives, recommending an approach, or writing the approved `INTAKE.md`.
+Load this reference only before presenting alternatives, recommending an approach, or seeding the approved SPEC skeleton.
 
 ## Anti-Patterns
 

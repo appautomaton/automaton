@@ -8,6 +8,31 @@ import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { skillsRoot } from './support/skill-helpers.mjs'
 
+test('auto-onboard gates, confidence markers, and cross-references agree with its own paths', () => {
+  const onboardRoot = join(skillsRoot, 'auto-onboard')
+  const skill = readFileSync(join(onboardRoot, 'SKILL.md'), 'utf8')
+  const artifactContract = readFileSync(join(onboardRoot, 'references', 'artifact-contract.md'), 'utf8')
+  const topologyScan = readFileSync(join(onboardRoot, 'references', 'topology-scan.md'), 'utf8')
+
+  // The overwrite-confirmation GATE must not block the scaffold path Detect State authorizes.
+  assert.match(skill, /Real \(non-scaffold\) steering exists and the user has not confirmed/)
+  assert.match(skill, /Scaffold-level steering proceeds without confirmation/)
+
+  // The rule bans verdict-style confidence sections, not the mandated certainty markers.
+  assert.match(skill, /The Observed, Inferred, and Needs Confirmation split from the artifact contract is required, not banned/)
+  assert.match(artifactContract, /are the required certainty split, not chatter/)
+  assert.doesNotMatch(skill + artifactContract, /free of speculative questions, confidence labels/)
+
+  // The cross-skill review-section contract lives in FRAMEWORK.md, not in a reference
+  // no review skill ever loads, and "append-only" contradicted append-replace.
+  assert.doesNotMatch(artifactContract, /Work Artifact Integrity/)
+  assert.doesNotMatch(artifactContract, /append-only/)
+
+  // question-patterns.md lives under references/, not a nonexistent examples/ directory.
+  assert.match(topologyScan, /references\/question-patterns\.md/)
+  assert.doesNotMatch(topologyScan, /examples\/question-patterns\.md/)
+})
+
 test('auto-onboard ships progressive-disclosure support docs and templates', () => {
   const onboardRoot = join(skillsRoot, 'auto-onboard')
   const expectedFiles = [

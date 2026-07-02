@@ -35,4 +35,9 @@ After: "Add JWT validation to protected API routes. Users without a valid token 
 
 ## Final Check
 
-If two engineers could implement materially different changes from the same SPEC, revise it.
+Run four scans before presenting the spec for the user's approval. The user reading SPEC.md is the product review, so the spec must be clean enough to judge.
+
+- Placeholder scan: no TBD, empty section, or unresolved blank. Resolve it or name it as an assumption.
+- Contradiction scan: the bet, the bounded goal, and the acceptance criteria must describe the same change.
+- Bundling scan: apply the capability check above. A spec bundling independently valuable outcomes is split, with the rest deferred for a stated reason.
+- Ambiguity scan: if two engineers could implement materially different changes from the same SPEC, revise it.

@@ -58,6 +58,29 @@ test('subagent protocol defines dispatch packets and bounded review loops', () =
   assert.match(protocol, /Host does not expose subagent support/, 'protocol must retain the host-unavailable STOP condition')
 })
 
+test('dispatch packet list and implementer slot template name the same per-call items', () => {
+  const protocol = readFileSync(join(skillsRoot, '_shared', 'references', 'SUBAGENT-PROTOCOL.md'), 'utf8')
+  const implementerPrompt = readFileSync(join(skillsRoot, 'auto-execute', 'references', 'implementer-prompt.md'), 'utf8')
+  const executeSkill = readFileSync(join(skillsRoot, 'auto-execute', 'SKILL.md'), 'utf8')
+  const contentExecution = readFileSync(join(skillsRoot, 'auto-execute', 'references', 'content-execution.md'), 'utf8')
+
+  // Edit scope is a protocol requirement, so the slot template must carry it.
+  assert.match(protocol, /edit scope: files or directories the implementer may modify/)
+  assert.match(implementerPrompt, /<edit-scope>/)
+  assert.match(implementerPrompt, /Unlisted paths are read-only/)
+
+  // Role identity, status vocabulary, and return envelope live in the installed role
+  // bodies. The packet list must not re-send them per call.
+  assert.match(protocol, /The installed role body already carries identity, status vocabulary, and the return envelope/)
+  assert.doesNotMatch(protocol, /- role and requested status vocabulary/)
+  assert.doesNotMatch(protocol, /- expected output structure/)
+
+  // NEEDS_CONTEXT is an implementer-to-coordinator status only, never a
+  // coordinator-to-user stop label.
+  assert.doesNotMatch(executeSkill, /stop with `NEEDS_CONTEXT`/)
+  assert.doesNotMatch(contentExecution, /NEEDS_CONTEXT/)
+})
+
 test('subagent status vocabulary is the same set on every end', () => {
   // The coordinator routes on these exact strings: the protocol tables tell it what each
   // status means, and the role envelopes tell subagents what they may return. If either end

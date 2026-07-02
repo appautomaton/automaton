@@ -15,7 +15,7 @@ Before editing, identify:
 - Content Anti-Goals: named patterns to avoid.
 - Channel, Source Policy, Factual Risk, and Format from the plan or SPEC.md.
 
-If a required input is missing, stop with `NEEDS_CONTEXT` rather than filling the gap.
+If a required input is missing, stop and report the missing input rather than filling the gap.
 
 ## Factual-Risk Gate
 

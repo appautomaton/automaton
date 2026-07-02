@@ -23,6 +23,23 @@ test('plan execute and verify preserve linked detail and traceability IDs', () =
   assert.match(verify, /unlinked supplemental file/)
 })
 
+test('auto-plan gates the PLAN.md write before the write instructions', () => {
+  const source = readFileSync(join(skillsRoot, 'auto-plan', 'SKILL.md'), 'utf8')
+
+  const gateIndex = source.indexOf('<GATE>')
+  const writeIndex = source.indexOf('### Write PLAN.md')
+  assert.ok(gateIndex > -1 && writeIndex > -1, 'auto-plan must keep its GATE and Write PLAN.md sections')
+  assert.ok(gateIndex < writeIndex, 'the GATE must precede the artifact write it gates (FRAMEWORK.md hard-stop placement)')
+})
+
+test('auto-plan preserves review sections and never replaces them as producer', () => {
+  const source = readFileSync(join(skillsRoot, 'auto-plan', 'SKILL.md'), 'utf8')
+
+  assert.match(source, /Preserve existing `## Review:` sections on re-run/)
+  assert.match(source, /Preserve review sections on refresh/)
+  assert.doesNotMatch(source, /Replace prior `## Review:`/)
+})
+
 test('auto-plan defines lean slice defaults without dropping execution safety', () => {
   const source = readFileSync(join(skillsRoot, 'auto-plan', 'SKILL.md'), 'utf8')
 
@@ -47,4 +64,17 @@ test('auto-plan defines lean slice defaults without dropping execution safety', 
   assert.doesNotMatch(source, /Context budget for this change/)
   assert.doesNotMatch(source, /known fraction of the context window/)
   assert.doesNotMatch(source, /~X% of context window/)
+})
+
+// DESIGN.md earns existence by a three-condition test, not taste. One condition
+// missing means the rationale is small enough to live in PLAN.md prose, and a
+// standing document would just be a second home for it.
+test('auto-plan gates DESIGN.md on the three-condition test', () => {
+  const source = readFileSync(join(skillsRoot, 'auto-plan', 'SKILL.md'), 'utf8')
+
+  assert.match(source, /hard to reverse/)
+  assert.match(source, /surprised without context/)
+  assert.match(source, /a real trade-off between genuine alternatives/)
+  assert.match(source, /Any one missing means the rationale lives in PLAN\.md prose/)
+  assert.doesNotMatch(source, /only for non-trivial architecture or new patterns/)
 })

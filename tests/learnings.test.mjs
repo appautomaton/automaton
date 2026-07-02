@@ -40,7 +40,7 @@ test('learnings stay out of skills that have no role in the channel', () => {
   // The reviews reason from SPEC/PLAN and conversation; resume orients from state and
   // artifacts; onboard folds facts into steering only via the lifecycle pruning rule,
   // not its own protocol.
-  for (const skill of ['auto-ceo-review', 'auto-eng-review', 'auto-resume']) {
+  for (const skill of ['auto-eng-review', 'auto-resume']) {
     assert.doesNotMatch(read(skill), /LEARNINGS\.md/, `${skill} must not join the learnings channel`)
   }
 })

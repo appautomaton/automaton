@@ -24,8 +24,9 @@ test('artifact lifecycle reference defines stage handoffs and canonical pointers
   assert.match(lifecycle, /do not create a separate status prose artifact to mirror them/)
   assert.match(lifecycle, /Do not add archive behavior/)
   assert.match(lifecycle, /\.agent\/work\/<change>/)
-  assert.match(lifecycle, /\.agent\/work\/<change>\/INTAKE\.md/)
-  assert.match(lifecycle, /discovered by `active_change`, not by a canonical pointer/)
+  assert.match(lifecycle, /may begin as an office-hours skeleton/)
+  assert.match(lifecycle, /a SPEC\.md without the pointer means framing is in progress/)
+  assert.doesNotMatch(lifecycle, /\.agent\/work\/<change>\/INTAKE\.md/)
 })
 
 test('artifact lifecycle supports progressive disclosure without scope narrowing', () => {
@@ -47,12 +48,14 @@ test('artifact lifecycle reference documents review verdict routing', () => {
   const lifecycle = readFileSync(join(skillsRoot, '_shared', 'references', 'ARTIFACT-LIFECYCLE.md'), 'utf8')
 
   assert.match(lifecycle, /## Review Verdict Routing/)
-  assert.match(lifecycle, /`auto-ceo-review`/)
+  assert.doesNotMatch(lifecycle, /auto-ceo-review/)
   assert.match(lifecycle, /`auto-eng-review`/)
 
-  for (const verdict of ['approved', 'approved_with_risks', 'needs_clarification', 'descoped', 'needs_correction']) {
+  for (const verdict of ['approved', 'approved_with_risks', 'needs_correction']) {
     assert.match(lifecycle, new RegExp(`\`${verdict}\``), `verdict ${verdict} must appear in lifecycle reference`)
   }
+  assert.match(lifecycle, /Product direction has no review skill: the user approves SPEC\.md at frame's exit\./)
+  assert.match(lifecycle, /\*\*Frame's exit\*\* -> the user reads and approves SPEC\.md before planning begins/)
 })
 
 test('artifact lifecycle allows clean execute-to-verify continuation', () => {
@@ -106,6 +109,21 @@ test('FRAMEWORK.md is the single home for artifact signal discipline', () => {
     assert.ok(framework.includes(fragment), `FRAMEWORK.md must hold the fragment: ${fragment}`)
     assert.ok(!lifecycle.includes(fragment), `ARTIFACT-LIFECYCLE.md must not redefine: ${fragment}`)
   }
+})
+
+test('checkpoint definitions live only in ARTIFACT-LIFECYCLE.md', () => {
+  const lifecycle = readFileSync(join(skillsRoot, '_shared', 'references', 'ARTIFACT-LIFECYCLE.md'), 'utf8')
+  const xmlConventions = readFileSync(join(skillsRoot, '_shared', 'authoring', 'XML-CONVENTIONS.md'), 'utf8')
+
+  // The definitions home. Each checkpoint type's meaning is stated here once.
+  assert.match(lifecycle, /## Checkpoint Semantics/)
+  assert.match(lifecycle, /named product, architecture, design, scope, or risk options/)
+
+  // XML-CONVENTIONS carried a second definitions table that drifted (its decision row
+  // dropped "risk"). It now points to the single home and defines nothing.
+  assert.match(xmlConventions, /defined once in `_shared\/references\/ARTIFACT-LIFECYCLE\.md` \(Checkpoint Semantics\)/)
+  assert.doesNotMatch(xmlConventions, /valid only when/)
+  assert.doesNotMatch(xmlConventions, /\| `human-verify` \|/)
 })
 
 test('artifact lifecycle defines the learned-truth wiki channel', () => {

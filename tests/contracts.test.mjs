@@ -14,7 +14,6 @@ import {
   EXECUTION_ROUTES,
   LENSES,
   PREREQUISITE_DIAGNOSTIC_CODES,
-  PRODUCT_REVIEW_VERDICTS,
   STAGE_PREREQUISITES,
   STAGES,
   SUBAGENT_STATUSES,
@@ -23,7 +22,6 @@ import {
   isValidEngineeringReview,
   isValidExecutionRoute,
   isValidLens,
-  isValidProductReview,
   isValidStage
 } from '../lib/contracts.mjs'
 
@@ -39,7 +37,6 @@ test('kernel contracts are driven by the checked-in contract manifest', () => {
   assert.deepEqual(CHECKPOINT_TYPES, contractsManifest.checkpointTypes)
   assert.deepEqual(ARTIFACT_LAYOUT, contractsManifest.artifactLayout)
   assert.deepEqual(STAGE_PREREQUISITES, contractsManifest.stagePrerequisites)
-  assert.deepEqual(PRODUCT_REVIEW_VERDICTS, contractsManifest.reviewVerdicts.product)
   assert.deepEqual(ENGINEERING_REVIEW_VERDICTS, contractsManifest.reviewVerdicts.engineering)
   assert.deepEqual(PREREQUISITE_DIAGNOSTIC_CODES, contractsManifest.prerequisiteDiagnosticCodes)
   assert.deepEqual(CANONICAL_POINTER_CHECKS, contractsManifest.canonicalPointerChecks)
@@ -50,14 +47,14 @@ test('kernel contracts are driven by the checked-in contract manifest', () => {
 })
 
 test('verdict routing covers every review verdict with known skills', () => {
-  assert.deepEqual(Object.keys(VERDICT_ROUTING.product).sort(), PRODUCT_REVIEW_VERDICTS.slice().sort())
   assert.deepEqual(Object.keys(VERDICT_ROUTING.engineering).sort(), ENGINEERING_REVIEW_VERDICTS.slice().sort())
+  assert.equal(VERDICT_ROUTING.product, undefined)
 
   const knownSkills = new Set([
-    'auto-office-hours', 'auto-frame', 'auto-ceo-review', 'auto-plan',
+    'auto-office-hours', 'auto-frame', 'auto-plan',
     'auto-eng-review', 'auto-execute', 'auto-verify', 'auto-resume', 'auto-onboard'
   ])
-  for (const routing of [VERDICT_ROUTING.product, VERDICT_ROUTING.engineering]) {
+  for (const routing of [VERDICT_ROUTING.engineering]) {
     for (const [verdict, skills] of Object.entries(routing)) {
       assert.ok(skills.length > 0, `${verdict} must route somewhere`)
       for (const skill of skills) {
@@ -120,12 +117,8 @@ test('kernel contracts expose stable stage prerequisites', () => {
 })
 
 test('kernel contracts expose stable review verdict vocabularies', () => {
-  assert.deepEqual(PRODUCT_REVIEW_VERDICTS, ['approved', 'approved_with_risks', 'needs_clarification', 'descoped'])
   assert.deepEqual(ENGINEERING_REVIEW_VERDICTS, ['approved', 'approved_with_risks', 'needs_correction'])
-  assert.equal(isValidProductReview('approved'), true)
-  assert.equal(isValidProductReview('needs_clarification'), true)
-  assert.equal(isValidProductReview('descoped'), true)
-  assert.equal(isValidProductReview('rejected'), false)
+  assert.equal(CONTRACTS_DATA.reviewVerdicts.product, undefined, 'product review vocabulary must not return')
   assert.equal(isValidEngineeringReview('approved'), true)
   assert.equal(isValidEngineeringReview('needs_correction'), true)
   assert.equal(isValidEngineeringReview('descoped'), false)

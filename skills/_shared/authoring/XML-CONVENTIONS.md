@@ -4,13 +4,12 @@ Tags are attention spikes. Their value comes from scarcity — every additional 
 
 ## Allowed Tags
 
-Three tags. No more.
+Two tags. No more.
 
 | Tag | Purpose | Shape |
 |-----|---------|-------|
 | `<GATE>` | Absolute prohibition | Starts with "Do NOT". Lists conditions. Includes an escape hatch. |
 | `<STOP>` | Halt conditions | Lists exact conditions. Ends with the concrete recovery action (report, recommend a skill), or with "Do not guess. Do not proceed." when there is none. |
-| `<INTERVIEW>` | Behavioral branch: ask vs. skip | States question budget and grouping. |
 
 ## Tag Syntax
 
@@ -33,9 +32,9 @@ Not every skill needs tags. Match tag density to the skill's decision surface.
 
 | Tier | Tags | Examples |
 |------|------|----------|
-| Heavy | `<GATE>` + `<STOP>` + optional `<INTERVIEW>` | auto-execute, auto-frame, auto-office-hours |
-| Medium | One tag, typically `<GATE>` or `<STOP>` | auto-plan, auto-onboard, auto-verify, auto-resume |
-| Light | No tags. Blocking conditions live in Rules as "Do not guess." sentences. | auto-ceo-review, auto-eng-review |
+| Heavy | `<GATE>` + `<STOP>` | auto-execute, auto-office-hours |
+| Medium | One tag, typically `<GATE>` or `<STOP>` | auto-frame, auto-plan, auto-onboard, auto-verify, auto-resume |
+| Light | No tags. Blocking conditions live in Rules as "Do not guess." sentences. | auto-eng-review |
 
 ## Signal Scarcity
 
@@ -64,14 +63,6 @@ Every gate in a skill maps to one of these four types.
 
 ## Checkpoint Types
 
-When a skill requires human interaction, use one of these checkpoint types:
-
-| Type | Use for |
-|------|---------|
-| `human-verify` | Human-only validation that available commands, tests, host tools, or local inspection cannot prove. |
-| `decision` | A human must choose among named product, architecture, design, or scope options. |
-| `human-action` | Progress requires an external action the agent cannot perform, such as 2FA, account approval, or off-machine access. |
+The checkpoint vocabulary (`human-verify`, `decision`, `human-action`) is defined once in `_shared/references/ARTIFACT-LIFECYCLE.md` (Checkpoint Semantics). Do not restate the definitions here or in any skill.
 
 Golden rule: **If the agent can run it, the agent runs it.** The user only does what requires human judgment.
-
-Decision checkpoints require a concrete question and named options. Do not pause for implementation caveats, validation results, downstream consequences, or next-step recommendations when the approved plan already names the next slice.

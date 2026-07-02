@@ -207,3 +207,20 @@ test('auto-execute stop examples require bounded diagnostics before halting on u
   assert.match(source, /run one bounded diagnostic/)
   assert.doesNotMatch(source, /unsure after 30 seconds/)
 })
+
+test('auto-execute git rule carries the worktree carve-out and one attempt limit', () => {
+  const source = readFileSync(join(skillsRoot, 'auto-execute', 'SKILL.md'), 'utf8')
+  const stopExamples = readFileSync(join(skillsRoot, 'auto-execute', 'references', 'stop-examples.md'), 'utf8')
+  const debugProtocol = readFileSync(join(skillsRoot, 'auto-execute', 'references', 'debug-protocol.md'), 'utf8')
+
+  // The strictly-additive rule must name the coordinator-managed worktree carve-out
+  // instead of contradicting the parallel-isolation mechanics in git-rhythm.md.
+  assert.match(source, /carve-out: coordinator-managed `git worktree add`\/`remove`/)
+  assert.match(source, /worktree carve-out in ARTIFACT-LIFECYCLE\.md/)
+
+  // One attempt threshold across the STOP condition and both references: 3, then halt.
+  assert.match(source, /A test fails 3 times with the same error/)
+  assert.doesNotMatch(source, /> ?3 attempts/)
+  assert.match(stopExamples, /A test fails 3 times with the same error/)
+  assert.match(debugProtocol, /within 3 attempts/)
+})

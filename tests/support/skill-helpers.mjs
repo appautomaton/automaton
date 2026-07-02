@@ -14,7 +14,6 @@ export const authoredSkills = [
   'auto-verify',
   'auto-resume',
   'auto-office-hours',
-  'auto-ceo-review',
   'auto-eng-review'
 ]
 

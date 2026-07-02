@@ -12,8 +12,13 @@
 
 ## Scenario 2: Fresh Session, No Active Change
 
-**State:** `current.json` has `active_change: "none"` or file is missing.
-**Action:** Check if `.agent/` exists. If yes, read steering artifacts that exist and ask user what to work on. If no, `Next: auto-onboard`.
+**State:** `current.json` exists with `active_change: "none"`.
+**Action:** Read the steering artifacts that exist and ask the user what to work on.
+
+## Scenario 2b: Missing State File
+
+**State:** `.agent/` does not exist, or `current.json` is missing.
+**Action:** This is the SKILL.md STOP condition. Halt, recommend `auto-onboard`, and do not attempt recovery without a state file.
 
 ## Scenario 3: Stale Canonical Pointer
 
@@ -22,8 +27,8 @@
 
 ## Scenario 4: Review Verdict Blocks Progress
 
-**State:** `current.json` has `product_review: "needs_clarification"` but stage is `plan`.
-**Action:** Surface the review verdict. `Next: auto-frame` to address the clarification before planning.
+**State:** `current.json` has `engineering_review: "needs_correction"` but stage is `execute`.
+**Action:** Surface the review verdict. `Next: auto-plan` to address the correction before execution continues.
 
 ## Scenario 5: Scaffold-Level Steering
 
@@ -38,12 +43,12 @@
 ## Stage Routing
 
 - Stage `frame` with no SPEC.md: `Next: auto-frame`.
-- Stage `frame` with SPEC.md: `Next: auto-plan`; mention `auto-ceo-review` only when product direction needs review.
+- Stage `frame` with SPEC.md: `Next: auto-plan`. The user approves SPEC.md at that stop.
 - Stage `plan` with no PLAN.md: `Next: auto-plan`.
-- Stage `plan` with PLAN.md: `Next: auto-execute`; mention `auto-eng-review` only when execution safety needs review.
+- Stage `plan` with PLAN.md: `Next: auto-execute`. Mention `auto-eng-review` only when execution safety needs review.
 - Stage `execute`: `Next: auto-execute`.
-- Stage `verify` → `auto-verify`.
-- Stage `verified` → change complete; report completion.
+- Stage `verify`: `Next: auto-verify`.
+- Stage `verified`: change complete. Report completion with no `Next:` line.
 - Stage `resume` with missing steering: `Next: auto-onboard`.
-- Change complete and ROADMAP.md has pending items: surface them as optional future work; no next lifecycle skill by default.
+- Change complete and ROADMAP.md has pending items: surface them as optional future work with no next lifecycle skill by default.
 - Change complete and no pending roadmap items: `none - change complete`.

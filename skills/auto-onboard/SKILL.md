@@ -71,7 +71,7 @@ Summarize what you found, what you wrote, and what remains uncertain.
 
 Do NOT proceed past scanning if:
 - The repository has no `README.md`, no `package.json` equivalent, and no recognizable directory structure after reading 10 files.
-- The user has not confirmed whether to overwrite existing steering artifacts.
+- Real (non-scaffold) steering exists and the user has not confirmed whether to overwrite it. Scaffold-level steering proceeds without confirmation per Detect State.
 
 If the repo is empty or unrecognizable, report this and stop.
 </GATE>
@@ -98,5 +98,5 @@ Do not guess. Do not proceed.
 - Default scan budget: 10 files. Summarize, do not transcribe. Extend in small increments only while runtime surfaces, package boundaries, stack, or working commands remain unidentified, and name the overrun reason in the report.
 - Cite a file path for every steering claim.
 - Delete empty template sections; templates are prompts, not required headings.
-- Keep durable artifacts free of speculative questions, confidence labels, and routing chatter.
+- Keep durable artifacts free of speculative questions, verdict-style confidence sections, and routing chatter. The Observed, Inferred, and Needs Confirmation split from the artifact contract is required, not banned.
 - Never create roadmap phases on first-time onboarding. On refresh, change roadmap phases only when evidence and user confirmation justify it.

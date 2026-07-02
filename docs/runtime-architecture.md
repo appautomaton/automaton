@@ -43,7 +43,7 @@ installProject()                    installHost(claude)
 ├─ replace runtime/ → .agent/.automaton/ │  (skip _shared/ and per-skill scripts)
 ├─ replace shared refs → .agent/.automaton/references/
 ├─ replace shared scripts → .agent/.automaton/scripts/
-└─ seed current.json if missing     ├─ generate HOST-TOOLS.md in auto-execute
+└─ seed current.json if missing     ├─ generate HOST-TOOLS.md in the 4 dispatching skills
                                     ├─ replace generated hook/plugin implementations
                                     └─ merge host config when needed
 ```
@@ -64,5 +64,5 @@ User invokes /auto-frame
   └─ LLM works (reads files, writes SPEC.md, etc.)
   └─ Last step: node .agent/.automaton/scripts/sync-status.mjs --canonical-spec ... --stage frame
        → validates/writes current.json
-  └─ Output: "Recommended next: auto-plan" or "Optional review: auto-ceo-review"
+  └─ Output: "Recommended next: auto-plan" once the user approves SPEC.md
 ```

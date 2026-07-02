@@ -17,16 +17,14 @@ This protocol is per-slice. `auto-execute` owns execute-stage orchestration acro
 
 ## Dispatch Packet
 
-Every subagent call should include a compact packet:
+Every subagent call should include a compact packet. The installed role body already carries identity, status vocabulary, and the return envelope, so the packet carries only per-call context:
 
-- role and requested status vocabulary
 - current slice objective
 - acceptance criteria or verification commands
 - relevant constraints and anti-goals
 - named files or areas to inspect
 - edit scope: files or directories the implementer may modify (unlisted paths are read-only)
 - requested changes from the prior review when the implementer is being re-dispatched after `CHANGES_REQUESTED`
-- expected output structure
 - stop conditions for missing context, ambiguity, or unsafe scope expansion
 
 Do not ask a subagent to rediscover the whole project unless exploration is the assigned slice. If a subagent needs more context, provide one targeted correction before escalating.
@@ -34,7 +32,7 @@ Do not ask a subagent to rediscover the whole project unless exploration is the 
 ## Dispatch Rules
 
 - Use subagents only when `auto-execute` selects the subagent route.
-- Enter this protocol from `auto-execute`; do not make framing, resume, or product review multi-agent by default.
+- Enter this protocol from `auto-execute`; do not make framing, resume, or reviews multi-agent by default.
 - Dispatch only by named host-native agent (`automaton-implementer`, `automaton-spec-reviewer`, `automaton-quality-reviewer`). Do not paste a role body into a generic worker, explorer, or other host agent at runtime; the named agent's installed definition already carries the role body.
 - The coordinator provides full task text for the current slice and relevant constraints. Do not make subagents rediscover the whole plan.
 - Dispatch implementers sequentially by default. Cross-slice parallel dispatch is allowed only when `PLAN.md` explicitly marks slices parallel-safe, dependencies are independent, and write sets are disjoint; in a git repo it also requires worktree isolation (see Parallel Isolation).

@@ -22,7 +22,7 @@ test('office-hours separates work scale from work shape', () => {
 
 test('office-hours captures request coverage before narrowing scope', () => {
   const source = readFileSync(join(skillsRoot, 'auto-office-hours', 'SKILL.md'), 'utf8')
-  const intakeTemplate = readFileSync(join(skillsRoot, 'auto-office-hours', 'references', 'intake-template.md'), 'utf8')
+  const intakeTemplate = readFileSync(join(skillsRoot, 'auto-office-hours', 'references', 'spec-skeleton.md'), 'utf8')
 
   assert.match(source, /### Request Coverage/)
   assert.match(source, /perspectives or audiences/)
@@ -53,24 +53,43 @@ test('office-hours captures request coverage before narrowing scope', () => {
   assert.equal(existsSync(join(skillsRoot, 'auto-office-hours', 'references', 'builder-intake-template.md')), false)
 })
 
-test('auto-office-hours persists approved intake without pre-approval writes', () => {
+// Grill mode is the salvage of the grill-me interaction contract: the model
+// extracts judgment from the human instead of pronouncing product verdicts.
+// It must stay opt-in, or office-hours turns every session into an interrogation.
+test('auto-office-hours carries the question contract and an opt-in grill mode', () => {
   const source = readFileSync(join(skillsRoot, 'auto-office-hours', 'SKILL.md'), 'utf8')
-  const template = readFileSync(join(skillsRoot, 'auto-office-hours', 'references', 'intake-template.md'), 'utf8')
+  const calibration = readFileSync(join(skillsRoot, 'auto-office-hours', 'references', 'diagnostic-calibration.md'), 'utf8')
+
+  assert.match(source, /Ask one question per message and attach your recommended answer/)
+  assert.match(source, /Never ask what the repo can answer/)
+  assert.match(source, /resolving dependent decisions one at a time/)
+  assert.match(source, /the user asks \(for example "grill me"\)/)
+  assert.match(source, /high-stakes \(auth, schema, concurrency, migration, payments\)/)
+  assert.match(source, /Never self-escalate into a grill/)
+  assert.match(calibration, /## Grill Depth/)
+  assert.match(calibration, /Walk the decision tree in dependency order/)
+  assert.match(calibration, /Stress-test relationships with concrete scenarios/)
+})
+
+test('auto-office-hours seeds the approved skeleton without pre-approval writes', () => {
+  const source = readFileSync(join(skillsRoot, 'auto-office-hours', 'SKILL.md'), 'utf8')
+  const template = readFileSync(join(skillsRoot, 'auto-office-hours', 'references', 'spec-skeleton.md'), 'utf8')
 
   assert.match(source, /Before approval, it writes nothing/)
-  assert.match(source, /does not create SPEC\.md in conversational mode/)
-  assert.match(source, /Persist Approved Intake/)
+  assert.match(source, /It does not complete the spec: auto-frame owns acceptance criteria, required outcome, and `canonical_spec`/)
+  assert.match(source, /Persist Approved Objective/)
   assert.match(source, /Continue To Frame When Ready/)
-  assert.match(source, /\.agent\/work\/<change>\/INTAKE\.md/)
+  assert.match(source, /Write the SPEC skeleton to `\.agent\/work\/<change>\/SPEC\.md`/)
   assert.match(source, /sync-status\.mjs --active-change "<change>" --stage frame/)
   assert.match(source, /records `active_change` and `stage`/)
   assert.match(source, /`stage: frame`/)
   assert.match(source, /shared state validator/)
-  assert.match(source, /`INTAKE\.md` is guaranteed only for an approved office-hours session/)
-  assert.match(source, /Approved, complete intake continues inline into `auto-frame` without another user prompt/)
-  assert.match(source, /write `\.agent\/work\/<change>\/SPEC\.md`/)
+  assert.match(source, /The SPEC skeleton is guaranteed only for an approved office-hours session/)
+  assert.match(source, /Approved, frame-ready skeleton continues inline into `auto-frame` without another user prompt/)
+  assert.match(source, /complete `\.agent\/work\/<change>\/SPEC\.md`/)
   assert.match(source, /no file writes before the user picks an approach/)
-  assert.match(template, /Write the approved intake to `\.agent\/work\/<change-name>\/INTAKE\.md`/)
+  assert.match(template, /top half of `\.agent\/work\/<change-name>\/SPEC\.md`/)
+  assert.match(template, /auto-frame owns them/)
 })
 
 test('auto-office-hours ships startup and builder diagnostic references', () => {
@@ -101,4 +120,24 @@ test('auto-office-hours uses observable diagnostic checks instead of posture lan
   assert.equal(existsSync(join(skillsRoot, 'auto-office-hours', 'references', 'anti-sycophancy.md')), false)
   assert.equal(existsSync(join(skillsRoot, 'auto-office-hours', 'references', 'pushback-patterns.md')), false)
   assert.equal(existsSync(join(skillsRoot, 'auto-office-hours', 'references', 'question-exemplars.md')), false)
+})
+
+test('auto-office-hours references route only to steps that exist in the skill', () => {
+  const landscape = readFileSync(join(skillsRoot, 'auto-office-hours', 'references', 'landscape-awareness.md'), 'utf8')
+  const contentIntake = readFileSync(join(skillsRoot, 'auto-office-hours', 'references', 'content-intake.md'), 'utf8')
+  const alternatives = readFileSync(join(skillsRoot, 'auto-office-hours', 'references', 'alternatives-format.md'), 'utf8')
+
+  // "Premise Challenge" was a reference that never existed here. Landscape findings route into
+  // the skill's own steps instead.
+  assert.doesNotMatch(landscape, /premise challenge/i)
+  assert.match(landscape, /Request Coverage/)
+
+  // Content is a peer mode alongside Startup and Builder, not an overlay on them.
+  assert.match(contentIntake, /Content is a peer mode alongside Startup and Builder/)
+  assert.doesNotMatch(contentIntake, /mode detection \(Startup or Builder\)/)
+
+  // The minimal-viable and ideal-architecture mandate is scoped to the shapes SKILL.md
+  // names, so shape-specific differentiation is not overridden by the format reference.
+  assert.match(alternatives, /For bug, feature, and capability work, one must be minimal viable/)
+  assert.match(alternatives, /blast radius, traceability, evidence depth, rollout risk, or verification strength/)
 })

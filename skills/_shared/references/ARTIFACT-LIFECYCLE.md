@@ -17,7 +17,6 @@ Stage list, state contract, and `sync-status.mjs` mandate are in `FRAMEWORK.md`.
 Allowed active-change layout:
 
 ```text
-.agent/work/<change>/INTAKE.md
 .agent/work/<change>/SPEC.md
 .agent/work/<change>/spec/*.md
 .agent/work/<change>/PLAN.md
@@ -26,7 +25,7 @@ Allowed active-change layout:
 .agent/work/<change>/orchestration/*.md   # conditional: subagent route or complex review loops only
 ```
 
-- `INTAKE.md` preserves approved office-hours context for `auto-frame`. It is discovered by `active_change`, not by a canonical pointer.
+- `SPEC.md` may begin as an office-hours skeleton. auto-frame completes it and only then records `canonical_spec`, so a SPEC.md without the pointer means framing is in progress. A legacy `INTAKE.md` from earlier versions is optional context.
 - `SPEC.md` must summarize and link every normative `spec/*.md` detail file. Unlinked supplemental files are notes, not contract.
 - `PLAN.md` must link any `slices/*.md` detail file and preserve requirement IDs, gap IDs, invariants, audit questions, migration checkpoints, or coverage targets from SPEC.md.
 - Execute and verify load only detail files linked to the active slice or requirement IDs.
@@ -46,7 +45,7 @@ Allowed active-change layout:
 
 | Stage | Required inputs | Produces | State pointer expectations | Next handoff |
 | --- | --- | --- | --- | --- |
-| `frame` | active change; optional `INTAKE.md` or framing context | `INTAKE.md`, `SPEC.md`, and roadmap update when office-hours approves roadmap scale | office-hours sets `active_change` and `stage: frame`; frame sets `canonical_spec`; `stage` stays `frame` unless plan handoff is approved | **Continue** → `auto-plan` (construction) or `auto-office-hours` (not frameable). **Stop** → `Next: auto-ceo-review` (optional review). |
+| `frame` | active change; optional SPEC skeleton or framing context | `SPEC.md` (skeleton seeded by office-hours, completed by frame) and roadmap update when office-hours approves roadmap scale | office-hours sets `active_change` and `stage: frame`; frame sets `canonical_spec`; `stage` stays `frame`, and auto-plan records `stage: plan` when planning begins | **Continue** → `auto-office-hours` (not frameable). **Stop** → `Next: auto-plan` once the user approves SPEC.md. |
 | `plan` | `canonical_spec`; optional review sections | `.agent/work/<change>/PLAN.md`; optional `DESIGN.md` | `canonical_plan` points to PLAN.md; `canonical_design` only when DESIGN.md exists; `stage` becomes `plan` | **Stop** → `Next: auto-eng-review` (optional) or `Next: auto-execute`. |
 | `execute` | approved PLAN.md (with `canonical_spec` still resolving), current slice, acceptance criteria, verification commands | code/docs/tests plus PLAN-required slice evidence | auto-execute sets `stage: execute` after `canonical_plan` resolves and before changes; do not change canonical pointers to missing files; do not add slice cursor state | **Continue** → re-enter for remaining slices, then `auto-verify` when all complete; **stop** at a valid checkpoint, STOP condition, context pressure, or host limit. |
 | `verify` | canonical PLAN.md (with `canonical_spec` still resolving), executed slices, verification commands | verification report; `VERIFY-GAP` annotations in PLAN.md on failure; terminal `## Verification` section in PLAN.md on pass | auto-verify sets `stage: verify` after `canonical_plan` resolves and before commands; failure returns state to `stage: execute`, or to `stage: plan` when the same criterion fails a second consecutive verification | **Stop** → `verified` on pass (terminal); `Next: auto-execute` on fail; `Next: auto-plan` on a repeated fail of the same criterion. |
@@ -57,11 +56,12 @@ Allowed active-change layout:
 
 The two-move model (**Continue inline** / **Stop and hand off**) is in `FRAMEWORK.md`. Continue inline by default so a clean handoff does not force the user to re-invoke the next skill. This is not nested skill invocation (DD-003): no skill calls another; the agent loads the next stage's SKILL.md and proceeds. Do not invent a universal Skill tool or hidden dispatcher.
 
-**Stop and hand off at three edges:**
+**Stop and hand off at four edges:**
 
-1. **Entry into `execute`** -> code and project artifacts start changing there, so a human authorizes it. Covers `plan → execute`, `auto-eng-review → execute`, and a failed `verify → execute`.
-2. **Entry into an optional review** -> `auto-ceo-review` and `auto-eng-review` are user-invoked. A producing skill recommends a review and stops. It does not auto-run a review on the artifact it just wrote, which would trap the review in the producer's own context.
-3. **Verify outcomes** -> a pass closes the change, a fail returns to execute, a repeated fail of the same criterion returns to plan. Stop in every case.
+1. **Frame's exit** -> the user reads and approves SPEC.md before planning begins. The human reading the spec is the product review. Covers `frame → plan`.
+2. **Entry into `execute`** -> code and project artifacts start changing there, so a human authorizes it. Covers `plan → execute`, `auto-eng-review → execute`, and a failed `verify → execute`.
+3. **Entry into the optional `auto-eng-review`** -> user-invoked. A producing skill recommends the review and stops. It does not auto-run a review on the artifact it just wrote, which would trap the review in the producer's own context.
+4. **Verify outcomes** -> a pass closes the change, a fail returns to execute, a repeated fail of the same criterion returns to plan. Stop in every case.
 
 `auto-verify` is the mandatory gate, not an optional review, so `execute → verify` continues inline. The audit re-derives from fresh command output, never from execute's reasoning. `auto-onboard` and `auto-resume` are utilities: they report findings and recommend a next skill rather than continuing, so the user keeps the direction. `stage: verified` is terminal. Any `auto-office-hours` mention is for a new objective, not a same-change handoff.
 
@@ -97,16 +97,10 @@ Validation tier: L3 (prompt prose plus regression tests). No runtime enforcement
 
 ## Review Verdict Routing
 
-`auto-ceo-review` and `auto-eng-review` are optional lifecycle checks, not stage prerequisites. Use them when product direction or execution safety needs review. Downstream skills must respect any review verdict in `current.json`.
-
-Product review may descope or re-scope; engineering review blocks execution safety only.
+`auto-eng-review` is an optional lifecycle check, not a stage prerequisite. Use it when execution safety needs review. Downstream skills must respect any review verdict in `current.json`. Product direction has no review skill: the user approves SPEC.md at frame's exit.
 
 | Review | Verdict | Next skill |
 | --- | --- | --- |
-| `auto-ceo-review` | `approved` | `auto-plan` |
-| `auto-ceo-review` | `approved_with_risks` | `auto-plan` (risks must appear in plan) |
-| `auto-ceo-review` | `needs_clarification` | `auto-frame` or `auto-office-hours` |
-| `auto-ceo-review` | `descoped` | `auto-office-hours` or stop |
 | `auto-eng-review` | `approved` | `auto-execute` |
 | `auto-eng-review` | `approved_with_risks` | `auto-execute` (risks surfaced before each slice) |
 | `auto-eng-review` | `needs_correction` | `auto-plan` |
@@ -135,4 +129,4 @@ Runtime stays portable across Claude, Codex, and OpenCode by holding only L1 che
 
 ## Artifact Signal Discipline
 
-The five signal rules and the deletion test live in `FRAMEWORK.md` (Artifact Signal Discipline), which loads once per session. Apply them to every artifact write. Do not accumulate multiple `## Review: Product` or `## Review: Engineering` blocks: append-replace, not stack.
+The five signal rules and the deletion test live in `FRAMEWORK.md` (Artifact Signal Discipline), which loads once per session. Apply them to every artifact write. Do not accumulate multiple `## Review: Engineering` blocks: append-replace, not stack.

@@ -16,7 +16,7 @@ If Layer 3 reasoning reveals a genuine insight, name it explicitly:
 
 > EUREKA: Everyone does X because they assume [assumption]. But [evidence from our conversation] suggests that's wrong here. This means [implication].
 
-If no eureka moment exists, say: "The conventional wisdom seems sound here. Let's build on it." Proceed to premise challenge.
+If no eureka moment exists, say: "The conventional wisdom seems sound here. Let's build on it." Carry the result into Request Coverage and the alternatives you present.
 
 ## Search Guidelines
 
@@ -34,7 +34,7 @@ If no eureka moment exists, say: "The conventional wisdom seems sound here. Let'
 - "[thing being built] open source alternatives"
 - "best [thing category] {current year}"
 
-Read the top 2-3 results. Feed findings into the Premise Challenge.
+Read the top 2-3 results. Feed findings into Request Coverage and the alternatives you present.
 
 ## Privacy Gate
 

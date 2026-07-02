@@ -19,7 +19,6 @@ const DEFAULT_STATE = {
   canonicalSpec: null,
   canonicalDesign: null,
   canonicalPlan: null,
-  productReview: null,
   engineeringReview: null
 }
 
@@ -77,13 +76,11 @@ function normalizeCurrentState(parsed) {
     canonical_spec: canonicalSpecSnake,
     canonical_design: canonicalDesignSnake,
     canonical_plan: canonicalPlanSnake,
-    product_review: productReviewSnake,
     engineering_review: engineeringReviewSnake,
     activeChange,
     canonicalSpec,
     canonicalDesign,
     canonicalPlan,
-    productReview,
     engineeringReview,
     ...rest
   } = state
@@ -94,7 +91,6 @@ function normalizeCurrentState(parsed) {
     canonicalSpec: canonicalSpec ?? canonicalSpecSnake ?? null,
     canonicalDesign: canonicalDesign ?? canonicalDesignSnake ?? null,
     canonicalPlan: canonicalPlan ?? canonicalPlanSnake ?? null,
-    productReview: productReview ?? productReviewSnake ?? null,
     engineeringReview: engineeringReview ?? engineeringReviewSnake ?? null,
     ...Object.fromEntries(
       Object.entries(rest).filter(
@@ -104,7 +100,6 @@ function normalizeCurrentState(parsed) {
           'canonical_spec',
           'canonical_design',
           'canonical_plan',
-          'product_review',
           'engineering_review'
         ].includes(key)
       )
@@ -115,7 +110,6 @@ function normalizeCurrentState(parsed) {
 function diagnose(state, projectRoot, manifest) {
   const diagnostics = []
   const validStages = new Set(manifest.stages ?? [])
-  const productVerdicts = new Set(manifest.reviewVerdicts?.product ?? [])
   const engineeringVerdicts = new Set(manifest.reviewVerdicts?.engineering ?? [])
   let invalidStage = false
   let stageIsValid = false
@@ -138,12 +132,6 @@ function diagnose(state, projectRoot, manifest) {
       if (state[field] === undefined || state[field] === null) {
         const code = manifest.prerequisiteDiagnosticCodes?.[field] ?? `missing_${field}`
         diagnostics.push(diagnostic('error', code, `${state.stage} stage requires ${field}`))
-      }
-    }
-
-    if (state.productReview !== undefined && state.productReview !== null) {
-      if (!productVerdicts.has(state.productReview)) {
-        diagnostics.push(diagnostic('error', 'invalid_product_review', `unrecognized product_review verdict: ${state.productReview}`))
       }
     }
 

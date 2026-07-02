@@ -80,7 +80,7 @@ Use strict vocabulary. No synonyms.
 
 ### Outside Voice
 
-Optional. When a second model is reachable from this session and the plan carries non-trivial risk, read `references/outside-voice.md` after rendering the verdict: a bounded cross-model pass that surfaces tension to the user and never auto-applies anything.
+Optional. When a second model is reachable from this session and the plan carries non-trivial risk, read `references/outside-voice.md` after rendering the verdict: a round-capped cross-model loop that arbiters findings with logged reasons, surfaces tension to the user, and never auto-applies anything.
 
 ### Append Review
 

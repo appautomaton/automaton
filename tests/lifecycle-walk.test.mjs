@@ -81,11 +81,8 @@ test('the full lifecycle walks edge by edge through the real scripts', () => {
   writeFileSync(join(root, specPath), GOOD_SPEC, 'utf8')
   assert.deepEqual(getContext(root).diagnostics, [], 'well-shaped SPEC must read clean')
 
-  // optional product review: the review skill appends its section to SPEC.md
-  // and syncs the verdict. Both surfaces move together or lint warns.
-  writeFileSync(join(root, specPath), `${GOOD_SPEC}\n## Review: Product\n\nVerdict: approved\n`, 'utf8')
-  expectClean('product review', sync(root, ['--product-review', 'approved']))
-  assert.equal(getContext(root).stage, 'frame')
+  // The user approves SPEC.md at frame's exit. There is no product review
+  // verdict to sync: the walk proceeds straight to plan.
 
   // plan: canonical plan recorded, stage advances.
   writeFileSync(join(root, planPath), GOOD_PLAN, 'utf8')
@@ -114,7 +111,6 @@ test('the full lifecycle walks edge by edge through the real scripts', () => {
   assert.equal(final.activeChange, change)
   assert.equal(final.canonicalSpec, specPath)
   assert.equal(final.canonicalPlan, planPath)
-  assert.equal(final.productReview, 'approved')
   assert.equal(final.engineeringReview, 'approved')
   assert.deepEqual(final.diagnostics, [])
 
@@ -136,7 +132,7 @@ test('the walk is guarded: invalid stages block and a change switch clears deriv
 
   expectClean('seed', sync(root, ['--active-change', change, '--canonical-spec', specPath, '--stage', 'frame']))
   expectClean('seed plan', sync(root, ['--canonical-plan', planPath, '--stage', 'plan']))
-  expectClean('seed reviews', sync(root, ['--product-review', 'approved', '--engineering-review', 'approved']))
+  expectClean('seed reviews', sync(root, ['--engineering-review', 'approved']))
 
   // L1 blocks an invalid stage with an error diagnostic and a non-zero exit (DD-004).
   const invalid = sync(root, ['--stage', 'bogus'])
@@ -152,6 +148,5 @@ test('the walk is guarded: invalid stages block and a change switch clears deriv
   assert.equal(next.activeChange, '2026-06-13-next')
   assert.equal(next.canonicalSpec, null)
   assert.equal(next.canonicalPlan, null)
-  assert.equal(next.productReview, null)
   assert.equal(next.engineeringReview, null)
 })

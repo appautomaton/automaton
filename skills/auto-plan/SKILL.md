@@ -38,7 +38,7 @@ Read `.agent/wiki/LEARNINGS.md` when it exists: one-line facts earlier changes p
 
 ### Assess Review State (if reviews exist)
 
-If `product_review` exists in `current.json`, read `## Review: Product` in SPEC.md. Address each `approved_with_risks` risk in the plan. Stop and recommend `auto-frame` for `descoped` or `needs_clarification`.
+If `engineering_review` exists in `current.json` for this change, this is a re-plan: read `## Review: Engineering` in the prior PLAN.md and address each correction and `approved_with_risks` risk in the revised plan.
 
 If the engineering approach is complex or risky, recommend `auto-eng-review` before execution.
 
@@ -93,6 +93,15 @@ Rules:
 - Checkpoint types (`human-verify`, `decision`, `human-action`) are defined once in `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Checkpoint Semantics). Assign a checkpoint only when its definition holds; default to `none`.
 - Keep slices small enough for one session. Move extended instructions to `slices/slice-NNN.md`; split only for independent outcomes.
 
+<GATE>
+
+Do NOT write PLAN.md if:
+- SPEC.md is missing or unreadable.
+- The scope is still ambiguous after reading SPEC.md.
+
+If any of these are true, recommend `auto-frame` and stop.
+</GATE>
+
 ### Write PLAN.md
 
 Write the plan to `.agent/work/<change>/PLAN.md`.
@@ -108,21 +117,11 @@ Write the plan to `.agent/work/<change>/PLAN.md`.
 - **Requirement traceability:** SPEC names gap IDs, invariant IDs, audit questions, migration checkpoints, or coverage targets. Omit when the SPEC has no traceable IDs.
 - **Aggregate verification commands table:** ≥ 3 slices or commands not captured per-slice. Per-slice inline suffices for smaller plans (index over transcript).
 
-Apply the Artifact Signal Discipline rules from `.agent/.automaton/references/FRAMEWORK.md` while writing. Replace prior `## Review:` sections on re-run for the same change.
+Apply the Artifact Signal Discipline rules from `.agent/.automaton/references/FRAMEWORK.md` while writing. Preserve existing `## Review:` sections on re-run. Review skills replace their own sections.
 
-### Write DESIGN.md (if non-trivial)
+### Write DESIGN.md (if it earns existence)
 
-Write `.agent/work/<change>/DESIGN.md` only for non-trivial architecture or new patterns. Keep it under 200 lines; skip it when the approach is obvious from SPEC.
-
-<GATE>
-
-Do NOT write PLAN.md if:
-- SPEC.md is missing or unreadable.
-- `product_review` is `descoped` or `needs_clarification`.
-- The scope is still ambiguous after reading SPEC.md.
-
-If any of these are true, recommend `auto-frame` and stop.
-</GATE>
+Write `.agent/work/<change>/DESIGN.md` only when all three hold: the decision is hard to reverse, a future reader would be surprised without context, and it resolved a real trade-off between genuine alternatives. Any one missing means the rationale lives in PLAN.md prose. Keep it under 200 lines.
 
 ### Update State
 

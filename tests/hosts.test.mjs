@@ -25,7 +25,7 @@ test('every host dispatch mapping names the librarian and its question packet', 
     assert.match(dispatch, /automaton-librarian/, `${host.id} dispatch mapping must name the librarian`)
     assert.match(dispatch, /LIBRARIAN\.md/, `${host.id} dispatch mapping must route the librarian to its question packet`)
     // The execute-stage packet must still be named so the implementer/reviewer path is intact.
-    assert.match(dispatch, /slice, constraints, acceptance criteria/, `${host.id} dispatch mapping must keep the execute-stage packet`)
+    assert.match(dispatch, /slice, edit scope, constraints, acceptance criteria/, `${host.id} dispatch mapping must keep the execute-stage packet including edit scope`)
   }
 })
 
@@ -131,6 +131,36 @@ test('Claude session-start hook reads Automaton state from a nested working dire
   assert.match(payload.hookSpecificOutput.additionalContext, /The user's latest request stays in charge/)
   assert.match(payload.hookSpecificOutput.additionalContext, /<\/automaton_reminder>$/)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /<change>/)
+})
+
+test('Claude session-start hook honors the compact source and defaults to non-compacted', () => {
+  const root = mkdtempSync(join(tmpdir(), 'automaton-install-claude-compact-'))
+  const scriptTarget = join(root, '.claude', 'hooks', 'session-start.mjs')
+
+  installHost(getHost('claude'), { root, sourceRoot })
+
+  // The claude matcher advertises `compact`, so the hook must read the payload's
+  // `source` field and emit the compaction reminder branch from context.mjs.
+  const compacted = spawnSync(process.execPath, [scriptTarget], {
+    cwd: root,
+    encoding: 'utf8',
+    input: JSON.stringify({ hook_event_name: 'SessionStart', source: 'compact' })
+  })
+  assert.equal(compacted.status, 0)
+  assert.match(
+    JSON.parse(compacted.stdout).hookSpecificOutput.additionalContext,
+    /This session was compacted\. Reload current\.json/
+  )
+
+  // Startup payloads and hosts that pass no payload stay on the plain reminder.
+  for (const input of [JSON.stringify({ hook_event_name: 'SessionStart', source: 'startup' }), '']) {
+    const plain = spawnSync(process.execPath, [scriptTarget], { cwd: root, encoding: 'utf8', input })
+    assert.equal(plain.status, 0)
+    assert.doesNotMatch(
+      JSON.parse(plain.stdout).hookSpecificOutput.additionalContext,
+      /This session was compacted/
+    )
+  }
 })
 
 test('Claude session-start hook injects the shared Automaton reminder without status prose', () => {
@@ -914,7 +944,7 @@ test('host install generates HOST-TOOLS.md in every dispatching skill and nowher
       `${skill} dispatches an agent and must carry HOST-TOOLS.md`
     )
   }
-  for (const skill of ['auto-verify', 'auto-resume', 'auto-onboard', 'auto-ceo-review', 'auto-eng-review']) {
+  for (const skill of ['auto-verify', 'auto-resume', 'auto-onboard', 'auto-eng-review']) {
     assert.equal(
       existsSync(join(skillsRoot, skill, 'references', 'HOST-TOOLS.md')),
       false,
@@ -1084,7 +1114,7 @@ test('OpenCode install generates host-native automaton subagent definitions for 
   assert.match(librarian, /^\s+task: deny$/m, 'librarian agent must deny task (recursion guard)')
 })
 
-test('HOST-TOOLS.md reaches every dispatching skill and marks the librarian any-stage', () => {
+test('HOST-TOOLS.md reaches every dispatching skill and scopes the librarian to them', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-install-hosttools-'))
   installHost(getHost('claude'), { root, sourceRoot })
 
@@ -1092,9 +1122,18 @@ test('HOST-TOOLS.md reaches every dispatching skill and marks the librarian any-
     const target = join(root, '.claude', 'skills', skill, 'references', 'HOST-TOOLS.md')
     assert.equal(existsSync(target), true, `${skill} must receive HOST-TOOLS.md`)
     const content = readFileSync(target, 'utf8')
-    assert.match(content, /automaton-librarian.*any stage/, 'HOST-TOOLS.md must list the librarian as an any-stage agent')
+    // HOST-TOOLS.md is generated only into these four skills, so its scope statement
+    // must name exactly them instead of promising "any stage".
+    assert.match(content, /automaton-librarian.*office-hours, frame, plan, and execute/, 'HOST-TOOLS.md must scope the librarian to the dispatching skills')
+    assert.match(content, /auto-office-hours, auto-frame, auto-plan, and auto-execute/, 'HOST-TOOLS.md must name the skills that carry the reference')
+    assert.doesNotMatch(content, /dispatched from any stage/)
     assert.match(content, /automaton-implementer.*execute stage/, 'HOST-TOOLS.md must mark the implementer execute-stage')
   }
+
+  // The shared LIBRARIAN reference points readers at their own skill's HOST-TOOLS copy,
+  // since no HOST-TOOLS.md exists beside the installed LIBRARIAN.md.
+  const librarian = readFileSync(join(root, '.agent', '.automaton', 'references', 'LIBRARIAN.md'), 'utf8')
+  assert.match(librarian, /installed in your skill's own `references\/` folder/)
 })
 
 test('install compiles role bodies into agent files without shipping role sources', () => {

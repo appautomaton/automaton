@@ -19,7 +19,7 @@ Do not dispatch it for a lookup you can settle in one or two reads yourself; the
 
 ## Dispatch
 
-Dispatch the host-native agent named `automaton-librarian` with your host's subagent mechanism (see `HOST-TOOLS.md` for the exact call on this host). Pass one bounded question:
+Dispatch the host-native agent named `automaton-librarian` with your host's subagent mechanism (see the `HOST-TOOLS.md` installed in your skill's own `references/` folder for the exact call on this host). Pass one bounded question:
 
 ```text
 <question>

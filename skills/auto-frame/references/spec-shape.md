@@ -7,6 +7,7 @@ SPEC.md is the reloadable contract. It must be specific enough for planning and 
 ## Core Fields
 
 Always include:
+- Bet: a one line `**Bet:** <wager>` opening the spec. It names what the change bets in plain language, so the reader can reject the premise before reading the mechanics.
 - Bounded goal: one sentence.
 - Broader intent: the larger user goal preserved or intentionally decomposed.
 - Work scale and work shape.
@@ -20,7 +21,7 @@ Always include:
 
 Include only when the trigger applies:
 - Linked detail files under `spec/` - trigger: constraints, risks, acceptance detail, or gap matrix is too large for inline SPEC.
-- Target user or stakeholder - trigger: product, design, or content lens is selected, or INTAKE names one.
+- Target user or stakeholder - trigger: product, design, or content lens is selected, or the skeleton names one.
 - Scope coverage decisions - trigger: intake or request includes included, deferred, anti-goal, or needs-decision items.
 - Blocking questions or assumptions - trigger: present and material; omit when none.
 

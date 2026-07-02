@@ -55,7 +55,7 @@ When stage is `execute` or `verify` and the project is a git repo, read the exec
 
 ### Surface Review State
 
-If `current.json` contains `product_review` or `engineering_review`, read the corresponding `## Review:` sections from canonical artifacts and include them in the resume summary.
+If `current.json` contains `engineering_review`, read the `## Review: Engineering` section from the canonical plan and include it in the resume summary.
 
 ### Recovery Summary
 

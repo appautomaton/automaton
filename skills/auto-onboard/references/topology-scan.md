@@ -53,4 +53,4 @@ That map should capture:
 - conventions and constraints
 - key unknowns and sources read
 
-If a follow-up is needed, use `examples/question-patterns.md`.
+If a follow-up is needed, use `references/question-patterns.md`.
