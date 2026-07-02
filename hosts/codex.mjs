@@ -1,10 +1,10 @@
 import { existsSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 
-import { renderSessionStartHook, shellQuote } from './hooks.mjs'
+import { renderNodeHookCommand, renderSessionStartHook, shellQuote } from './hooks.mjs'
 
 function renderHookCommand(root, scriptName) {
-  return `${shellQuote(process.execPath)} ${shellQuote(resolve(root, '.codex', 'hooks', `${scriptName}.mjs`))}`
+  return renderNodeHookCommand(shellQuote(resolve(root, '.codex', 'hooks', `${scriptName}.mjs`)))
 }
 
 function renderCodexHooksConfig(root) {

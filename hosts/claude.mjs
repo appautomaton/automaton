@@ -1,10 +1,10 @@
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 
-import { renderSessionStartHook, shellQuote } from './hooks.mjs'
+import { renderNodeHookCommand, renderSessionStartHook } from './hooks.mjs'
 
 function renderClaudeHookCommand(scriptName) {
-  return `${shellQuote(process.execPath)} "$CLAUDE_PROJECT_DIR"/.claude/hooks/${scriptName}.mjs`
+  return renderNodeHookCommand(`"$CLAUDE_PROJECT_DIR"/.claude/hooks/${scriptName}.mjs`)
 }
 
 function renderClaudeSettings() {

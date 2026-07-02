@@ -85,7 +85,8 @@ test('Claude install scaffolds .agent and the Claude skills surface', () => {
   assert.equal(existsSync(join(root, '.claude', 'skills', 'auto-onboard', 'templates', 'PROJECT.md')), true)
   assert.equal(existsSync(join(root, '.claude', 'skills', 'auto-frame', 'scripts')), false)
   assert.deepEqual(Object.keys(settings.hooks), ['SessionStart'])
-  assert.equal(settings.hooks.SessionStart[0].hooks[0].command.includes(process.execPath), true)
+  assert.match(settings.hooks.SessionStart[0].hooks[0].command, /^command -v node/, 'hook command must prefer node from the session PATH')
+  assert.equal(settings.hooks.SessionStart[0].hooks[0].command.includes(process.execPath), true, 'hook command must keep the install-time interpreter as fallback')
   assert.equal(existsSync(join(root, '.claude', 'hooks', 'session-start.mjs')), true)
   assert.equal(existsSync(join(root, '.claude', 'hooks', 'stop.mjs')), false)
 })
@@ -157,6 +158,39 @@ test('Claude session-start hook injects the shared Automaton reminder without st
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /<change>/)
 })
 
+test('Claude hook command prefers PATH node and falls back to the install-time interpreter', () => {
+  // The rendered command must survive the install-time runtime disappearing (an
+  // uninstalled bundled node, an nvm version switch) as long as any `node` is on
+  // the session PATH — and must still run via the pinned interpreter when PATH
+  // carries no node at all. Pinning process.execPath alone broke hooks whenever
+  // the installer happened to run under an ephemeral runtime.
+  const root = mkdtempSync(join(tmpdir(), 'automaton-hook-node-resolution-'))
+
+  installHost(getHost('claude'), { root, sourceRoot })
+
+  const settings = JSON.parse(readFileSync(join(root, '.claude', 'settings.json'), 'utf8'))
+  const command = settings.hooks.SessionStart[0].hooks[0].command
+
+  // A stub `node` on PATH wins over the pinned interpreter.
+  const stubBin = join(root, 'stub-bin')
+  mkdirSync(stubBin)
+  writeFileSync(join(stubBin, 'node'), '#!/bin/sh\necho stub-node-ran\n', { mode: 0o755 })
+  const preferred = spawnSync('/bin/sh', ['-c', command], {
+    encoding: 'utf8',
+    env: { PATH: stubBin, CLAUDE_PROJECT_DIR: root }
+  })
+  assert.equal(preferred.status, 0)
+  assert.equal(preferred.stdout.trim(), 'stub-node-ran')
+
+  // With no node on PATH, the pinned install-time interpreter still runs the hook.
+  const fallback = spawnSync('/bin/sh', ['-c', command], {
+    encoding: 'utf8',
+    env: { PATH: '/nonexistent', CLAUDE_PROJECT_DIR: root }
+  })
+  assert.equal(fallback.status, 0)
+  assert.match(fallback.stdout, /automaton_reminder/)
+})
+
 test('Claude install preserves existing settings while adding Automaton hooks', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-install-claude-settings-'))
   const settingsTarget = join(root, '.claude', 'settings.json')
@@ -209,6 +243,7 @@ test('Claude reinstall refreshes Automaton settings hooks without duplicating th
   assert.equal(settings.env.FOO, 'bar')
   assert.deepEqual(Object.keys(settings.hooks), ['SessionStart', 'Stop'])
   assert.equal(settings.hooks.SessionStart.length, 1)
+  assert.match(settings.hooks.SessionStart[0].hooks[0].command, /^command -v node/)
   assert.equal(settings.hooks.SessionStart[0].hooks[0].command.includes(process.execPath), true)
   assert.equal(settings.hooks.Stop[0].hooks[0].command, 'node "$CLAUDE_PROJECT_DIR"/.claude/hooks/custom-stop.mjs')
 })
@@ -242,7 +277,8 @@ test('Codex install scaffolds config, hooks, and skills', () => {
   assert.deepEqual(Object.keys(hooks.hooks), ['SessionStart'])
   assert.doesNotMatch(hooks.hooks.SessionStart[0].hooks[0].command, /sh -lc|git rev-parse --show-toplevel/)
   assert.match(hooks.hooks.SessionStart[0].hooks[0].command, /\.codex\/hooks\/session-start\.mjs/)
-  assert.equal(hooks.hooks.SessionStart[0].hooks[0].command.includes(process.execPath), true)
+  assert.match(hooks.hooks.SessionStart[0].hooks[0].command, /^command -v node/, 'hook command must prefer node from the session PATH')
+  assert.equal(hooks.hooks.SessionStart[0].hooks[0].command.includes(process.execPath), true, 'hook command must keep the install-time interpreter as fallback')
   assert.equal(existsSync(join(root, '.codex', 'skills', 'auto-frame', 'scripts')), false)
   assert.equal(existsSync(join(root, '.codex', 'hooks', 'session-start.mjs')), true)
   assert.equal(existsSync(join(root, '.codex', 'hooks', 'stop.mjs')), false)
@@ -367,6 +403,7 @@ test('Codex reinstall refreshes Automaton hooks.json entry without duplicating i
 
   assert.equal(sessionStartCommands.includes('node .codex/hooks/user-start.mjs'), true)
   assert.equal(automatonCommands.length, 1)
+  assert.match(automatonCommands[0], /^command -v node/)
   assert.equal(automatonCommands[0].includes(process.execPath), true)
   assert.doesNotMatch(automatonCommands[0], /old\/path/)
 })
