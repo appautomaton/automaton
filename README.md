@@ -8,10 +8,6 @@ Portable, stage-gated agentic-AI harness for Claude Code, Codex, and OpenCode.
 
 An AI coding agent framework that gives LLM-powered development tools structured workflows for long-running tasks. Automaton installs markdown skills, lightweight startup integrations, and durable `.agent/` state into a project so agent work survives context window limits, session restarts, and multi-step changes that would otherwise lose coherence.
 
-## Acknowledgement 致谢
-
-🖤🤍💛 Thanks to [Linux Do](https://linux.do/) (https://linux.do/) for their vibrant AI development community. 🖤🤍💛
-
 ## Why Use It
 
 - Keep project truth, current work, and handoff state outside the chat window.
@@ -75,6 +71,10 @@ Contributor-only design and runtime notes live in the repository [`docs/`](docs/
 - [npm package](https://www.npmjs.com/package/@appautomaton/automaton)
 - [GitHub](https://github.com/appautomaton/automaton)
 - [Issues](https://github.com/appautomaton/automaton/issues)
+
+## Acknowledgement
+
+🖤🤍💛 Thanks to [Linux Do](https://linux.do/) for their vibrant AI development community. 🖤🤍💛
 
 ## License
 
