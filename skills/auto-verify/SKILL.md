@@ -15,7 +15,7 @@ First action: run `node .agent/.automaton/scripts/get-context.mjs` from the proj
 
 Independent audit. Re-read the plan, run proof commands, and compare fresh results to acceptance criteria. It does not trust execute's self-assessment or fix what it finds. When continuing inline from execute, re-derive from fresh command output; execute's reasoning is context, not evidence.
 
-Loading discipline: one PLAN.md read + verification commands per criterion. Read source files when verifying correctness requires inspecting the actual changes, not just command output.
+Loading discipline: on warm continuation from execute, one PLAN.md read plus verification commands per criterion. On cold entry, load in dependency order, spec before plan; `auto-resume` owns the full order table. Read source files when verifying correctness requires inspecting the actual changes, not just command output.
 
 ## Quality Gate
 
@@ -91,5 +91,5 @@ When gap diagnosis reveals durable project truth beyond this change, append a on
 - Binary evaluation. Partial evidence is FAIL for the plan.
 - Verify the full plan: all slices, all criteria. Derive missing commands from acceptance criteria and document them.
 - Verify what the plan requires; flag an unmentioned common gap (input validation, concurrency, security, etc.) only when obviously critical to the change.
-- No git writes. `auto-verify` never runs `git commit` or any history-modifying command; markdown writes (`VERIFY-GAP`, ROADMAP phase update) sit in the working tree until `auto-execute` re-entry sweeps them up on FAIL or the user closes them on PASS.
+- No git writes. The GATE above owns this contract with `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Git Rhythm), including how markdown leftovers are swept on FAIL or closed on PASS.
 - Do not print a long pass transcript. Expand only failures, skipped checks, derived commands, or user-requested detail.

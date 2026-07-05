@@ -46,11 +46,4 @@ Push target: a specific claim about why the product becomes more valuable as the
 
 ## Shape-Aware Routing
 
-When the shape is not feature, supplement or replace the scope-routed questions above. Shape questions take priority; mode questions fill remaining gaps.
-
-- **Parity** → Q2 (status quo) stays relevant. Add: What is the reference system? Which gaps affect paying customers most? What does parity look like: matching output, passing compliance, meeting a benchmark?
-- **Audit** → Q1 (demand reality) stays relevant. Add: What questions must the audit answer? What decision depends on the findings? What evidence would change your next move?
-- **Refactor** → Q2 (status quo) stays relevant. Add: What structural problem are you solving? What behavior must remain invariant? What's the blast radius?
-- **Migration** → Q2 (status quo) + Q4 (narrowest wedge) stay relevant. Add: What's the target state? What compatibility constraints exist? What's the rollback plan?
-- **Coverage** → Q5 (observation / surprise) stays relevant. Add: What risk areas are undertested? Where have bugs escaped? What's the target improvement?
-- **Mixed** → Combine the questions from each constituent shape. Ask the highest-priority question from each.
+When the shape is not feature, read `references/shape-questions.md`: shape questions take priority, and the scope-routed questions above fill the remaining gaps.

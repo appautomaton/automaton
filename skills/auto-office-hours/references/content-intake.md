@@ -44,7 +44,7 @@ Red flags: "Use a professional tone." That's not a voice, it's an absence of one
 
 After content intake, the diagnostic output feeds into:
 - `auto-frame` with a content lens: audience, thesis, voice, and anti-goals become SPEC.md fields.
-- Future Pass 2 skills: channel, source policy, factual risk, and format are not captured here.
+- Deferred dimensions (channel, source policy, factual risk, format) are captured at framing or planning, not here.
 
 ## Anti-Slop Calibration
 

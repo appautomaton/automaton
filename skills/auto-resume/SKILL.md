@@ -59,7 +59,7 @@ If `current.json` contains `engineering_review`, read the `## Review: Engineerin
 
 ### Recovery Summary
 
-Produce a concise summary under 200 tokens:
+Produce a concise summary in this shape:
 
 ```
 **Active change:** [name]
@@ -69,7 +69,7 @@ Produce a concise summary under 200 tokens:
 **What was blocked:** [1-2 sentences, or "nothing"]
 **What comes next:** [specific next action, or "none - change complete"]
 **Execution ledger:** [last slice commit + in-flight files, "clean", or "n/a"]
-**Review verdicts:** [product: X, engineering: Y, or "none"]
+**Review verdicts:** [engineering: X, or "none"]
 **Missing state:** [list or "none"]
 **Roadmap:** [N pending / M total, or "not tracked"]
 ```
@@ -82,7 +82,7 @@ Use `references/recovery-scenarios.md` for the full routing table. The invariant
 
 ## Output
 
-- Resume summary (under 200 tokens)
+- Resume summary (the template above, nothing more)
 - Artifacts loaded
 - Review verdicts (if present)
 - `.agent/.automaton/state/current.json` is read-only for auto-resume; stale pointers are reported, not silently repaired

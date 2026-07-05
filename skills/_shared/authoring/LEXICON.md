@@ -7,7 +7,7 @@ Canonical vocabulary for Automaton skills. Use these terms exactly. Do not subst
 | Canonical | Anti-patterns | Meaning |
 |-----------|---------------|---------|
 | change | ticket, issue, story, task | A unit of work tracked by Automaton. Has a name, stage, and artifacts. |
-| stage | phase, step | One of `frame`, `plan`, `execute`, `verify`, `verified`, `resume`. Immutable and validated. |
+| stage | phase, step | One of `frame`, `plan`, `execute`, `verify`, `verified`, `resume`. Immutable and validated. Roadmap phases (`ROADMAP-CONTRACT.md`) are a separate concept, not a stage synonym; "Phase N" is correct there and only there. Frontmatter may label a non-stage helper `utility` (auto-onboard); the runtime enum never includes it. |
 | slice | task, subtask, step | A testable, deliverable chunk of a plan. Ordered and verifiable. |
 | artifact | document, file | A markdown file produced by a skill: `SPEC.md`, `DESIGN.md`, `PLAN.md`. |
 | steering | project config | Files in `.agent/steering/` that describe project truth: `PROJECT.md`, `REQUIREMENTS.md`, `ROADMAP.md`. |
@@ -21,9 +21,7 @@ Canonical vocabulary for Automaton skills. Use these terms exactly. Do not subst
 |-----------|-----------|---------|
 | approved | pass, OK, good | Direction is sound. Proceed. |
 | approved_with_risks | proceed with caution | Direction is sound but carries known risks. Document them. |
-| needs_clarification | unclear, vague | Direction cannot be evaluated. Return to framing. |
 | needs_correction | wrong, broken | Direction is flawed. Return to planning. |
-| descoped | reject, cancel | Direction is out of scope or low-leverage. Do not pursue. |
 
 ## Context and State
 
@@ -65,6 +63,16 @@ The harness exists to let the model use its full capability safely, not to fence
 - **One home per contract.** State a rule once and point to it everywhere else. Tests guard the single home. Restating a contract in two files is not robustness, it is a future contradiction.
 - **Never key behavior to quantities the model cannot observe.** No self-measured token counts, percentages, or wall-clock estimates. Key behavior to observable signals (output quality, skipped steps) or to host-reported data, explicitly marked as such.
 - **Defaults with named escapes beat hard caps.** "Default budget: 10 files, extend while X remains unidentified and say why" preserves boundedness without capping capability. A bare numeric ceiling does not.
+
+## Prose Standard
+
+Skill prose is read by a strong model under load. Write for that reader:
+
+- No em-dashes. Prefer commas, periods, or a colon; a semicolon only where a period would fragment one thought.
+- Complete sentences, plain words, one idea per sentence.
+- State every hard rule with its reason in the same breath. A rule that carries its why survives paraphrase and edge cases.
+- Principles over checklists. Cut anything a capable model already knows; keep what is project-specific or counter-intuitive.
+- Flag slop in clusters, not single instances (`ANTI-SLOP.md`, What Not To Flag).
 
 ## Prohibited Phrases
 

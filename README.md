@@ -47,8 +47,10 @@ Automaton is copy-based: installed skills are local plain markdown files that ar
 ## Workflow
 
 ```text
-office-hours -> frame -> product review -> plan -> engineering review -> execute -> verify -> verified
+office-hours -> frame -> plan -> engineering review (optional) -> execute -> verify -> verified
 ```
+
+The user approving `SPEC.md` at frame's exit is the product review; no model gate stands in for product judgment.
 
 Most changes start at `auto-frame`, move through `auto-plan`, then continue with `auto-execute` and `auto-verify`. A full verification pass closes the change as `verified` (terminal). Use `auto-onboard` when project steering is missing or stale, `auto-office-hours` when the objective is still too broad, and `auto-resume` to re-enter existing work from a fresh session at any point.
 
@@ -61,6 +63,8 @@ npx @appautomaton/automaton status
 npx @appautomaton/automaton validate
 npx @appautomaton/automaton install --uninstall --codex
 ```
+
+`status` also warns when installed copies drift from the CLI source: a missing install receipt, a version skew, or an orphaned skill a newer version removed.
 
 ## Contributor Docs
 

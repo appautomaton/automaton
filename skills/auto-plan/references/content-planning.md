@@ -4,7 +4,7 @@ Load this reference when `SPEC.md` has content fields or the change is about wri
 
 ## Inputs From Framing
 
-Carry these Pass 1 fields into every content slice:
+Carry these framing fields into every content slice:
 
 | Field | Planning use |
 | --- | --- |
@@ -15,7 +15,7 @@ Carry these Pass 1 fields into every content slice:
 
 If any field is missing, add a planning assumption or a blocking question. Do not let execution invent it.
 
-## Pass 2 Slice Constraints
+## Deferred Dimensions
 
 Add these when they affect execution or verification:
 

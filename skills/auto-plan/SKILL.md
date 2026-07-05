@@ -15,7 +15,7 @@ First action: run `node .agent/.automaton/scripts/get-context.mjs` from the proj
 
 auto-plan builds the smallest plan that makes execution safe while preserving the approved scope. It does not write code or broaden scope beyond the approved spec.
 
-Loading discipline: hold SPEC.md, review state, and source files needed for accurate slices. Read wider project files when understanding existing code informs slice boundaries or verification commands. Read `.agent/.automaton/references/CONTEXT-BUDGET.md` when wider reads threaten context pressure. When locating code or tracing a flow would otherwise pull wide reads into context, you may dispatch the read-only `automaton-librarian` for a one-shot lookup (see `.agent/.automaton/references/LIBRARIAN.md`); it returns evidence, you keep the decision.
+Loading discipline: hold SPEC.md, review state, and source files needed for accurate slices. Read wider project files when understanding existing code informs slice boundaries or verification commands. Read `.agent/.automaton/references/CONTEXT-BUDGET.md` when wider reads threaten context pressure. When a lookup would otherwise pull wide reads into context, dispatch the read-only `automaton-librarian` (see `.agent/.automaton/references/LIBRARIAN.md`): it returns evidence, you keep the decision.
 
 Artifact discipline: `PLAN.md` is the reloadable execution index, not the whole implementation dossier. Keep PLAN.md compact enough to re-read. For large coherent work, summarize slices in PLAN.md and link optional detail files under `.agent/work/<change>/slices/`. Split only for independent outcomes, not because one coherent plan has many requirements.
 
@@ -86,11 +86,9 @@ Include when useful:
 Rules:
 - Every material slice must have a verification command. Verify the exact behavior, not the absence of errors. Include rollback verification for migrations.
 - Every material slice must have acceptance criteria; execution cannot verify vibes.
-- Omitted `Execution` means `direct`. Use `subagent recommended` for broad, cross-subsystem, interface, schema, or review-risk work. Use `subagent required` only for user-requested multi-agent execution or security-critical, production-data, or irreversible-state changes.
-- Omitted `Depends on` means `none`.
-- Continuation is the default. Omitted `Checkpoint after` means `none`, so the next slice may start after verification passes.
-- Verification findings, implementation caveats, downstream consequences, and next-slice recommendations are not checkpoints when the approved plan already names the next slice. Record them as slice evidence or risks and continue.
-- Checkpoint types (`human-verify`, `decision`, `human-action`) are defined once in `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Checkpoint Semantics). Assign a checkpoint only when its definition holds; default to `none`.
+- Use `subagent recommended` for broad, cross-subsystem, interface, schema, or review-risk work. Use `subagent required` only for user-requested multi-agent execution or security-critical, production-data, or irreversible-state changes.
+- Continuation is the default. Omitted slice fields carry the defaults pinned in `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Slice Defaults).
+- Checkpoint types are defined once in `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Checkpoint Semantics). Assign a checkpoint only when its definition holds; default to `none`.
 - Keep slices small enough for one session. Move extended instructions to `slices/slice-NNN.md`; split only for independent outcomes.
 
 <GATE>
@@ -113,7 +111,7 @@ Write the plan to `.agent/work/<change>/PLAN.md`.
 - **Per-slice verification**: one verification command inline on every material slice.
 
 **Conditional** sections appear only when their trigger applies; omit or mark "n/a" otherwise:
-- **Architecture approach:** introduces a new pattern, non-obvious decision, or cross-system integration. Omit when the design is obvious from SPEC.
+- **Architecture approach:** introduces a new pattern, non-obvious decision, or cross-system integration. Name the contestable decisions and their tradeoffs plainly; a review can only bite what the plan states. Omit when the design is obvious from SPEC.
 - **Requirement traceability:** SPEC names gap IDs, invariant IDs, audit questions, migration checkpoints, or coverage targets. Omit when the SPEC has no traceable IDs.
 - **Aggregate verification commands table:** ≥ 3 slices or commands not captured per-slice. Per-slice inline suffices for smaller plans (index over transcript).
 
@@ -121,7 +119,7 @@ Apply the Artifact Signal Discipline rules from `.agent/.automaton/references/FR
 
 ### Write DESIGN.md (if it earns existence)
 
-Write `.agent/work/<change>/DESIGN.md` only when all three hold: the decision is hard to reverse, a future reader would be surprised without context, and it resolved a real trade-off between genuine alternatives. Any one missing means the rationale lives in PLAN.md prose. Keep it under 200 lines.
+Write `.agent/work/<change>/DESIGN.md` only when all three hold: the decision is hard to reverse, a future reader would be surprised without context, and it resolved a real trade-off between genuine alternatives. Any one missing means the rationale lives in PLAN.md prose. Keep it under 200 lines so it stays a reloadable contract rather than a dossier.
 
 ### Update State
 

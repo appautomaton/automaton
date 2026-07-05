@@ -15,7 +15,7 @@ First action: run `node .agent/.automaton/scripts/get-context.mjs` from the proj
 
 auto-office-hours owns clarity before framing: classify the work internally, test the missing assumptions, preserve request coverage, present approaches, and seed the approved SPEC skeleton. It does not write code or scaffold projects. It does not complete the spec: auto-frame owns acceptance criteria, required outcome, and `canonical_spec`. Before approval, it writes nothing.
 
-Loading discipline: keep the conversation goal, evidence, request coverage, rejected framings, and next decision in context. Read project files only when repo evidence changes the objective, especially for parity, audit, migration, coverage, or mixed work. When repo evidence would otherwise pull wide reads into context, you may dispatch the read-only `automaton-librarian` for a one-shot lookup (see `.agent/.automaton/references/LIBRARIAN.md`); it returns evidence, you keep the decision.
+Loading discipline: keep the conversation goal, evidence, request coverage, rejected framings, and next decision in context. Read project files only when repo evidence changes the objective, especially for parity, audit, migration, coverage, or mixed work. When repo evidence would pull wide reads into context, dispatch the read-only `automaton-librarian` (see `.agent/.automaton/references/LIBRARIAN.md`): it returns evidence, you keep the decision.
 
 Interaction: keep chat plain, organized, and grounded in the user's words. Do not expose taxonomy labels such as mode, scale, or shape. Ask one question per message and attach your recommended answer with its reason, so a single "yes" can move the conversation. Never ask what the repo can answer: explore or dispatch the librarian first. For real branch decisions, offer 2–4 concrete options with a one-line reason for each. Use the host question tool when available; otherwise present the same options inline.
 
@@ -48,7 +48,7 @@ Ask only questions that make the objective frameable. Use the active reference:
 - Builder Mode: read `references/builder-diagnostic.md` when the work is personal, exploratory, open-source, or design-partner shaped.
 - Content Mode: read `references/content-intake.md` when the deliverable is writing, article, brief, deck, newsletter, documentation, or other prose.
 
-When the shape is not feature, shape-specific questions take priority: parity needs a reference system and gap-closure target; audit needs questions and decision use; refactor needs invariants and blast radius; migration needs source/target state and rollback; coverage needs risk areas and verification target; mixed work needs the highest-priority question from each shape.
+When the shape is not feature, shape questions take priority over mode questions: read `references/shape-questions.md` alongside the mode diagnostic.
 
 Follow up when an answer changes scope, reveals a constraint, contradicts earlier context, or stays abstract. Ask for a concrete correction or choice, not a generic reaction. If the answer is polished but vague, push until it names concrete evidence, a specific stakeholder, or an observable workaround. Read `references/diagnostic-calibration.md` when the diagnostic feels soft or agreeable rather than evidence-backed, or when grill mode needs depth guidance.
 

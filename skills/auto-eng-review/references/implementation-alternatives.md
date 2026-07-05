@@ -2,6 +2,8 @@
 
 Use this only when PLAN.md lacks an approach rationale, the user asks for alternatives, or the review verdict depends on comparing safer execution paths. Keep it in chat unless the plan needs correction.
 
+auto-office-hours keeps a sibling alternatives format for pre-spec scoping. The shared skeleton is deliberate and the rules differ on purpose: a scoping choice and an execution path answer different questions.
+
 For each approach:
 
 ```

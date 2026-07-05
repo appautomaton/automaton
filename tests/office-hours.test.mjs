@@ -141,3 +141,20 @@ test('auto-office-hours references route only to steps that exist in the skill',
   assert.match(alternatives, /For bug, feature, and capability work, one must be minimal viable/)
   assert.match(alternatives, /blast radius, traceability, evidence depth, rollout risk, or verification strength/)
 })
+
+test('shape questions have one home both diagnostics point at', () => {
+  // One home per contract: the per-shape question sets lived near-verbatim in
+  // both mode diagnostics and could silently diverge. shape-questions.md is
+  // the single home; the diagnostics carry only the pointer.
+  const home = readFileSync(join(skillsRoot, 'auto-office-hours', 'references', 'shape-questions.md'), 'utf8')
+  const startup = readFileSync(join(skillsRoot, 'auto-office-hours', 'references', 'startup-diagnostic.md'), 'utf8')
+  const builder = readFileSync(join(skillsRoot, 'auto-office-hours', 'references', 'builder-diagnostic.md'), 'utf8')
+
+  for (const shape of ['Parity', 'Audit', 'Refactor', 'Migration', 'Coverage']) {
+    assert.match(home, new RegExp(`\\*\\*${shape}:`), `${shape} questions must live in the home`)
+  }
+  for (const diagnostic of [startup, builder]) {
+    assert.match(diagnostic, /references\/shape-questions\.md/)
+    assert.doesNotMatch(diagnostic, /What is the reference system/, 'shape questions must not be restated in a diagnostic')
+  }
+})

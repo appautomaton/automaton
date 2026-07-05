@@ -27,7 +27,7 @@ Every subagent call should include a compact packet. The installed role body alr
 - requested changes from the prior review when the implementer is being re-dispatched after `CHANGES_REQUESTED`
 - stop conditions for missing context, ambiguity, or unsafe scope expansion
 
-Do not ask a subagent to rediscover the whole project unless exploration is the assigned slice. If a subagent needs more context, provide one targeted correction before escalating.
+Do not ask a subagent to rediscover the whole project unless exploration is the assigned slice. If a subagent needs more context, provide one targeted correction before escalating. Keep packets compact for the coordinator's own sake: everything pasted into a dispatch stays resident in its context for the rest of the session, so heavy evidence moves through orchestration files instead of paste.
 
 ## Dispatch Rules
 
@@ -55,6 +55,7 @@ Cross-slice parallel dispatch requires worktree isolation when the project is a 
 - Spec reviewers focus on required behavior, acceptance criteria, and extra scope. They do not perform general maintainability review.
 - Quality reviewers use severity language (`critical`, `important`, `minor`) and focus on bugs, maintainability, tests, cleanup, state, path handling, and unrelated edits.
 - Quality reviewers do not reopen product scope unless a quality issue proves the implementation cannot work safely.
+- The coordinator does not pre-judge reviews. Dispatch packets and implementation summaries never tell a reviewer to skip a check, soften a finding, or cap severity: that language spares the coordinator a review loop at the price of the review.
 
 ## Status Vocabulary
 

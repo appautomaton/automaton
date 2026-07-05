@@ -62,7 +62,7 @@ Read `references/risk-examples.md` for sample matrix scoring.
 | Rollback safety | | Can revert without data loss or downtime |
 | Dependency risk | | No new critical dependencies; existing ones are stable |
 
-A score ≤ 3 in any dimension is a blocking concern. Surface it explicitly. Read `references/engineering-sections.md` only when the plan carries non-trivial engineering risk.
+A score of 3 or lower in any dimension is a blocking concern: a score that low means you can already name the failure mode, and naming it is the review's job. Surface it explicitly. Read `references/engineering-sections.md` only when the plan carries non-trivial engineering risk.
 
 ### Render Verdict
 
@@ -105,6 +105,6 @@ State the next skill based on the verdict.
 - Focus on execution safety, not product vision.
 - Prefer specific engineering objections over generic caution.
 - Do not broaden scope just to feel thorough.
-- Do not emit the full risk matrix when all dimensions are acceptable; keep the durable review to the 5-field template.
+- Do not emit the full risk matrix when all dimensions are acceptable; keep the durable review to the review-template fields.
 - Verdict vocabulary is strict. Use only the three approved values.
 - Missing DESIGN.md is not a blocker when `canonical_design` is null, absent, or intentionally skipped by the plan.

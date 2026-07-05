@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url'
 import { existsSync, readFileSync, realpathSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 
+import { driftReport } from '../lib/drift.mjs'
 import { installHosts, installProject, uninstallHosts, uninstallProject } from '../lib/install.mjs'
 import { automatonPaths } from '../lib/paths.mjs'
 import { loadReceipt, receiptOwners } from '../lib/receipt.mjs'
@@ -112,10 +113,15 @@ function run(argv) {
     const currentPath = join(paths.runtimeRoot, 'state', 'current.json')
     if (!existsSync(currentPath)) {
       console.log('active change: none\nstage: none')
-      return
+    } else {
+      console.log(statusSummary(loadCurrentState(currentPath)))
     }
-    const currentState = loadCurrentState(currentPath)
-    console.log(statusSummary(currentState))
+    // Drift is stderr-only orientation; stdout and the exit code stay stable
+    // so scripted status consumers are unaffected.
+    const sourceRoot = fileURLToPath(new URL('..', import.meta.url))
+    for (const warning of driftReport(root, { sourceRoot })) {
+      console.error(`warning: ${warning.message}`)
+    }
     return
   }
 

@@ -60,3 +60,15 @@ Every test file belongs to exactly one primary layer.
 3. **Cite the rationale home.** If a DD or shared reference owns the why, name it in the header comment. If none does, consider whether the decision deserves a DD entry.
 4. **Fixtures must satisfy the lint.** Tests that assert exact-empty diagnostics need well-shaped SPEC and PLAN fixtures (see `LINT_CLEAN_SPEC` in `state.test.mjs`).
 5. **Never weaken a guard to make an edit pass.** A failing prose pin is a decision point: either the edit is wrong, or the contract changed and the test, its rationale, and the prose move together in one commit.
+
+## Validation Tiers
+
+Runtime validation has three tiers. Keep each check at the lowest tier that catches the failure; do not promote artifact-shape or norm checks into runtime.
+
+| Tier | Scope | Enforced by | Example |
+| --- | --- | --- | --- |
+| **L1 Coordination** | Cross-skill state invariants | `runtime/lib/validate.mjs`; `error`-level diagnostic; hard stop | Stage enum, canonical pointer resolves to an existing file |
+| **L2 Artifact shape** | A single artifact's downstream consumability | `get-context.mjs` and `sync-status.mjs` artifact lint surfaces `warning`-level diagnostics; the consuming skill judges them | SPEC.md has Acceptance Criteria; PLAN.md slices have verification commands |
+| **L3 Norms** | Wording, structure, prose quality | Prompt text + repository regression tests | Bounded goal is one sentence; lifecycle skills avoid mandatory nested invocation |
+
+Runtime stays portable across Claude, Codex, and OpenCode by holding only L1 checks. L2 lives where artifacts are consumed. L3 lives in prompts and regression tests. Running skills need only the operational half, pinned in ARTIFACT-LIFECYCLE.md (Handoff Contract): error diagnostics block advancement, warning diagnostics surface to the next stage.

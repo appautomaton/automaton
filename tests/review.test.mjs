@@ -74,6 +74,11 @@ test('review and verification templates use the pinned handoff form and risk cap
   // approved_with_risks can document one line per slice-scoped risk inside the template.
   assert.match(engTemplate, /for `approved_with_risks`: one line per documented risk/)
   assert.match(engTemplate, /naming the slice it affects when known/)
+
+  // The outside-voice loop records into the template's one conditional field,
+  // so the two references cannot contradict each other on where results land.
+  assert.match(engTemplate, /Outside voice: /)
+  assert.match(engTemplate, /present only when the cross-model loop ran/)
 })
 
 test('auto-eng-review treats DESIGN.md as optional canonical context', () => {
@@ -101,5 +106,7 @@ test('the outside voice is optional, bounded, and never auto-applies (DD-013)', 
   assert.match(voice, /reject it with a one-line logged reason/)
   assert.match(voice, /Never fake convergence/)
   assert.match(voice, /Record the round count and any unresolved points/)
+  assert.match(voice, /orchestration\/outside-voice-log\.md/, 'the argument transcript must persist as an audit artifact')
+  assert.match(voice, /read-only or sandbox mode on every invocation, including resumes/, 'a CLI critic must be forced read-only on every call')
   assert.doesNotMatch(voice, /codex exec|--json|thread_id/i, 'host CLI mechanics must not enter the reference')
 })

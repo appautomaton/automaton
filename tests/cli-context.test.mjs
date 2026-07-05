@@ -66,7 +66,9 @@ test('status command reads seeded durable snake_case current state', () => {
   const result = spawnSync(process.execPath, [cliPath, 'status', root], { encoding: 'utf8' })
 
   assert.equal(result.status, 0)
-  assert.equal(result.stderr, '')
+  // A hand-seeded runtime has no install receipt, so status surfaces the
+  // drift warning on stderr while stdout and the exit code stay stable.
+  assert.match(result.stderr, /warning: no install receipt/)
   assert.equal(result.stdout, 'active change: automaton-v1-foundation\nstage: plan\n')
 })
 

@@ -19,7 +19,7 @@ test('authored skills use valid portable frontmatter and concise bodies', () => 
     assert.ok(fields.description.length > 0)
     assert.ok(fields.description.length <= 1024)
     assert.ok(fields.description.length > 10, `${skillName} description too short`)
-    assert.ok(source.includes('metadata:\n  stage:'), `${skillName} frontmatter must declare its lifecycle stage (hosts and tests route by it)`)
+    assert.ok(source.includes('metadata:\n  stage:'), `${skillName} frontmatter must declare metadata.stage: a lifecycle stage or utility (a reader-facing label; runtime stages live in contracts-data.json)`)
     assert.match(body, /## Do\n/, `${skillName} must keep the shared skeleton section ## Do (FRAMEWORK.md, Skill Structure)`)
     assert.match(body, /## Output\n/, `${skillName} must keep the shared skeleton section ## Output (FRAMEWORK.md, Skill Structure)`)
     assert.match(body, /## Rules\n/, `${skillName} must keep the shared skeleton section ## Rules (FRAMEWORK.md, Skill Structure)`)

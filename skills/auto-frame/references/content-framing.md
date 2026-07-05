@@ -57,7 +57,7 @@ Content framing adds a content lens to the standard lens set. It does not replac
 - If the change produces content as part of a feature (onboarding copy, error messages, docs), lenses are `product` + `engineering` + content.
 - Content lens does not trigger `security` or `runtime` unless the content involves sensitive data or is generated at runtime.
 
-## Pass 2 Dimensions (Deferred)
+## Deferred Dimensions
 
 Capture these when the user already supplied them or when they materially affect scope. Otherwise leave them for planning as explicit assumptions or blocking questions:
 

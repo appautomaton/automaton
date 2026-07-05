@@ -2,6 +2,8 @@
 
 Present exactly 2–3 approaches using this format. For bug, feature, and capability work, one must be minimal viable and one must be ideal architecture. One can be creative/lateral. For refactor, parity, audit, migration, or coverage work, differentiate by blast radius, traceability, evidence depth, rollout risk, or verification strength instead. For roadmap-sized work, present decomposition strategies or first-spec candidates.
 
+auto-eng-review keeps a sibling implementation-alternatives format for execution paths. The shared skeleton is deliberate and the rules differ on purpose: this file differentiates scoping choices before a spec exists, that one compares safer execution paths for an already-approved plan.
+
 ```
 ## Approach A: [Name]
 

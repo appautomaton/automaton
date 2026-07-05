@@ -10,6 +10,7 @@ Append exactly this format to `PLAN.md`:
 - Concern: <one sentence, or for approved_with_risks one line per risk>
 - Action: <one sentence>
 - Verified: <what was checked, or "pending">
+- Outside voice: <rounds run, unresolved points, log path; include only when the cross-model loop ran>
 ```
 
 ## Rules
@@ -19,4 +20,5 @@ Append exactly this format to `PLAN.md`:
 - Concern is exactly one sentence, except for `approved_with_risks`: one line per documented risk, each naming the slice it affects when known, so `auto-execute` can surface the right risk before each slice.
 - Action must be a concrete next step, not a strategy.
 - Verified must list what was actually checked (e.g., "data flow traced", "edge cases enumerated"), or "pending" if nothing was checked.
-- Do not add extra fields or commentary outside this format.
+- Outside voice is the only conditional field: round count, unresolved points, and a pointer to `orchestration/outside-voice-log.md`, present only when the cross-model loop ran.
+- Do not add fields or commentary beyond this format.

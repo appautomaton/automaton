@@ -2,7 +2,7 @@
 name: auto-onboard
 description: Build project truth from repo evidence. Use when steering is missing or stale.
 metadata:
-  stage: frame
+  stage: utility
 ---
 
 # auto-onboard

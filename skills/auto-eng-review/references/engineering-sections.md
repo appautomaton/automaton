@@ -1,180 +1,79 @@
 # Engineering Review Sections
 
-Use this as a trigger-based risk checklist. Do not run every section by default, and do not write "No issues found" filler. Evaluate only sections whose trigger appears in PLAN.md, DESIGN.md, or the changed surface. Summarize clean sections in one line at most; expand only verdict-driving risks.
+Use this as a trigger-based risk checklist. Evaluate only sections whose trigger appears in PLAN.md, DESIGN.md, or the changed surface, and do not write "No issues found" filler: summarize clean sections in one line at most and expand only verdict-driving risks. A section earns its space by naming a failure mode before execution pays for it.
 
-## Section 1: Architecture Review
+## 1. Architecture
 
 Trigger: new pattern, cross-module integration, state machine, pipeline, external service, or unclear component boundary.
 
-Evaluate when triggered:
-- Overall system design and component boundaries. Dependency graph.
-- Data flow: happy path and material shadow paths. Add one diagram only when prose would be ambiguous.
-- State machines. Diagram only non-trivial stateful objects. Include impossible/invalid transitions when they affect risk.
-- Coupling concerns. Before/after dependency graph.
-- Scaling characteristics. What breaks first under 10x load? Under 100x?
-- Single points of failure. Map them.
-- Security architecture. Auth boundaries, data access patterns, API surfaces.
-- Production failure scenarios. One realistic failure per new integration point.
-- Rollback posture. Git revert? Feature flag? DB migration rollback? How long?
+- Do component boundaries and the dependency graph stay clean, or does coupling grow?
+- What breaks first under 10x load, and where is the single point of failure?
+- For each new integration point, name one realistic production failure and the rollback posture (revert, flag, migration rollback, and how long it takes).
+- Do auth boundaries or data access patterns move?
 
-## Section 2: Error & Rescue Map
+## 2. Errors And Rescue
 
 Trigger: new error handling, external calls, persistence, retries, parsing, async jobs, or user-visible failure states.
 
-For risk-bearing methods/services, fill in only rows that can change the verdict:
+For each risk-bearing codepath, name what can go wrong, whether it is rescued, and what the user sees. Catch-all handling is a smell: name specific exceptions. Every rescued error must retry with backoff, degrade gracefully, or re-raise with context, because swallow-and-continue hides the failure until it is expensive. For each gap, specify the rescue action and the user-visible result.
 
-```
-  METHOD/CODEPATH          | WHAT CAN GO WRONG           | EXCEPTION CLASS
-  -------------------------|-----------------------------|-----------------
-  ExampleService#call      | API timeout                 | TimeoutError
-                           | API returns 429             | RateLimitError
+## 3. Security
 
-  EXCEPTION CLASS              | RESCUED?  | RESCUE ACTION          | USER SEES
-  -----------------------------|-----------|------------------------|------------------
-  TimeoutError                 | Y         | Retry 2x, then raise   | "Service temporarily unavailable"
-  JSONParseError               | N ← GAP   | —                      | 500 error ← BAD
-```
+Trigger: new user input, auth or permission boundary, secrets, file paths, network calls, dependencies, sensitive data, or injection surface.
 
-Rules:
-- Catch-all error handling is ALWAYS a smell. Name specific exceptions.
-- Every rescued error must: retry with backoff, degrade gracefully, or re-raise with context.
-- "Swallow and continue" is almost never acceptable.
-- For each GAP: specify rescue action and what the user should see.
+- Where does the attack surface grow (endpoints, params, paths, jobs), and is every new input validated for nil, type, length, and injection?
+- Is authorization scoped to the right user or role, with no direct object reference holes?
+- Are secrets in env vars and rotatable? Do new dependencies have a security track record?
+- Is PII or payment data handled consistently with existing patterns, with an audit trail for sensitive operations?
 
-## Section 3: Security & Threat Model
+Rate each finding by likelihood and impact, with mitigation status.
 
-Trigger: new user input, auth/permission boundary, secrets, file paths, network calls, dependencies, sensitive data, or injection surface.
-
-Evaluate when triggered:
-- Attack surface expansion. New endpoints, params, file paths, background jobs?
-- Input validation. For every new user input: nil, empty, wrong type, max length, injection attempts.
-- Authorization. Scoped to right user/role? Direct object reference vulnerabilities?
-- Secrets and credentials. In env vars, not hardcoded? Rotatable?
-- Dependency risk. New packages? Security track record?
-- Data classification. PII, payment data? Handling consistent with existing patterns?
-- Injection vectors. SQL, command, template, LLM prompt injection.
-- Audit logging. For sensitive operations: is there an audit trail?
-
-For each finding: threat, likelihood (High/Med/Low), impact (High/Med/Low), mitigation status.
-
-## Section 4: Data Flow & Interaction Edge Cases
+## 4. Data Flow And Edge Cases
 
 Trigger: new data transform, persistence, UI interaction, workflow state, or user-visible async behavior.
 
-**Data Flow Tracing:** For complex new data flow, one diagram may help:
-```
-  INPUT ──▶ VALIDATION ──▶ TRANSFORM ──▶ PERSIST ──▶ OUTPUT
-    │            │              │            │           │
-    ▼            ▼              ▼            ▼           ▼
-  [nil?]    [invalid?]    [exception?]  [conflict?]  [stale?]
-  [empty?]  [too long?]   [timeout?]    [dup key?]   [partial?]
-  [wrong    [wrong type?] [OOM?]        [locked?]    [encoding?
-   type?]                                                     ]
-```
+Trace each new flow from input to output and probe every stage with the boundary most likely to break it: empty, wrong type, too large, concurrent, stale, partial, or an upstream failure. For new interactions, evaluate only the applicable edge cases (double-click, navigate-away, zero results, huge results, retry-in-flight). Flag each unhandled case with its fix.
 
-**Interaction Edge Cases:** For new user-visible interactions, evaluate only applicable edge cases: double-click, stale state, navigate-away, slow connection, zero results, 10,000 results, retry-while-in-flight.
+## 5. Code Quality
 
-Flag any unhandled edge case as a gap. For each gap, specify the fix.
+Trigger: the plan touches code organization, shared modules, or repeated patterns. Bound the review to files the plan touches.
 
-## Section 5: Code Quality Review
+Does the change fit existing patterns, name things for what they do, and avoid both over-engineering (an abstraction with no second caller) and under-engineering (happy path only)? Cite file and line for any duplication worth fixing.
 
-Trigger: always, but keep it bounded to the files and patterns touched by the plan.
+## 6. Tests
 
-- Code organization and module structure. Fits existing patterns?
-- DRY violations. Be aggressive. Reference file and line.
-- Naming quality. Named for what they do, not how.
-- Error handling patterns. (Cross-reference Section 2.)
-- Missing edge cases. List explicitly.
-- Over-engineering check. Any abstraction solving a problem that does not exist yet?
-- Under-engineering check. Fragile? Happy-path only?
-- Cyclomatic complexity. Flag any method with >5 branches.
+Trigger: the plan adds or changes behavior. Bound the review to the new surface.
 
-## Section 6: Test Review
+For each new flow, codepath, job, integration, and rescue path: which test type covers it, does the plan name that test, and does it cover the failure path rather than only the happy path? Name the test that catches the failure mode you fear most; a plan that lacks it has a finding. Flag tests that depend on time, randomness, external services, or ordering.
 
-Trigger: always. Use a compact coverage map, not a diagram dump.
-
-Map new things when present:
-- NEW UX FLOWS
-- NEW DATA FLOWS
-- NEW CODEPATHS
-- NEW BACKGROUND JOBS / ASYNC WORK
-- NEW INTEGRATIONS / EXTERNAL CALLS
-- NEW ERROR/RESCUE PATHS
-
-For each item:
-- What type of test covers it? (Unit / Integration / System / E2E)
-- Does a test exist in the plan?
-- Happy path test?
-- Failure path test? (Be specific.)
-- Edge case test? (nil, empty, boundary, concurrent access)
-
-Test ambition check:
-- What test would make you confident shipping at 2am on a Friday?
-- What test would a hostile QA engineer write to break this?
-- What is the chaos test?
-
-Test pyramid check: Many unit, fewer integration, few E2E? Or inverted?
-Flakiness risk: Flag tests depending on time, randomness, external services, or ordering.
-
-## Section 7: Performance Review
+## 7. Performance
 
 Trigger: new queries, loops over unbounded data, background jobs, large files, caching, concurrency, or external calls.
 
-- N+1 queries. Every new association traversal: includes/preload?
-- Memory usage. Maximum size in production for every new data structure.
-- Database indexes. Every new query: is there an index?
-- Caching opportunities. Every expensive computation or external call.
-- Background job sizing. Worst-case payload, runtime, retry behavior.
-- Slow paths. Top 3 slowest new codepaths and estimated p99 latency.
-- Connection pool pressure. New DB, Redis, HTTP connections?
+- An N+1 check on every new association traversal, and an index behind every new query.
+- Maximum production size for every new data structure, and worst-case payload and retry behavior for every job.
+- The top new slow path and whether anything caches it.
 
-## Section 8: Observability & Debuggability
+## 8. Observability
 
-Trigger: operated service behavior, production workflows, async jobs, external dependencies, sensitive flows, or hard-to-debug state.
+Trigger: operated service behavior, production workflows, async jobs, external dependencies, or hard-to-debug state.
 
-- Logging. Structured log lines at entry, exit, and each significant branch?
-- Metrics. What metric tells you it is working? What tells you it is broken?
-- Tracing. Trace IDs propagated for cross-service flows?
-- Alerting. What new alerts should exist?
-- Dashboards. What new panels on day 1?
-- Debuggability. Can you reconstruct what happened from logs alone?
-- Admin tooling. New operational tasks that need admin UI or scripts?
-- Runbooks. For each new failure mode: what is the operational response?
+What metric says it works, what says it is broken, and can you reconstruct what happened from logs alone? For each new failure mode, name the operational response.
 
-## Section 9: Deployment & Rollout
+## 9. Deployment
 
-Trigger: deployment risk, migrations, feature flags, config/env changes, data compatibility, or irreversible state.
+Trigger: migrations, feature flags, config changes, data compatibility, or irreversible state.
 
-- Migration safety. Backward-compatible? Zero-downtime? Table locks?
-- Feature flags. Should any part be behind a flag?
-- Rollout order. Migrate first, deploy second?
-- Rollback plan. Explicit step-by-step.
-- Deploy-time risk window. Old code + new code simultaneously: what breaks?
-- Environment parity. Tested in staging?
-- Post-deploy verification. First 5 minutes? First hour?
-- Smoke tests. What automated checks immediately post-deploy?
+Is the migration backward-compatible and zero-downtime, what is the rollout order, and what breaks while old and new code run together? Name the explicit rollback plan and the first post-deploy check.
 
-## Section 10: Long-Term Trajectory
+## 10. Trajectory
 
-Trigger: architectural commitment, new dependency, durable schema/API, framework choice, or path-dependent abstraction.
+Trigger: architectural commitment, new dependency, durable schema or API, or path-dependent abstraction.
 
-- Technical debt introduced. Code, operational, testing, documentation debt.
-- Path dependency. Does this make future changes harder?
-- Knowledge concentration. Documentation sufficient for a new engineer?
-- Reversibility. Rate 1-5: 1 = one-way door, 5 = easily reversible.
-- Ecosystem fit. Aligns with ecosystem direction?
-- The 1-year question. Read this plan as a new engineer in 12 months: obvious?
+What debt does this introduce, does it make future changes harder, and how reversible is it? Would a new engineer reading this plan in a year find it obvious?
 
-## Section 11: Design & UX Review
+## 11. Design And UX
 
-Skip only if no UI scope detected.
+Trigger: UI scope.
 
-- Information architecture: what does the user see first, second, third?
-- Interaction state coverage map: LOADING | EMPTY | ERROR | SUCCESS | PARTIAL
-- User journey coherence: storyboard the emotional arc
-- AI slop risk: does the plan describe generic UI patterns?
-- DESIGN.md alignment: does the plan match the stated design system?
-- Responsive intention: mobile mentioned or afterthought?
-- Accessibility basics: keyboard nav, screen readers, contrast, touch targets
-
-Add a user-flow diagram only when screens or states are complex enough that prose would be ambiguous.
+What does the user see first, and is every interaction state covered (loading, empty, error, success, partial)? Check keyboard navigation, contrast, and touch targets, and confirm the plan matches DESIGN.md when one exists.

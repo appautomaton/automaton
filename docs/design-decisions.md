@@ -138,7 +138,7 @@ A survey of seven vendored harnesses (June 2026) found the field converging on t
 
 Role bodies also gained three proven phrasings: identity affirmation over prohibition for recursion guards, explicit permission to escalate (bad work is worse than no work), and a boundary against reading harness machinery.
 
-**Why deliberate rejections are recorded too:** message buses, resident supervisors, and milestone-message protocols substitute machinery for model judgment; per-window adaptive prompt thinning solves a small-context problem this harness does not have (it targets SOTA-class models and pins prompt weight in the census instead); mandatory double-review on trivial slices is ceremony the route decision already prevents.
+**Why deliberate rejections are recorded too:** message buses, resident supervisors, and milestone-message protocols substitute machinery for model judgment; per-window adaptive prompt thinning solves a small-context problem this harness does not have (it targets SOTA-class models and pins prompt weight in the census instead); runtime-generated role bodies would bypass the named-agent contract that keeps role prompts installed, auditable, and structurally sandboxed; mandatory double-review on trivial slices is ceremony the route decision already prevents.
 
 **See:** `skills/_shared/references/SUBAGENT-PROTOCOL.md`, `skills/auto-execute/references/git-rhythm.md` (Parallel Isolation), `skills/auto-eng-review/references/outside-voice.md`, `skills/auto-execute/role-sources/*-role.md`, `tests/subagent-protocol.test.mjs`.
 

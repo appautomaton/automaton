@@ -43,6 +43,8 @@ test('subagent protocol defines dispatch packets and bounded review loops', () =
   assert.match(protocol, /Never paste full source files, full command logs, or chat transcripts/)
   assert.match(protocol, /one targeted correction/)
   assert.match(protocol, /reviewer requests changes twice/)
+  assert.match(protocol, /stays resident in its context for the rest of the session/, 'packet compactness must carry its resident-context rationale')
+  assert.match(protocol, /does not pre-judge reviews/, 'the coordinator must not bias reviewer dispatches')
   assert.match(protocol, /Do not invent a universal SDK or CLI/)
 
   // Slice 3: the protocol names host-native agents and forbids role-body prompt injection.

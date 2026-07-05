@@ -44,6 +44,16 @@ test('artifact lifecycle supports progressive disclosure without scope narrowing
   assert.match(lifecycle, /Do not split or narrow one coherent outcome/)
 })
 
+test('slice defaults and the non-checkpoint list are pinned once in the lifecycle reference', () => {
+  const lifecycle = readFileSync(join(skillsRoot, '_shared', 'references', 'ARTIFACT-LIFECYCLE.md'), 'utf8')
+
+  assert.match(lifecycle, /## Slice Defaults/)
+  assert.match(lifecycle, /Omitted `Execution` means `direct`/)
+  assert.match(lifecycle, /Omitted `Depends on` means `none`/)
+  assert.match(lifecycle, /Omitted `Checkpoint after` means `none`/)
+  assert.match(lifecycle, /recommendations for an already-approved next slice are not checkpoints/)
+})
+
 test('artifact lifecycle reference documents review verdict routing', () => {
   const lifecycle = readFileSync(join(skillsRoot, '_shared', 'references', 'ARTIFACT-LIFECYCLE.md'), 'utf8')
 
@@ -80,11 +90,15 @@ test('artifact lifecycle reference defines handoff contract and validation tiers
   assert.match(lifecycle, /not nested skill invocation/)
   assert.match(lifecycle, /Do not invent a universal Skill tool or hidden dispatcher/)
 
-  assert.match(lifecycle, /^## Validation Tiers$/m)
-  assert.match(lifecycle, /L1 Coordination/)
-  assert.match(lifecycle, /L2 Artifact shape/)
-  assert.match(lifecycle, /L3 Norms/)
-  assert.match(lifecycle, /runtime\/lib\/validate\.mjs/)
+  // Validation tiers are authoring doctrine, so they live in docs/testing.md;
+  // the runtime file keeps only the operational half (error blocks, warning surfaces).
+  const testingMap = readFileSync(join(skillsRoot, '..', 'docs', 'testing.md'), 'utf8')
+  assert.match(testingMap, /^## Validation Tiers/m)
+  assert.match(testingMap, /L1 Coordination/)
+  assert.match(testingMap, /L2 Artifact shape/)
+  assert.match(testingMap, /L3 Norms/)
+  assert.match(testingMap, /runtime\/lib\/validate\.mjs/)
+  assert.doesNotMatch(lifecycle, /## Validation Tiers/)
 })
 
 test('FRAMEWORK.md is the single home for artifact signal discipline', () => {

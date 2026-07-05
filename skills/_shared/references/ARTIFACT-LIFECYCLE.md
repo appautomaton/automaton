@@ -8,7 +8,7 @@ Stage list, state contract, and `sync-status.mjs` mandate are in `FRAMEWORK.md`.
 
 - Concrete paths belong in `current.json`, `SPEC.md`, and `PLAN.md`; do not create a separate status prose artifact to mirror them.
 - Skills write artifacts only for the active change unless a skill explicitly documents a steering or wiki output.
-- Do not add archive behavior here: no archive commands, runtime enforcement, daemons, dashboards, browser workflows, marketplace behavior, or vendor-source imports.
+- Do not add archive behavior or runtime lifecycle machinery here; the STOP Conditions list below names the full ban.
 
 ## Progressive Disclosure
 
@@ -22,10 +22,10 @@ Allowed active-change layout:
 .agent/work/<change>/PLAN.md
 .agent/work/<change>/slices/*.md
 .agent/work/<change>/DESIGN.md
-.agent/work/<change>/orchestration/*.md   # conditional: subagent route or complex review loops only
+.agent/work/<change>/orchestration/*.md   # conditional: subagent route or complex review loops only (e.g. outside-voice-log.md)
 ```
 
-- `SPEC.md` may begin as an office-hours skeleton. auto-frame completes it and only then records `canonical_spec`, so a SPEC.md without the pointer means framing is in progress. A legacy `INTAKE.md` from earlier versions is optional context.
+- `SPEC.md` may begin as an office-hours skeleton. auto-frame completes it and only then records `canonical_spec`, so a SPEC.md without the pointer means framing is in progress. A legacy `INTAKE.md` is optional context.
 - `SPEC.md` must summarize and link every normative `spec/*.md` detail file. Unlinked supplemental files are notes, not contract.
 - `PLAN.md` must link any `slices/*.md` detail file and preserve requirement IDs, gap IDs, invariants, audit questions, migration checkpoints, or coverage targets from SPEC.md.
 - Execute and verify load only detail files linked to the active slice or requirement IDs.
@@ -84,9 +84,18 @@ Each handoff carries five durable elements:
 
 Verification findings, implementation caveats, downstream consequences, and recommendations for an already-approved next slice are not checkpoints. Record them as slice evidence or risks and continue.
 
+## Slice Defaults
+
+Omitted `PLAN.md` slice fields default as pinned here, so plan and execute cannot drift:
+
+- Omitted `Execution` means `direct`.
+- Omitted `Depends on` means `none`.
+- Omitted `Checkpoint after` means `none`.
+- Omitted checkpoint reason means `none`.
+
 ## Git Rhythm
 
-Per-slice commits are owned by `auto-execute`. The operational rhythm (trigger detection, pre-existing dirt, commit shape, STOP-and-surface on commit failure) lives in `auto-execute`'s SKILL.md. This contract pins the cross-skill invariants:
+Per-slice commits are owned by `auto-execute`, whose SKILL.md holds the operational rhythm. This contract pins the cross-skill invariants:
 
 - **Single owner.** `auto-execute` runs every `git commit` Automaton produces. `auto-verify` never invokes any git write command. Its read-only-on-code gate extends to git history. Subagents on the implementer route never invoke any git command. The orchestrator owns history.
 - **Strictly additive.** `git commit` only. Never `amend`, `reset`, `rebase`, `branch`, `checkout`, or `push`. The harness never rewrites history a user might already have inspected. One carve-out: coordinator-managed `git worktree add`/`remove` for parallel slice isolation does not breach this rule, because the user's checked-out branch is never switched and every result lands as a normal additive slice commit on it.
@@ -97,7 +106,7 @@ Validation tier: L3 (prompt prose plus regression tests). No runtime enforcement
 
 ## Review Verdict Routing
 
-`auto-eng-review` is an optional lifecycle check, not a stage prerequisite. Use it when execution safety needs review. Downstream skills must respect any review verdict in `current.json`. Product direction has no review skill: the user approves SPEC.md at frame's exit.
+`auto-eng-review` is an optional lifecycle check, not a stage prerequisite. Downstream skills must respect any review verdict in `current.json`. Product direction has no review skill: the user approves SPEC.md at frame's exit.
 
 | Review | Verdict | Next skill |
 | --- | --- | --- |
@@ -115,18 +124,6 @@ Halt and report when:
 - A stage is asked to consume a future-stage artifact.
 - The requested work would add archive behavior, runtime lifecycle enforcement, daemons, dashboards, browser workflows, marketplace behavior, or vendor-source imports without a new SPEC.
 
-## Validation Tiers
-
-Validation has three tiers. Keep each check at the lowest tier that catches the failure; do not promote artifact-shape or norm checks into runtime.
-
-| Tier | Scope | Enforced by | Example |
-| --- | --- | --- | --- |
-| **L1 Coordination** | Cross-skill state invariants | `runtime/lib/validate.mjs`; `error`-level diagnostic; hard stop | Stage enum, canonical pointer resolves to an existing file |
-| **L2 Artifact shape** | A single artifact's downstream consumability | `get-context.mjs` and `sync-status.mjs` artifact lint surfaces `warning`-level diagnostics; the consuming skill judges them | SPEC.md has Acceptance Criteria; PLAN.md slices have verification commands |
-| **L3 Norms** | Wording, structure, prose quality | Prompt text + repository regression tests | Bounded goal is one sentence; lifecycle skills avoid mandatory nested invocation |
-
-Runtime stays portable across Claude, Codex, and OpenCode by holding only L1 checks. L2 lives where artifacts are consumed. L3 lives in prompts and regression tests.
-
 ## Artifact Signal Discipline
 
-The five signal rules and the deletion test live in `FRAMEWORK.md` (Artifact Signal Discipline), which loads once per session. Apply them to every artifact write. Do not accumulate multiple `## Review: Engineering` blocks: append-replace, not stack.
+The five signal rules and the deletion test live in `FRAMEWORK.md` (Artifact Signal Discipline). Apply them to every artifact write.

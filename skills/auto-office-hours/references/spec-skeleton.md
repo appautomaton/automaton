@@ -11,7 +11,7 @@ The skeleton is a faithful record of what the user approved. Use the user's lang
 
 Seeded by auto-office-hours on {date}
 Active change: {change-name}
-Work class: {Startup / Builder / Content} mode, {bug / feature / capability / roadmap} scale, {feature / refactor / parity / audit / migration / coverage / content / mixed} shape
+Work: {Startup / Builder / Content} mode, {bug / feature / capability / roadmap} scale, {feature / refactor / parity / audit / migration / coverage / content / mixed} shape
 
 ## Goal
 {the user's final refined objective, not the initial framing and not the agent's rewrite}

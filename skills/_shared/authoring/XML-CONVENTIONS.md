@@ -1,6 +1,6 @@
 # XML Conventions
 
-Tags are attention spikes. Their value comes from scarcity — every additional tag dilutes the signal that makes the remaining ones work. Use standard markdown headers for structure. Reserve angle-bracket tags for the moments where the agent must halt, gate, or choose.
+Tags are attention spikes. Their value comes from scarcity: every additional tag dilutes the signal that makes the remaining ones work. Use standard markdown headers for structure. Reserve angle-bracket tags for the moments where the agent must halt, gate, or choose.
 
 ## Allowed Tags
 
@@ -32,13 +32,13 @@ Not every skill needs tags. Match tag density to the skill's decision surface.
 
 | Tier | Tags | Examples |
 |------|------|----------|
-| Heavy | `<GATE>` + `<STOP>` | auto-execute, auto-office-hours |
-| Medium | One tag, typically `<GATE>` or `<STOP>` | auto-frame, auto-plan, auto-onboard, auto-verify, auto-resume |
-| Light | No tags. Blocking conditions live in Rules as "Do not guess." sentences. | auto-eng-review |
+| Heavy | `<GATE>` + `<STOP>` | auto-execute, auto-office-hours, auto-onboard |
+| Medium | One tag, typically `<GATE>` or `<STOP>` | auto-frame, auto-plan, auto-verify, auto-resume, auto-eng-review |
+| Light | No tags. Blocking conditions live in Rules as "Do not guess." sentences. | (none currently) |
 
 ## Signal Scarcity
 
-Tags work because they are rare. An LLM scanning 200 lines of markdown sees a `<GATE>` as a pattern break — the attention spike makes it harder to skip. Dilute with structural tags and the spike flattens.
+Tags work because they are rare. An LLM scanning 200 lines of markdown sees a `<GATE>` as a pattern break, and the attention spike makes it harder to skip. Dilute with structural tags and the spike flattens.
 
 Rules:
 1. **One `<GATE>` per skill.** More than one dilutes the signal.
