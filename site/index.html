@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Automaton: a stage-gated harness for coding agents</title>
+<meta name="description" content="Automaton moves agent work through framed specs, ordered plans, and verified slices, with durable state that survives the session. For Claude Code, Codex, and OpenCode.">
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+<link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=zodiak@400,401,700,900&f[]=author@400,500,600&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="wrap top">
+  <a class="wordmark" href="#">Automaton</a>
+  <button class="toggle" id="theme" type="button" aria-label="Switch color theme">theme</button>
+</header>
+
+<div class="wrap run">
+
+  <nav class="rail" aria-label="Lifecycle stages">
+    <ol id="rail">
+      <li data-for="problem" class="active">Frame</li>
+      <li data-for="model">Plan</li>
+      <li data-for="trail">Execute</li>
+      <li data-for="economy">Verify</li>
+      <li data-for="install">Verified</li>
+    </ol>
+    <p class="rail-note">You are scrolling through a run. Each section sits at a stage of the lifecycle it describes.</p>
+  </nav>
+
+  <main>
+
+    <section class="hero" id="top">
+      <div class="hero-grid">
+        <div>
+          <p class="eyebrow">A workflow harness for Claude Code, Codex, and OpenCode</p>
+          <h1>The chat window forgets. Artifacts don&rsquo;t.</h1>
+          <p class="lede">Watch the session on the right die mid-change and lose nothing. That is the whole idea: the work lives in files, not in the conversation.</p>
+          <div class="actions">
+            <div class="cmd"><code>npx @appautomaton/automaton install --claude</code><button class="copy" type="button" data-copy="npx @appautomaton/automaton install --claude">copy</button></div>
+            <div class="linkrow">
+              <a href="https://github.com/appautomaton/automaton">GitHub</a>
+              <a href="https://www.npmjs.com/package/@appautomaton/automaton">npm</a>
+            </div>
+          </div>
+        </div>
+        <div class="term" role="img" aria-label="Terminal transcript: a change moves through frame, plan, and execute. The session compacts and its context is gone. auto-resume reads the spec, the plan, and git history, and the run finishes verified. Nothing is lost.">
+          <div class="term-bar" aria-hidden="true"><span></span><span></span><span></span></div>
+          <pre class="term-body" aria-hidden="true"><span class="tl"><b class="tp">&#10095;</b> /auto-frame rate-limit the API</span>
+<span class="tl"><span class="ts">frame</span>SPEC.md written &middot; awaiting your yes</span>
+<span class="tl"><b class="tp">&#10095;</b> approved</span>
+<span class="tl"><span class="ts">plan</span>PLAN.md &middot; 4 slices, each verifiable</span>
+<span class="tl"><span class="ts">execute</span>slice 1/4 &#10003; &middot; commit a41f3c2</span>
+<span class="tl"><span class="ts">execute</span>slice 2/4 &#10003; &middot; commit 9be07d1</span>
+<span class="tl td">&#9472;&#9472; session compacted, context gone &#9472;&#9472;</span>
+<span class="tl"><b class="tp">&#10095;</b> /auto-resume</span>
+<span class="tl"><span class="ts">resume</span>SPEC.md &middot; PLAN.md &middot; git log &middot; all here</span>
+<span class="tl"><span class="ts">execute</span>slice 3/4 &#10003; &middot; slice 4/4 &#10003;</span>
+<span class="tl"><span class="ts">verify</span>12/12 pass &middot; change complete</span></pre>
+        </div>
+      </div>
+      <p class="bet">Bet: a page that teaches the operating model in one scroll beats a feature pitch. You are reading that bet.</p>
+    </section>
+
+    <section id="problem">
+      <p class="eyebrow"><span class="num">01</span> The problem</p>
+      <h2>Long agent tasks lose the plot.</h2>
+      <p>Anyone who has pushed an agent through a multi-day change knows the shape of the failure. The context window compacts and the reasons disappear. A fresh session re-reads half the repository to rediscover Tuesday&rsquo;s decisions. &ldquo;Done&rdquo; arrives with no evidence attached.</p>
+      <p>None of that is a model problem. It is a memory architecture problem: the work lived in the conversation, and the conversation is the one thing guaranteed to vanish.</p>
+    </section>
+
+    <section id="model">
+      <p class="eyebrow"><span class="num">02</span> The operating model</p>
+      <h2>Keep the work outside the window.</h2>
+
+      <div class="flow-box">
+        <svg viewBox="0 0 860 170" role="img" aria-label="The lifecycle as a track: frame produces SPEC.md, a gate stops for a human yes, plan produces PLAN.md, a second gate stops for a human yes, execute produces slices and commits, verify produces a report from fresh evidence, and verified is terminal.">
+          <line class="f-track" x1="30" y1="56" x2="806" y2="56"></line>
+          <path class="f-arrow" d="M806 50 L820 56 L806 62 Z"></path>
+
+          <line class="f-gate" x1="149" y1="42" x2="149" y2="70"></line>
+          <line class="f-gate" x1="156" y1="42" x2="156" y2="70"></line>
+          <text class="f-gatelabel" x="152" y="30" text-anchor="middle">human yes</text>
+
+          <line class="f-gate" x1="334" y1="42" x2="334" y2="70"></line>
+          <line class="f-gate" x1="341" y1="42" x2="341" y2="70"></line>
+          <text class="f-gatelabel" x="337" y="30" text-anchor="middle">human yes</text>
+
+          <g class="f-node" transform="translate(60,56)">
+            <circle r="7"></circle>
+            <text class="f-stage" y="-18" text-anchor="middle">frame</text>
+            <line class="f-drop" y1="10" y2="34"></line>
+            <rect class="f-chip" x="-45" y="34" width="90" height="30" rx="4"></rect>
+            <text class="f-doc" y="53" text-anchor="middle">SPEC.md</text>
+          </g>
+          <g class="f-node" transform="translate(245,56)">
+            <circle r="7"></circle>
+            <text class="f-stage" y="-18" text-anchor="middle">plan</text>
+            <line class="f-drop" y1="10" y2="34"></line>
+            <rect class="f-chip" x="-45" y="34" width="90" height="30" rx="4"></rect>
+            <text class="f-doc" y="53" text-anchor="middle">PLAN.md</text>
+          </g>
+          <g class="f-node" transform="translate(430,56)">
+            <circle r="7"></circle>
+            <text class="f-stage" y="-18" text-anchor="middle">execute</text>
+            <line class="f-drop" y1="10" y2="34"></line>
+            <rect class="f-chip" x="-62" y="34" width="124" height="30" rx="4"></rect>
+            <text class="f-doc" y="53" text-anchor="middle">slices &middot; commits</text>
+          </g>
+          <g class="f-node" transform="translate(615,56)">
+            <circle r="7"></circle>
+            <text class="f-stage" y="-18" text-anchor="middle">verify</text>
+            <line class="f-drop" y1="10" y2="34"></line>
+            <rect class="f-chip" x="-56" y="34" width="112" height="30" rx="4"></rect>
+            <text class="f-doc" y="53" text-anchor="middle">fresh evidence</text>
+          </g>
+          <g class="f-node" transform="translate(790,56)">
+            <circle class="f-final" r="11"></circle>
+            <circle r="5"></circle>
+            <text class="f-stage" y="-22" text-anchor="middle">verified</text>
+            <text class="f-doc" y="53" text-anchor="middle">terminal</text>
+          </g>
+        </svg>
+      </div>
+      <p class="caption">The double bars are gates: the run stops there and waits for a human yes. Everything a stage produces is a file the next session can reload.</p>
+
+      <div class="model-cols">
+        <div>
+          <h3>Stages with hard edges</h3>
+          <p>A human approves the spec before planning starts, and authorizes execution before code changes. Verification re-derives results from fresh command output, never from the agent&rsquo;s recollection of what it did.</p>
+        </div>
+        <div>
+          <h3>Artifacts as contracts</h3>
+          <p>SPEC.md and PLAN.md are reloadable contracts, not meeting notes. A fresh session reads them and continues where the last one stopped, because every decision was written down when it was made.</p>
+        </div>
+        <div>
+          <h3>State as evidence</h3>
+          <p>A small state file is the cursor and per-slice commits are the ledger. Recovery reconciles the plan against git history, so a resumed session trusts evidence over memory.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="trail">
+      <p class="eyebrow"><span class="num">03</span> The proof</p>
+      <h2>This page is a run.</h2>
+      <p>We built this page with the harness. It is change <code>2026-07-05-automaton-landing-page</code>, scoped in an office-hours dialogue, bounded by a spec, and held to eight acceptance criteria. The paper trail below is real.</p>
+
+      <div class="papers">
+        <article class="paper">
+          <p class="doc">SPEC.md</p>
+          <blockquote>
+            <p class="field"><b>Bet:</b> a single page that teaches the operating model in one scroll converts curious developers better than a feature pitch would.</p>
+            <p class="field"><b>Constraint:</b> hand-authored static page, no build step, no framework. Fonts and libraries load from CDNs; nothing persisted locally.</p>
+          </blockquote>
+          <span class="src mono">.agent/work/&hellip;/SPEC.md</span>
+        </article>
+        <article class="paper">
+          <p class="doc">DESIGN.md</p>
+          <blockquote>
+            <p class="field"><b>Typography:</b> Zodiak and Author via the Fontshare CDN. The trending cluster (Inter, Geist, Instrument Sans, General Sans, Space Grotesk) was researched and ruled out by name.</p>
+            <p class="field"><b>Code face:</b> your system&rsquo;s own mono. A CLI tool should speak in your terminal&rsquo;s voice.</p>
+          </blockquote>
+          <span class="src mono">.agent/work/&hellip;/DESIGN.md</span>
+        </article>
+        <article class="paper">
+          <p class="doc">Acceptance criteria</p>
+          <ul>
+            <li>Authored assets under 100&thinsp;KB, graphics in SVG</li>
+            <li>No font or library files committed, CDN only</li>
+            <li>Readable with JS disabled and fonts blocked</li>
+            <li>Both color schemes, no overflow at 360&thinsp;px</li>
+            <li>Copy passes the project&rsquo;s anti-slop scan</li>
+          </ul>
+          <span class="src mono">verified before deploy</span>
+        </article>
+      </div>
+    </section>
+
+    <section id="economy">
+      <p class="eyebrow"><span class="num">04</span> The token economy</p>
+      <h2>Instructions compete with your code for the same window.</h2>
+      <p>Automaton&rsquo;s entry points are deliberately small, and depth loads only when a trigger fires. The prompt budget is enforced in CI: a skill that grows past its word ceiling fails the build until someone consciously raises it.</p>
+
+      <div class="chart-box">
+        <svg viewBox="0 0 640 248" role="img" aria-label="Bar chart: instruction tokens held to complete one unit of work. Automaton about 4 thousand, Superpowers 7, Trellis 9, GSD 25, gstack 28.">
+          <g transform="translate(120,12)">
+            <g><title>Automaton: ~4k tokens</title>
+              <text class="bar-name hi" x="-10" y="15" text-anchor="end">Automaton</text>
+              <rect class="bar hi" x="0" y="2" width="69" height="20" rx="3"></rect>
+              <text class="bar-val" x="77" y="17">~4k</text>
+            </g>
+            <g transform="translate(0,44)"><title>Superpowers: ~7k tokens</title>
+              <text class="bar-name" x="-10" y="15" text-anchor="end">Superpowers</text>
+              <rect class="bar" x="0" y="2" width="120" height="20" rx="3"></rect>
+              <text class="bar-val" x="128" y="17">~7k</text>
+            </g>
+            <g transform="translate(0,88)"><title>Trellis: ~9k tokens</title>
+              <text class="bar-name" x="-10" y="15" text-anchor="end">Trellis</text>
+              <rect class="bar" x="0" y="2" width="154" height="20" rx="3"></rect>
+              <text class="bar-val" x="162" y="17">~9k</text>
+            </g>
+            <g transform="translate(0,132)"><title>GSD: ~25k tokens</title>
+              <text class="bar-name" x="-10" y="15" text-anchor="end">GSD</text>
+              <rect class="bar" x="0" y="2" width="429" height="20" rx="3"></rect>
+              <text class="bar-val" x="437" y="17">~25k</text>
+            </g>
+            <g transform="translate(0,176)"><title>gstack: ~28k tokens</title>
+              <text class="bar-name" x="-10" y="15" text-anchor="end">gstack</text>
+              <rect class="bar" x="0" y="2" width="480" height="20" rx="3"></rect>
+              <text class="bar-val" x="488" y="17">~28k</text>
+            </g>
+            <text class="axis-note" x="0" y="224">Instruction tokens a model holds to complete one typical unit of work</text>
+          </g>
+        </svg>
+      </div>
+      <p class="caption">In-house measurement across each harness&rsquo;s default workflow, July 2026. Midpoints shown. Method notes live in the repository, and the point survives the error bars.</p>
+    </section>
+
+    <section id="install">
+      <p class="eyebrow"><span class="num">05</span> Verified</p>
+      <h2>Install it where your agent works.</h2>
+      <p>Copy-based install. Everything Automaton adds to your project is plain, inspectable markdown, recorded in a receipt so uninstall removes exactly what install created.</p>
+
+      <div class="installs">
+        <div class="cmd"><code>npx @appautomaton/automaton install --claude</code><button class="copy" type="button" data-copy="npx @appautomaton/automaton install --claude">copy</button></div>
+        <div class="cmd"><code>npx @appautomaton/automaton install --codex</code><button class="copy" type="button" data-copy="npx @appautomaton/automaton install --codex">copy</button></div>
+        <div class="cmd"><code>npx @appautomaton/automaton install --opencode</code><button class="copy" type="button" data-copy="npx @appautomaton/automaton install --opencode">copy</button></div>
+      </div>
+
+      <p>Then read the operating model in the <a href="https://github.com/appautomaton/automaton">repository</a>, or start from the <a href="https://www.npmjs.com/package/@appautomaton/automaton">npm package</a>. The depth stays in the repo on purpose: one home per contract.</p>
+    </section>
+
+    <footer>
+      <span>MIT. Built with Automaton, on itself.</span>
+      <span class="linkrow">
+        <a href="https://github.com/appautomaton/automaton">GitHub</a>
+        <a href="https://www.npmjs.com/package/@appautomaton/automaton">npm</a>
+      </span>
+    </footer>
+
+  </main>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var stored = null;
+  try { stored = localStorage.getItem('theme'); } catch (e) {}
+  if (stored) root.setAttribute('data-theme', stored);
+
+  document.getElementById('theme').addEventListener('click', function () {
+    var dark = matchMedia('(prefers-color-scheme: dark)').matches;
+    var current = root.getAttribute('data-theme') || (dark ? 'dark' : 'light');
+    var next = current === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+  });
+
+  document.querySelectorAll('.copy').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      navigator.clipboard.writeText(btn.getAttribute('data-copy')).then(function () {
+        btn.textContent = 'copied';
+        setTimeout(function () { btn.textContent = 'copy'; }, 1600);
+      });
+    });
+  });
+
+  var items = document.querySelectorAll('#rail li');
+  if ('IntersectionObserver' in window && items.length) {
+    var map = {};
+    items.forEach(function (li) { map[li.getAttribute('data-for')] = li; });
+    var seen = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting && map[entry.target.id]) {
+          items.forEach(function (li) { li.classList.remove('active'); });
+          map[entry.target.id].classList.add('active');
+        }
+      });
+    }, { rootMargin: '-40% 0px -50% 0px' });
+    ['problem', 'model', 'trail', 'economy', 'install'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) seen.observe(el);
+    });
+  }
+})();
+</script>
+
+</body>
+</html>
