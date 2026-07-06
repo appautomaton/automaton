@@ -3,6 +3,7 @@
 [![npm version](https://img.shields.io/npm/v/@appautomaton/automaton.svg)](https://www.npmjs.com/package/@appautomaton/automaton)
 [![license](https://img.shields.io/npm/l/@appautomaton/automaton.svg)](https://github.com/appautomaton/automaton/blob/main/LICENSE)
 [![node](https://img.shields.io/node/v/@appautomaton/automaton.svg)](https://www.npmjs.com/package/@appautomaton/automaton)
+[![site](https://github.com/appautomaton/automaton/actions/workflows/pages.yml/badge.svg)](https://appautomaton.github.io/automaton/)
 
 Portable, stage-gated agentic-AI harness for Claude Code, Codex, and OpenCode.
 
@@ -68,6 +69,7 @@ Contributor-only design and runtime notes live in the repository [`docs/`](docs/
 
 ## Links
 
+- [Site](https://appautomaton.github.io/automaton/): the operating model in one scroll
 - [npm package](https://www.npmjs.com/package/@appautomaton/automaton)
 - [GitHub](https://github.com/appautomaton/automaton)
 - [Issues](https://github.com/appautomaton/automaton/issues)
