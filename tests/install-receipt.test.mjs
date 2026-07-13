@@ -19,7 +19,7 @@ import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import { installHost, uninstallHost, installProject, uninstallProject } from '../lib/install.mjs'
-import { hashContent, loadReceipt, receiptPath, saveReceipt } from '../lib/receipt.mjs'
+import { hashContent, loadReceipt, receiptPath, saveReceipt, warning } from '../lib/receipt.mjs'
 import { getHost } from '../hosts/index.mjs'
 
 const sourceRoot = fileURLToPath(new URL('..', import.meta.url))
@@ -224,6 +224,47 @@ test('upgrade prunes a whole skill directory the source no longer ships', () => 
     next.files.some((entry) => entry.path.includes('auto-retired-review')),
     false,
     'the receipt must carry no entries for the retired skill'
+  )
+})
+
+// Per-owner install records (DD-011): hosts install independently, so the
+// receipt records which automaton version last installed EACH owner, and
+// when. Failure story: a later `install --codex` overwrote the single global
+// stamps and silenced the drift warning for a claude install still on an
+// older version.
+test('each install records its owner version and time; uninstall removes exactly that record', () => {
+  const root = tempRoot('owner-records')
+
+  installHost(getHost('claude'), { root, sourceRoot })
+  installHost(getHost('codex'), { root, sourceRoot })
+
+  const receipt = loadReceipt(root)
+  for (const owner of ['project', 'claude', 'codex']) {
+    assert.equal(receipt.owners[owner]?.automatonVersion, packageVersion, `${owner} carries the version that last installed it`)
+    assert.ok(receipt.owners[owner]?.installedAt, `${owner} carries the time it was last installed`)
+  }
+
+  const raw = JSON.parse(readFileSync(receiptPath(root), 'utf8'))
+  assert.ok(raw.owners.claude.automaton_version, 'owner record keys are snake_case (DD-002)')
+  assert.ok(raw.owners.claude.installed_at, 'owner record keys are snake_case (DD-002)')
+
+  uninstallHost(getHost('claude'), { root, sourceRoot })
+
+  assert.deepEqual(
+    Object.keys(loadReceipt(root).owners).sort(),
+    ['codex', 'project'],
+    'uninstalling a host must drop its record and no other'
+  )
+})
+
+// The CLI warning vocabulary has one home (WARNING_CODES) and one constructor
+// that rejects strays, so a typo'd code fails at emission instead of shipping
+// as a new accidental vocabulary entry no test or reader knows about.
+test('the CLI warning vocabulary is closed: unknown codes throw at construction', () => {
+  assert.throws(() => warning('not_a_code', 'nope'), /unknown warning code/)
+  assert.deepEqual(
+    warning('kept_modified_file', 'kept'),
+    { level: 'warning', code: 'kept_modified_file', message: 'kept' }
   )
 })
 

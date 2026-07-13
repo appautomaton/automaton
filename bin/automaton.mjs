@@ -183,6 +183,11 @@ function run(argv) {
     const installed = [installProject(options.root, { sourceRoot }), ...installHosts(options.hosts, { root: options.root, sourceRoot })]
 
     console.log(installed.map((entry) => entry.id).join('\n'))
+    // Stderr-only orientation, like status drift warnings: stdout and the
+    // exit code stay stable for scripted consumers.
+    if (!options.hasHostSelection) {
+      console.error('note: no host selected, only the shared .agent runtime was installed (add --claude, --codex, --opencode, or --all for host skills)')
+    }
     printWarnings(installed)
     return
   }

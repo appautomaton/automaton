@@ -33,6 +33,8 @@ npx @appautomaton/automaton install --all
 
 The target root is optional and defaults to the current directory. To install into another project, pass its path as the final argument.
 
+Host flags pick what to install: `--claude`, `--codex`, `--opencode`, or `--all`. Without a host flag, `install` prepares only the shared `.agent` runtime and prints a note saying so. The default runs the other way on removal: `install --uninstall` without a host flag removes every installed host plus the shared runtime, while `.agent` project history is always preserved.
+
 ## What It Adds
 
 - `.agent/` durable project state, steering, work artifacts, and runtime files

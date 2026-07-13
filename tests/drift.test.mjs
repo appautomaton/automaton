@@ -44,14 +44,70 @@ test('a pre-receipt install reports missing_receipt', () => {
   rmSync(root, { recursive: true, force: true })
 })
 
-test('a version mismatch reports version_drift', () => {
+test('a version mismatch reports version_drift for the stale owner', () => {
   const root = tempRoot('version')
   installProject(root, { sourceRoot })
   const manifest = JSON.parse(readFileSync(receiptPath(root), 'utf8'))
+  manifest.owners.project.automaton_version = '0.0.0-older'
+  writeFileSync(receiptPath(root), JSON.stringify(manifest, null, 2) + '\n')
+  const drift = driftReport(root, { sourceRoot }).find((warning) => warning.code === 'version_drift')
+  assert.ok(drift, 'a stale installed version must be flagged')
+  assert.match(drift.message, /for project/, 'the warning must name which owner is stale')
+  rmSync(root, { recursive: true, force: true })
+})
+
+// Hosts install independently: installing codex with a newer CLI must not
+// hide that claude's copies are still old. Failure story: the receipt's
+// single global version stamp was overwritten by every install pass, so a
+// later `install --codex` silenced the drift warning for a stale claude.
+test('version drift is per host, not one global stamp', () => {
+  const root = tempRoot('per-owner')
+  installHost(getHost('claude'), { root, sourceRoot })
+  installHost(getHost('codex'), { root, sourceRoot })
+  const manifest = JSON.parse(readFileSync(receiptPath(root), 'utf8'))
+  manifest.owners.claude.automaton_version = '0.0.0-older'
+  writeFileSync(receiptPath(root), JSON.stringify(manifest, null, 2) + '\n')
+
+  const drifts = driftReport(root, { sourceRoot }).filter((warning) => warning.code === 'version_drift')
+  assert.equal(drifts.length, 1, 'only the stale host may be flagged')
+  assert.match(drifts[0].message, /for claude/, 'the stale host is named')
+  assert.match(drifts[0].message, /reinstall --claude/, 'the remedy is host-scoped')
+  rmSync(root, { recursive: true, force: true })
+})
+
+// A mixed-era receipt: one host installed by a pre-stamp CLI (entries, no
+// stamp), another by a stamp-aware CLI. The unstamped host must be reported
+// as unrecorded, never assumed current — otherwise the blind spot the stamps
+// exist to close reopens for exactly the installs that most need upgrading.
+// (Absence of a stamp proves a pre-stamp installer: downgrade rewrites are
+// explicitly out of scope.)
+test('an owner with entries but no version stamp is reported, not assumed current', () => {
+  const root = tempRoot('mixed-era')
+  installHost(getHost('claude'), { root, sourceRoot })
+  installHost(getHost('codex'), { root, sourceRoot })
+  const manifest = JSON.parse(readFileSync(receiptPath(root), 'utf8'))
+  delete manifest.owners.claude
+  writeFileSync(receiptPath(root), JSON.stringify(manifest, null, 2) + '\n')
+
+  const drifts = driftReport(root, { sourceRoot }).filter((warning) => warning.code === 'version_drift')
+  assert.equal(drifts.length, 1, 'only the unstamped host may be flagged')
+  assert.match(drifts[0].message, /version unrecorded\) for claude/, 'the unstamped host is named as unrecorded')
+  assert.match(drifts[0].message, /reinstall --claude/, 'the remedy is host-scoped')
+  rmSync(root, { recursive: true, force: true })
+})
+
+// Receipts written before per-owner records carry no owners map; drift must
+// degrade to the historical global comparison, never go silent.
+test('a receipt without owner records falls back to the global version check', () => {
+  const root = tempRoot('fallback')
+  installProject(root, { sourceRoot })
+  const manifest = JSON.parse(readFileSync(receiptPath(root), 'utf8'))
+  delete manifest.owners
   manifest.automaton_version = '0.0.0-older'
   writeFileSync(receiptPath(root), JSON.stringify(manifest, null, 2) + '\n')
-  const codes = driftReport(root, { sourceRoot }).map((warning) => warning.code)
-  assert.ok(codes.includes('version_drift'), 'a stale installed version must be flagged')
+  const drift = driftReport(root, { sourceRoot }).find((warning) => warning.code === 'version_drift')
+  assert.ok(drift, 'a stale pre-owner-stamp receipt must still be flagged')
+  assert.match(drift.message, /installed automaton 0\.0\.0-older, this CLI is/)
   rmSync(root, { recursive: true, force: true })
 })
 

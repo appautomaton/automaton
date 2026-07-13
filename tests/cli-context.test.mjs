@@ -9,6 +9,12 @@ import { fileURLToPath } from 'node:url'
 
 const cliPath = fileURLToPath(new URL('../bin/automaton.mjs', import.meta.url))
 
+// A host-less install is a valid agent-only provisioning step, but it is also
+// the classic first-run mistake, so the CLI orients on stderr while stdout and
+// the exit code stay stable for scripted consumers. Pinning the full line
+// proves the note is the ONLY stderr output of a pristine bare install.
+const NO_HOST_NOTE = 'note: no host selected, only the shared .agent runtime was installed (add --claude, --codex, --opencode, or --all for host skills)\n'
+
 test('context command prints the retrieval summary for the requested stage', () => {
   const result = spawnSync(process.execPath, [cliPath, 'context', 'plan'], { encoding: 'utf8' })
 
@@ -34,7 +40,7 @@ test('install command creates bootstrap state and status reports it', () => {
   const installResult = spawnSync(process.execPath, [cliPath, 'install', root], { encoding: 'utf8' })
 
   assert.equal(installResult.status, 0)
-  assert.equal(installResult.stderr, '')
+  assert.equal(installResult.stderr, NO_HOST_NOTE)
   assert.equal(installResult.stdout, 'agent\n')
   assert.equal(existsSync(agentRoot), true)
   assert.equal(
@@ -85,7 +91,7 @@ test('install command preserves existing durable snake_case current state', () =
   const installResult = spawnSync(process.execPath, [cliPath, 'install', root], { encoding: 'utf8' })
 
   assert.equal(installResult.status, 0)
-  assert.equal(installResult.stderr, '')
+  assert.equal(installResult.stderr, NO_HOST_NOTE)
   assert.equal(
     readFileSync(currentPath, 'utf8'),
     '{\n  "active_change": "existing-change",\n  "stage": "execute",\n  "canonical_design": "docs/design.md"\n}\n'
@@ -153,7 +159,7 @@ test('install command only provisions .agent when no host flags are passed', () 
   const result = spawnSync(process.execPath, [cliPath, 'install', root], { encoding: 'utf8' })
 
   assert.equal(result.status, 0)
-  assert.equal(result.stderr, '')
+  assert.equal(result.stderr, NO_HOST_NOTE)
   assert.equal(result.stdout, 'agent\n')
   assert.equal(existsSync(join(root, '.agent', 'steering', 'PROJECT.md')), true)
   assert.equal(existsSync(join(root, '.claude', 'skills', 'auto-frame', 'SKILL.md')), false)
