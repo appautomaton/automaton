@@ -19,7 +19,7 @@ When entering any stage, load files in this order. Stop as soon as you have enou
 2. SPEC.md      (if canonical_spec exists)
 3. PLAN.md      (if executing)
 4. Wiki pages   (LEARNINGS.md when present, others only when referenced by spec or plan)
-5. Source files (read as needed to understand the project and produce accurate work)
+5. Source files (read those the current decision requires)
 ```
 
 ## Degradation Signals
@@ -37,7 +37,7 @@ When the host surfaces actual context usage, treat it as corroboration: above ro
 
 Two responses, in order:
 
-1. **Conserve.** Stop new wide reads. Dispatch the librarian for lookups instead of reading inline. Summarize aggressively. Finish the current slice before starting anything new.
+1. **Conserve.** Stop new wide reads. In skills that carry `references/HOST-TOOLS.md`, dispatch the librarian for lookups instead of reading inline. Summarize aggressively. Finish the current slice before starting anything new.
 2. **Checkpoint.** When signals persist after conserving, record slice evidence and durable state, then stop with a clear next action. A clean checkpoint beats a degraded continuation.
 
 ## Re-Read Rule
@@ -62,11 +62,3 @@ Use this guide to decide what to load, link, summarize, or checkpoint. Do not tu
 | "This is a big change" | "This requires three independently verifiable slices" |
 | "Read the whole codebase" | "Load files named by the active slice and scan wider only when correctness requires it" |
 | "Re-read the spec" | "Summarize the relevant section from memory unless a re-read trigger applies" |
-
-## Anti-Patterns
-
-- **Broad scans.** `find . -name "*.js" | xargs cat` loads the entire codebase. Never do this.
-- **Greedy wiki loading.** Loading every file in `.agent/wiki/` because "they might be useful."
-- **Artifact bloat.** A SPEC.md that is 800 lines long. Link detail under `spec/*.md` or move architecture rationale to DESIGN.md.
-- **Re-read loops.** Reading `package.json` three times in one session because it was not held in working memory.
-- **Confident amnesia.** Refusing to re-read after compaction and summarizing a file from a guess instead.

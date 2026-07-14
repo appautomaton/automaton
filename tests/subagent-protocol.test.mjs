@@ -140,6 +140,28 @@ test('parallel dispatch requires worktree isolation with serial integration', ()
   assert.match(lifecycle, /Never `amend`, `reset`, `rebase`, `branch`, `checkout`, or `push`(.|\n)*worktree add(.|\n)*never switched/)
 })
 
+// The subagent git boundary protects history integrity, so it is write-scoped: reads
+// like git log stay available as implementation context. Every home must state the
+// same scope, because the installed role body is the only text the subagent sees.
+test('subagent git boundary is write-scoped in every home', () => {
+  const lifecycle = readFileSync(join(skillsRoot, '_shared', 'references', 'ARTIFACT-LIFECYCLE.md'), 'utf8')
+  const rhythm = readFileSync(join(skillsRoot, 'auto-execute', 'references', 'git-rhythm.md'), 'utf8')
+  const executeSkill = readFileSync(join(skillsRoot, 'auto-execute', 'SKILL.md'), 'utf8')
+  const implementerRole = readFileSync(join(skillsRoot, 'auto-execute', 'role-sources', 'implementer-role.md'), 'utf8')
+
+  assert.match(lifecycle, /implementer route never invoke any git write command/)
+  assert.match(rhythm, /Subagents never run git write commands/)
+  assert.match(executeSkill, /implementer route never run any git write command/)
+  assert.match(implementerRole, /Do not run any `git` write command/)
+  for (const [name, source] of Object.entries({ lifecycle, rhythm, executeSkill })) {
+    assert.doesNotMatch(
+      source,
+      /never (?:run|invoke) any git command/,
+      `${name} must scope the subagent git ban to write commands`
+    )
+  }
+})
+
 test('role bodies carry identity affirmation, escalation permission, and the harness boundary', () => {
   const roleDir = join(skillsRoot, 'auto-execute', 'role-sources')
   for (const role of ['implementer-role.md', 'spec-reviewer-role.md', 'quality-reviewer-role.md']) {

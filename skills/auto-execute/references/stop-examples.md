@@ -14,10 +14,6 @@
 
 ## When to Push Through
 
-**Typo in test:** The test fails because of a clear typo in the assertion (`expect(foo).toBe(bar)` where `bar` is obviously wrong). Fix the typo and continue.
-
-**Lint failure:** The build fails because of a missing semicolon or import order. Fix and continue.
-
 **Expected dependency conflict:** The plan warned that two packages have conflicting peer dependencies and specified the resolution strategy. Follow the strategy and continue.
 
 **Flaky test:** A test fails intermittently and the plan explicitly notes it as flaky with a workaround. Apply the workaround and continue.

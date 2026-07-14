@@ -168,9 +168,12 @@ test('auto-execute owns route selection and execution-window continuation', () =
   assert.match(source, /Checkpoint after: none/)
   assert.match(source, /defaults pinned in `\.agent\/\.automaton\/references\/ARTIFACT-LIFECYCLE\.md` \(Slice Defaults\)/)
   assert.match(source, /missing acceptance criteria or verification/)
-  assert.match(source, /validate that it actually requires human input/)
-  assert.match(source, /Do not pause for checkpoint text that only records verification findings/)
-  assert.match(source, /Record a plan correction, keep the evidence, and continue/)
+  // Checkpoint validity is judged against the single home; execute carries no second
+  // copy of the exclusion list (ARTIFACT-LIFECYCLE.md, Checkpoint Semantics).
+  assert.match(source, /validate it against the definitions/)
+  assert.match(source, /holds only when its defined condition is met/)
+  assert.doesNotMatch(source, /verification findings, caveats, or next-slice recommendations/)
+  assert.match(source, /record a plan correction, keep the evidence, and continue/)
   assert.match(source, /Record completion evidence in place/)
   assert.match(source, /The slice status still updates in place/)
   assert.match(source, /If the slice is inline in `PLAN\.md`, update that slice entry in `PLAN\.md`/)
@@ -182,8 +185,12 @@ test('auto-execute owns route selection and execution-window continuation', () =
   assert.match(source, /do not invent slice cursor or checkpoint fields/)
   assert.match(source, /The next slice is selected from `PLAN\.md`/)
   assert.match(source, /Execute the window serially by default/)
-  assert.match(source, /Build an execution window, but execute and verify one slice at a time/)
+  assert.match(source, /Execute and verify one approved slice at a time inside the selected execution window/)
   assert.match(source, /The route decision lives here/)
+  // Route assignment criteria have one home in auto-plan; execute only honors values.
+  assert.match(source, /The assignment criteria live in `auto-plan`/)
+  assert.doesNotMatch(source, /crosses subsystem boundaries/)
+  assert.match(source, /record a plan correction rather than silently rerouting/)
   assert.match(source, /Run the per-slice protocol/)
   assert.match(source, /Do not tell the user to invoke another execute skill/)
   assert.match(source, /continue inline into `auto-verify`'s contract/)
@@ -215,7 +222,7 @@ test('auto-execute git rule carries the worktree carve-out and one attempt limit
   // The strictly-additive rule must name the coordinator-managed worktree carve-out
   // instead of contradicting the parallel-isolation mechanics in git-rhythm.md.
   assert.match(source, /carve-out: coordinator-managed `git worktree add`\/`remove`/)
-  assert.match(source, /worktree carve-out in ARTIFACT-LIFECYCLE\.md/)
+  assert.match(source, /parallel slice isolation, defined in `\.agent\/\.automaton\/references\/ARTIFACT-LIFECYCLE\.md` \(Git Rhythm\)/)
 
   // One attempt threshold across the STOP condition and both references: 3, then halt.
   assert.match(source, /A test fails 3 times with the same error/)

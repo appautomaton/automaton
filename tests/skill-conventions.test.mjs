@@ -29,8 +29,10 @@ test('authored skills use valid portable frontmatter and concise bodies', () => 
 })
 
 test('portable skill names are unique and match their directory names', () => {
+  // Dot-directories are local host residue the repo gitignores (.claude/, .DS_Store
+  // siblings); they are not authored skills and must not fail the census.
   const skillDirectories = readdirSync(skillsRoot, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory() && !entry.name.startsWith('_'))
+    .filter((entry) => entry.isDirectory() && !entry.name.startsWith('_') && !entry.name.startsWith('.'))
     .map((entry) => entry.name)
 
   const names = skillDirectories.map((directory) => parseFrontmatter(readFileSync(join(skillsRoot, directory, 'SKILL.md'), 'utf8')).fields.name)
@@ -333,6 +335,39 @@ test('no skill uses <HARD-GATE>', () => {
       /HARD-GATE/,
       `${skillName} must use <GATE> instead of <HARD-GATE>`
     )
+  }
+})
+
+test('installed skill prose avoids the LEXICON prohibited phrases', () => {
+  // LEXICON.md (Prohibited Phrases) bans instruction wording too vague to shape behavior.
+  // Double-quoted spans are stripped before scanning: quality cards and calibration
+  // references quote violations on purpose as anti-pattern examples.
+  const prohibited = /\b(consider|as needed|be careful|think about|best practices?)\b/i
+  const prosePaths = []
+
+  const walk = (dir) => {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      const full = join(dir, entry.name)
+      if (entry.isDirectory()) {
+        walk(full)
+      } else if (entry.name.endsWith('.md')) {
+        prosePaths.push(full)
+      }
+    }
+  }
+
+  for (const entry of readdirSync(skillsRoot, { withFileTypes: true })) {
+    if (entry.isDirectory() && entry.name.startsWith('auto-')) {
+      walk(join(skillsRoot, entry.name))
+    }
+  }
+  walk(join(skillsRoot, '_shared', 'references'))
+
+  assert.ok(prosePaths.length > 30, 'prohibited-phrase scan must cover the installed prose surfaces')
+  for (const file of prosePaths) {
+    const unquoted = readFileSync(file, 'utf8').replaceAll(/"[^"]*"/g, '""')
+    const hit = unquoted.match(prohibited)
+    assert.equal(hit, null, `${file} uses prohibited phrase "${hit?.[0]}" (LEXICON.md, Prohibited Phrases)`)
   }
 })
 

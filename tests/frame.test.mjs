@@ -46,7 +46,11 @@ test('auto-frame asks only blocking decisions, keeps one stage owner and a condi
   assert.match(source, /auto-plan owns the `stage: plan` mutation/)
   assert.doesNotMatch(source, /Use `--stage plan` only when/)
   const lifecycle = readFileSync(join(skillsRoot, '_shared', 'references', 'ARTIFACT-LIFECYCLE.md'), 'utf8')
-  assert.match(lifecycle, /auto-plan records `stage: plan` when planning begins/)
+  // Both homes describe the mutation at its real moment: auto-plan's single sync call
+  // lands stage and canonical_plan together when PLAN.md is written, not at plan entry.
+  assert.match(lifecycle, /auto-plan records `stage: plan` when it writes PLAN\.md/)
+  assert.match(source, /records it when it writes PLAN\.md/)
+  assert.doesNotMatch(lifecycle, /when planning begins/)
   assert.doesNotMatch(lifecycle, /stays `frame` unless plan handoff is approved/)
 
   // The GATE holds conditions only. The write procedure lives outside the tag.
@@ -95,7 +99,8 @@ test('auto-frame checks request coverage before writing SPEC', () => {
   assert.match(source, /Included items must appear/)
   assert.match(source, /Deferred items must stay deferred/)
   assert.match(source, /Anti-goals must appear/)
-  assert.match(source, /Needs-decision items require one focused question with 2–3 concrete options, a one-line reason each, and your recommended answer/)
+  assert.match(source, /Needs-decision items require one focused question with concrete options and your recommended answer/)
+  assert.match(source, /Asking The User convention/)
   assert.match(source, /Do not drop a material item silently/)
   assert.match(specShape, /Target user or stakeholder/i)
   assert.match(specShape, /Scope coverage decisions/i)

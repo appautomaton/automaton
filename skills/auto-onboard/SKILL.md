@@ -99,4 +99,3 @@ Do not guess. Do not proceed.
 - Cite a file path for every steering claim.
 - Delete empty template sections; templates are prompts, not required headings.
 - Keep durable artifacts free of speculative questions, verdict-style confidence sections, and routing chatter. The Observed, Inferred, and Needs Confirmation split from the artifact contract is required, not banned.
-- Never create roadmap phases on first-time onboarding. On refresh, change roadmap phases only when evidence and user confirmation justify it.

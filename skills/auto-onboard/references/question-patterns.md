@@ -9,8 +9,7 @@ For ROADMAP.md, do not ask during first-time onboarding; keep the placeholder. O
 1. Name the evidence.
 2. State the working assumption.
 3. Ask for the smallest decision that resolves the ambiguity.
-4. Prefer 2 to 4 concrete options.
-5. Use the host question tool when available.
+4. Offer options per the Asking The User convention in `.agent/.automaton/references/FRAMEWORK.md`.
 
 ## Good Patterns
 

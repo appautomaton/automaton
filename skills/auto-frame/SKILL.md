@@ -48,7 +48,7 @@ If the skeleton or conversation context includes scope coverage, compare the int
 - Included items must appear in the bounded goal, required outcome, constraints, risks, or acceptance criteria.
 - Deferred items must stay deferred with a reason in a SPEC deferred-scope note.
 - Anti-goals must appear in SPEC anti-goals.
-- Needs-decision items require one focused question with 2–3 concrete options, a one-line reason each, and your recommended answer, unless the user explicitly accepts an assumption. Use the host question tool when available, otherwise present the options inline.
+- Needs-decision items require one focused question with concrete options and your recommended answer, per the Asking The User convention in `.agent/.automaton/references/FRAMEWORK.md`, unless the user explicitly accepts an assumption.
 
 If no formal scope coverage exists but the request has multiple material asks, perspectives, constraints, or worries, build the lightweight check from available context. Do not drop a material item silently.
 
@@ -58,9 +58,9 @@ List only constraints, unknowns, and risks that change implementation or verific
 
 ### Select Lenses
 
-Choose the minimum useful lenses from `product`, `engineering`, `design`, `security`, `runtime`. Default to `product` + `engineering` unless the request says otherwise. Read `references/lens-selection.md` when selection is not obvious.
+Choose the minimum useful lenses from `product`, `engineering`, `design`, `security`, `runtime`, and `content`. Default to `product` + `engineering` unless the request says otherwise. Read `references/lens-selection.md` when selection is not obvious.
 
-If the change involves content creation - writing, article, brief, deck, blog post, newsletter, documentation, or similar prose - add the content lens and read `references/content-framing.md`.
+If the change involves content creation (writing, article, brief, deck, blog post, newsletter, documentation, or similar prose), add the content lens and read `references/content-framing.md`.
 
 ### Continue To Office-Hours When Not Frameable
 
@@ -87,7 +87,7 @@ Apply the Artifact Signal Discipline rules from `.agent/.automaton/references/FR
 
 If `active_change` is `bootstrap` or does not match the current objective, derive a new slug: `YYYY-MM-DD-<kebab-case-objective>` using today's date. Use that slug before writing SPEC.md.
 
-After writing SPEC.md, run `node .agent/.automaton/scripts/sync-status.mjs --active-change "<change>" --canonical-spec ".agent/work/<change>/SPEC.md" --stage frame` from the project root. auto-plan owns the `stage: plan` mutation when planning begins, including inline continuation.
+After writing SPEC.md, run `node .agent/.automaton/scripts/sync-status.mjs --active-change "<change>" --canonical-spec ".agent/work/<change>/SPEC.md" --stage frame` from the project root. auto-plan owns the `stage: plan` mutation and records it when it writes PLAN.md, including on inline continuation.
 
 ## Output
 

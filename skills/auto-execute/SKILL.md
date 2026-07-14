@@ -60,7 +60,7 @@ After slice verification passes in `Verify And Advance`, run `git add -A` follow
 - `git commit -m "slice N: <objective>"` for a fresh slice (objective from `PLAN.md`).
 - `git commit -m "slice N gap-fix: <fix objective>"` for a slice re-entered after `auto-verify` FAIL (fix objective from the `VERIFY-GAP` block).
 
-**Strictly additive.** `git commit` only. Never `amend`, `reset`, `rebase`, `branch`, `checkout`, or `push`. One carve-out: coordinator-managed `git worktree add`/`remove` for parallel slice isolation, defined in `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Git Rhythm). Subagents on the implementer route never run any git command; the orchestrator owns history. A failed commit is a STOP, not a step to skip. Cross-skill contract: `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Git Rhythm).
+**Strictly additive.** `git commit` only. Never `amend`, `reset`, `rebase`, `branch`, `checkout`, or `push`. One carve-out: coordinator-managed `git worktree add`/`remove` for parallel slice isolation, defined in `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Git Rhythm). Subagents on the implementer route never run any git write command. The orchestrator owns history. A failed commit is a STOP, not a step to skip.
 
 ### Select Execution Window
 
@@ -73,20 +73,20 @@ Omitted slice fields carry the defaults pinned in `.agent/.automaton/references/
 
 For each slice in the window, extract objective, dependencies, touched files or subsystems, constraints and anti-goals, acceptance criteria, verification commands, checkpoint metadata, route metadata, and linked detail files and traceability IDs. If a material slice is missing acceptance criteria or verification, stop and recommend `auto-plan`.
 
-For content slices, also extract artifact target, audience, thesis, voice, content anti-goals, channel, source policy, factual risk, and format. If the slice needs a missing source or factual-risk decision, stop and report the missing source or unresolved factual-risk decision.
+For content slices, also extract the content fields per `references/content-execution.md`. Stop only for the gaps it names: a missing required-core input, a missing source, or an unresolved factual-risk decision.
 
 ### Route Selection
 
-The route decision lives here:
-- `direct`: small area, no slice-blocking review risk, fits in the parent session.
-- `subagent recommended`: prefer subagents when the slice crosses subsystem boundaries, touches many files, modifies shared interfaces or data schemas, or carries a relevant `approved_with_risks` verdict.
+The route decision lives here. The assignment criteria live in `auto-plan`. Honor the plan's `Execution:` value:
+- `direct`: implement in the parent session.
+- `subagent recommended`: prefer the subagent route.
 - `subagent required`: use the subagent route. Do not implement directly.
 
-Use the subagent route when the user explicitly requests multi-agent execution. Do not tell the user to invoke another execute skill for the same slice.
+Use the subagent route when the user explicitly requests multi-agent execution. If implementation reveals the assigned route no longer fits the slice, record a plan correction rather than silently rerouting. Do not tell the user to invoke another execute skill for the same slice.
 
 ### Direct Route
 
-Use this route only when route selection permits direct execution. Change code and project artifacts in the order the slice requires. Keep diffs small, local, and easy to verify. For prose artifacts, follow `references/content-execution.md`.
+Use this route only when route selection permits direct execution. For prose artifacts, follow `references/content-execution.md`.
 
 ### Subagent Route
 
@@ -121,7 +121,7 @@ After evidence is recorded, run the per-slice commit when the **Git Rhythm** is 
 
 The next slice is selected from `PLAN.md`; do not invent slice cursor or checkpoint fields in `.agent/.automaton/state/current.json`. Change state only through `node .agent/.automaton/scripts/sync-status.mjs` when stage, active change, review state, or canonical artifact pointers change.
 
-If the completed slice has a checkpoint, validate that it actually requires human input per the checkpoint definitions (`human-verify`, `decision`, `human-action`) in `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Checkpoint Semantics): a checkpoint holds only when its defined condition is met. Do not pause for checkpoint text that only records verification findings, caveats, or next-slice recommendations; those are not checkpoints. Record a plan correction, keep the evidence, and continue when normal continuation conditions pass.
+If the completed slice has a checkpoint, validate it against the definitions (`human-verify`, `decision`, `human-action`) in `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Checkpoint Semantics): it holds only when its defined condition is met. For checkpoint text that fails its definition, record a plan correction, keep the evidence, and continue when normal continuation conditions pass.
 
 Continue within the selected execution window only when verification passed, dependencies are met, the next slice still matches the approved plan, context remains healthy, and no STOP condition applies. If the checkpoint is valid, pause with the next action and checkpoint reason.
 
@@ -129,7 +129,7 @@ Continue within the selected execution window only when verification passed, dep
 
 When the selected execution window is complete but `PLAN.md` still has uncompleted approved slices, return to **Select Execution Window** immediately. "N slices remain" is progress state, not a stop reason. Remaining approved slices require another execution-window pass unless a valid checkpoint, STOP condition, context-pressure tier, or unavailable host capability prevents continuing.
 
-If all slices are complete and no STOP condition applies, ensure slice evidence is recorded, then continue inline into `auto-verify`'s contract when safe. Do not make the user run `auto-verify` manually just because execution finished. When continuing, re-read the canonical `PLAN.md`, collect every acceptance criterion, run or derive verification commands, and produce the verification report. Do not trust execute's own slice evidence as final verification.
+If all slices are complete and no STOP condition applies, ensure slice evidence is recorded, then continue inline into `auto-verify`'s contract when safe. Do not make the user run `auto-verify` manually just because execution finished. Do not trust execute's own slice evidence as final verification.
 
 ### Record Corrections
 
@@ -161,10 +161,7 @@ Read `references/stop-examples.md` when uncertain whether a situation qualifies 
 
 ## Rules
 
-- auto-execute owns route selection and execution-window continuation.
-- Build an execution window, but execute and verify one slice at a time.
 - Serial execution is the default; parallel cross-slice dispatch requires explicit plan approval and disjoint write sets.
 - Do not silently redefine the plan; record corrections transparently.
-- auto-execute owns all `git commit` operations for Automaton. The rhythm is strictly additive, with the coordinator-managed worktree carve-out in ARTIFACT-LIFECYCLE.md (Git Rhythm), and subagents never run git.
 - If the user asks for a quick fix outside the plan, reframe through `auto-frame`; do not bypass the plan.
 - Keep durable evidence in `PLAN.md` or linked `slices/slice-NNN.md`, not new evidence files by default.

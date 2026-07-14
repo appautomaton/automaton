@@ -51,9 +51,13 @@ Two tags mark hard stops in skill procedures. Scan for them before reading the f
 Two moves at every lifecycle edge:
 
 - **Continue inline:** load and follow the next stage's contract in the same session. Default when the exit gate passes, reviews are non-blocking, and context is healthy.
-- **Stop and hand off:** end the turn with a recommendation. Required at four edges: frame's exit (the user approves SPEC.md, which is the product review), entry into `execute` (code changes need human authorization), entry into the optional `auto-eng-review`, and verify outcomes (pass closes, fail returns to execute, a repeated failure of the same criterion returns to plan).
+- **Stop and hand off:** end the turn with a recommendation. Required at four edges: frame's exit, entry into `execute`, entry into the optional `auto-eng-review`, and verify outcomes. Each edge's why is fixed in `ARTIFACT-LIFECYCLE.md` (Handoff Contract), so skills do not restate it.
 
-**Form.** Continue-inline emits no handoff line. The next contract's output speaks for it. A stop ends the turn with one line: `**Next:** <skill>, <reason in ≤8 words>`. Terminal completion reports `Change status: complete` and a `New objective:` line, with no `Next:`. The reason names the trigger, not the rule. Each mandatory stop's *why* is fixed above, so skills do not restate it.
+**Form.** Continue-inline emits no handoff line. The next contract's output speaks for it. A stop ends the turn with one line: `**Next:** <skill>, <reason in ≤8 words>`. Terminal completion reports `Change status: complete` and a `New objective:` line, with no `Next:`. The reason names the trigger, not the rule.
+
+## Asking The User
+
+Ask one question per message, with your recommended answer and its reason attached, so a single "yes" keeps the conversation moving. For a branch decision, offer 2 to 4 concrete options with a one-line reason each. Use the host question tool when available, otherwise present the options inline.
 
 ## Loading Discipline
 

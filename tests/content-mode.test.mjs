@@ -94,6 +94,20 @@ test('auto-execute ships content-execution reference with source and factual gua
   assert.match(skill, /references\/content-execution\.md/)
 })
 
+// Channel, source policy, factual risk, and format are conditional by contract
+// (content-intake defers them, content-framing and content-planning capture them only
+// when material), so their absence must not halt a prose slice. Only the required core,
+// a missing source, or an unresolved factual-risk decision stops execution.
+test('content execution stops only for required-core, source, or factual-risk gaps', () => {
+  const contentExecution = readFileSync(join(skillsRoot, 'auto-execute', 'references', 'content-execution.md'), 'utf8')
+  const skill = readFileSync(join(skillsRoot, 'auto-execute', 'SKILL.md'), 'utf8')
+
+  assert.match(contentExecution, /identify the required core/)
+  assert.match(contentExecution, /Their absence is not a stop/)
+  assert.match(contentExecution, /only when a required-core input is missing, a needed source is missing, or a factual-risk decision is unresolved/)
+  assert.match(skill, /a missing required-core input, a missing source, or an unresolved factual-risk decision/)
+})
+
 test('auto-verify ships content-verification reference with evidence checks', () => {
   const contentVerification = readFileSync(join(skillsRoot, 'auto-verify', 'references', 'content-verification.md'), 'utf8')
   const skill = readFileSync(join(skillsRoot, 'auto-verify', 'SKILL.md'), 'utf8')

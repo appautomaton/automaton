@@ -55,3 +55,20 @@ test('scope narrowing is not legitimized by promoting scope to a ROADMAP phase',
     'auto-eng-review must not list roadmap as a deferred-work surface'
   )
 })
+
+// Without an adoption owner, every phase after the first stays pending with an empty
+// change: field forever: office-hours only activates the first spec of a decomposition,
+// and auto-verify's matching rule skips empty change: fields, so the roadmap decays
+// into fiction after phase 1. Office-hours owns the pending -> active transition.
+test('pending phases have an adoption owner so later phases can reach done', () => {
+  const contract = readFileSync(join(skillsRoot, '_shared', 'references', 'ROADMAP-CONTRACT.md'), 'utf8')
+  const officeHours = readFileSync(join(skillsRoot, 'auto-office-hours', 'SKILL.md'), 'utf8')
+
+  assert.match(contract, /\| `auto-office-hours` \| Adopts a pending phase/)
+  assert.match(contract, /adoption of a pending phase that matches a new approved objective/)
+  assert.match(officeHours, /Read `\.agent\/steering\/ROADMAP\.md` when it exists/)
+  assert.match(officeHours, /Adoption is recorded at Persist per `\.agent\/\.automaton\/references\/ROADMAP-CONTRACT\.md` \(Update Rules\)/)
+  assert.match(officeHours, /adopt it: set the phase to `status: active` and write the change slug into its `change:` field/)
+  // Adoption does not weaken the authorship bans: frame stays out of phase writes.
+  assert.doesNotMatch(contract, /\| `auto-frame` \| Adopts/)
+})

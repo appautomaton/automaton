@@ -20,6 +20,7 @@ Wild repos are normal. Explain the topology. Do not classify for the sake of com
 1. Existing Automaton truth
    - `.agent/.automaton/state/current.json`
    - `.agent/steering/*.md`
+   - `.agent/wiki/LEARNINGS.md` when present. On a confirmed refresh, stable facts may fold into steering per `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Learned Truth)
    - active `.agent/work/<change>/...`
 2. Intent surfaces
    - `README*`, `AGENTS.md`, `CLAUDE.md`, top-level `docs/`

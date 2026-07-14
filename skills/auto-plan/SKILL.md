@@ -138,4 +138,3 @@ Run `node .agent/.automaton/scripts/sync-status.mjs --canonical-plan ".agent/wor
 - Remove placeholders instead of preserving them.
 - Do not broaden scope to cover hypothetical future work.
 - Preserve review sections on refresh unless the user explicitly requests consolidation.
-- Every material slice must have acceptance criteria and an explicit verification command.

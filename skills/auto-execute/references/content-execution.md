@@ -6,16 +6,17 @@ Load this reference when the active slice drafts, rewrites, edits, outlines, aud
 
 Content execution produces or changes prose, but it still follows the active slice. Do not broaden the assignment into a general writing workflow.
 
-Before editing, identify:
+Before editing, identify the required core:
 
 - Artifact target: path or chat-native output.
 - Audience: reader, context level, and intended belief or behavior change.
 - Thesis: the claim to preserve.
 - Voice: sample pointer or stated style constraints.
 - Content Anti-Goals: named patterns to avoid.
-- Channel, Source Policy, Factual Risk, and Format from the plan or SPEC.md.
 
-If a required input is missing, stop and report the missing input rather than filling the gap.
+Channel, Source Policy, Factual Risk, and Format are constraints when the plan or SPEC.md carries them. Their absence is not a stop.
+
+Stop and report, rather than filling the gap, only when a required-core input is missing, a needed source is missing, or a factual-risk decision is unresolved.
 
 ## Factual-Risk Gate
 

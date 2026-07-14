@@ -36,6 +36,16 @@ test('scoping and construction stages read learned truth when present', () => {
   }
 })
 
+test('onboard reads learned truth through its scan protocol so the fold rule is reachable', () => {
+  // ARTIFACT-LIFECYCLE (Learned Truth) lets onboard fold stable facts into steering on
+  // a confirmed refresh. Without a read trigger in the scan order, that permission was
+  // unreachable: onboard never opened the file it was allowed to fold.
+  const topologyScan = readFileSync(join(skillsRoot, 'auto-onboard', 'references', 'topology-scan.md'), 'utf8')
+
+  assert.match(topologyScan, /`\.agent\/wiki\/LEARNINGS\.md` when present/)
+  assert.match(topologyScan, /ARTIFACT-LIFECYCLE\.md` \(Learned Truth\)/)
+})
+
 test('learnings stay out of skills that have no role in the channel', () => {
   // The reviews reason from SPEC/PLAN and conversation; resume orients from state and
   // artifacts; onboard folds facts into steering only via the lifecycle pruning rule,

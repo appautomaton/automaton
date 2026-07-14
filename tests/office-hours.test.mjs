@@ -31,7 +31,7 @@ test('office-hours captures request coverage before narrowing scope', () => {
   for (const bucket of ['Included', 'Deferred', 'Anti-goal', 'Needs decision']) {
     assert.match(source, new RegExp(bucket), `office-hours must classify coverage bucket: ${bucket}`)
   }
-  assert.match(source, /ask one focused question or offer 2–3 concrete options/)
+  assert.match(source, /ask one focused question or offer concrete options/)
   assert.match(source, /Do not drop request context silently/)
   assert.match(source, /Scope coverage: included, deferred, anti-goals, and needs-decision items/)
 
@@ -59,8 +59,15 @@ test('office-hours captures request coverage before narrowing scope', () => {
 test('auto-office-hours carries the question contract and an opt-in grill mode', () => {
   const source = readFileSync(join(skillsRoot, 'auto-office-hours', 'SKILL.md'), 'utf8')
   const calibration = readFileSync(join(skillsRoot, 'auto-office-hours', 'references', 'diagnostic-calibration.md'), 'utf8')
+  const framework = readFileSync(join(skillsRoot, '_shared', 'references', 'FRAMEWORK.md'), 'utf8')
 
-  assert.match(source, /Ask one question per message and attach your recommended answer/)
+  // The question convention has one home (FRAMEWORK.md, Asking The User); the
+  // conversational skills point at it instead of restating it with drifting counts.
+  assert.match(framework, /## Asking The User/)
+  assert.match(framework, /Ask one question per message, with your recommended answer/)
+  assert.match(framework, /2 to 4 concrete options/)
+  assert.match(source, /Asking The User convention/)
+  assert.doesNotMatch(source, /2–4 concrete options|2–3 concrete options/)
   assert.match(source, /Never ask what the repo can answer/)
   assert.match(source, /resolving dependent decisions one at a time/)
   assert.match(source, /the user asks \(for example "grill me"\)/)
@@ -120,6 +127,28 @@ test('auto-office-hours uses observable diagnostic checks instead of posture lan
   assert.equal(existsSync(join(skillsRoot, 'auto-office-hours', 'references', 'anti-sycophancy.md')), false)
   assert.equal(existsSync(join(skillsRoot, 'auto-office-hours', 'references', 'pushback-patterns.md')), false)
   assert.equal(existsSync(join(skillsRoot, 'auto-office-hours', 'references', 'question-exemplars.md')), false)
+})
+
+// Landscape search must be reachable from every mode: its file carries Builder search
+// guidance and the consent gate that governs outbound queries. A Startup-scoped trigger
+// meant Builder sessions searched (or skipped searching) without ever loading either.
+test('landscape awareness is reachable from every mode with its consent gate', () => {
+  const source = readFileSync(join(skillsRoot, 'auto-office-hours', 'SKILL.md'), 'utf8')
+  const landscape = readFileSync(join(skillsRoot, 'auto-office-hours', 'references', 'landscape-awareness.md'), 'utf8')
+
+  assert.match(source, /Any mode: read `references\/landscape-awareness\.md`/)
+  assert.doesNotMatch(source, /Startup Mode: read `references\/startup-diagnostic\.md`[^\n]*landscape-awareness/)
+  assert.match(landscape, /## Privacy Gate/)
+  assert.match(landscape, /\*\*Builder mode:\*\* Search for/)
+})
+
+// Switching active_change cascade-clears the old change's canonical pointers
+// (sync-status.mjs), so parking an in-flight change must be surfaced, never silent.
+test('office-hours surfaces an unfinished change before switching the cursor', () => {
+  const source = readFileSync(join(skillsRoot, 'auto-office-hours', 'SKILL.md'), 'utf8')
+
+  assert.match(source, /unfinished change at `execute` or `verify`/)
+  assert.match(source, /confirm parking it before recording the new change/)
 })
 
 test('auto-office-hours references route only to steps that exist in the skill', () => {

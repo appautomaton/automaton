@@ -24,7 +24,7 @@ The sequence should read like `why -> what must stay true -> what may come next`
 - Separate `Observed`, `Inferred`, and `Needs Confirmation` when certainty differs.
 - When a user follow-up is needed, ask a bounded decision question instead of outsourcing discovery.
 - Do not use durable artifacts as scratchpads for speculative questions, verdict-style confidence sections, or routing chatter. The Observed, Inferred, and Needs Confirmation markers below are the required certainty split, not chatter.
-- Keep ROADMAP.md compact by default. Do not create phases on first-time onboarding, and do not promote candidate phases during refresh without user confirmation.
+- Keep ROADMAP.md compact by default. Its write rules live in the ROADMAP.md expectations below.
 - Keep roadmap items evidence-backed and near-term when phases are confirmed. Do not invent distant strategy.
 - Name concrete files, packages, and commands whenever they anchor the truth.
 - Do not let one artifact duplicate the full content of another. Each artifact should narrow the surface area.
@@ -72,7 +72,7 @@ The sequence should read like `why -> what must stay true -> what may come next`
 - on refresher runs, if strong roadmap evidence exists but confirmation is missing, ask one bounded follow-up before writing phases
 - each confirmed phase must include `status: pending` and an empty `change:` field; auto-onboard never writes `status: active`; see `.agent/.automaton/references/ROADMAP-CONTRACT.md` for the full format
 - each confirmed phase should have an objective, why now, likely outputs, and an exit signal
-- confirmed phases should reflect the current repo, not generic best practices
+- confirmed phases should reflect the current repo, not generic recommendations
 
 ## Failure Mode to Avoid
 

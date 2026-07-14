@@ -17,7 +17,7 @@ auto-office-hours owns clarity before framing: classify the work internally, tes
 
 Loading discipline: keep the conversation goal, evidence, request coverage, rejected framings, and next decision in context. Read project files only when repo evidence changes the objective, especially for parity, audit, migration, coverage, or mixed work. When repo evidence would pull wide reads into context, dispatch the read-only `automaton-librarian` (see `.agent/.automaton/references/LIBRARIAN.md`): it returns evidence, you keep the decision.
 
-Interaction: keep chat plain, organized, and grounded in the user's words. Do not expose taxonomy labels such as mode, scale, or shape. Ask one question per message and attach your recommended answer with its reason, so a single "yes" can move the conversation. Never ask what the repo can answer: explore or dispatch the librarian first. For real branch decisions, offer 2–4 concrete options with a one-line reason for each. Use the host question tool when available; otherwise present the same options inline.
+Interaction: keep chat plain, organized, and grounded in the user's words. Do not expose taxonomy labels such as mode, scale, or shape. Ask per the Asking The User convention in `.agent/.automaton/references/FRAMEWORK.md`. Never ask what the repo can answer: explore or dispatch the librarian first.
 
 ## Quality Gate
 
@@ -37,16 +37,19 @@ Determine three internal axes:
 - **Work scale:** bug-sized, feature-sized, capability-sized, or roadmap-sized. Do not equate "large" with roadmap-sized. Capability-sized work remains one spec when it serves one coherent outcome; roadmap-sized means multiple independently valuable outcomes that need decomposition through `ROADMAP.md`.
 - **Work shape:** feature, refactor, parity, audit, migration, coverage, content, or mixed.
 
-Hold this classification internally to steer questioning. Confirm the read in plain language grounded in the user's words, not by naming the taxonomy. If the user corrects any dimension, adjust before continuing. For bug-sized goals with a known fix, consider whether `auto-frame` is the better entry point. For Startup or Builder mode, read `references/operating-principles.md` for doctrine; for Content mode, read `references/content-intake.md`; for roadmap-sized goals, read `.agent/.automaton/references/ROADMAP-CONTRACT.md`.
+Hold this classification internally to steer questioning. Confirm the read in plain language grounded in the user's words, not by naming the taxonomy. If the user corrects any dimension, adjust before continuing. For bug-sized goals with a known fix, name `auto-frame` as the likely better entry point and let the user choose. For Startup or Builder mode, read `references/operating-principles.md` for doctrine; for Content mode, read `references/content-intake.md`; for roadmap-sized goals, read `.agent/.automaton/references/ROADMAP-CONTRACT.md`.
 
 Read `.agent/wiki/LEARNINGS.md` when it exists: known project facts sharpen scope and feasibility questions before the diagnostic asks them.
+
+Read `.agent/steering/ROADMAP.md` when it exists. If the objective matches a pending phase, say so and scope the discussion around that phase. Adoption is recorded at Persist per `.agent/.automaton/references/ROADMAP-CONTRACT.md` (Update Rules).
 
 ### Run Diagnostic
 
 Ask only questions that make the objective frameable. Use the active reference:
-- Startup Mode: read `references/startup-diagnostic.md` when demand, user, market, or customer evidence matters; read `references/landscape-awareness.md` when market, ecosystem, competitor, or current-state evidence would change the frame.
+- Startup Mode: read `references/startup-diagnostic.md` when demand, user, market, or customer evidence matters.
 - Builder Mode: read `references/builder-diagnostic.md` when the work is personal, exploratory, open-source, or design-partner shaped.
 - Content Mode: read `references/content-intake.md` when the deliverable is writing, article, brief, deck, newsletter, documentation, or other prose.
+- Any mode: read `references/landscape-awareness.md` when market, ecosystem, competitor, or current-state evidence would change the frame. Its consent gate governs every outbound search.
 
 When the shape is not feature, shape questions take priority over mode questions: read `references/shape-questions.md` alongside the mode diagnostic.
 
@@ -64,19 +67,19 @@ Classify each material item as:
 - **Anti-goal** for this change.
 - **Needs decision** because the answer would change scope, approach, or verification.
 
-If any item would be narrowed or dropped, name the reason. If a decision is needed, ask one focused question or offer 2–3 concrete options before recommending an approach. Keep this as a decision map, not a transcript.
+If any item would be narrowed or dropped, name the reason. If a decision is needed, ask one focused question or offer concrete options before recommending an approach. Keep this as a decision map, not a transcript.
 
 ### Generate Alternatives
 
 Present 2–3 distinct approaches that match the user's scale and shape. Include a minimal viable option and an ideal architecture option for bug, feature, and capability work; for roadmap-sized work, offer decomposition strategies or first-spec candidates. For refactor, parity, audit, migration, or coverage, differentiate by blast radius, traceability, evidence depth, rollout risk, or verification strength. Read `references/alternatives-format.md` for the exact format.
 
-Recommend one approach and explain what evidence supports it, what it does not prove, and what evidence would change the recommendation. Do not proceed until the user explicitly approves an approach or chooses a different one.
+Recommend one approach and explain what evidence supports it, what it does not prove, and what evidence would change the recommendation.
 
 ### Persist Approved Objective
 
-After approval, derive a date-prefixed change slug: `YYYY-MM-DD-<kebab-case-objective>` using today's date. Reuse `active_change` only when it already matches this discussion. Write the SPEC skeleton to `.agent/work/<change>/SPEC.md` using `references/spec-skeleton.md`. Content mode includes the required content fields from `references/content-intake.md`.
+After approval, derive a date-prefixed change slug: `YYYY-MM-DD-<kebab-case-objective>` using today's date. Reuse `active_change` only when it already matches this discussion. When the first-action context shows a different unfinished change at `execute` or `verify`, name it and its progress and confirm parking it before recording the new change. Write the SPEC skeleton to `.agent/work/<change>/SPEC.md` using `references/spec-skeleton.md`. Content mode includes the required content fields from `references/content-intake.md`.
 
-When scale is roadmap and the user has approved a phased decomposition, replace `.agent/steering/ROADMAP.md` with that approved decomposition per `.agent/.automaton/references/ROADMAP-CONTRACT.md`. Without that explicit approval, leave `ROADMAP.md` untouched and keep deferred scope in the skeleton.
+When scale is roadmap and the user has approved a phased decomposition, replace `.agent/steering/ROADMAP.md` with that approved decomposition per `.agent/.automaton/references/ROADMAP-CONTRACT.md`. Without that explicit approval, leave `ROADMAP.md` untouched and keep deferred scope in the skeleton. When the approved objective matches a pending `ROADMAP.md` phase, adopt it: set the phase to `status: active` and write the change slug into its `change:` field, per the same contract's Update Rules.
 
 Run `node .agent/.automaton/scripts/sync-status.mjs --active-change "<change>" --stage frame` from the project root. This records `active_change` and `stage` through the shared state validator.
 
@@ -92,7 +95,7 @@ If those conditions pass, load and follow `auto-frame`'s contract to complete `.
 
 <GATE>
 
-Do NOT create SPEC.md, DESIGN.md, or implementation artifacts until:
+Do NOT create SPEC.md or any implementation artifact until:
 - The user has explicitly approved one presented approach.
 - Blocking questions are resolved or explicitly accepted as assumptions.
 
@@ -125,7 +128,6 @@ If the user does not approve an approach, output a short discussion summary, why
 ## Rules
 
 - Do not drop request context silently; every material ask, context detail, perspective, or worry is included, deferred with reason, marked as an anti-goal, or turned into a focused question.
-- Ask follow-up questions when they matter; do not bank them for a later checklist.
 - State the decision basis; name what evidence supports, what it does not support, and what would change the recommendation.
 - Keep the skeleton compact; omit empty sections and analysis nobody downstream needs.
 - If the user's language shifts from exploration to urgency, or from technical to business framing, reclassify mode, scale, or shape and state the change in plain language.

@@ -2,6 +2,8 @@
 
 Artifacts must be loaded in dependency order. A downstream artifact assumes upstream artifacts are already understood.
 
+This table is the orientation load order for `auto-resume` and for cold re-entry. Stage skills own their working loads: what a stage reads while doing its job is governed by that skill's own contract, not by this table.
+
 ## Dependency Graph
 
 ```

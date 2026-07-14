@@ -48,7 +48,7 @@ Sharp: "Have you watched someone use it without helping them? What did they do t
 In grill mode the diagnostic runs to resolution, not to minimum. Hold these mechanics:
 
 - Walk the decision tree in dependency order: settle the decision other decisions hang on before its dependents.
-- One question per message, recommended answer attached. A user who agrees with every recommendation still moves fast. The questions exist so disagreement surfaces early.
+- A user who agrees with every recommendation still moves fast. The questions exist so disagreement surfaces early.
 - Exhaust a branch before switching: a half-resolved branch reopens later at higher cost.
 - Stress-test relationships with concrete scenarios. Invent a specific case that probes a boundary ("a user cancels half an order mid-migration: what happens?") and force precision about where one concept ends and the next begins.
 - Exit when every branch is resolved or explicitly parked by the user, then present the approaches.

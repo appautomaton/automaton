@@ -26,7 +26,7 @@ Plan-approved parallel-safe groups dispatch each implementer into its own worktr
 
 1. Precondition: clean tree. Pre-existing dirt is swept by a prior slice commit before fan-out.
 2. Create one worktree per parallel slice, detached at HEAD (`git worktree add --detach`), so no branch ref is ever created. A host's native worktree isolation manages its own lifecycle and is fine too.
-3. Dispatch implementers into their worktrees. They edit files only; subagents never run git.
+3. Dispatch implementers into their worktrees. They edit files only. Subagents never run git write commands.
 4. Integrate serially in plan order: take the worktree diff, apply it to the main tree, run slice verification, then make the normal `slice N:` commit.
 5. Remove each worktree (`git worktree remove`) after integration. A stray worktree found later is a reportable leftover, never something to silently delete.
 
