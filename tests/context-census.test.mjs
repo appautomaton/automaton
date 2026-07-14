@@ -13,30 +13,35 @@ import { skillsRoot } from './support/skill-helpers.mjs'
 const words = (relativePath) =>
   readFileSync(join(skillsRoot, relativePath), 'utf8').split(/\s+/).filter(Boolean).length
 
+// 2026-07-14 lightweight-steering ratchet: ceilings lowered to actuals plus ~5%
+// after the coherence and zero-based trim rounds, so removed handholding cannot
+// silently regrow. Down-ratchets lock trims; only new capability raises a ceiling.
 const SHARED_CEILINGS = {
-  '_shared/references/FRAMEWORK.md': 800,
-  '_shared/references/ARTIFACT-LIFECYCLE.md': 2000,
-  '_shared/references/CONTEXT-BUDGET.md': 750,
+  // Carries the Asking The User consolidation (one home for the question
+  // convention that three skills used to restate with drifting option counts).
+  '_shared/references/FRAMEWORK.md': 830,
+  '_shared/references/ARTIFACT-LIFECYCLE.md': 1940,
+  '_shared/references/CONTEXT-BUDGET.md': 585,
   // Raised 1100 -> 1350 for DD-013: evidence-over-signal completion, BLOCKED
   // triage, and parallel worktree isolation are new coordination capability,
   // not restated prose.
   '_shared/references/SUBAGENT-PROTOCOL.md': 1350,
-  '_shared/references/LIBRARIAN.md': 450,
-  '_shared/references/ANTI-SLOP.md': 300,
-  '_shared/references/ROADMAP-CONTRACT.md': 800
+  '_shared/references/LIBRARIAN.md': 380,
+  '_shared/references/ANTI-SLOP.md': 270,
+  '_shared/references/ROADMAP-CONTRACT.md': 670
 }
 
 const SKILL_CEILINGS = {
-  'auto-execute/SKILL.md': 2100,
+  'auto-execute/SKILL.md': 1890,
   'auto-office-hours/SKILL.md': 1600,
-  'auto-plan/SKILL.md': 1350,
-  'auto-frame/SKILL.md': 1300,
+  'auto-plan/SKILL.md': 1250,
+  'auto-frame/SKILL.md': 1200,
   'auto-verify/SKILL.md': 1000,
-  'auto-onboard/SKILL.md': 800,
+  'auto-onboard/SKILL.md': 760,
   'auto-eng-review/SKILL.md': 750,
   // Raised 700 -> 750 for DD-012/DD-013: the execution-ledger reconciliation
   // (slice commits, in-flight dirt, stray worktrees) is new recovery capability.
-  'auto-resume/SKILL.md': 750
+  'auto-resume/SKILL.md': 740
 }
 
 test('shared references stay under their word ceilings', () => {
@@ -59,11 +64,11 @@ test('skill entry points stay under their word ceilings', () => {
 const WORKING_SETS = {
   'frame common path': {
     files: ['_shared/references/FRAMEWORK.md', 'auto-frame/SKILL.md'],
-    ceiling: 2100
+    ceiling: 2030
   },
   'plan': {
     files: ['_shared/references/FRAMEWORK.md', 'auto-plan/SKILL.md', '_shared/references/ARTIFACT-LIFECYCLE.md'],
-    ceiling: 4200
+    ceiling: 4030
   },
   'execute direct route': {
     files: [
@@ -72,7 +77,7 @@ const WORKING_SETS = {
       '_shared/references/ARTIFACT-LIFECYCLE.md',
       '_shared/references/CONTEXT-BUDGET.md'
     ],
-    ceiling: 5800
+    ceiling: 5250
   },
   'execute subagent route': {
     files: [
@@ -82,11 +87,11 @@ const WORKING_SETS = {
       '_shared/references/CONTEXT-BUDGET.md',
       '_shared/references/SUBAGENT-PROTOCOL.md'
     ],
-    ceiling: 6900
+    ceiling: 6620
   },
   'verify': {
     files: ['_shared/references/FRAMEWORK.md', 'auto-verify/SKILL.md', '_shared/references/ARTIFACT-LIFECYCLE.md'],
-    ceiling: 3900
+    ceiling: 3800
   }
 }
 
