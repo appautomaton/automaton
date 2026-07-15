@@ -97,6 +97,27 @@ test('authored skills ship compact local quality cards', () => {
   assert.equal(existsSync(join(skillsRoot, '_shared', 'references', 'WRITING-QUALITY-PATTERNS.md')), false)
 })
 
+test('the change-parking rule has one home and both frame-stage entry points cite it', () => {
+  // Syncing a new active_change cascade-clears the prior change's pointers
+  // (sync-status.mjs applyStatePatch), so an unfinished change must be parked
+  // consciously, never silently. Failure story: office-hours carried the full
+  // rule but auto-frame, an equal entry point, did not, so framing directly
+  // over a mid-execute change reset the cursor with no confirmation. The rule
+  // lives once in FRAMEWORK.md (State Contract, per LEXICON one-home posture).
+  const framework = readFileSync(join(skillsRoot, '_shared', 'references', 'FRAMEWORK.md'), 'utf8')
+  assert.match(framework, /unfinished change at `execute` or `verify`/, 'FRAMEWORK.md State Contract must carry the parking rule')
+  assert.match(framework, /confirm parking it/, 'the parking rule must require user confirmation')
+
+  for (const skillName of ['auto-office-hours', 'auto-frame']) {
+    const source = readFileSync(join(skillsRoot, skillName, 'SKILL.md'), 'utf8')
+    assert.match(
+      source,
+      /parking rule in `\.agent\/\.automaton\/references\/FRAMEWORK\.md` \(State Contract\)/,
+      `${skillName} records a new active_change and must cite the parking rule home`
+    )
+  }
+})
+
 test('read-only skills do not include the state-write template', () => {
   for (const skillName of ['auto-resume', 'auto-onboard']) {
     const source = readFileSync(join(skillsRoot, skillName, 'SKILL.md'), 'utf8')

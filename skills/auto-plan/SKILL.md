@@ -38,7 +38,7 @@ Read `.agent/wiki/LEARNINGS.md` when it exists: one-line facts earlier changes p
 
 ### Assess Review State (if reviews exist)
 
-If `engineering_review` exists in `current.json` for this change, this is a re-plan: read `## Review: Engineering` in the prior PLAN.md and address each correction and `approved_with_risks` risk in the revised plan.
+If `engineering_review` exists in `current.json` for this change, this is a re-plan: read `## Review: Engineering` in the prior PLAN.md and address each correction and `approved_with_risks` risk in the revised plan. Syncing the revised plan clears the standing verdict (`.agent/.automaton/references/ARTIFACT-LIFECYCLE.md`, Review Verdict Routing).
 
 If the engineering approach is complex or risky, recommend `auto-eng-review` before execution.
 

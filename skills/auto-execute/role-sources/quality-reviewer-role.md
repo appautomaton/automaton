@@ -30,7 +30,7 @@ Use these labels for findings:
 - Tests or verification are appropriate for the change.
 - No obvious race, state, path, or cleanup bug.
 - No unrelated edits.
-- No hidden dependency on host-specific behavior outside `HOST-TOOLS.md`.
+- No dependence on machine-local state: absolute paths, hardcoded environment values, or setup the project does not declare.
 
 If you approve with no findings, say `ISSUES: none` and state the remaining residual risk, if any.
 

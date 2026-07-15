@@ -142,15 +142,6 @@ test('landscape awareness is reachable from every mode with its consent gate', (
   assert.match(landscape, /\*\*Builder mode:\*\* Search for/)
 })
 
-// Switching active_change cascade-clears the old change's canonical pointers
-// (sync-status.mjs), so parking an in-flight change must be surfaced, never silent.
-test('office-hours surfaces an unfinished change before switching the cursor', () => {
-  const source = readFileSync(join(skillsRoot, 'auto-office-hours', 'SKILL.md'), 'utf8')
-
-  assert.match(source, /unfinished change at `execute` or `verify`/)
-  assert.match(source, /confirm parking it before recording the new change/)
-})
-
 test('auto-office-hours references route only to steps that exist in the skill', () => {
   const landscape = readFileSync(join(skillsRoot, 'auto-office-hours', 'references', 'landscape-awareness.md'), 'utf8')
   const contentIntake = readFileSync(join(skillsRoot, 'auto-office-hours', 'references', 'content-intake.md'), 'utf8')

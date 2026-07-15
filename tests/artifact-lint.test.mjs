@@ -210,3 +210,39 @@ test('a non-git project and a quiet repo produce no drift hint', () => {
   assert.equal(codes.includes('state_drift'), false)
   assert.equal(codes.includes('dirty_tree_at_verified'), false)
 })
+
+// Per-slice rhythm commits are the harness's own execution ledger: execute syncs
+// state once at stage entry, then commits per verified slice without touching
+// current.json. Counting them as drift would flag every healthy mid-execute
+// recovery, the exact scenario auto-resume's ledger reconciliation handles.
+test('per-slice rhythm commits alone do not surface a drift hint', () => {
+  const { root, currentPath } = scaffold({ spec: COMPLETE_SPEC, plan: COMPLETE_PLAN })
+  const git = (...args) => {
+    const result = spawnSync('git', args, { cwd: root, encoding: 'utf8' })
+    assert.equal(result.status, 0, result.stderr)
+  }
+  git('init', '-q', '.')
+  git('-c', 'user.email=t@t', '-c', 'user.name=t', 'commit', '-q', '--allow-empty', '-m', 'slice 1: walk the first edge')
+  git('-c', 'user.email=t@t', '-c', 'user.name=t', 'commit', '-q', '--allow-empty', '-m', 'slice 2 gap-fix: close the gap')
+  git('-c', 'user.email=t@t', '-c', 'user.name=t', 'commit', '-q', '--allow-empty', '-m', 'slice 3: land evidence')
+
+  const codes = runGetContext(currentPath).diagnostics.map((item) => item.code)
+  assert.equal(codes.includes('state_drift'), false, 'rhythm commits are the ledger, not drift')
+})
+
+test('out-of-band commits still surface the drift hint among rhythm commits', () => {
+  const { root, currentPath } = scaffold({ spec: COMPLETE_SPEC, plan: COMPLETE_PLAN })
+  const git = (...args) => {
+    const result = spawnSync('git', args, { cwd: root, encoding: 'utf8' })
+    assert.equal(result.status, 0, result.stderr)
+  }
+  git('init', '-q', '.')
+  git('-c', 'user.email=t@t', '-c', 'user.name=t', 'commit', '-q', '--allow-empty', '-m', 'slice 1: walk the first edge')
+  for (const message of ['hotfix out of band', 'second manual commit', 'third manual commit']) {
+    git('-c', 'user.email=t@t', '-c', 'user.name=t', 'commit', '-q', '--allow-empty', '-m', message)
+  }
+
+  const drift = runGetContext(currentPath).diagnostics.find((item) => item.code === 'state_drift')
+  assert.ok(drift, 'three out-of-band commits must still surface state_drift')
+  assert.match(drift.message, /^3 out-of-band commits/, 'the count must exclude rhythm commits')
+})

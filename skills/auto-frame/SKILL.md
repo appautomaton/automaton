@@ -85,7 +85,7 @@ Apply the Artifact Signal Discipline rules from `.agent/.automaton/references/FR
 
 ### Update State
 
-If `active_change` is `bootstrap` or does not match the current objective, derive a new slug: `YYYY-MM-DD-<kebab-case-objective>` using today's date. Use that slug before writing SPEC.md.
+If `active_change` is `bootstrap` or does not match the current objective, derive a new slug: `YYYY-MM-DD-<kebab-case-objective>` using today's date. Use that slug before writing SPEC.md. Recording a new change over an unfinished one follows the parking rule in `.agent/.automaton/references/FRAMEWORK.md` (State Contract).
 
 After writing SPEC.md, run `node .agent/.automaton/scripts/sync-status.mjs --active-change "<change>" --canonical-spec ".agent/work/<change>/SPEC.md" --stage frame` from the project root. auto-plan owns the `stage: plan` mutation and records it when it writes PLAN.md, including on inline continuation.
 

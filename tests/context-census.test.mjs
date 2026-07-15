@@ -18,8 +18,10 @@ const words = (relativePath) =>
 // silently regrow. Down-ratchets lock trims; only new capability raises a ceiling.
 const SHARED_CEILINGS = {
   // Carries the Asking The User consolidation (one home for the question
-  // convention that three skills used to restate with drifting option counts).
-  '_shared/references/FRAMEWORK.md': 830,
+  // convention that three skills used to restate with drifting option counts)
+  // and the change-parking rule (one home for the guard the two frame-stage
+  // entry points previously restated or missed).
+  '_shared/references/FRAMEWORK.md': 870,
   '_shared/references/ARTIFACT-LIFECYCLE.md': 1940,
   '_shared/references/CONTEXT-BUDGET.md': 585,
   // Raised 1100 -> 1350 for DD-013: evidence-over-signal completion, BLOCKED

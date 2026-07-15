@@ -34,10 +34,11 @@ Conditional reference reads (`Read references/X.md when Y`) appear inline at the
 - **Update state only through `sync-status.mjs`.** Never edit `current.json` by hand.
 - Canonical pointers (`canonical_spec`, `canonical_plan`, `canonical_design`) and review verdicts are fields in `current.json`.
 - Work artifacts live under `.agent/work/<change>/`; steering under `.agent/steering/`.
+- Syncing a new `active_change` clears the prior change's canonical pointers and verdict. When current state shows a different unfinished change at `execute` or `verify`, name it and confirm parking it with the user before recording the new change.
 
 ## Quality Gate
 
-Every skill ships `references/quality.md` with three sections: anti-patterns, better shape, and prose hygiene. Read it when the skill's output drifts toward vagueness, theater, or inflation. The Quality Gate in each SKILL.md names the skill-specific trigger. All artifacts must pass `.agent/.automaton/references/ANTI-SLOP.md`.
+Every skill ships `references/quality.md` with four sections: anti-patterns, better shape, prose hygiene, and a final check. Read it when the skill's output drifts toward vagueness, theater, or inflation. The Quality Gate in each SKILL.md names the skill-specific trigger. All artifacts must pass `.agent/.automaton/references/ANTI-SLOP.md`.
 
 ## Hard Stop Tags
 

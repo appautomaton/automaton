@@ -120,7 +120,7 @@ A staff-level audit (June 2026) found the weakest long-horizon link was cold mid
 
 - `auto-resume` reconciles the execution ledger on cold re-entry: per-slice commits (`slice N:`) mark verified slices, and a dirty tree on top of the last slice commit is in-flight work for the next slice. The git rhythm's commit trail doubles as the durable execution cursor, read-only.
 - `auto-verify` writes a terminal `## Verification` section to PLAN.md on PASS (append-replace), so the audit record outlives the conversation.
-- `get-context.mjs` emits L2 drift hints (`state_drift`, `dirty_tree_at_verified`) when repo evidence shows movement after `current.json` was last touched, and a review-verdict integrity warning when a verdict field has no matching `## Review:` section on its artifact. Warnings never block and degrade silently without git.
+- `get-context.mjs` emits L2 drift hints (`state_drift`, `dirty_tree_at_verified`) when repo evidence shows movement after `current.json` was last touched, and a review-verdict integrity warning when a verdict field has no matching `## Review:` section on its artifact. Rhythm commits (`slice N:`, `slice N gap-fix:`) are excluded from the drift count: they are the ledger itself, produced between state syncs by design. Warnings never block and degrade silently without git.
 - Stage prerequisites carry `canonicalSpec` from execute onward, so dependency-order loading (spec first) always resolves on resume.
 
 **Why:** The post-DD-011 boundary applies here too: derive what is derivable. A slice cursor field would duplicate what PLAN.md evidence and the commit trail already record, and would drift from both. Reading the ledger costs two read-only git commands at resume time; no new state, no new files, no portability loss for non-git projects (every git-derived signal degrades to silence).
@@ -156,3 +156,11 @@ The replacement is structural, not a thinner review:
 **Migration:** upgrade is re-install. The receipt prunes the removed skill's files, a legacy `product_review` state field loads as an inert unknown key, and a legacy `INTAKE.md` remains optional framing context.
 
 **See:** `skills/_shared/references/FRAMEWORK.md` (Handoff Model), `skills/_shared/references/ARTIFACT-LIFECYCLE.md` (Handoff Contract), `skills/auto-office-hours/references/spec-skeleton.md`, `skills/auto-frame/references/quality.md`, `skills/auto-eng-review/references/outside-voice.md`, `tests/verdict-routing.test.mjs`, `tests/install-receipt.test.mjs`.
+
+## DD-015: A review verdict describes the plan content it reviewed
+
+Any `--canonical-plan` sync clears a standing `engineering_review` verdict in `applyStatePatch`, even when the path is unchanged, because a re-plan rewrites the same PLAN.md file. Before this, `needs_correction` survived re-planning: auto-plan's handoff offered execute, execute's entry gate bounced on the stale verdict, and the change looped between plan and execute with only an undocumented exit (re-running the review).
+
+**Why:** The rejected alternative was prose declaring re-review mandatory after `needs_correction`. That turns an optional check sticky-mandatory, against DD-014's posture that model-run review runs only where invoked, and the mandatory human stop at execute entry already guards the safety property. Clearing on re-sync keeps the state machine honest: a verdict field always describes the currently synced plan. The preserved `## Review: Engineering` section keeps the prior rationale on the artifact as history, and the L2 verdict-integrity lint (DD-012) is unaffected because it only checks verdict-implies-section.
+
+**See:** `skills/_shared/scripts/sync-status.mjs` (`applyStatePatch`), `skills/_shared/references/ARTIFACT-LIFECYCLE.md` (Review Verdict Routing), `tests/lifecycle-walk.test.mjs`.

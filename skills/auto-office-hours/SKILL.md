@@ -77,7 +77,7 @@ Recommend one approach and explain what evidence supports it, what it does not p
 
 ### Persist Approved Objective
 
-After approval, derive a date-prefixed change slug: `YYYY-MM-DD-<kebab-case-objective>` using today's date. Reuse `active_change` only when it already matches this discussion. When the first-action context shows a different unfinished change at `execute` or `verify`, name it and its progress and confirm parking it before recording the new change. Write the SPEC skeleton to `.agent/work/<change>/SPEC.md` using `references/spec-skeleton.md`. Content mode includes the required content fields from `references/content-intake.md`.
+After approval, derive a date-prefixed change slug: `YYYY-MM-DD-<kebab-case-objective>` using today's date. Reuse `active_change` only when it already matches this discussion. Recording a new change over an unfinished one follows the parking rule in `.agent/.automaton/references/FRAMEWORK.md` (State Contract). Write the SPEC skeleton to `.agent/work/<change>/SPEC.md` using `references/spec-skeleton.md`. Content mode includes the required content fields from `references/content-intake.md`.
 
 When scale is roadmap and the user has approved a phased decomposition, replace `.agent/steering/ROADMAP.md` with that approved decomposition per `.agent/.automaton/references/ROADMAP-CONTRACT.md`. Without that explicit approval, leave `ROADMAP.md` untouched and keep deferred scope in the skeleton. When the approved objective matches a pending `ROADMAP.md` phase, adopt it: set the phase to `status: active` and write the change slug into its `change:` field, per the same contract's Update Rules.
 

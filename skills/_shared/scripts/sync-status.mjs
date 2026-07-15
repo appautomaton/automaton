@@ -303,7 +303,11 @@ function applyStatePatch(currentState, patch) {
     ])
   }
 
-  if (patch.canonicalPlan !== undefined && patch.canonicalPlan !== currentState.canonicalPlan) {
+  // A verdict describes the plan content that was synced with it. A re-plan
+  // rewrites the same PLAN.md path, so the clear keys on the patch itself, not
+  // on a path change: otherwise needs_correction outlives the re-plan and
+  // deadlocks execute's entry gate.
+  if (patch.canonicalPlan !== undefined) {
     clearUnlessPatched(nextState, patch, ['engineeringReview'])
   }
 

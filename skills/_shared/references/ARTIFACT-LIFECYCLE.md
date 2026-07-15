@@ -106,7 +106,7 @@ Validation tier: L3 (prompt prose plus regression tests). No runtime enforcement
 
 ## Review Verdict Routing
 
-`auto-eng-review` is an optional lifecycle check, not a stage prerequisite. Downstream skills must respect any review verdict in `current.json`. Product direction has no review skill: the user approves SPEC.md at frame's exit.
+`auto-eng-review` is an optional lifecycle check, not a stage prerequisite. Downstream skills must respect any review verdict in `current.json`. A verdict describes the plan content it reviewed, so any `--canonical-plan` re-sync clears the standing verdict: a revised plan re-enters the optional review loop instead of staying blocked by the old `needs_correction`. Product direction has no review skill: the user approves SPEC.md at frame's exit.
 
 | Review | Verdict | Next skill |
 | --- | --- | --- |

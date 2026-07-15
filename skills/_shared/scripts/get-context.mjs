@@ -235,12 +235,18 @@ function driftDiagnostics(target, state, projectRoot) {
   const diagnostics = []
   const stateMtime = statSync(target).mtime.toISOString()
   const commitsSince = gitLines(projectRoot, ['log', '--oneline', `--since=${stateMtime}`, '-20'])
+  // Per-slice rhythm commits are the harness's own execution ledger: state syncs
+  // once at execute entry, then slices commit without touching current.json, so
+  // only out-of-band commits count as drift.
+  const outOfBand = commitsSince === null
+    ? null
+    : commitsSince.filter((line) => !/^\S+ slice \S+(?: gap-fix)?: /.test(line))
 
-  if (commitsSince !== null && commitsSince.length >= 3) {
+  if (outOfBand !== null && outOfBand.length >= 3) {
     diagnostics.push(diagnostic(
       'warning',
       'state_drift',
-      `${commitsSince.length}${commitsSince.length === 20 ? '+' : ''} commits since current.json last changed; harness state may lag the repo. Record durable out-of-band findings in .agent/wiki/LEARNINGS.md or refresh state through the lifecycle.`
+      `${outOfBand.length}${commitsSince.length === 20 ? '+' : ''} out-of-band commits since current.json last changed; harness state may lag the repo. Record durable findings in .agent/wiki/LEARNINGS.md or refresh state through the lifecycle.`
     ))
   }
 

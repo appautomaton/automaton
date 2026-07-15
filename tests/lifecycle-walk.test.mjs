@@ -120,6 +120,30 @@ test('the full lifecycle walks edge by edge through the real scripts', () => {
   assert.match(durable, /"stage": "verified"/)
 })
 
+// A verdict describes the plan content it reviewed (ARTIFACT-LIFECYCLE.md, Review
+// Verdict Routing). Failure story: a re-plan rewrites the same PLAN.md path, so a
+// path-keyed clear let needs_correction survive the re-sync, and execute's entry
+// gate bounced the change between plan and execute with no exit.
+test('a plan re-sync clears the standing verdict so a re-plan is not deadlocked', () => {
+  const root = scaffold()
+  const change = '2026-07-14-replan'
+  const workDir = join(root, '.agent', 'work', change)
+  mkdirSync(workDir, { recursive: true })
+  const specPath = `.agent/work/${change}/SPEC.md`
+  const planPath = `.agent/work/${change}/PLAN.md`
+  writeFileSync(join(root, specPath), GOOD_SPEC, 'utf8')
+  writeFileSync(join(root, planPath), GOOD_PLAN, 'utf8')
+
+  expectClean('seed', sync(root, ['--active-change', change, '--canonical-spec', specPath, '--stage', 'frame']))
+  expectClean('plan', sync(root, ['--canonical-plan', planPath, '--stage', 'plan']))
+  expectClean('review rejects', sync(root, ['--engineering-review', 'needs_correction']))
+  assert.equal(getContext(root).engineeringReview, 'needs_correction')
+
+  expectClean('re-plan same path', sync(root, ['--canonical-plan', planPath, '--stage', 'plan']))
+  assert.equal(getContext(root).engineeringReview, null, 'a re-synced plan must clear the standing verdict, or execute deadlocks on needs_correction')
+  expectClean('execute after re-plan', sync(root, ['--stage', 'execute']))
+})
+
 test('the walk is guarded: invalid stages block and a change switch clears derived state', () => {
   const root = scaffold()
   const change = '2026-06-12-walk-guards'
