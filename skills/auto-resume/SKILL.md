@@ -63,7 +63,7 @@ Produce a concise summary in this shape:
 
 ```
 **Active change:** [name]
-**Stage:** [frame|plan|execute|verify|verified|resume]
+**Stage:** [frame|plan|execute|verify|verified]
 **Artifacts loaded:** [list]
 **What was done:** [1-2 sentences]
 **What was blocked:** [1-2 sentences, or "nothing"]

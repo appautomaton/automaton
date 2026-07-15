@@ -192,7 +192,7 @@ test('auto-execute owns route selection and execution-window continuation', () =
   assert.doesNotMatch(source, /crosses subsystem boundaries/)
   assert.match(source, /record a plan correction rather than silently rerouting/)
   assert.match(source, /Run the per-slice protocol/)
-  assert.match(source, /Do not tell the user to invoke another execute skill/)
+  assert.match(source, /Do not make the user re-invoke execution for the same slice/)
   assert.match(source, /continue inline into `auto-verify`'s contract/)
   assert.match(source, /Do not make the user run `auto-verify` manually/)
   assert.match(source, /Do not trust execute's own slice evidence as final verification/)

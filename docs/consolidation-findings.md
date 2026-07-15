@@ -81,3 +81,16 @@ Executed under change `2026-05-24-unify-automaton-consistency`. Outcomes by conc
 - **C5, unchanged.** `content-*.md` remains per-stage by design.
 
 Net: every correctness and drift-hazard concern (C1, C2, dead files) is resolved and test-guarded. The footprint-hygiene-only items (C3, review base, C5) are deliberately left inline. Suite all green at 188 tests (+6 contract/guard tests from this change).
+
+## Follow-up audit, 2026-07-14
+
+A second full-tree coherence audit (all skills and references, shared runtime scripts, host wiring, guard tests), run after the lightweight-steering trim rounds. Fourteen findings, none architectural. Resolution, by tier:
+
+- **Behavior (fixed):** a standing `needs_correction` verdict survived a same-path re-plan and deadlocked execute's entry gate. `sync-status.mjs` now clears the verdict on any `--canonical-plan` sync (DD-015, `tests/lifecycle-walk.test.mjs`).
+- **Guards (fixed):** the change-parking rule had one guarded entry point (office-hours) and one unguarded one (frame). It moved to a single home in `FRAMEWORK.md` (State Contract) with both entry points citing it (`tests/skill-conventions.test.mjs`). `state_drift` counted the harness's own `slice N:` rhythm commits as drift, flagging every healthy mid-execute recovery; the count now excludes them (DD-012 amendment).
+- **Coherence batch (fixed):** host-neutral quality-reviewer check (`HOST-TOOLS.md` was both unreadable to the role and irrelevant to project code); FRAMEWORK's quality-card description corrected to four sections; unreachable `stage: resume` prose removed from resume surfaces (the enum value stays: it serves `automaton context resume`); the durable `## Verification` copy drops the `Change status`/`New objective` routing lines; content verification marks uncarried conditional fields n/a; an anti-slop hit defined once as a cluster; execute's preamble names the parallel-group exception to serial order; the implementer role defers to the dispatched `<edit-scope>`; lens guidance folded inline and `lens-selection.md` deleted (its trigger promised selection help it did not carry); the REPO-MAP line cap converted to a default with a named escape per the LEXICON posture.
+- **Deliberately left:** the `**Next:**` bold-versus-plain variance in skill Output prose (the emission form has one home in FRAMEWORK.md, and normalizing every descriptive mention is churn without a failure mode), and everything the 2026-05-24 resolution already settled.
+
+Verified clean in the same pass, for the next auditor's baseline: the content-mode field relay across all five stages, the subagent protocol against its role sources and dispatch prompts, roadmap-contract authorship rules across five skills, host adapters against LIBRARIAN.md's guarantees, lint vocabulary on both emit and consume ends, checkpoint and slice-default single homes, and the four-stop-edge handoff model.
+
+Token accounting: the behavior fixes cost +91 words across surfaces that never co-load (new contracts, each carrying its why); this batch returned most of it (lens fold, pointer swaps, splice fixes), with ceilings ratcheted per the census discipline.

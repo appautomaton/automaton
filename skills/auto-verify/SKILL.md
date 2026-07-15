@@ -29,7 +29,7 @@ Before writing the verification report:
 
 ### Load State
 
-Read the canonical `PLAN.md`. Load only linked `slices/slice-NNN.md` files and referenced requirement IDs from `spec/*.md`; Linked detail file and traceability IDs are normative, and an unlinked supplemental file is not verification context. For prose slices, read `references/content-verification.md`.
+Read the canonical `PLAN.md`. Load only linked `slices/slice-NNN.md` files and referenced requirement IDs from `spec/*.md`: linked detail and traceability IDs are normative, and an unlinked supplemental file is not verification context. For prose slices, read `references/content-verification.md`.
 
 ### Mark Verify Stage
 
@@ -62,7 +62,7 @@ Build the full criterion checklist internally. Use `references/verification-temp
 
 - Append a compact `## Verification` section to the canonical `PLAN.md` (append-replace, never stack): per-slice criterion rollup, commands run, derived or skipped checks named, and the PASS verdict. Use the durable-record shape in `references/verification-template.md`. This is the record a future change or auditor reads; the inline report evaporates with the conversation.
 - Run `node .agent/.automaton/scripts/sync-status.mjs --stage verified` from the project root.
-- If `.agent/steering/ROADMAP.md` exists, mark the matching `change:` phase `status: done` per `.agent/.automaton/references/ROADMAP-CONTRACT.md`; skip empty or non-matching phases. The ROADMAP edit lands in the working tree as a markdown leftover; do not commit it. The user closes it in their own rhythm.
+- If `.agent/steering/ROADMAP.md` exists, mark the matching `change:` phase `status: done` per `.agent/.automaton/references/ROADMAP-CONTRACT.md`; skip empty or non-matching phases. When no active or pending phase and no deferred item remains, reset to the contract's empty shape. The ROADMAP edit lands in the working tree as a markdown leftover; do not commit it. The user closes it in their own rhythm.
 - End the report with `Change status: complete` and a separate `New objective` line pointing to `auto-office-hours` for future work. Do not print a `Next:` line on PASS. Use `auto-resume` only for later re-entry or recovery.
 
 ### On Fail

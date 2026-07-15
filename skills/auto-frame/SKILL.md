@@ -58,7 +58,7 @@ List only constraints, unknowns, and risks that change implementation or verific
 
 ### Select Lenses
 
-Choose the minimum useful lenses from `product`, `engineering`, `design`, `security`, `runtime`, and `content`. Default to `product` + `engineering` unless the request says otherwise. Read `references/lens-selection.md` when selection is not obvious.
+Choose the minimum useful lenses from `product`, `engineering`, `design`, `security`, `runtime`, and `content`. Default to `product` + `engineering`: even pure-engineering changes carry product risk, and a minimal set keeps the spec focused. Add `security` from the start when the change touches auth, data, or trust.
 
 If the change involves content creation (writing, article, brief, deck, blog post, newsletter, documentation, or similar prose), add the content lens and read `references/content-framing.md`.
 

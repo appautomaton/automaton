@@ -4,7 +4,7 @@ Load this reference when verifying a slice that creates, rewrites, edits, outlin
 
 ## Verification Contract
 
-Evaluate each check as PASS, FAIL, or PARTIAL with evidence. Do not collapse content quality into "reads well".
+Evaluate each check as PASS, FAIL, or PARTIAL with evidence. Do not collapse content quality into "reads well". Channel, Source Policy, Factual Risk, and Format apply only when the plan or SPEC.md carries them: mark an uncarried field n/a instead of FAIL.
 
 | Check | Evidence requirement |
 | --- | --- |

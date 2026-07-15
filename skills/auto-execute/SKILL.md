@@ -13,7 +13,7 @@ First action: run `node .agent/.automaton/scripts/get-context.mjs` from the proj
 
 ## Preamble
 
-auto-execute owns execute-stage orchestration, route selection, state, and scope. Direct implementation and subagent implementation are two routes inside this skill. It does not reopen product scope or modify the approved plan's intent. Execute and verify one approved slice at a time inside the selected execution window. Continuation is the default after a verified slice; checkpoints and STOP conditions are the exceptions. An execution window is a context-management batch, not a completion boundary.
+auto-execute owns execute-stage orchestration, route selection, state, and scope. Direct implementation and subagent implementation are two routes inside this skill. It does not reopen product scope or modify the approved plan's intent. Execute and verify one approved slice at a time inside the selected execution window. Plan-declared parallel-safe groups are the one exception to that serial order. Continuation is the default after a verified slice; checkpoints and STOP conditions are the exceptions. An execution window is a context-management batch, not a completion boundary.
 
 Loading discipline: keep the active slice, execution-window metadata, acceptance criteria, route metadata, verification commands, and active files in context. Load linked detail files and traceability IDs for the active slice only; read wider project files only when implementation correctness requires it. Read `.agent/.automaton/references/CONTEXT-BUDGET.md` when wider reads threaten context pressure. When a lookup would otherwise pull wide reads into context, dispatch the read-only `automaton-librarian` (see `.agent/.automaton/references/LIBRARIAN.md`): it returns evidence, you keep the decision.
 
@@ -82,7 +82,7 @@ The route decision lives here. The assignment criteria live in `auto-plan`. Hono
 - `subagent recommended`: prefer the subagent route.
 - `subagent required`: use the subagent route. Do not implement directly.
 
-Use the subagent route when the user explicitly requests multi-agent execution. If implementation reveals the assigned route no longer fits the slice, record a plan correction rather than silently rerouting. Do not tell the user to invoke another execute skill for the same slice.
+Use the subagent route when the user explicitly requests multi-agent execution. If implementation reveals the assigned route no longer fits the slice, record a plan correction rather than silently rerouting. Do not make the user re-invoke execution for the same slice.
 
 ### Direct Route
 

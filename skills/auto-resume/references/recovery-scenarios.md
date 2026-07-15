@@ -3,7 +3,7 @@
 ## Scenario 1: Fresh Session, Active Change Exists
 
 **State:** `current.json` has `active_change: "feature-x"`, `stage: "execute"`.
-**Action:** Load SPEC.md, DESIGN.md, PLAN.md. Identify the current slice from PLAN.md evidence, then reconcile against the execution ledger (`git log --oneline -15`, `git status --porcelain`): the last `slice N:` commit is the last verified slice, and a dirty tree on top of it is in-flight work for the next slice. Summarize; `Next: auto-execute`.
+**Action:** Load SPEC.md, DESIGN.md when present, and PLAN.md. Identify the current slice from PLAN.md evidence, then reconcile against the execution ledger (`git log --oneline -15`, `git status --porcelain`): the last `slice N:` commit is the last verified slice, and a dirty tree on top of it is in-flight work for the next slice. Summarize; `Next: auto-execute`.
 
 ## Scenario 1b: Mid-Slice Interruption
 
@@ -49,6 +49,5 @@
 - Stage `execute`: `Next: auto-execute`.
 - Stage `verify`: `Next: auto-verify`.
 - Stage `verified`: change complete. Report completion with no `Next:` line.
-- Stage `resume` with missing steering: `Next: auto-onboard`.
 - Change complete and ROADMAP.md has pending items: surface them as optional future work with no next lifecycle skill by default.
 - Change complete and no pending roadmap items: `none - change complete`.

@@ -20,4 +20,4 @@ Prose patterns to flag in any Automaton artifact. Flag each hit unless it is quo
 
 ## What Not To Flag
 
-Flag clusters, not single instances. One em-dash, one three-part list, or one polished sentence is normal writing; a pattern of them is the tell. Do not rewrite text that is merely well edited.
+A hit is a cluster, not a single instance. One em-dash, one three-part list, or one polished sentence is normal writing; a pattern of them is the tell. Do not rewrite text that is merely well edited.

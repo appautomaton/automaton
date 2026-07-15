@@ -19,7 +19,7 @@ test('plan execute and verify preserve linked detail and traceability IDs', () =
   assert.match(plan, /Do not collapse traceable requirements into untraceable prose/)
   assert.match(execute, /linked detail files and traceability IDs/)
   assert.match(execute, /load those linked files for the active slice/)
-  assert.match(verify, /Linked detail file and traceability IDs/)
+  assert.match(verify, /linked detail and traceability IDs are normative/)
   assert.match(verify, /unlinked supplemental file/)
 })
 

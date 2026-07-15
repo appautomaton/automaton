@@ -13,7 +13,7 @@ First action: run `node .agent/.automaton/scripts/get-context.mjs` from the proj
 
 ## Preamble
 
-auto-onboard builds bounded project truth from repository evidence, not training data, not conversation, not guessing. It does not write code or produce specs. Loading discipline: keep REPO-MAP.md under 150 lines; stop scanning once you have enough.
+auto-onboard builds bounded project truth from repository evidence, not training data, not conversation, not guessing. It does not write code or produce specs. Loading discipline: keep REPO-MAP.md near 150 lines, running longer only while a runtime surface, boundary, or working command still needs recording. Stop scanning once you have enough.
 
 ## Quality Gate
 
