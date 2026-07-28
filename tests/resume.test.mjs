@@ -16,13 +16,15 @@ test('auto-resume recovery scenarios prefer current state and canonical artifact
   assert.doesNotMatch(recovery, /STATUS\.md|status prose|summary text/)
 })
 
-test('auto-resume recovery scenarios agree with the SKILL.md STOP on missing state', () => {
+test('auto-resume SKILL.md owns the missing-state STOP, with no duplicate scenario', () => {
+  // Failure story: the missing-state halt used to live in two places, and the reference
+  // copy was unreachable: the SKILL STOP fires before the reference is ever loaded.
+  const skill = readFileSync(join(skillsRoot, 'auto-resume', 'SKILL.md'), 'utf8')
   const recovery = readFileSync(join(skillsRoot, 'auto-resume', 'references', 'recovery-scenarios.md'), 'utf8')
 
-  assert.match(recovery, /Missing State File/)
-  assert.match(recovery, /`current\.json` is missing[\s\S]{0,200}recommend `automaton install`/)
-  assert.match(recovery, /do not attempt recovery without a state file/i)
-  assert.doesNotMatch(recovery, /file is missing[\s\S]{0,120}ask user what to work on/i)
+  assert.match(skill, /`current\.json` is missing[\s\S]{0,200}Recommend `automaton install`/)
+  assert.match(skill, /Do not attempt recovery without a state file/)
+  assert.doesNotMatch(recovery, /Missing State File/)
 })
 
 test('auto-resume treats verified completion as no automatic next skill', () => {

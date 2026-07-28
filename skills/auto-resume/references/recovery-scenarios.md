@@ -3,7 +3,7 @@
 ## Scenario 1: Fresh Session, Active Change Exists
 
 **State:** `current.json` has `active_change: "feature-x"`, `stage: "execute"`.
-**Action:** Load SPEC.md, DESIGN.md when present, and PLAN.md. Identify the current slice from PLAN.md evidence, then reconcile against the execution ledger (`git log --oneline -15`, `git status --porcelain`): the last `slice N:` commit is the last verified slice, and a dirty tree on top of it is in-flight work for the next slice. Summarize; route to `auto-execute`.
+**Action:** Load SPEC.md, DESIGN.md when present, and PLAN.md. Reconcile the execution ledger per the SKILL (Reconcile Execution Ledger), identify the current slice, summarize, and route to `auto-execute`.
 
 ## Scenario 1b: Mid-Slice Interruption
 
@@ -14,11 +14,6 @@
 
 **State:** `current.json` exists with `active_change: "none"`.
 **Action:** Read `.agent/steering/ROADMAP.md` for pending phases and ask the user what to work on.
-
-## Scenario 2b: Missing State File
-
-**State:** `.agent/` does not exist, or `current.json` is missing.
-**Action:** This is the SKILL.md STOP condition. Halt, recommend `automaton install`, and do not attempt recovery without a state file.
 
 ## Scenario 3: Stale Canonical Pointer
 
@@ -32,8 +27,8 @@
 
 ## Scenario 5: Multiple Changes in Progress
 
-**State:** `.agent/work/` contains multiple change directories.
-**Action:** List them. Ask user which to resume. Do not guess.
+**State:** `current.json` has no resolvable `active_change`, and `.agent/work/` contains multiple change directories.
+**Action:** `current.json` is the only source for the active change. When it cannot pick one, list the directories and ask the user which to resume. Do not guess.
 
 ## Stage Routing
 

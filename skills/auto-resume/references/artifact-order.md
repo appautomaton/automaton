@@ -30,10 +30,9 @@ current.json (state) ──┘
 | `execute` | SPEC.md, DESIGN.md (if exists), PLAN.md, current slice | Do not load unrelated slices |
 | `verify` | SPEC.md, PLAN.md, verification evidence | Resume or re-run verification; spec first, the criteria trace to it |
 | `verified` | PLAN.md (change complete; surface pending roadmap items only as context) | Do not reload the full artifact chain or route to new work unless the user asks |
-| `resume` | current.json, then canonical artifacts that resolve | Load only what is needed to orient |
 
 ## Anti-Patterns
 
 - **Loading PLAN.md before SPEC.md.** The plan assumes the spec is understood.
 - **Reloading the full chain at verified stage.** Verification passed. Report completion and surface optional future work only when useful.
-- **Rebuilding project context by scanning the repo.** The artifacts hold the decisions. For a specific lookup, dispatch the read-only `automaton-librarian` instead of a broad read.
+- **Rebuilding project context by scanning the repo.** The artifacts hold the decisions.

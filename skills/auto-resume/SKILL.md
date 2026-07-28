@@ -87,7 +87,7 @@ Use `references/recovery-scenarios.md` for the full routing table. The invariant
 
 Resume orients and stops. It never starts the work it just found.
 
-After the recovery summary, end the turn with `**Next:** <skill>, <reason>`. For a verified change, report `Change status: complete` and print no `Next:` line. When ROADMAP.md has pending items, surface them as optional future work rather than an automatic `auto-frame` handoff.
+After the recovery summary, end the turn with `**Next:** <skill>, <reason>` when the recovered state has incomplete or blocked work. For a verified change, report `Change status: complete` and print no `Next:` line. When ROADMAP.md has pending items, surface them as optional future work rather than an automatic `auto-frame` handoff.
 
 ## Output
 
