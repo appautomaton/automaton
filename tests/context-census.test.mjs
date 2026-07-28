@@ -30,8 +30,12 @@ const SHARED_CEILINGS = {
   // Raised 890 -> 945 (pass 8, actual 900): the Where rule bent to legitimize the
   // two real emission shapes (verify's outcome fan-out, execute's loop-back), new
   // structural capability; the four-edge enumeration moved home to ARTIFACT-LIFECYCLE.
-  '_shared/references/FRAMEWORK.md': 945,
-  '_shared/references/ARTIFACT-LIFECYCLE.md': 1940,
+  // Down-ratchet 945 -> 922 (pass 9): Loading Discipline collapsed to two pointer
+  // lines; actual 878, 878 x 1.05 = 922.
+  '_shared/references/FRAMEWORK.md': 922,
+  // Down-ratchet 1940 -> 1817 (passes 8-9): skill restatements and phase authorship
+  // became pointers; actual 1730, 1730 x 1.05 = 1817.
+  '_shared/references/ARTIFACT-LIFECYCLE.md': 1817,
   '_shared/references/CONTEXT-BUDGET.md': 585,
   // Raised 1100 -> 1350 for DD-013: evidence-over-signal completion, BLOCKED
   // triage, and parallel worktree isolation are new coordination capability,
@@ -39,7 +43,9 @@ const SHARED_CEILINGS = {
   '_shared/references/SUBAGENT-PROTOCOL.md': 1350,
   '_shared/references/LIBRARIAN.md': 380,
   '_shared/references/ANTI-SLOP.md': 270,
-  '_shared/references/ROADMAP-CONTRACT.md': 670
+  // Down-ratchet 670 -> 585 (pass 9): the zero-consumer evidence field and the
+  // empty-shape doctrine line removed; actual 557, 557 x 1.05 = 585.
+  '_shared/references/ROADMAP-CONTRACT.md': 585
 }
 
 const SKILL_CEILINGS = {

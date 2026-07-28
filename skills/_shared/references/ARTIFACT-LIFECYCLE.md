@@ -6,7 +6,7 @@ Shared contract for what each Automaton stage consumes, writes, records, and han
 
 Stage list, state contract, and `sync-status.mjs` mandate are in `FRAMEWORK.md`.
 
-- Concrete paths belong in `current.json`, `SPEC.md`, and `PLAN.md`. Do not create a separate status prose artifact to mirror them.
+- Concrete state paths live in `current.json`; artifact-to-artifact links live inside `SPEC.md` and `PLAN.md`. Do not create a separate status prose artifact to mirror them.
 - Skills write artifacts only for the active change unless a skill explicitly documents a steering output.
 - Do not add archive behavior or runtime lifecycle machinery here. The STOP Conditions list below names the full ban.
 
@@ -31,7 +31,7 @@ Allowed active-change layout:
 - Execute and verify load only detail files linked to the active slice or requirement IDs.
 - Execute writes slice evidence in place: inline slices update `PLAN.md`; linked detail slices update `slices/slice-NNN.md`; `orchestration/*.md` is supporting evidence, not the default write target.
 - Split a change only for independent outcomes. Do not split or narrow one coherent outcome solely because the spec or plan has many files, gaps, constraints, or scenarios.
-- If a skill narrows the user's stated scope, it must name the narrowing, explain why, and then widen the scope, ask the user to confirm, or record the deferred scope as a `Deferred / Not in scope` note inside the current change's SPEC. A narrowed scope must not be promoted into a `ROADMAP.md` phase: roadmap phases come only from a decomposition the user approved during framing, never as a side effect of a skill writing a smaller spec.
+- If a skill narrows the user's stated scope, it must name the narrowing, explain why, and then widen the scope, ask the user to confirm, or record the deferred scope as a `Deferred / Not in scope` note inside the current change's SPEC. A narrowed scope never becomes a `ROADMAP.md` phase; phase authorship rules live in `.agent/.automaton/references/ROADMAP-CONTRACT.md`.
 
 ## Stage Handoffs
 

@@ -11,8 +11,6 @@ Use when no active or pending roadmap remains:
 
 No active roadmap.
 
-Phases come from a user-approved decomposition, never from repo evidence alone.
-
 ## Deferred or Not Now
 
 - None recorded.
@@ -30,7 +28,6 @@ Reset to this shape instead of deleting ROADMAP.md.
 - objective: [bounded outcome]
 - why now: [dependency or leverage justification]
 - likely outputs: [deliverables]
-- evidence: `[file path or command]` | user-stated
 - exit signal: [how to verify the phase is complete]
 ```
 

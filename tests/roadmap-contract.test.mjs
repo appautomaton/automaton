@@ -42,7 +42,10 @@ test('scope narrowing is not legitimized by promoting scope to a ROADMAP phase',
   assert.match(source, /A narrowed SPEC never becomes a `ROADMAP\.md` phase/)
   assert.match(source, /Silent narrowing is a framing failure/)
   assert.match(contract(), /A narrowed SPEC never becomes a roadmap phase/)
-  assert.match(lifecycle(), /roadmap phases come only from a decomposition the user approved during framing/)
+  // The narrowing ban stays in LIFECYCLE; phase authorship itself has one home
+  // (ROADMAP-CONTRACT, pinned below), and LIFECYCLE points at it.
+  assert.match(lifecycle(), /A narrowed scope never becomes a `ROADMAP\.md` phase/)
+  assert.match(lifecycle(), /phase authorship rules live in `\.agent\/\.automaton\/references\/ROADMAP-CONTRACT\.md`/)
 
   // auto-eng-review is not a roadmap writer; deferred work it surfaces lives in the plan or review action.
   assert.doesNotMatch(

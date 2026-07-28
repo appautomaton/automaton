@@ -64,9 +64,7 @@ Ask one question per message, with your recommended answer and its reason attach
 
 ## Loading Discipline
 
-- Context is finite. Load progressively: smallest artifact first, more only when needed.
-- Do not re-read a file you can still accurately recall. Triggers: `.agent/.automaton/references/CONTEXT-BUDGET.md` (Re-Read Rule).
-- Artifacts (`SPEC.md`, `PLAN.md`) are reloadable contracts, not dossiers. Link detail under `spec/` or `slices/` instead of inlining everything.
+Context is finite: load progressively, recall over re-read (home: `.agent/.automaton/references/CONTEXT-BUDGET.md`). Artifacts are reloadable indexes, not dossiers; layout and linking rules live in `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Progressive Disclosure).
 
 ## Artifact Signal Discipline
 

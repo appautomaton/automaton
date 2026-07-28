@@ -8,5 +8,5 @@
 // README, AGENTS.md, and docs/. The retired PROJECT.md and REQUIREMENTS.md
 // bodies moved to DEPRECATED_STEERING_FILES in lib/scaffold.mjs (DD-016).
 export const STEERING_FILES = {
-  'ROADMAP.md': '# Roadmap\n\nNo active roadmap.\n\nPhases come from a user-approved decomposition, never from repo evidence alone.\n\n## Deferred or Not Now\n\n- None recorded.\n'
+  'ROADMAP.md': '# Roadmap\n\nNo active roadmap.\n\n## Deferred or Not Now\n\n- None recorded.\n'
 }
