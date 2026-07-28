@@ -160,7 +160,11 @@ test('auto-frame keeps one stage owner and the pinned handoff form', () => {
   assert.doesNotMatch(lifecycle, /stays `frame` unless plan handoff is approved/)
 
   assert.match(source, /\*\*Next:\*\* auto-plan, <reason>/)
-  assert.match(source, /The user reading SPEC\.md is the product review/)
+  assert.match(source, /Frame's exit is a mandatory stop/)
+  // The edge's why has one home (ARTIFACT-LIFECYCLE.md, Handoff Contract); the skill
+  // performs the stop and points. The why itself stays pinned at its home by
+  // artifact-lifecycle.test.mjs.
+  assert.doesNotMatch(source, /The user reading SPEC\.md is the product review/)
   assert.doesNotMatch(source, /auto-ceo-review/)
 })
 

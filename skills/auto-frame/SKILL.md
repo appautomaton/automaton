@@ -99,16 +99,16 @@ The spec is a decision record, not a transcript. It records what the user approv
 
 After writing SPEC.md, run `node .agent/.automaton/scripts/sync-status.mjs --active-change "<change>" --canonical-spec ".agent/work/<change>/SPEC.md" --stage frame` from the project root. auto-plan owns the `stage: plan` mutation and records it when it writes PLAN.md, including on inline continuation.
 
-### Hand Off
-
-Frame's exit is a mandatory stop. Do not plan in the same turn. The user reading SPEC.md is the product review.
-
-Report what the spec bounds, what it excludes, and any assumption worth rejecting now. Then end the turn with `**Next:** auto-plan, <reason>`.
-
 <STOP>
 
 Halt and report when the user wants a solution before describing the problem, or when the diagnostic still cannot identify a stakeholder, desired outcome, content audience and thesis, concrete evidence, or observable workaround. Do not guess.
 </STOP>
+
+### Hand Off
+
+Frame's exit is a mandatory stop. Do not plan in the same turn. The edge's why: `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Handoff Contract).
+
+Report what the spec bounds, what it excludes, and any assumption worth rejecting now. Then end the turn with `**Next:** auto-plan, <reason>`.
 
 ## Output
 

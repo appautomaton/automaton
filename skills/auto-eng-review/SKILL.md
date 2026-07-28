@@ -88,7 +88,7 @@ Run `node .agent/.automaton/scripts/sync-status.mjs --engineering-review "<verdi
 
 ### Hand Off
 
-The review always stops. It never runs the plan it just approved.
+The review always stops. The edge's why: `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Handoff Contract).
 
 Report the verdict, the riskiest slice, and the one concern execution should watch for. Then end the turn with `**Next:** auto-execute, <reason>` for `approved` or `approved_with_risks`, or `**Next:** auto-plan, <reason>` for `needs_correction`.
 

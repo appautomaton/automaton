@@ -123,7 +123,7 @@ Run `node .agent/.automaton/scripts/sync-status.mjs --canonical-plan ".agent/wor
 
 ### Hand Off
 
-Planning always stops. Entry into execute is where code starts changing, so a human authorizes it.
+Planning always stops. The edge's why: `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Handoff Contract).
 
 Report the slice count, the execution topology, and any checkpoint. Then end the turn with `**Next:** auto-execute, <reason>`, or `**Next:** auto-eng-review, <reason>` when the plan carries non-trivial engineering risk.
 

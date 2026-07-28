@@ -27,7 +27,10 @@ const SHARED_CEILINGS = {
   // among their outputs and issued it from nowhere, so a model that read ## Output
   // as documentation, which it is, ended the turn silently. Paying ~20 words here
   // let the eight SKILL.md files drop 100.
-  '_shared/references/FRAMEWORK.md': 890,
+  // Raised 890 -> 945 (pass 8, actual 900): the Where rule bent to legitimize the
+  // two real emission shapes (verify's outcome fan-out, execute's loop-back), new
+  // structural capability; the four-edge enumeration moved home to ARTIFACT-LIFECYCLE.
+  '_shared/references/FRAMEWORK.md': 945,
   '_shared/references/ARTIFACT-LIFECYCLE.md': 1940,
   '_shared/references/CONTEXT-BUDGET.md': 585,
   // Raised 1100 -> 1350 for DD-013: evidence-over-signal completion, BLOCKED

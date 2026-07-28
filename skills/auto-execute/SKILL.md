@@ -123,7 +123,7 @@ If the completed slice has a checkpoint, validate it against the definitions (`h
 
 Continue within the selected execution window only when verification passed, dependencies are met, the next slice still matches the approved plan, context remains healthy, and no STOP condition applies. If the checkpoint is valid, pause with the next action and checkpoint reason.
 
-### Continuation And Handoff
+### Continuation And Hand Off
 
 When the selected execution window is complete but `PLAN.md` still has uncompleted approved slices, return to **Select Execution Window** immediately. "N slices remain" is progress state, not a stop reason. Remaining approved slices require another execution-window pass unless a valid checkpoint, STOP condition, context-pressure tier, or unavailable host capability prevents continuing.
 

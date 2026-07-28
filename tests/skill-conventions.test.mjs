@@ -139,8 +139,9 @@ test('every handoff-carrying skill issues its handoff from inside ## Do', () => 
   // model that executes ## Do top to bottom writes its artifacts and ends the turn silently.
   // Weaker models papered over this by reproducing the whole template. Stronger ones parse
   // ## Output as documentation, which it is, and go quiet. auto-verify always carried the
-  // form inside ## Do and never went silent. FRAMEWORK.md pins the wire format of the line,
-  // this guard pins where it is issued.
+  // form inside ## Do and never went silent. FRAMEWORK.md pins the wire format of the line
+  // and names ### Hand Off the conventional shape; this guard pins the load-bearing half:
+  // the line is issued from inside ## Do, never from ## Output.
   for (const skillName of authoredSkills) {
     const source = readFileSync(join(skillsRoot, skillName, 'SKILL.md'), 'utf8')
     const doStart = source.indexOf('\n## Do\n')

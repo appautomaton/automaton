@@ -21,7 +21,7 @@ Every skill follows this skeleton:
 ```
 Preamble        -> identity, "does not" boundary, loading discipline
 Quality Gate    -> checks before finalizing. Each skill ships a quality.md reference
-Do              -> skill-specific procedure, ending in Hand Off when the skill stops
+Do              -> skill-specific procedure, ending in the stop-issuing step when the skill stops
 Output          -> artifacts produced and state changes
 Rules           -> guardrails
 ```
@@ -40,7 +40,7 @@ Conditional reference reads (`Read references/X.md when Y`) appear inline at the
 
 Every skill ships `references/quality.md` with four sections: anti-patterns, better shape, prose hygiene, and a final check. Read it when the skill's output drifts toward vagueness, theater, or inflation. The Quality Gate in each SKILL.md names the skill-specific trigger. All artifacts must pass `.agent/.automaton/references/ANTI-SLOP.md`.
 
-## Hard Stop Tags
+## GATE and STOP Tags
 
 Two tags mark hard stops in skill procedures. Scan for them before reading the full `## Do` section.
 
@@ -52,11 +52,11 @@ Two tags mark hard stops in skill procedures. Scan for them before reading the f
 Two moves at every lifecycle edge:
 
 - **Continue inline:** load and follow the next stage's contract in the same session. Default when the exit gate passes, reviews are non-blocking, and context is healthy.
-- **Stop and hand off:** end the turn with a recommendation. Required at four edges: frame's exit, entry into `execute`, entry into the optional `auto-eng-review`, and verify outcomes. Each edge's why is fixed in `ARTIFACT-LIFECYCLE.md` (Handoff Contract), so skills do not restate it.
+- **Stop and hand off:** end the turn with a recommendation. Required at the four stop edges pinned in `ARTIFACT-LIFECYCLE.md` (Handoff Contract); a skill does not restate an edge's why.
 
 **Form.** Continue-inline emits no handoff line. The next contract's output speaks for it. A stop ends the turn with one line: `**Next:** <skill>, <reason in ≤8 words>`. Terminal completion reports `Change status: complete` and a `New objective:` line, with no `Next:`. The reason names the trigger, not the rule.
 
-**Where.** A skill that stops issues this line from a `### Hand Off` step ending its `## Do`, never from `## Output`. A handoff listed among artifacts reads as a manifest entry, not an instruction. Elsewhere, name a target skill in plain text and reserve the `**Next:**` form for the emitted line.
+**Where.** A skill that stops issues this line from a step inside `## Do`, after its artifact writes and state mutations, never from `## Output`. The conventional shape is a terminal `### Hand Off` step; a stop that fans out by outcome or loops back into the procedure issues from the step that owns the outcome instead. A handoff listed among artifacts reads as a manifest entry, not an instruction. Elsewhere, name a target skill in plain text and reserve the `**Next:**` form for the emitted line.
 
 ## Asking The User
 
