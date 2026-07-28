@@ -17,17 +17,15 @@ This protocol is per-slice. `auto-execute` owns execute-stage orchestration acro
 
 ## Dispatch Packet
 
-Every subagent call should include a compact packet. The installed role body already carries identity, status vocabulary, and the return envelope, so the packet carries only per-call context:
+The installed role body already carries identity, status vocabulary, and the return envelope, so a packet carries only per-call context. Each role's packet shape lives in its own prompt file, the sole home of that shape: `auto-execute/references/implementer-prompt.md`, `spec-reviewer-prompt.md`, and `quality-reviewer-prompt.md`.
 
-- current slice objective
-- acceptance criteria or verification commands
-- relevant constraints and anti-goals
-- named files or areas to inspect
-- edit scope: files or directories the implementer may modify (unlisted paths are read-only)
-- requested changes from the prior review when the implementer is being re-dispatched after `CHANGES_REQUESTED`
-- stop conditions for missing context, ambiguity, or unsafe scope expansion
+Cross-role invariants:
 
-Do not ask a subagent to rediscover the whole project unless exploration is the assigned slice. If a subagent needs more context, provide one targeted correction before escalating. Keep packets compact for the coordinator's own sake: everything pasted into a dispatch stays resident in its context for the rest of the session, so heavy evidence moves through orchestration files instead of paste.
+- The packet is built from the current slice only: its objective, acceptance criteria or verification commands, relevant constraints, and named files or areas.
+- edit scope: files or directories the implementer may modify (unlisted paths are read-only).
+- One slice per dispatch. A re-dispatch after `CHANGES_REQUESTED` carries the requested changes from the prior review.
+- Do not ask a subagent to rediscover the whole project unless exploration is the assigned slice. If a subagent needs more context, provide one targeted correction before escalating.
+- Keep packets compact for the coordinator's own sake: everything pasted into a dispatch stays resident in its context for the rest of the session, so heavy evidence moves through orchestration files instead of paste.
 
 ## Dispatch Rules
 
@@ -47,17 +45,18 @@ A subagent's completion signal is an event, not proof. The working tree is the a
 
 ## Parallel Isolation
 
-Cross-slice parallel dispatch requires worktree isolation when the project is a git repo: the coordinator creates one worktree per parallel implementer (host-native isolation where the host provides it), integrates each result serially in plan order, and removes the worktree afterwards. Disjoint write sets remain required in the plan. The worktree makes that claim structural instead of hoped. Serial dispatch stays in the main tree. Without git, parallel dispatch is allowed only on disjoint write sets, as before. Integration mechanics live in `auto-execute/references/git-rhythm.md` (Parallel Isolation).
+Cross-slice parallel dispatch requires worktree isolation when the project is a git repo: one worktree per parallel implementer (host-native isolation where the host provides it), integrated serially in plan order. Disjoint write sets remain required in the plan; the worktree makes that claim structural instead of hoped. Serial dispatch stays in the main tree. Without git, parallel dispatch is allowed only on disjoint write sets. Integration mechanics live in `auto-execute/references/git-rhythm.md` (Parallel Isolation).
 
 ## Review Rules
 
-- Spec reviewers do not trust implementer reports. They inspect changed files, command evidence, or concrete observations before approving.
 - Spec reviewers focus on required behavior, acceptance criteria, and extra scope. They do not perform general maintainability review.
 - Quality reviewers use severity language (`critical`, `important`, `minor`) and focus on bugs, maintainability, tests, cleanup, state, path handling, and unrelated edits.
 - Quality reviewers do not reopen product scope unless a quality issue proves the implementation cannot work safely.
 - The coordinator does not pre-judge reviews. Dispatch packets and implementation summaries never tell a reviewer to skip a check, soften a finding, or cap severity: that language spares the coordinator a review loop at the price of the review.
 
-## Status Vocabulary
+## Subagent Return Statuses
+
+These dispatch statuses are not lifecycle review verdicts. The verdict vocabulary (`approved`, `approved_with_risks`, `needs_correction`) lives in `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Review Verdict Routing).
 
 Implementers return exactly one status:
 
@@ -68,7 +67,7 @@ Implementers return exactly one status:
 | `NEEDS_CONTEXT` | Subagent cannot proceed without information. | Provide missing context and redispatch. |
 | `BLOCKED` | Subagent cannot complete the slice. | Triage the cause (below) before reacting. |
 
-`BLOCKED` triage: diagnose the cause, never re-dispatch unchanged work and hope. A context gap gets one targeted correction and a redispatch. A capability gap (the slice needs deeper reasoning than the dispatched agent showed) falls back to the direct route in the coordinator's own session. A too-large slice returns to `auto-plan` to split. A wrong plan stops for the user.
+`BLOCKED` triage: diagnose the cause, never re-dispatch unchanged work and hope. A capability gap (the slice needs deeper reasoning than the dispatched agent showed) falls back to the direct route in the coordinator's own session. A too-large slice returns to `auto-plan` to split. A wrong plan stops for the user. A missing-context report arrives as `NEEDS_CONTEXT`, not `BLOCKED`: it gets one targeted correction and a redispatch (STOP Conditions).
 
 Reviewers return exactly one status:
 
@@ -80,17 +79,9 @@ Reviewers return exactly one status:
 
 ## Artifact Expectations
 
-Use orchestration artifacts only for subagent routes or complex review loops where the details would pollute `PLAN.md` or a linked slice detail file. The slice's durable status still belongs in `PLAN.md` or `slices/slice-NNN.md`; orchestration files are supporting evidence.
+Use orchestration artifacts only for subagent routes or complex review loops where the details would pollute `PLAN.md` or a linked slice detail file. The slice's durable status still belongs in `PLAN.md` or `slices/slice-NNN.md`; orchestration files are supporting evidence. Layout and linking rules live in `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Progressive Disclosure).
 
 Write the summary first. Future coordinators should read `slice-NNN-summary.md` before any role-specific file.
-
-```text
-.agent/work/<change>/orchestration/
-  slice-001-summary.md
-  slice-001-implementer.md
-  slice-001-spec-review.md
-  slice-001-quality-review.md
-```
 
 `slice-NNN-summary.md` should contain only:
 - final status and decision
@@ -101,9 +92,9 @@ Write the summary first. Future coordinators should read `slice-NNN-summary.md` 
 
 Role files are optional. Write them only when needed to debug, rerun, or explain a non-obvious decision.
 
-Never paste full source files, full command logs, or chat transcripts unless needed to explain a blocker. Summarize with file paths, line anchors when available, commands run, command results, and unresolved risks.
+Never paste full source files, full command logs, or chat transcripts unless needed to explain a blocker. Summaries follow Artifact Signal Discipline (`.agent/.automaton/references/FRAMEWORK.md`).
 
-## Stop Conditions
+## STOP Conditions
 
 - Host does not expose subagent support or the required feature is disabled.
 - The current slice has no clear acceptance criteria.
