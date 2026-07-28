@@ -40,7 +40,10 @@ const SHARED_CEILINGS = {
 }
 
 const SKILL_CEILINGS = {
-  'auto-execute/SKILL.md': 1890,
+  // Down-ratchet 1890 -> 1855 (pass 3 halt/proceed contract): actual 1767 after
+  // internal-repeat trims; the approved_with_risks fix added capability back.
+  // 1767 x 1.05 = 1855.
+  'auto-execute/SKILL.md': 1855,
   'auto-plan/SKILL.md': 1250,
   // DD-017 folded auto-office-hours into auto-frame: two ceilings totalling 2800 become
   // one at 1400. The merged entry point is 1375, up 269 from frame alone, which buys mode

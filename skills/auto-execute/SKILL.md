@@ -41,7 +41,7 @@ Do NOT write code unless:
 
 Read the canonical `PLAN.md`. If it contains `VERIFY-GAP` annotations, treat those gap-fix objectives as the current work before selecting the next uncompleted slice.
 
-If `engineering_review` is `approved_with_risks`, surface the rationale before starting but block only when the risk affects the current slice.
+If `engineering_review` is `approved_with_risks`, surface each risk's rationale before the slice it affects. The verdict already means safe to proceed: a named risk does not block its slice.
 
 If the current slice involves prose, read `references/content-execution.md`. If it links `slices/slice-NNN.md` or requirement IDs in `spec/*.md`, load those linked files for the active slice and preserve their traceability IDs.
 
@@ -58,13 +58,13 @@ After slice verification passes in `Verify And Advance`, run `git add -A` follow
 - `git commit -m "slice N: <objective>"` for a fresh slice (objective from `PLAN.md`).
 - `git commit -m "slice N gap-fix: <fix objective>"` for a slice re-entered after `auto-verify` FAIL (fix objective from the `VERIFY-GAP` block).
 
-**Strictly additive.** `git commit` only. Never `amend`, `reset`, `rebase`, `branch`, `checkout`, or `push`. One carve-out: coordinator-managed `git worktree add`/`remove` for parallel slice isolation, defined in `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Git Rhythm). Subagents on the implementer route never run any git write command. The orchestrator owns history. A failed commit is a STOP, not a step to skip.
+**Strictly additive.** `git commit` only. Never `amend`, `reset`, `rebase`, `branch`, `checkout`, or `push`. One carve-out: coordinator-managed `git worktree add`/`remove` for parallel slice isolation, defined in `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Git Rhythm). Subagents on the implementer route never run any git write command. The orchestrator owns history.
 
 ### Select Execution Window
 
 The next slice is selected from `PLAN.md`. Build the smallest safe execution window:
 - Always include the next uncompleted slice.
-- Add following slices only while `Checkpoint after: none` is present or defaulted, dependencies are met, verification is explicit, and no STOP condition, slice-blocking review risk, or context pressure appears.
+- Add following slices only while `Checkpoint after: none` is present or defaulted, dependencies are met, verification is explicit, and no STOP condition or context pressure appears.
 - Execute the window serially by default. Cross-slice parallel dispatch is allowed only when `PLAN.md`'s **Parallel-safe groups:** line names the slices and write sets are disjoint, and in a git repo it runs under worktree isolation (`.agent/.automaton/references/SUBAGENT-PROTOCOL.md`, Parallel Isolation; mechanics in `references/git-rhythm.md`).
 
 Omitted slice fields carry the defaults pinned in `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Slice Defaults).
@@ -84,7 +84,7 @@ Use the subagent route when the user explicitly requests multi-agent execution. 
 
 ### Direct Route
 
-Use this route only when route selection permits direct execution. For prose artifacts, follow `references/content-execution.md`.
+Use this route only when route selection permits direct execution.
 
 ### Subagent Route
 
@@ -117,7 +117,7 @@ Append-replace the evidence block. Do not paste transcripts, full command logs, 
 
 After evidence is recorded, run the per-slice commit when the **Git Rhythm** is active. A failed commit is a STOP condition, not a step to skip.
 
-The next slice is selected from `PLAN.md`. Do not invent slice cursor or checkpoint fields in `.agent/.automaton/state/current.json`. Change state only through `node .agent/.automaton/scripts/sync-status.mjs` when stage, active change, review state, or canonical artifact pointers change.
+Do not invent slice cursor or checkpoint fields in `.agent/.automaton/state/current.json`. Change state only through `node .agent/.automaton/scripts/sync-status.mjs` when stage, active change, review state, or canonical artifact pointers change.
 
 If the completed slice has a checkpoint, validate it against the definitions (`human-verify`, `decision`, `human-action`) in `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Checkpoint Semantics): it holds only when its defined condition is met. For checkpoint text that fails its definition, record a plan correction, keep the evidence, and continue when normal continuation conditions pass.
 

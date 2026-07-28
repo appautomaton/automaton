@@ -6,6 +6,4 @@ The `<STOP>` conditions in SKILL.md name what halts. This names how to tell a ha
 - **Structural** obstacle (missing dependency, ambiguous instruction, stale plan): halt and report.
 - **Unsure:** run one bounded diagnostic. If it is still structural or ambiguous after that, halt.
 
-A test fails 3 times with the same error counts as structural. Identical failures mean the approach is wrong, not the run.
-
 The discriminator is whether the obstacle changes what the slice means. A typo does not. A plan that references a renamed file does.

@@ -24,7 +24,7 @@ If the commit operation itself fails (pre-commit hook rejection, signing failure
 
 Plan-approved parallel-safe groups dispatch each implementer into its own worktree. The worktree is scratch isolation, not a branching strategy: the user's checked-out branch is never switched, and every result lands as a normal additive slice commit.
 
-1. Precondition: clean tree. Pre-existing dirt is swept by a prior slice commit before fan-out.
+1. Precondition: clean tree. Prior slice commits are what sweep entry dirt, so a parallel group that opens the run cannot fan out over dirt: execute that group serially (slice 1's commit sweeps it per Pre-Existing Dirt), or ask the user to commit or stash first. Later groups fan out normally.
 2. Create one worktree per parallel slice, detached at HEAD (`git worktree add --detach`), so no branch ref is ever created. A host's native worktree isolation manages its own lifecycle and is fine too.
 3. Dispatch implementers into their worktrees. They edit files only. Subagents never run git write commands.
 4. Integrate serially in plan order: take the worktree diff, apply it to the main tree, run slice verification, then make the normal `slice N:` commit.

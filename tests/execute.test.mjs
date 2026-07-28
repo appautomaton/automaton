@@ -235,9 +235,11 @@ test('auto-execute git rule carries the worktree carve-out and one attempt limit
   assert.match(source, /carve-out: coordinator-managed `git worktree add`\/`remove`/)
   assert.match(source, /parallel slice isolation, defined in `\.agent\/\.automaton\/references\/ARTIFACT-LIFECYCLE\.md` \(Git Rhythm\)/)
 
-  // One attempt threshold across the STOP condition and both references: 3, then halt.
+  // One attempt threshold: the 3-failures rule lives in the SKILL STOP list only.
+  // stop-examples keeps the halt-from-obstacle discriminator; duplicating the rule
+  // there made two homes that could drift on the threshold.
   assert.match(source, /A test fails 3 times with the same error/)
   assert.doesNotMatch(source, /> ?3 attempts/)
-  assert.match(stopExamples, /A test fails 3 times with the same error/)
+  assert.doesNotMatch(stopExamples, /A test fails 3 times with the same error/)
   assert.match(debugProtocol, /within 3 attempts/)
 })
