@@ -9,7 +9,6 @@ Use this before writing or refreshing `.agent/work/<change>/SPEC.md`.
 Always include:
 - **Bet:** a one line `**Bet:** <wager>` opening the spec. It names what the change bets in plain language, so the reader can reject the premise before reading the mechanics.
 - Bounded goal: one sentence, in the user's final refined language.
-- Broader intent: the larger user goal preserved or intentionally decomposed. Omit when identical to the bounded goal.
 - Work scale and work shape.
 - Selected lenses.
 - Constraints and risks that change implementation.
@@ -22,7 +21,8 @@ Always include:
 Include only when the trigger applies:
 - Linked detail files under `spec/` - trigger: constraints, risks, acceptance detail, or gap matrix is too large for inline SPEC.
 - Target user or stakeholder - trigger: product, design, or content lens is selected.
-- Scope coverage: included, deferred, anti-goal, and needs-decision items - trigger: the request carried more than one material ask. Omit empty groups.
+- Scope coverage: included, deferred, anti-goal, and resolved needs-decision items - trigger: the request carried more than one material ask. Omit empty groups.
+- Broader intent: the larger user goal preserved or intentionally decomposed - trigger: it differs from the bounded goal.
 - Scope preservation: whether this preserves the user's full stated intent or intentionally decomposes it - trigger: anything was deferred or narrowed.
 - Approved approach: the chosen approach, the evidence supporting it, and what that evidence does not prove - trigger: alternatives were presented.
 - Rejected or deferred framings, with reasons - trigger: a direction was ruled out. Do not carry the full alternatives analysis.

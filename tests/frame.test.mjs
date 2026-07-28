@@ -129,6 +129,23 @@ test('auto-frame writes nothing while a scope-changing decision is unresolved', 
   assert.equal(source.match(/<GATE>/g)?.length, 1)
 })
 
+test('auto-frame names the change before the write that consumes the slug', () => {
+  // Failure story: the slug was derived two steps after the SPEC write that needs it,
+  // and the ROADMAP adoption needed it earlier still. A step that says "use that slug
+  // before writing SPEC.md" must not sit behind the write.
+  const source = skill()
+
+  assert.match(source, /### Name The Change/)
+  assert.ok(
+    source.indexOf('derive a new slug') < source.indexOf('### Write SPEC.md'),
+    'slug derivation must come before the SPEC.md write'
+  )
+  assert.ok(
+    source.indexOf('### Name The Change') < source.indexOf('### Cover The Request'),
+    'the ROADMAP adoption in Cover The Request consumes the slug'
+  )
+})
+
 test('auto-frame keeps one stage owner and the pinned handoff form', () => {
   const source = skill()
   const lifecycle = readFileSync(join(skillsRoot, '_shared', 'references', 'ARTIFACT-LIFECYCLE.md'), 'utf8')

@@ -50,6 +50,8 @@ const SKILL_CEILINGS = {
   // classification, the depth choice, and roadmap authorship. The diagnostic machinery it
   // absorbed rides references/diagnostic.md behind the Choose Depth trigger instead of the
   // common path, because 11 of the last 12 changes never ran a diagnostic.
+  // Pass 6's slug reorder holds 1400 at actual 1387 (1% headroom): the duplicate
+  // write-ban deletion paid for the Name The Change step.
   'auto-frame/SKILL.md': 1400,
   'auto-verify/SKILL.md': 1000,
   // Pass 5 absorbed the risk-examples threshold mapping and the stale-DESIGN split:

@@ -56,7 +56,11 @@ Run the diagnostic first when the request lacks a problem, a stakeholder, a desi
 
 Do not run a diagnostic to look thorough, and do not skip one to look fast.
 
-When the answer is deep, read `references/diagnostic.md` and follow it before returning here. It carries the mode diagnostics, grill mode, and the alternatives contract. Nothing is written to disk until the user approves an approach.
+When the answer is deep, read `references/diagnostic.md` and follow it before returning here. It carries the mode diagnostics, grill mode, and the alternatives contract.
+
+### Name The Change
+
+If `active_change` is `bootstrap` or does not match the current objective, derive a new slug: `YYYY-MM-DD-<kebab-case-objective>` using today's date. Derive it now: the ROADMAP adoption in Cover The Request and the SPEC.md write both use it. Recording a new change over an unfinished one follows the parking rule in `.agent/.automaton/references/FRAMEWORK.md` (State Contract).
 
 ### Cover The Request
 
@@ -93,8 +97,6 @@ The spec is a decision record, not a transcript. It records what the user approv
 
 ### Update State
 
-If `active_change` is `bootstrap` or does not match the current objective, derive a new slug: `YYYY-MM-DD-<kebab-case-objective>` using today's date. Use that slug before writing SPEC.md. Recording a new change over an unfinished one follows the parking rule in `.agent/.automaton/references/FRAMEWORK.md` (State Contract).
-
 After writing SPEC.md, run `node .agent/.automaton/scripts/sync-status.mjs --active-change "<change>" --canonical-spec ".agent/work/<change>/SPEC.md" --stage frame` from the project root. auto-plan owns the `stage: plan` mutation and records it when it writes PLAN.md, including on inline continuation.
 
 ### Hand Off
@@ -111,7 +113,7 @@ Halt and report when the user wants a solution before describing the problem, or
 ## Output
 
 - **SPEC.md** written to `.agent/work/<change>/SPEC.md`, with `canonical_spec` and frame state recorded through `sync-status.mjs`.
-- Scope coverage recorded in the spec: included, deferred, anti-goals, needs-decision. Omit empty groups.
+- Scope coverage recorded in the spec: included, deferred, anti-goals, and how each needs-decision item resolved. Omit empty groups.
 - `.agent/steering/ROADMAP.md` is updated only when the user approves a phased decomposition.
 
 Halted without an approved approach, nothing is written: report the discussion, why no approach was selected, and any deferred scope worth preserving.
