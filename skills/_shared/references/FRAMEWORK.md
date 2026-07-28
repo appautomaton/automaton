@@ -60,7 +60,7 @@ Two moves at every lifecycle edge:
 
 ## Asking The User
 
-Ask one question per message, with your recommended answer and its reason attached, so a single "yes" keeps the conversation moving. For a branch decision, offer 2 to 4 concrete options with a one-line reason each. Use the host question tool when available, otherwise present the options inline.
+Ask one question per message, with your recommended answer and its reason attached, so a single "yes" keeps the conversation moving. For a branch decision, offer 2 to 4 concrete options with a one-line reason each. Prefer the host question tool: its name, schema, and availability gate are on the `questions` line of `HOST-TOOLS.md` in your skill's `references/`. When it is not among your tools this turn, ask in plain text and end the turn.
 
 ## Loading Discipline
 

@@ -82,6 +82,7 @@ export const codexHost = {
     wait: 'Use wait to collect subagent results before continuing review or integration.',
     cleanup: 'Use close_agent after each completed subagent to free the slot.',
     tracking: 'Use update_plan for session-local progress tracking when useful.',
+    questions: 'Use `request_user_input` when it is listed in your available tools for this turn. Pass `questions` (prefer 1, never more than 3), each with `id` (snake_case), `header` (max 12 chars), `question` (one sentence), and `options` (2 to 3 `{label, description}` pairs). Put your recommended option first and suffix its label with "(Recommended)". Do not add an "Other" option: the client adds one. Availability is conditional: Codex registers this tool in Plan mode, only for the root thread, and only on an interactive terminal. When it is not listed, ask in plain assistant text and end the turn. Never hand-render a multiple-choice menu as text.',
     isolation: 'No native worktree parameter: for plan-approved parallel cross-slice dispatch the coordinator runs `git worktree add` first and points each spawned agent at its worktree as the working directory. Integrate and remove per `auto-execute/references/git-rhythm.md` (Parallel Isolation).',
     configuration: 'Requires [features].multi_agent = true in the primary `.codex/config.toml` so the coordinator can spawn the named subagents.',
     unavailable: false

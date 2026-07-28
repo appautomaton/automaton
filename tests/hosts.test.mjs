@@ -322,6 +322,51 @@ test('Codex install scaffolds config, hooks, and skills', () => {
   assert.equal(existsSync(join(root, '.codex', 'hooks', 'stop.mjs')), false)
 })
 
+test('every host HOST-TOOLS names its own question tool and no other host\'s', () => {
+  // FRAMEWORK's Asking The User convention tells every skill to prefer the host
+  // question tool. Without a name per host that instruction is a guess, and a
+  // guessed tool name is a failed call at the exact moment a scope decision needs
+  // the user. All three hosts ship a real one, each conditionally exposed, so the
+  // mapping carries the gate alongside the name.
+  const root = mkdtempSync(join(tmpdir(), 'automaton-question-tool-'))
+
+  for (const host of HOSTS) {
+    installHost(host, { root, sourceRoot })
+  }
+
+  const hostToolsFor = (hostId) =>
+    readFileSync(join(root, `.${hostId}`, 'skills', 'auto-frame', 'references', 'HOST-TOOLS.md'), 'utf8')
+
+  const TOOLS = {
+    claude: 'AskUserQuestion',
+    codex: 'request_user_input',
+    opencode: '`question` tool'
+  }
+
+  for (const [hostId, toolName] of Object.entries(TOOLS)) {
+    const hostTools = hostToolsFor(hostId)
+    assert.match(hostTools, /- questions: /, `${hostId} HOST-TOOLS.md must carry a questions line`)
+    assert.ok(hostTools.includes(toolName), `${hostId} HOST-TOOLS.md must name its own question tool (${toolName})`)
+
+    for (const [otherId, otherTool] of Object.entries(TOOLS)) {
+      if (otherId === hostId) {
+        continue
+      }
+      assert.ok(
+        !hostTools.includes(otherTool),
+        `${hostId} HOST-TOOLS.md must not name ${otherId}'s question tool (${otherTool})`
+      )
+    }
+  }
+
+  // The shared convention stays host-agnostic: it points at HOST-TOOLS, never a tool name.
+  const framework = readFileSync(join(root, '.agent', '.automaton', 'references', 'FRAMEWORK.md'), 'utf8')
+  assert.match(framework, /questions` line of `HOST-TOOLS\.md/, 'FRAMEWORK must route to the per-host mapping')
+  for (const toolName of Object.values(TOOLS)) {
+    assert.ok(!framework.includes(toolName), `FRAMEWORK must not hardcode the ${toolName} tool name`)
+  }
+})
+
 test('Codex HOST-TOOLS carries the fork_turns dispatch directive; other hosts do not', () => {
   // fork_turns="none" is a Codex-specific spawn_agent argument: it stops a child agent
   // from inheriting the parent transcript and self-deadlocking on wait. It must ride in

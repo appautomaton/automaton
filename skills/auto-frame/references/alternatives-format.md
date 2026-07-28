@@ -4,7 +4,7 @@ Present exactly 2–3 approaches using this format. For bug, feature, and capabi
 
 auto-eng-review keeps a sibling implementation-alternatives format for execution paths. The shared skeleton is deliberate and the rules differ on purpose: this file differentiates scoping choices before a spec exists, that one compares safer execution paths for an already-approved plan.
 
-State your recommendation and its one-sentence why first, then the approaches. Present the choice through the host question tool per `.agent/.automaton/references/FRAMEWORK.md` (Asking The User) when the tool exists; the tool renders the options, so keep each approach compact.
+State your recommendation and its one-sentence why first, then the approaches. Present the choice through the host question tool per `.agent/.automaton/references/FRAMEWORK.md` (Asking The User), naming your recommended approach as the first option; the tool renders the options, so keep each approach compact.
 
 ```
 ## Approach A: [Name]

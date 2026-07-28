@@ -67,6 +67,7 @@ export const claudeHost = {
     wait: 'Agent tool calls return their result to the coordinator when complete; no separate wait command is needed.',
     cleanup: 'No explicit close step is needed after an Agent result is returned.',
     tracking: 'Use TodoWrite for session-local progress tracking when useful.',
+    questions: 'Use the AskUserQuestion tool. Pass `questions` (1 to 4), each with `question`, `header` (max 12 chars), `options` (2 to 4 `{label, description}` pairs), and `multiSelect`. Put your recommended option first and suffix its label with "(Recommended)". Do not add an "Other" option: the tool adds one.',
     isolation: 'For plan-approved parallel cross-slice dispatch, pass `isolation: "worktree"` on each parallel Agent call; the host creates the worktree and removes it when unchanged. Integrate results per `auto-execute/references/git-rhythm.md` (Parallel Isolation).',
     unavailable: false
   },
