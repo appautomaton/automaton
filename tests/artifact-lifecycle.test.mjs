@@ -1,10 +1,10 @@
-// ARTIFACT-LIFECYCLE.md: stage handoffs, verdict routing, signal discipline, learned truth.
+// ARTIFACT-LIFECYCLE.md: stage handoffs, verdict routing, signal discipline.
 // Failure story: lifecycle contracts restated in two files drift apart silently (it happened
 // to checkpoint semantics, see execution-contract.test.mjs). These pins keep each contract in
 // its single home and keep handoff edges consistent with the skills that walk them (DD-010).
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
+import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { skillsRoot } from './support/skill-helpers.mjs'
 
@@ -21,11 +21,11 @@ test('artifact lifecycle reference defines stage handoffs and canonical pointers
   assert.match(framework, /canonical_design/)
   assert.match(framework, /current\.json/)
   assert.match(framework, /sync-status\.mjs/)
-  assert.match(lifecycle, /do not create a separate status prose artifact to mirror them/)
+  assert.match(lifecycle, /Do not create a separate status prose artifact to mirror them/)
   assert.match(lifecycle, /Do not add archive behavior/)
   assert.match(lifecycle, /\.agent\/work\/<change>/)
-  assert.match(lifecycle, /may begin as an office-hours skeleton/)
-  assert.match(lifecycle, /a SPEC\.md without the pointer means framing is in progress/)
+  assert.match(lifecycle, /records `canonical_spec` only once the spec is complete/)
+  assert.match(lifecycle, /a `SPEC.md` without the pointer means framing is still in progress/)
   assert.doesNotMatch(lifecycle, /\.agent\/work\/<change>\/INTAKE\.md/)
 })
 
@@ -140,13 +140,15 @@ test('checkpoint definitions live only in ARTIFACT-LIFECYCLE.md', () => {
   assert.doesNotMatch(xmlConventions, /\| `human-verify` \|/)
 })
 
-test('artifact lifecycle defines the learned-truth wiki channel', () => {
-  const lifecycle = readFileSync(join(skillsRoot, '_shared', 'references', 'ARTIFACT-LIFECYCLE.md'), 'utf8')
-
-  assert.match(lifecycle, /^## Learned Truth$/m)
-  assert.match(lifecycle, /\.agent\/wiki\/LEARNINGS\.md/)
-  assert.match(lifecycle, /one-line project facts/i)
-  assert.match(lifecycle, /Evidence: path or command/)
-  assert.match(lifecycle, /no transcripts, no speculation/)
-  assert.match(lifecycle, /delete a line it proves false/)
+// The learned-truth wiki channel was removed (DD-010 superseded). This guard now pins
+// its absence: a second memory system alongside a project's own docs was never written
+// once across 12 changes in two projects, and ROADMAP.md is the one long-horizon surface.
+test('the learned-truth wiki channel stays removed', () => {
+  for (const entry of readdirSync(skillsRoot, { recursive: true, withFileTypes: true })) {
+    if (!entry.isFile() || !entry.name.endsWith('.md')) {
+      continue
+    }
+    const file = join(entry.parentPath, entry.name)
+    assert.doesNotMatch(readFileSync(file, 'utf8'), /LEARNINGS\.md|Learned Truth/, `${file} must not reintroduce the learnings channel`)
+  }
 })

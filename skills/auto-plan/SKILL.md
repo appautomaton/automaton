@@ -34,15 +34,11 @@ Before finalizing `PLAN.md`:
 
 Load the canonical SPEC.md, linked spec detail that carries normative requirements, relevant DESIGN.md, and source files needed to choose slice boundaries, dependencies, and verification commands. Do not ignore linked `spec/*.md` files when they contain requirement IDs, gap IDs, invariants, audit questions, migration checkpoints, coverage targets, or acceptance detail.
 
-Read `.agent/wiki/LEARNINGS.md` when it exists: one-line facts earlier changes paid to learn, often constraints slices must respect.
-
 ### Assess Review State (if reviews exist)
 
 If `engineering_review` exists in `current.json` for this change, this is a re-plan: read `## Review: Engineering` in the prior PLAN.md and address each correction and `approved_with_risks` risk in the revised plan. Syncing the revised plan clears the standing verdict (`.agent/.automaton/references/ARTIFACT-LIFECYCLE.md`, Review Verdict Routing).
 
-If the engineering approach is complex or risky, recommend `auto-eng-review` before execution.
-
-If SPEC.md contains content fields or produces writing, articles, briefs, decks, newsletters, documentation, or proposals, read `references/content-planning.md`; carry forward channel, source policy, factual risk, and format where they affect execution or verification.
+If SPEC.md contains content fields or produces writing, articles, briefs, decks, newsletters, documentation, or proposals, read `references/content-planning.md`. Carry forward channel, source policy, factual risk, and format where they affect execution or verification.
 
 If SPEC.md names requirement IDs, gap IDs, invariants, audit questions, migration checkpoints, or coverage targets, preserve them in PLAN.md and attach them to satisfying slices. Do not collapse traceable requirements into untraceable prose.
 
@@ -85,11 +81,11 @@ Include when useful:
 
 Rules:
 - Every material slice must have a verification command. Verify the exact behavior, not the absence of errors. Include rollback verification for migrations.
-- Every material slice must have acceptance criteria; execution cannot verify vibes.
+- Every material slice must have acceptance criteria. Execution cannot verify vibes.
 - Use `subagent recommended` for broad, cross-subsystem, interface, schema, or review-risk work. Use `subagent required` only for user-requested multi-agent execution or security-critical, production-data, or irreversible-state changes.
 - Continuation is the default. Omitted slice fields carry the defaults pinned in `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Slice Defaults).
 - Checkpoint types are defined once in `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Checkpoint Semantics). Assign a checkpoint only when its definition holds; default to `none`.
-- Keep slices small enough for one session. Move extended instructions to `slices/slice-NNN.md`; split only for independent outcomes.
+- Keep slices small enough for one session. Move extended instructions to `slices/slice-NNN.md`. Split only for independent outcomes.
 
 <GATE>
 
@@ -105,12 +101,12 @@ If any of these are true, recommend `auto-frame` and stop.
 Write the plan to `.agent/work/<change>/PLAN.md`.
 
 **Core** sections (always present):
-- **Goal**: one-line bounded goal or SPEC.md pointer; do not mirror the full SPEC text.
+- **Goal**: one-line bounded goal or SPEC.md pointer. Do not mirror the full SPEC text.
 - **Ordered slice sequence**: dependency order, with linked detail files when needed.
 - **Execution routing and topology**: default continuation path, explicit overrides/checkpoints, and a **Parallel-safe groups:** line set to `none` or the slice groups.
 - **Per-slice verification**: one verification command inline on every material slice.
 
-**Conditional** sections appear only when their trigger applies; omit or mark "n/a" otherwise:
+**Conditional** sections appear only when their trigger applies. Omit or mark "n/a" otherwise:
 - **Architecture approach:** introduces a new pattern, non-obvious decision, or cross-system integration. Name the contestable decisions and their tradeoffs plainly; a review can only bite what the plan states. Omit when the design is obvious from SPEC.
 - **Requirement traceability:** SPEC names gap IDs, invariant IDs, audit questions, migration checkpoints, or coverage targets. Omit when the SPEC has no traceable IDs.
 - **Aggregate verification commands table:** ≥ 3 slices or commands not captured per-slice. Per-slice inline suffices for smaller plans (index over transcript).
@@ -125,16 +121,18 @@ Write `.agent/work/<change>/DESIGN.md` only when all three hold: the decision is
 
 Run `node .agent/.automaton/scripts/sync-status.mjs --canonical-plan ".agent/work/<change>/PLAN.md" --stage plan` from the project root. Add `--canonical-design ".agent/work/<change>/DESIGN.md"` when DESIGN.md was written.
 
+### Hand Off
+
+Planning always stops. Entry into execute is where code starts changing, so a human authorizes it.
+
+Report the slice count, the execution topology, and any checkpoint. Then end the turn with `**Next:** auto-execute, <reason>`, or `**Next:** auto-eng-review, <reason>` when the plan carries non-trivial engineering risk.
+
 ## Output
 
 - `PLAN.md`: written to `.agent/work/<change>/PLAN.md`
 - `DESIGN.md`: written to `.agent/work/<change>/DESIGN.md` (if needed)
 - `.agent/.automaton/state/current.json`: records `canonical_design` (when written), `canonical_plan`, and `stage: plan` through `sync-status.mjs`
-- Handoff (always stops): `Next: auto-eng-review` (optional review) or `Next: auto-execute`.
 
 ## Rules
 
-- Prefer the smallest correct design.
-- Remove placeholders instead of preserving them.
-- Do not broaden scope to cover hypothetical future work.
 - Preserve review sections on refresh unless the user explicitly requests consolidation.

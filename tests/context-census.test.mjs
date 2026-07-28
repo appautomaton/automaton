@@ -21,7 +21,13 @@ const SHARED_CEILINGS = {
   // convention that three skills used to restate with drifting option counts)
   // and the change-parking rule (one home for the guard the two frame-stage
   // entry points previously restated or missed).
-  '_shared/references/FRAMEWORK.md': 870,
+  // Raised 870 -> 890: the Handoff Model gained a Where rule pinning that a stop
+  // is issued from a ### Hand Off step inside ## Do, never from ## Output. That is
+  // new capability, not restated prose. Before it, six skills described the handoff
+  // among their outputs and issued it from nowhere, so a model that read ## Output
+  // as documentation, which it is, ended the turn silently. Paying ~20 words here
+  // let the eight SKILL.md files drop 100.
+  '_shared/references/FRAMEWORK.md': 890,
   '_shared/references/ARTIFACT-LIFECYCLE.md': 1940,
   '_shared/references/CONTEXT-BUDGET.md': 585,
   // Raised 1100 -> 1350 for DD-013: evidence-over-signal completion, BLOCKED
@@ -35,11 +41,14 @@ const SHARED_CEILINGS = {
 
 const SKILL_CEILINGS = {
   'auto-execute/SKILL.md': 1890,
-  'auto-office-hours/SKILL.md': 1600,
   'auto-plan/SKILL.md': 1250,
-  'auto-frame/SKILL.md': 1200,
+  // DD-017 folded auto-office-hours into auto-frame: two ceilings totalling 2800 become
+  // one at 1400. The merged entry point is 1375, up 269 from frame alone, which buys mode
+  // classification, the depth choice, and roadmap authorship. The diagnostic machinery it
+  // absorbed rides references/diagnostic.md behind the Choose Depth trigger instead of the
+  // common path, because 11 of the last 12 changes never ran a diagnostic.
+  'auto-frame/SKILL.md': 1400,
   'auto-verify/SKILL.md': 1000,
-  'auto-onboard/SKILL.md': 760,
   'auto-eng-review/SKILL.md': 750,
   // Raised 700 -> 750 for DD-012/DD-013: the execution-ledger reconciliation
   // (slice commits, in-flight dirt, stray worktrees) is new recovery capability.
@@ -65,8 +74,11 @@ test('skill entry points stay under their word ceilings', () => {
 // cards, content tracks, recovery tables) are excluded: they load only when triggered.
 const WORKING_SETS = {
   'frame common path': {
+    // Raised 2070 -> 2300 by DD-017. The set is 2251: one skill now covers a path that
+    // used to cost 2377 for office-hours plus 1982 for frame when a change needed both.
+    // The shallow path pays +181 over frame alone for the depth choice and the mode read.
     files: ['_shared/references/FRAMEWORK.md', 'auto-frame/SKILL.md'],
-    ceiling: 2030
+    ceiling: 2300
   },
   'plan': {
     files: ['_shared/references/FRAMEWORK.md', 'auto-plan/SKILL.md', '_shared/references/ARTIFACT-LIFECYCLE.md'],

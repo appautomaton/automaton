@@ -8,7 +8,7 @@ import { join } from 'node:path'
 import { skillsRoot, authoredSkills } from './support/skill-helpers.mjs'
 
 test('review and verification templates avoid nobody-reads-this bulk', () => {
-  const officeHours = readFileSync(join(skillsRoot, 'auto-office-hours', 'SKILL.md'), 'utf8')
+  const frame = readFileSync(join(skillsRoot, 'auto-frame', 'SKILL.md'), 'utf8')
   const verify = readFileSync(join(skillsRoot, 'auto-verify', 'SKILL.md'), 'utf8')
   const verificationTemplate = readFileSync(join(skillsRoot, 'auto-verify', 'references', 'verification-template.md'), 'utf8')
   const engReview = readFileSync(join(skillsRoot, 'auto-eng-review', 'SKILL.md'), 'utf8')
@@ -16,11 +16,11 @@ test('review and verification templates avoid nobody-reads-this bulk', () => {
   const primeDirectives = readFileSync(join(skillsRoot, 'auto-eng-review', 'references', 'prime-directives.md'), 'utf8')
   const alternatives = readFileSync(join(skillsRoot, 'auto-eng-review', 'references', 'implementation-alternatives.md'), 'utf8')
 
-  assert.match(officeHours, /skeleton is a decision record, not a transcript/)
+  assert.match(frame, /decision record, not a transcript/)
   assert.match(verify, /Build the full criterion checklist internally/)
-  assert.match(verify, /Do not print a long pass transcript/)
+  assert.match(verify, /Summarize passing criteria by slice/)
   assert.match(verificationTemplate, /The full checklist is internal/)
-  assert.match(verificationTemplate, /report passing criteria as grouped counts/)
+  assert.match(verificationTemplate, /Report passing criteria as grouped counts/)
   assert.match(engReview, /Use this matrix as an internal checklist/)
   assert.match(engReview, /Do not emit the full risk matrix/)
   assert.match(engReview, /only when the plan carries non-trivial engineering risk/)
@@ -67,7 +67,7 @@ test('review and verification templates use the pinned handoff form and risk cap
   const verificationTemplate = readFileSync(join(skillsRoot, 'auto-verify', 'references', 'verification-template.md'), 'utf8')
 
   // FAIL closes with the pinned **Next:** form, not a freehand recommendation line.
-  assert.match(verificationTemplate, /\*\*Next:\*\* auto-execute, \[reason in 8 words or fewer\]/)
+  assert.match(verificationTemplate, /\*\*Next:\*\* auto-execute, \[reason\]/)
   assert.match(verificationTemplate, /`\*\*Next:\*\* auto-plan, \[repeated criterion\]`/)
   assert.doesNotMatch(verificationTemplate, /Recommended next skill/)
 

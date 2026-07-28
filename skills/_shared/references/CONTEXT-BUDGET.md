@@ -18,7 +18,7 @@ When entering any stage, load files in this order. Stop as soon as you have enou
 1. .agent/.automaton/state/current.json   (always, tiny)
 2. SPEC.md      (if canonical_spec exists)
 3. PLAN.md      (if executing)
-4. Wiki pages   (LEARNINGS.md when present, others only when referenced by spec or plan)
+4. Wiki pages   (only when referenced by spec or plan)
 5. Source files (read those the current decision requires)
 ```
 

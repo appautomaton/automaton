@@ -66,13 +66,11 @@ test('authored skills point script commands at shared project runtime scripts', 
 
 test('authored skills ship compact local quality cards', () => {
   const markers = {
-    'auto-onboard': /Onboard Anti-Patterns|Uncited repo claims/,
     'auto-frame': /SPEC Anti-Patterns|Solution leakage/i,
     'auto-plan': /PLAN Anti-Patterns|Architecture theater/,
     'auto-execute': /Execute Anti-Patterns|Obvious comments/,
     'auto-verify': /VERIFY Anti-Patterns|Completion theater/,
     'auto-resume': /Resume Anti-Patterns|Invented continuity/,
-    'auto-office-hours': /Office-Hours Quality|Sycophantic validation/,
     'auto-eng-review': /Engineering Review Anti-Patterns|Generic risk language/
   }
   const contents = []
@@ -108,7 +106,7 @@ test('the change-parking rule has one home and both frame-stage entry points cit
   assert.match(framework, /unfinished change at `execute` or `verify`/, 'FRAMEWORK.md State Contract must carry the parking rule')
   assert.match(framework, /confirm parking it/, 'the parking rule must require user confirmation')
 
-  for (const skillName of ['auto-office-hours', 'auto-frame']) {
+  for (const skillName of ['auto-frame']) {
     const source = readFileSync(join(skillsRoot, skillName, 'SKILL.md'), 'utf8')
     assert.match(
       source,
@@ -119,7 +117,7 @@ test('the change-parking rule has one home and both frame-stage entry points cit
 })
 
 test('read-only skills do not include the state-write template', () => {
-  for (const skillName of ['auto-resume', 'auto-onboard']) {
+  for (const skillName of ['auto-resume']) {
     const source = readFileSync(join(skillsRoot, skillName, 'SKILL.md'), 'utf8')
 
     assert.doesNotMatch(
@@ -135,12 +133,66 @@ test('read-only skills do not include the state-write template', () => {
   }
 })
 
-test('lifecycle controller skills load the artifact lifecycle contract', () => {
-  for (const skillName of ['auto-frame', 'auto-plan', 'auto-execute', 'auto-verify', 'auto-resume']) {
+test('every handoff-carrying skill issues its handoff from inside ## Do', () => {
+  // Failure story: a handoff written only under ## Output reads as a manifest entry rather
+  // than an instruction. It becomes the one listed "output" with no producing step, so a
+  // model that executes ## Do top to bottom writes its artifacts and ends the turn silently.
+  // Weaker models papered over this by reproducing the whole template. Stronger ones parse
+  // ## Output as documentation, which it is, and go quiet. auto-verify always carried the
+  // form inside ## Do and never went silent. FRAMEWORK.md pins the wire format of the line,
+  // this guard pins where it is issued.
+  for (const skillName of authoredSkills) {
+    const source = readFileSync(join(skillsRoot, skillName, 'SKILL.md'), 'utf8')
+    const doStart = source.indexOf('\n## Do\n')
+    const doEnd = source.indexOf('\n## Output\n')
+    const doSection = source.slice(doStart, doEnd)
+
+    assert.ok(doStart >= 0 && doEnd > doStart, `${skillName} must keep ## Do before ## Output`)
+    assert.match(
+      doSection,
+      /\*\*Next:\*\* |Change status: complete/,
+      `${skillName} must issue its handoff from a step inside ## Do, not only describe it under ## Output`
+    )
+    assert.doesNotMatch(
+      source.slice(doEnd),
+      /\*\*Next:\*\* |^- Handoff:/m,
+      `${skillName} must not restate its handoff under ## Output: one home per contract`
+    )
+  }
+
+  // One wire format. Prose that merely names a target skill uses plain text, so a
+  // routing table can never be mistaken for a line the model should emit.
+  for (const entry of readdirSync(skillsRoot, { recursive: true, withFileTypes: true })) {
+    if (!entry.isFile() || !entry.name.endsWith('.md')) {
+      continue
+    }
+    const file = join(entry.parentPath, entry.name)
+    assert.doesNotMatch(
+      readFileSync(file, 'utf8'),
+      /`Next: /,
+      `${file} uses a non-canonical handoff form: FRAMEWORK.md pins **Next:** <skill>, <reason>`
+    )
+  }
+})
+
+test('state-mutating controllers load the artifact lifecycle contract', () => {
+  // Scoped to the four controllers that write state. auto-resume was dropped from this
+  // list on purpose: it mutates nothing, advances no stage, and takes its routing from
+  // references/recovery-scenarios.md, its load order from references/artifact-order.md,
+  // and its stale-pointer handling from its own Verify Artifact Integrity step. It was
+  // paying an unconditional 1,873-word read for three sentences it already carried, on
+  // the one path guaranteed to run with zero warm context.
+  for (const skillName of ['auto-frame', 'auto-plan', 'auto-execute', 'auto-verify']) {
     const source = readFileSync(join(skillsRoot, skillName, 'SKILL.md'), 'utf8')
 
     assert.match(source, /\.agent\/\.automaton\/references\/ARTIFACT-LIFECYCLE\.md/, `${skillName} must reference the artifact lifecycle contract: controllers that stop citing it re-derive stage handoffs from memory and drift`)
   }
+
+  // The three homes resume relies on instead must keep carrying that weight.
+  const resume = readFileSync(join(skillsRoot, 'auto-resume', 'SKILL.md'), 'utf8')
+  assert.match(resume, /references\/artifact-order\.md/, 'auto-resume must keep its own load-order home')
+  assert.match(resume, /references\/recovery-scenarios\.md/, 'auto-resume must keep its own routing home')
+  assert.match(resume, /If any pointer is stale, report it plainly/, 'auto-resume must keep its own stale-pointer handling')
 })
 
 test('durable artifact templates avoid context budget math', () => {
@@ -173,7 +225,6 @@ test('controller prompts route current state writes through sync-status', () => 
   }
 
   const expectedStateFlags = {
-    'auto-office-hours': /sync-status\.mjs --active-change "<change>" --stage frame/,
     'auto-frame': /sync-status\.mjs --active-change "<change>" --canonical-spec/,
     'auto-plan': /sync-status\.mjs --canonical-plan/,
     'auto-execute': /sync-status\.mjs --stage execute/,
@@ -191,11 +242,26 @@ test('controller prompts route current state writes through sync-status', () => 
   assert.match(framework, /[Nn]ever edit `current\.json` by hand/, 'FRAMEWORK.md must forbid hand-editing current.json')
 })
 
-test('authored skills do not require STATUS.md as lifecycle context', () => {
-  for (const skillName of authoredSkills) {
-    const source = readFileSync(join(skillsRoot, skillName, 'SKILL.md'), 'utf8')
+test('retired lifecycle artifacts leave no tolerance prose in shipped skills', () => {
+  // Backward compatibility belongs in install code (lib/scaffold.mjs DEPRECATED_STEERING_FILES),
+  // never in prompts. Failure story: a shipped file that still names a retired artifact keeps
+  // teaching it to the model, so the concept stays generative. The model can look for the
+  // artifact, cite it, or produce one, and every invocation pays for a shape that no longer
+  // occurs. The scan covers references/ and authoring/ too: a retired artifact taught to a
+  // skill author returns to a prompt on the next edit.
+  const retired = [/STATUS\.md|Status summary|status summary/, /INTAKE\.md/]
 
-    assert.doesNotMatch(source, /STATUS\.md|Status summary|status summary/, `${skillName} must not depend on STATUS.md`)
+  for (const entry of readdirSync(skillsRoot, { recursive: true, withFileTypes: true })) {
+    if (!entry.isFile() || !entry.name.endsWith('.md')) {
+      continue
+    }
+
+    const file = join(entry.parentPath, entry.name)
+    const source = readFileSync(file, 'utf8')
+
+    for (const pattern of retired) {
+      assert.doesNotMatch(source, pattern, `${file} names a retired artifact: retire the prose, keep legacy handling in install code`)
+    }
   }
 })
 

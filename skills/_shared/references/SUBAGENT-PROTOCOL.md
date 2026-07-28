@@ -1,6 +1,6 @@
 # Subagent Protocol
 
-Use this protocol when `auto-execute` chooses the subagent route for one approved plan slice. It defines shared semantics only; host-specific tool calls live in `HOST-TOOLS.md`, and static role bodies live in the installed host-native agent definitions. This file does not author role system prompts.
+Use this protocol when `auto-execute` chooses the subagent route for one approved plan slice. It defines shared semantics only. Host-specific tool calls live in `HOST-TOOLS.md`, and static role bodies live in the installed host-native agent definitions. This file does not author role system prompts.
 
 ## Roles
 
@@ -13,7 +13,7 @@ Use this protocol when `auto-execute` chooses the subagent route for one approve
 
 The coordinator does not outsource scope ownership. Subagents receive curated slice context, not the full `PLAN.md`, full conversation, or unrelated work history.
 
-This protocol is per-slice. `auto-execute` owns execute-stage orchestration across slices; this protocol owns only the implementer and reviewer loop for the selected slice. The `automaton-librarian` is deliberately not in the roster above: it is a cross-stage, read-only one-shot lookup governed by `LIBRARIAN.md`, so the dispatch rules below name only the three execute-stage agents.
+This protocol is per-slice. `auto-execute` owns execute-stage orchestration across slices. This protocol owns only the implementer and reviewer loop for the selected slice. The `automaton-librarian` is deliberately not in the roster above: it is a cross-stage, read-only one-shot lookup governed by `LIBRARIAN.md`, so the dispatch rules below name only the three execute-stage agents.
 
 ## Dispatch Packet
 
@@ -32,8 +32,8 @@ Do not ask a subagent to rediscover the whole project unless exploration is the 
 ## Dispatch Rules
 
 - Use subagents only when `auto-execute` selects the subagent route.
-- Enter this protocol from `auto-execute`; do not make framing, resume, or reviews multi-agent by default.
-- Dispatch only by named host-native agent (`automaton-implementer`, `automaton-spec-reviewer`, `automaton-quality-reviewer`). Do not paste a role body into a generic worker, explorer, or other host agent at runtime; the named agent's installed definition already carries the role body.
+- Enter this protocol from `auto-execute`. Do not make framing, resume, or reviews multi-agent by default.
+- Dispatch only by named host-native agent (`automaton-implementer`, `automaton-spec-reviewer`, `automaton-quality-reviewer`). Do not paste a role body into a generic worker, explorer, or other host agent at runtime. The named agent's installed definition already carries the role body.
 - The coordinator provides full task text for the current slice and relevant constraints. Do not make subagents rediscover the whole plan.
 - Dispatch implementers sequentially by default. Cross-slice parallel dispatch is allowed only when `PLAN.md` explicitly marks slices parallel-safe, dependencies are independent, and write sets are disjoint; in a git repo it also requires worktree isolation (see Parallel Isolation).
 - Review order is mandatory: spec compliance first, code quality second.
@@ -47,7 +47,7 @@ A subagent's completion signal is an event, not proof. The working tree is the a
 
 ## Parallel Isolation
 
-Cross-slice parallel dispatch requires worktree isolation when the project is a git repo: the coordinator creates one worktree per parallel implementer (host-native isolation where the host provides it), integrates each result serially in plan order, and removes the worktree afterwards. Disjoint write sets remain required in the plan; the worktree makes that claim structural instead of hoped. Serial dispatch stays in the main tree. Without git, parallel dispatch is allowed only on disjoint write sets, as before. Integration mechanics live in `auto-execute/references/git-rhythm.md` (Parallel Isolation).
+Cross-slice parallel dispatch requires worktree isolation when the project is a git repo: the coordinator creates one worktree per parallel implementer (host-native isolation where the host provides it), integrates each result serially in plan order, and removes the worktree afterwards. Disjoint write sets remain required in the plan. The worktree makes that claim structural instead of hoped. Serial dispatch stays in the main tree. Without git, parallel dispatch is allowed only on disjoint write sets, as before. Integration mechanics live in `auto-execute/references/git-rhythm.md` (Parallel Isolation).
 
 ## Review Rules
 

@@ -1,14 +1,14 @@
 # Artifact Lifecycle
 
-Shared contract for what each Automaton stage consumes, writes, records, and hands off. This reference guides skills; it does not add runtime enforcement.
+Shared contract for what each Automaton stage consumes, writes, records, and hands off. This reference guides skills. It does not add runtime enforcement.
 
 ## Invariants
 
 Stage list, state contract, and `sync-status.mjs` mandate are in `FRAMEWORK.md`.
 
-- Concrete paths belong in `current.json`, `SPEC.md`, and `PLAN.md`; do not create a separate status prose artifact to mirror them.
-- Skills write artifacts only for the active change unless a skill explicitly documents a steering or wiki output.
-- Do not add archive behavior or runtime lifecycle machinery here; the STOP Conditions list below names the full ban.
+- Concrete paths belong in `current.json`, `SPEC.md`, and `PLAN.md`. Do not create a separate status prose artifact to mirror them.
+- Skills write artifacts only for the active change unless a skill explicitly documents a steering output.
+- Do not add archive behavior or runtime lifecycle machinery here. The STOP Conditions list below names the full ban.
 
 ## Progressive Disclosure
 
@@ -25,36 +25,28 @@ Allowed active-change layout:
 .agent/work/<change>/orchestration/*.md   # conditional: subagent route or complex review loops only (e.g. outside-voice-log.md)
 ```
 
-- `SPEC.md` may begin as an office-hours skeleton. auto-frame completes it and only then records `canonical_spec`, so a SPEC.md without the pointer means framing is in progress. A legacy `INTAKE.md` is optional context.
+- `auto-frame` records `canonical_spec` only once the spec is complete, so a `SPEC.md` without the pointer means framing is still in progress.
 - `SPEC.md` must summarize and link every normative `spec/*.md` detail file. Unlinked supplemental files are notes, not contract.
 - `PLAN.md` must link any `slices/*.md` detail file and preserve requirement IDs, gap IDs, invariants, audit questions, migration checkpoints, or coverage targets from SPEC.md.
 - Execute and verify load only detail files linked to the active slice or requirement IDs.
 - Execute writes slice evidence in place: inline slices update `PLAN.md`; linked detail slices update `slices/slice-NNN.md`; `orchestration/*.md` is supporting evidence, not the default write target.
 - Split a change only for independent outcomes. Do not split or narrow one coherent outcome solely because the spec or plan has many files, gaps, constraints, or scenarios.
-- If a skill narrows the user's stated scope, it must name the narrowing, explain why, and then widen the scope, ask the user to confirm, or record the deferred scope as a `Deferred / Not in scope` note inside the current change's SPEC. A narrowed scope must not be promoted into a `ROADMAP.md` phase: roadmap phases come only from a user-approved `auto-office-hours` decomposition, never as a side effect of a skill writing a smaller spec.
-
-## Learned Truth
-
-`.agent/wiki/LEARNINGS.md` carries one-line project facts that execution paid to learn: a required env var, the real entry point, a misleading config. Format: `- Fact. Evidence: path or command (change-slug)`.
-
-- Writers: `auto-execute` when a plan correction reveals durable truth, `auto-verify` when gap diagnosis does. One line per fact, evidence cited, no transcripts, no speculation.
-- Readers: `auto-plan` and `auto-execute` load it when present; `auto-office-hours` and `auto-frame` consult it so scoping respects facts earlier changes paid to learn. It stays small enough to read whole.
-- Pruning: any skill may delete a line it proves false. `auto-onboard` may fold stable facts into steering on a confirmed refresh.
+- If a skill narrows the user's stated scope, it must name the narrowing, explain why, and then widen the scope, ask the user to confirm, or record the deferred scope as a `Deferred / Not in scope` note inside the current change's SPEC. A narrowed scope must not be promoted into a `ROADMAP.md` phase: roadmap phases come only from a decomposition the user approved during framing, never as a side effect of a skill writing a smaller spec.
 
 ## Stage Handoffs
 
 | Stage | Required inputs | Produces | State pointer expectations | Next handoff |
 | --- | --- | --- | --- | --- |
-| `frame` | active change; optional SPEC skeleton or framing context | `SPEC.md` (skeleton seeded by office-hours, completed by frame) and roadmap update when office-hours approves roadmap scale | office-hours sets `active_change` and `stage: frame`; frame sets `canonical_spec`; `stage` stays `frame`, and auto-plan records `stage: plan` when it writes PLAN.md | **Continue** → `auto-office-hours` (not frameable). **Stop** → `Next: auto-plan` once the user approves SPEC.md. |
-| `plan` | `canonical_spec`; optional review sections | `.agent/work/<change>/PLAN.md`; optional `DESIGN.md` | `canonical_plan` points to PLAN.md; `canonical_design` only when DESIGN.md exists; `stage` becomes `plan` | **Stop** → `Next: auto-eng-review` (optional) or `Next: auto-execute`. |
+| `frame` | the request, conversation, and repo evidence | `SPEC.md`, plus a `ROADMAP.md` update when the user approves a phased decomposition | `auto-frame` sets `active_change`, `stage: frame`, and `canonical_spec`; `stage` stays `frame`, and auto-plan records `stage: plan` when it writes PLAN.md | **Stop** → `auto-plan` once the user approves SPEC.md. |
+| `plan` | `canonical_spec`; optional review sections | `.agent/work/<change>/PLAN.md`; optional `DESIGN.md` | `canonical_plan` points to PLAN.md; `canonical_design` only when DESIGN.md exists; `stage` becomes `plan` | **Stop** → `auto-eng-review` (optional) or `auto-execute`. |
 | `execute` | approved PLAN.md (with `canonical_spec` still resolving), current slice, acceptance criteria, verification commands | code/docs/tests plus PLAN-required slice evidence | auto-execute sets `stage: execute` after `canonical_plan` resolves and before changes; do not change canonical pointers to missing files; do not add slice cursor state | **Continue** → re-enter for remaining slices, then `auto-verify` when all complete; **stop** at a valid checkpoint, STOP condition, context pressure, or host limit. |
-| `verify` | canonical PLAN.md (with `canonical_spec` still resolving), executed slices, verification commands | verification report; `VERIFY-GAP` annotations in PLAN.md on failure; terminal `## Verification` section in PLAN.md on pass | auto-verify sets `stage: verify` after `canonical_plan` resolves and before commands; failure returns state to `stage: execute`, or to `stage: plan` when the same criterion fails a second consecutive verification | **Stop** → `verified` on pass (terminal); `Next: auto-execute` on fail; `Next: auto-plan` on a repeated fail of the same criterion. |
-| `verified` | canonical PLAN.md and verification evidence | completed change summary; roadmap phase marked done when applicable | `stage: verified` set only on full verification pass | None. Terminal. `auto-office-hours` only as a new-objective entry point. |
-| `resume` | current state and canonical artifact pointers | concise recovery summary and next recommended skill | does not invent missing pointers; stale pointers are reported, not silently repaired | Orient and stop → `Next: <skill matching recovered state>`. |
+| `verify` | canonical PLAN.md (with `canonical_spec` still resolving), executed slices, verification commands | verification report; `VERIFY-GAP` annotations in PLAN.md on failure; terminal `## Verification` section in PLAN.md on pass | auto-verify sets `stage: verify` after `canonical_plan` resolves and before commands; failure returns state to `stage: execute`, or to `stage: plan` when the same criterion fails a second consecutive verification | **Stop** → `verified` on pass (terminal); `auto-execute` on fail; `auto-plan` on a repeated fail of the same criterion. |
+| `verified` | canonical PLAN.md and verification evidence | completed change summary; roadmap phase marked done when applicable | `stage: verified` set only on full verification pass | None. Terminal. `auto-frame` only as a new-objective entry point. |
+| `resume` | current state and canonical artifact pointers | concise recovery summary and next recommended skill | does not invent missing pointers; stale pointers are reported, not silently repaired | Orient and stop → the skill matching recovered state. |
 
 ## Handoff Contract
 
-The two-move model (**Continue inline** / **Stop and hand off**) is in `FRAMEWORK.md`. Continue inline by default so a clean handoff does not force the user to re-invoke the next skill. This is not nested skill invocation (DD-003): no skill calls another; the agent loads the next stage's SKILL.md and proceeds. Do not invent a universal Skill tool or hidden dispatcher.
+The two-move model (**Continue inline** / **Stop and hand off**) is in `FRAMEWORK.md`. Continue inline by default so a clean handoff does not force the user to re-invoke the next skill. This is not nested skill invocation (DD-003): no skill calls another. The agent loads the next stage's SKILL.md and proceeds. Do not invent a universal Skill tool or hidden dispatcher.
 
 **Stop and hand off at four edges:**
 
@@ -63,7 +55,7 @@ The two-move model (**Continue inline** / **Stop and hand off**) is in `FRAMEWOR
 3. **Entry into the optional `auto-eng-review`** -> user-invoked. A producing skill recommends the review and stops. It does not auto-run a review on the artifact it just wrote, which would trap the review in the producer's own context.
 4. **Verify outcomes** -> a pass closes the change, a fail returns to execute, a repeated fail of the same criterion returns to plan. Stop in every case.
 
-`auto-verify` is the mandatory gate, not an optional review, so `execute → verify` continues inline. The audit re-derives from fresh command output, never from execute's reasoning. `auto-onboard` and `auto-resume` are utilities: they report findings and recommend a next skill rather than continuing, so the user keeps the direction. `stage: verified` is terminal. Any `auto-office-hours` mention is for a new objective, not a same-change handoff.
+`auto-verify` is the mandatory gate, not an optional review, so `execute → verify` continues inline. The audit re-derives from fresh command output, never from execute's reasoning. `auto-resume` orients and stops: it reports findings and recommends a next skill rather than continuing, so the user keeps the direction. `stage: verified` is terminal. Any `auto-frame` mention at `verified` is for a new objective, not a same-change handoff.
 
 Each handoff carries five durable elements:
 
@@ -75,7 +67,7 @@ Each handoff carries five durable elements:
 
 ## Checkpoint Semantics
 
-`Checkpoint after:` marks a slice that must pause for human input before the next slice starts. The label vocabulary is pinned in `contracts-data.json`; each value's meaning is defined here, once, so `auto-plan` (which assigns checkpoints) and `auto-execute` (which honors them) cannot drift.
+`Checkpoint after:` marks a slice that must pause for human input before the next slice starts. The label vocabulary is pinned in `contracts-data.json`. Each value's meaning is defined here, once, so `auto-plan` (which assigns checkpoints) and `auto-execute` (which honors them) cannot drift.
 
 - **`none`** (default) -> no pause. The next slice may start once verification passes.
 - **`human-verify`** -> valid only when available commands, tests, host tools, and local inspection cannot verify the result. If any of those can confirm it, it is not a checkpoint.
@@ -120,7 +112,7 @@ Halt and report when:
 
 - `canonical_spec` is required but missing or unreadable.
 - `canonical_plan` is required but missing or unreadable.
-- `canonical_design` is set but the file is missing; report it and continue only when the active skill says DESIGN.md is optional.
+- `canonical_design` is set but the file is missing. Report it and continue only when the active skill says DESIGN.md is optional.
 - A stage is asked to consume a future-stage artifact.
 - The requested work would add archive behavior, runtime lifecycle enforcement, daemons, dashboards, browser workflows, marketplace behavior, or vendor-source imports without a new SPEC.
 

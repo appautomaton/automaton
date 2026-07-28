@@ -182,7 +182,7 @@ test('auto-execute owns route selection and execution-window continuation', () =
   assert.match(source, /\*\*Status:\*\* complete \| blocked \| needs-plan-correction/)
   assert.match(source, /Append-replace the evidence block/)
   assert.match(source, /Do not paste transcripts, full command logs, or source excerpts/)
-  assert.match(source, /do not invent slice cursor or checkpoint fields/)
+  assert.match(source, /Do not invent slice cursor or checkpoint fields/)
   assert.match(source, /The next slice is selected from `PLAN\.md`/)
   assert.match(source, /Execute the window serially by default/)
   assert.match(source, /Execute and verify one approved slice at a time inside the selected execution window/)
@@ -203,7 +203,7 @@ test('auto-execute owns route selection and execution-window continuation', () =
   for (const agentName of ['automaton-implementer', 'automaton-spec-reviewer', 'automaton-quality-reviewer']) {
     assert.match(source, new RegExp(`\`${agentName}\``), `auto-execute must name ${agentName} in the Subagent Route`)
   }
-  assert.match(source, /do not paste a role body into a generic worker or explorer agent/, 'auto-execute must forbid runtime role-body pasting')
+  assert.match(source, /Do not paste a role body into a generic worker or explorer agent/, 'auto-execute must forbid runtime role-body pasting')
   assert.match(source, /Do not fall back to runtime-curated prompt injection/, 'auto-execute must forbid runtime prompt-injection fallback')
 })
 

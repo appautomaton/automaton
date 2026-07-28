@@ -1,15 +1,15 @@
 # Diagnostic Calibration
 
-Use this when questions drift soft, generic, flattering, or too agreeable. It calibrates the conversation; it is not a script.
+Use this when questions drift soft, generic, flattering, or too agreeable. It calibrates the conversation. It is not a script.
 
 ## Stance
 
 - Make an evidence-backed assessment: what the answer proves, what it does not prove, and what evidence would change it.
 - Ask for named evidence when answers stay abstract: a stakeholder, observed behavior, workaround, failed attempt, benchmark, or decision.
 - Push once, then push again when the first answer sounds polished.
-- Quote the user's words back when precision matters; do not praise character traits.
+- Quote the user's words back when precision matters. Do not praise character traits.
 
-Avoid blocklist thinking. The issue is not a phrase; it is validation without evidence.
+Avoid blocklist thinking. The issue is not a phrase. It is validation without evidence.
 
 ## Soft To Sharp
 

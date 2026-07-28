@@ -28,24 +28,23 @@ Every test file belongs to exactly one primary layer.
 | `cli-context.test.mjs` | runtime-behavior | CLI install, status, context commands against temp roots | DD-006 |
 | `paths.test.mjs` | runtime-behavior | Path resolution helpers | layout in contracts-data |
 | `retrieval.test.mjs` | runtime-behavior | Stage retrieval order summary | progressive-disclosure.md |
-| `scaffold.test.mjs` | runtime-behavior | `.agent/` tree scaffolding, seed-only-when-missing | DD-001 |
+| `scaffold.test.mjs` | runtime-behavior | `.agent/` tree scaffolding, seed-only-when-missing, retired-steering asymmetry | DD-001, DD-011, DD-016 |
+| `session-health.test.mjs` | runtime-behavior | Hook findings the harness knows and the user cannot see, and the quiet path | DD-016 |
+| `drift.test.mjs` | runtime-behavior | Installed-copy drift detection against the CLI source | DD-011 |
 | `execution-contract.test.mjs` | cross-file contract | plan to execute routes, checkpoints, topology label, checkpoint semantics single home | consolidation-findings C1 |
 | `verdict-routing.test.mjs` | cross-file contract | review verdict to next-skill routing in three prose tables | DD-004 pattern |
 | `skill-conventions.test.mjs` | prose-norm | Cross-skill skeleton, frontmatter, state-write routing, tag vocabulary | FRAMEWORK.md, DD-003 |
-| `artifact-lifecycle.test.mjs` | prose-norm | Stage handoffs, signal-discipline single home, learned-truth contract | ARTIFACT-LIFECYCLE.md, DD-010 |
+| `artifact-lifecycle.test.mjs` | prose-norm | Stage handoffs, signal-discipline single home, retired-channel absence | ARTIFACT-LIFECYCLE.md, DD-016 |
 | `subagent-protocol.test.mjs` | prose-norm | Dispatch packet, named-agent dispatch, anti-slop taxonomy | SUBAGENT-PROTOCOL.md |
 | `librarian.test.mjs` | prose-norm | Read-only explore role, opt-in librarian roster | LIBRARIAN.md, DD-008 |
-| `learnings.test.mjs` | prose-norm | Learned-truth writers, readers, and non-members | DD-010 |
 | `execute.test.mjs` | prose-norm | Route ownership, execution windows, role sources and dispatch prompts | auto-execute SKILL.md, SUBAGENT-PROTOCOL.md |
 | `verify.test.mjs` | prose-norm | Terminal pass semantics, repeat-failure escalation | auto-verify SKILL.md |
 | `plan.test.mjs` | prose-norm | Lean slice defaults, traceability preservation | auto-plan SKILL.md |
-| `frame.test.mjs` | prose-norm | Scope preservation, adaptive SPEC shapes, coverage check | auto-frame SKILL.md |
-| `office-hours.test.mjs` | prose-norm | Pre-approval write ban, request coverage, diagnostics | auto-office-hours SKILL.md |
-| `onboard.test.mjs` | prose-norm | Bounded evidence artifacts, no speculative roadmap | auto-onboard SKILL.md, ROADMAP-CONTRACT.md |
+| `frame.test.mjs` | prose-norm | Scope preservation, adaptive SPEC shapes, request coverage, depth choice, pre-approval write ban | auto-frame SKILL.md, DD-017 |
 | `resume.test.mjs` | prose-norm | Recovery from durable state, no invented continuity | auto-resume SKILL.md |
 | `review.test.mjs` | prose-norm | Review template economy, optional DESIGN.md | review SKILL.md files |
 | `roadmap-contract.test.mjs` | prose-norm | Phase authorship reserved to user-approved decomposition | ROADMAP-CONTRACT.md |
-| `content-mode.test.mjs` | prose-norm | Content lens track across five skills, anti-slop deferral | content-*.md references |
+| `content-mode.test.mjs` | prose-norm | Content lens track across four skills, anti-slop deferral | content-*.md references |
 | `hosts.test.mjs` | install-host | Host adapters, agent definitions, append-only role ids, uninstall | DD-001, DD-006, DD-008 |
 | `install-receipt.test.mjs` | install-host | Receipt shape, directory provenance, zero-trace uninstall, history preservation, orphan cleanup, legacy fallback | DD-011 |
 | `cli-smoke.test.mjs` | install-host | Full-tree install in temp dirs, paths with spaces, symlinks | slow by design, see below |

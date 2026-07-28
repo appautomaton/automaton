@@ -1,6 +1,6 @@
 # Operating Principles
 
-Mode doctrine for office-hours diagnostics. Use this for judgment, not phrasing.
+Mode doctrine for the framing diagnostic. Use this for judgment, not phrasing.
 
 ## Startup Mode
 

@@ -7,10 +7,10 @@ Canonical vocabulary for Automaton skills. Use these terms exactly. Do not subst
 | Canonical | Anti-patterns | Meaning |
 |-----------|---------------|---------|
 | change | ticket, issue, story, task | A unit of work tracked by Automaton. Has a name, stage, and artifacts. |
-| stage | phase, step | One of `frame`, `plan`, `execute`, `verify`, `verified`, `resume`. Immutable and validated. Roadmap phases (`ROADMAP-CONTRACT.md`) are a separate concept, not a stage synonym; "Phase N" is correct there and only there. Frontmatter may label a non-stage helper `utility` (auto-onboard); the runtime enum never includes it. |
+| stage | phase, step | One of `frame`, `plan`, `execute`, `verify`, `verified`, `resume`. Immutable and validated. Roadmap phases (`ROADMAP-CONTRACT.md`) are a separate concept, not a stage synonym; "Phase N" is correct there and only there. Every skill's frontmatter stage is one of these values. |
 | slice | task, subtask, step | A testable, deliverable chunk of a plan. Ordered and verifiable. |
 | artifact | document, file | A markdown file produced by a skill: `SPEC.md`, `DESIGN.md`, `PLAN.md`. |
-| steering | project config | Files in `.agent/steering/` that describe project truth: `PROJECT.md`, `REQUIREMENTS.md`, `ROADMAP.md`. |
+| steering | project config | `.agent/steering/ROADMAP.md`, the forward queue. Automaton keeps no description of the project: identity, constraints, and architecture live in the repo's own README, AGENTS.md, and `docs/`. |
 | skill folder | skill file | A self-contained directory with `SKILL.md`, `references/`, and optionally `templates/`. |
 | references | guides, docs, examples | Lazy-loaded deep content inside a skill folder. Loaded only when needed. |
 | scripts | helpers, tools | Shared self-contained `.mjs` files in `.agent/.automaton/scripts/`. Invoked via `bash` tool with `node`. |

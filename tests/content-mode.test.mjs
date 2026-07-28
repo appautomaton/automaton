@@ -9,9 +9,9 @@ import { join } from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { skillsRoot, cliPath, contentDimensions, escapeRegExp } from './support/skill-helpers.mjs'
 
-test('auto-office-hours ships content-intake reference with diagnostic questions', () => {
-  const contentIntake = readFileSync(join(skillsRoot, 'auto-office-hours', 'references', 'content-intake.md'), 'utf8')
-  const skill = readFileSync(join(skillsRoot, 'auto-office-hours', 'SKILL.md'), 'utf8')
+test('auto-frame ships content-intake reference with diagnostic questions', () => {
+  const contentIntake = readFileSync(join(skillsRoot, 'auto-frame', 'references', 'content-intake.md'), 'utf8')
+  const skill = readFileSync(join(skillsRoot, 'auto-frame', 'SKILL.md'), 'utf8')
 
   assert.ok(contentIntake.split('\n').length <= 120, 'content-intake reference must stay under 120 lines')
   assert.match(contentIntake, /Audience/)
@@ -19,7 +19,8 @@ test('auto-office-hours ships content-intake reference with diagnostic questions
   assert.match(contentIntake, /Anti-Goals/)
   assert.match(contentIntake, /Voice/)
   assert.match(skill, /Content mode/)
-  assert.match(skill, /references\/content-intake\.md/)
+  assert.match(skill, /references\/diagnostic\.md/)
+  assert.match(readFileSync(join(skillsRoot, 'auto-frame', 'references', 'diagnostic.md'), 'utf8'), /`content-intake\.md`/)
 })
 
 test('auto-frame ships content-framing reference with anti-slop checklist', () => {
@@ -36,23 +37,11 @@ test('auto-frame ships content-framing reference with anti-slop checklist', () =
 })
 
 test('content references do not duplicate existing skill references', () => {
-  const contentIntake = readFileSync(join(skillsRoot, 'auto-office-hours', 'references', 'content-intake.md'), 'utf8')
+  const contentIntake = readFileSync(join(skillsRoot, 'auto-frame', 'references', 'content-intake.md'), 'utf8')
   const contentFraming = readFileSync(join(skillsRoot, 'auto-frame', 'references', 'content-framing.md'), 'utf8')
 
-  assert.doesNotMatch(contentIntake, /Startup mode|Builder mode|Six Forcing Questions/, 'content-intake must not duplicate office-hours diagnostics')
+  assert.doesNotMatch(contentIntake, /Startup mode|Builder mode|Six Forcing Questions/, 'content-intake must not duplicate the mode diagnostics')
   assert.doesNotMatch(contentFraming, /lens-selection\.md|LEXICON\.md/, 'content-framing must not duplicate existing auto-frame references')
-})
-
-test('content mode detection is consistent across office-hours and frame skills', () => {
-  const officeHours = readFileSync(join(skillsRoot, 'auto-office-hours', 'SKILL.md'), 'utf8')
-  const frame = readFileSync(join(skillsRoot, 'auto-frame', 'SKILL.md'), 'utf8')
-
-  const contentSignals = ['article', 'brief', 'deck', 'newsletter', 'documentation']
-
-  for (const signal of contentSignals) {
-    assert.match(officeHours, new RegExp(signal), `office-hours must detect content signal: ${signal}`)
-    assert.match(frame, new RegExp(signal), `frame must detect content signal: ${signal}`)
-  }
 })
 
 test('content lens lexicon names the canonical content dimensions', () => {
@@ -125,7 +114,7 @@ test('auto-verify ships content-verification reference with evidence checks', ()
 
 test('content references defer anti-slop taxonomy to the shared reference', () => {
   const contentRefs = [
-    readFileSync(join(skillsRoot, 'auto-office-hours', 'references', 'content-intake.md'), 'utf8'),
+    readFileSync(join(skillsRoot, 'auto-frame', 'references', 'content-intake.md'), 'utf8'),
     readFileSync(join(skillsRoot, 'auto-frame', 'references', 'content-framing.md'), 'utf8'),
     readFileSync(join(skillsRoot, 'auto-execute', 'references', 'content-execution.md'), 'utf8'),
     readFileSync(join(skillsRoot, 'auto-verify', 'references', 'content-verification.md'), 'utf8')
@@ -153,14 +142,12 @@ test('pass 2 content references stay local and do not duplicate pass 1 reference
 
 test('pass 2 content mode gates are consistent across lifecycle skills', () => {
   const sources = {
-    'auto-office-hours': readFileSync(join(skillsRoot, 'auto-office-hours', 'SKILL.md'), 'utf8'),
     'auto-frame': readFileSync(join(skillsRoot, 'auto-frame', 'SKILL.md'), 'utf8'),
     'auto-plan': readFileSync(join(skillsRoot, 'auto-plan', 'SKILL.md'), 'utf8'),
     'auto-execute': readFileSync(join(skillsRoot, 'auto-execute', 'SKILL.md'), 'utf8'),
     'auto-verify': readFileSync(join(skillsRoot, 'auto-verify', 'SKILL.md'), 'utf8')
   }
   const references = {
-    'auto-office-hours': 'content-intake',
     'auto-frame': 'content-framing',
     'auto-plan': 'content-planning',
     'auto-execute': 'content-execution',
@@ -171,7 +158,6 @@ test('pass 2 content mode gates are consistent across lifecycle skills', () => {
     assert.match(source, new RegExp(references[skillName]), `${skillName} must lazy-load its content reference`)
   }
   for (const signal of ['writing', 'article', 'brief', 'deck', 'newsletter', 'documentation']) {
-    assert.match(sources['auto-office-hours'], new RegExp(signal), `office-hours must detect content signal: ${signal}`)
     assert.match(sources['auto-frame'], new RegExp(signal), `frame must detect content signal: ${signal}`)
     assert.match(sources['auto-plan'], new RegExp(signal), `plan must detect content signal: ${signal}`)
   }
@@ -183,7 +169,6 @@ test('codex install copies content-aware skill surfaces from source', () => {
   const installedAntiSlop = join(root, '.agent', '.automaton', 'references', 'ANTI-SLOP.md')
   const sourceAntiSlop = join(skillsRoot, '_shared', 'references', 'ANTI-SLOP.md')
   const expectedReferences = {
-    'auto-office-hours': 'content-intake.md',
     'auto-frame': 'content-framing.md',
     'auto-plan': 'content-planning.md',
     'auto-execute': 'content-execution.md',

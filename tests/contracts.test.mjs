@@ -51,8 +51,8 @@ test('verdict routing covers every review verdict with known skills', () => {
   assert.equal(VERDICT_ROUTING.product, undefined)
 
   const knownSkills = new Set([
-    'auto-office-hours', 'auto-frame', 'auto-plan',
-    'auto-eng-review', 'auto-execute', 'auto-verify', 'auto-resume', 'auto-onboard'
+    'auto-frame', 'auto-plan',
+    'auto-eng-review', 'auto-execute', 'auto-verify', 'auto-resume'
   ])
   for (const routing of [VERDICT_ROUTING.engineering]) {
     for (const [verdict, skills] of Object.entries(routing)) {
@@ -83,7 +83,6 @@ test('kernel contracts expose stable stage, lens, and artifact layout values', (
     agentRoot: '.agent',
     runtimeRoot: '.agent/.automaton',
     steeringDir: 'steering',
-    wikiDir: 'wiki',
     workDir: 'work'
   })
   assert.equal(ARTIFACT_LAYOUT.runtimeRoot, `${ARTIFACT_LAYOUT.agentRoot}/.automaton`)

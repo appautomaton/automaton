@@ -23,7 +23,7 @@ Layer 1 and 2 sizes are regression-guarded by `tests/context-census.test.mjs`, w
 **Layer 2** -> Per-skill references (domain-specific) and shared references (`.agent/.automaton/references`, see DD-001). Loaded only when trigger fires.
 
 **Layer 3** -> Artifacts load in order with stop-as-soon-as-you-can:
-`current.json (50 tok) → SPEC.md (1k tok) → PLAN.md (1k tok) → wiki → source files`
+`current.json (50 tok) → SPEC.md (1k tok) → PLAN.md (1k tok) → source files`
 
 ## Degradation Handling
 

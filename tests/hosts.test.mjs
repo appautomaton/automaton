@@ -2,7 +2,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join, dirname } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
@@ -77,13 +77,16 @@ test('Claude install scaffolds .agent and the Claude skills surface', () => {
   const settings = JSON.parse(readFileSync(join(root, '.claude', 'settings.json'), 'utf8'))
 
   assert.equal(result.id, 'claude')
-  assert.equal(existsSync(join(root, '.agent', 'steering', 'PROJECT.md')), true)
+  assert.equal(existsSync(join(root, '.agent', 'steering', 'ROADMAP.md')), true)
   assert.equal(existsSync(join(root, '.agent', '.automaton', 'state', 'current.json')), true)
   assert.equal(existsSync(join(root, '.claude', 'skills', 'auto-frame', 'SKILL.md')), true)
   assert.equal(existsSync(join(root, '.claude', 'skills', 'auto-execute', 'SKILL.md')), true)
   assert.match(readFileSync(join(root, '.claude', 'skills', 'auto-execute', 'references', 'HOST-TOOLS.md'), 'utf8'), /Agent tool/)
-  assert.equal(existsSync(join(root, '.claude', 'skills', 'auto-onboard', 'templates', 'PROJECT.md')), true)
   assert.equal(existsSync(join(root, '.claude', 'skills', 'auto-frame', 'scripts')), false)
+  // DD-016: `.agent/` carries the running log of work, never a description of the
+  // project. Steering is one file, and there is no wiki to scaffold.
+  assert.deepEqual(readdirSync(join(root, '.agent', 'steering')), ['ROADMAP.md'])
+  assert.equal(existsSync(join(root, '.agent', 'wiki')), false)
   assert.deepEqual(Object.keys(settings.hooks), ['SessionStart'])
   assert.match(settings.hooks.SessionStart[0].hooks[0].command, /^command -v node/, 'hook command must prefer node from the session PATH')
   assert.equal(settings.hooks.SessionStart[0].hooks[0].command.includes(process.execPath), true, 'hook command must keep the install-time interpreter as fallback')
@@ -125,7 +128,9 @@ test('Claude session-start hook reads Automaton state from a nested working dire
   const payload = JSON.parse(result.stdout)
   assert.match(payload.hookSpecificOutput.additionalContext, /^<automaton_reminder>\nAutomaton is installed for this project as a stage-gated workflow\./)
   assert.match(payload.hookSpecificOutput.additionalContext, /Current state: \.agent\/\.automaton\/state\/current\.json \(change=bootstrap; stage=frame\)\./)
-  assert.match(payload.hookSpecificOutput.additionalContext, /Work artifacts live under \.agent\/work\/ when they matter/)
+  // Resolving `change=bootstrap` from a nested cwd is the property under test.
+  // A fresh install has nothing wrong with it, so the hook opens quiet (DD-016).
+  assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /Needs attention before you trust this state:/)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /STATUS\.md|Status summary/)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /\.agent\/work\/bootstrap\//)
   assert.match(payload.hookSpecificOutput.additionalContext, /The user's latest request stays in charge/)
@@ -181,7 +186,10 @@ test('Claude session-start hook injects the shared Automaton reminder without st
   assert.equal(result.stderr, '')
   const payload = JSON.parse(result.stdout)
   assert.match(payload.hookSpecificOutput.additionalContext, /Current state: \.agent\/\.automaton\/state\/current\.json \(change=deepen-skills; stage=plan\)\./)
-  assert.match(payload.hookSpecificOutput.additionalContext, /Canonical artifact pointers live in current\.json\./)
+  // Both canonical pointers name files that do not exist in this root, so the
+  // hook surfaces the stale state rather than reporting the change as healthy.
+  assert.match(payload.hookSpecificOutput.additionalContext, /canonicalSpec points to .* but file does not exist/)
+  assert.match(payload.hookSpecificOutput.additionalContext, /canonicalPlan points to .* but file does not exist/)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /STATUS\.md|Status summary/)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /Progress:/)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /Next:/)
@@ -500,7 +508,9 @@ test('Codex session-start hook reads Automaton state from a nested working direc
   const payload = JSON.parse(result.stdout)
   assert.match(payload.hookSpecificOutput.additionalContext, /^<automaton_reminder>\nAutomaton is installed for this project as a stage-gated workflow\./)
   assert.match(payload.hookSpecificOutput.additionalContext, /Current state: \.agent\/\.automaton\/state\/current\.json \(change=bootstrap; stage=frame\)\./)
-  assert.match(payload.hookSpecificOutput.additionalContext, /Work artifacts live under \.agent\/work\/ when they matter/)
+  // Resolving `change=bootstrap` from a nested cwd is the property under test.
+  // A fresh install has nothing wrong with it, so the hook opens quiet (DD-016).
+  assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /Needs attention before you trust this state:/)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /STATUS\.md|Status summary/)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /\.agent\/work\/bootstrap\//)
   assert.match(payload.hookSpecificOutput.additionalContext, /The user's latest request stays in charge/)
@@ -526,7 +536,10 @@ test('Codex session-start hook injects the shared Automaton reminder without sta
   assert.equal(result.stderr, '')
   const payload = JSON.parse(result.stdout)
   assert.match(payload.hookSpecificOutput.additionalContext, /Current state: \.agent\/\.automaton\/state\/current\.json \(change=deepen-skills; stage=plan\)\./)
-  assert.match(payload.hookSpecificOutput.additionalContext, /Canonical artifact pointers live in current\.json\./)
+  // Both canonical pointers name files that do not exist in this root, so the
+  // hook surfaces the stale state rather than reporting the change as healthy.
+  assert.match(payload.hookSpecificOutput.additionalContext, /canonicalSpec points to .* but file does not exist/)
+  assert.match(payload.hookSpecificOutput.additionalContext, /canonicalPlan points to .* but file does not exist/)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /STATUS\.md|Status summary/)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /Progress:/)
   assert.doesNotMatch(payload.hookSpecificOutput.additionalContext, /Next:/)
@@ -574,7 +587,7 @@ test('Codex uninstall removes Automaton hooks and skills while preserving .agent
   const result = uninstallHost(getHost('codex'), { root, sourceRoot })
 
   assert.equal(result.id, 'codex')
-  assert.equal(existsSync(join(root, '.agent', 'steering', 'PROJECT.md')), true)
+  assert.equal(existsSync(join(root, '.agent', 'steering', 'ROADMAP.md')), true)
   // Automaton created .codex on this pristine root, so uninstall takes the
   // whole directory back out (receipt provenance, DD-011).
   assert.equal(existsSync(join(root, '.codex')), false)
@@ -937,14 +950,14 @@ test('host install generates HOST-TOOLS.md in every dispatching skill and nowher
   const skillsRoot = join(root, '.claude', 'skills')
   // Skills that may dispatch an agent get HOST-TOOLS.md: auto-execute (implementer +
   // reviewers) and the planning skills that may dispatch the read-only librarian.
-  for (const skill of ['auto-execute', 'auto-office-hours', 'auto-frame', 'auto-plan']) {
+  for (const skill of ['auto-execute', 'auto-frame', 'auto-plan']) {
     assert.equal(
       existsSync(join(skillsRoot, skill, 'references', 'HOST-TOOLS.md')),
       true,
       `${skill} dispatches an agent and must carry HOST-TOOLS.md`
     )
   }
-  for (const skill of ['auto-verify', 'auto-resume', 'auto-onboard', 'auto-eng-review']) {
+  for (const skill of ['auto-verify', 'auto-resume', 'auto-eng-review']) {
     assert.equal(
       existsSync(join(skillsRoot, skill, 'references', 'HOST-TOOLS.md')),
       false,
@@ -1118,14 +1131,14 @@ test('HOST-TOOLS.md reaches every dispatching skill and scopes the librarian to 
   const root = mkdtempSync(join(tmpdir(), 'automaton-install-hosttools-'))
   installHost(getHost('claude'), { root, sourceRoot })
 
-  for (const skill of ['auto-execute', 'auto-office-hours', 'auto-frame', 'auto-plan']) {
+  for (const skill of ['auto-execute', 'auto-frame', 'auto-plan']) {
     const target = join(root, '.claude', 'skills', skill, 'references', 'HOST-TOOLS.md')
     assert.equal(existsSync(target), true, `${skill} must receive HOST-TOOLS.md`)
     const content = readFileSync(target, 'utf8')
     // HOST-TOOLS.md is generated only into these four skills, so its scope statement
     // must name exactly them instead of promising "any stage".
     assert.match(content, /automaton-librarian.*office-hours, frame, plan, and execute/, 'HOST-TOOLS.md must scope the librarian to the dispatching skills')
-    assert.match(content, /auto-office-hours, auto-frame, auto-plan, and auto-execute/, 'HOST-TOOLS.md must name the skills that carry the reference')
+    assert.match(content, /auto-frame, auto-plan, and auto-execute/, 'HOST-TOOLS.md must name the skills that carry the reference')
     assert.doesNotMatch(content, /dispatched from any stage/)
     assert.match(content, /automaton-implementer.*execute stage/, 'HOST-TOOLS.md must mark the implementer execute-stage')
   }

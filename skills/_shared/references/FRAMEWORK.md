@@ -21,8 +21,8 @@ Every skill follows this skeleton:
 ```
 Preamble        -> identity, "does not" boundary, loading discipline
 Quality Gate    -> checks before finalizing. Each skill ships a quality.md reference
-Do              -> skill-specific procedure
-Output          -> artifacts produced, state changes, handoff
+Do              -> skill-specific procedure, ending in Hand Off when the skill stops
+Output          -> artifacts produced and state changes
 Rules           -> guardrails
 ```
 
@@ -56,6 +56,8 @@ Two moves at every lifecycle edge:
 
 **Form.** Continue-inline emits no handoff line. The next contract's output speaks for it. A stop ends the turn with one line: `**Next:** <skill>, <reason in ≤8 words>`. Terminal completion reports `Change status: complete` and a `New objective:` line, with no `Next:`. The reason names the trigger, not the rule.
 
+**Where.** A skill that stops issues this line from a `### Hand Off` step ending its `## Do`, never from `## Output`. A handoff listed among artifacts reads as a manifest entry, not an instruction. Elsewhere, name a target skill in plain text and reserve the `**Next:**` form for the emitted line.
+
 ## Asking The User
 
 Ask one question per message, with your recommended answer and its reason attached, so a single "yes" keeps the conversation moving. For a branch decision, offer 2 to 4 concrete options with a one-line reason each. Use the host question tool when available, otherwise present the options inline.
@@ -63,7 +65,7 @@ Ask one question per message, with your recommended answer and its reason attach
 ## Loading Discipline
 
 - Context is finite. Load progressively: smallest artifact first, more only when needed.
-- Do not re-read a file you can still accurately recall. Re-read when it changed, when verification requires fresh evidence, or when recall is uncertain (for example after compaction). Full triggers: `.agent/.automaton/references/CONTEXT-BUDGET.md` (Re-Read Rule).
+- Do not re-read a file you can still accurately recall. Triggers: `.agent/.automaton/references/CONTEXT-BUDGET.md` (Re-Read Rule).
 - Artifacts (`SPEC.md`, `PLAN.md`) are reloadable contracts, not dossiers. Link detail under `spec/` or `slices/` instead of inlining everything.
 
 ## Artifact Signal Discipline

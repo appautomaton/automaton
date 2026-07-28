@@ -246,7 +246,7 @@ function driftDiagnostics(target, state, projectRoot) {
     diagnostics.push(diagnostic(
       'warning',
       'state_drift',
-      `${outOfBand.length}${commitsSince.length === 20 ? '+' : ''} out-of-band commits since current.json last changed; harness state may lag the repo. Record durable findings in .agent/wiki/LEARNINGS.md or refresh state through the lifecycle.`
+      `${outOfBand.length}${commitsSince.length === 20 ? '+' : ''} out-of-band commits since current.json last changed; harness state may lag the repo. Refresh state through the lifecycle.`
     ))
   }
 

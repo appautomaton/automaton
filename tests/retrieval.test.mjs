@@ -7,8 +7,8 @@ import { contextSummary, retrievalProfile } from '../lib/retrieval.mjs'
 
 test('retrieval profile covers every contract stage', () => {
   assert.deepEqual(STAGES, ['frame', 'plan', 'execute', 'verify', 'verified', 'resume'])
-  assert.deepEqual(retrievalProfile('frame'), ['request', 'steering', 'wiki'])
-  assert.deepEqual(retrievalProfile('plan'), ['request', 'steering', 'work', 'wiki'])
+  assert.deepEqual(retrievalProfile('frame'), ['request', 'steering', 'repo'])
+  assert.deepEqual(retrievalProfile('plan'), ['request', 'steering', 'work'])
   assert.deepEqual(retrievalProfile('execute'), ['request', 'work', 'packet'])
   assert.deepEqual(retrievalProfile('verify'), ['request', 'work', 'evidence'])
   assert.deepEqual(retrievalProfile('verified'), ['request', 'work', 'evidence'])
@@ -27,5 +27,5 @@ test('retrieval profile returns a defensive copy', () => {
   const profile = retrievalProfile('plan')
   profile.push('mutated')
 
-  assert.deepEqual(retrievalProfile('plan'), ['request', 'steering', 'work', 'wiki'])
+  assert.deepEqual(retrievalProfile('plan'), ['request', 'steering', 'work'])
 })

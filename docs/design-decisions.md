@@ -94,13 +94,13 @@ The canonical list of Automaton subagent roles lives in `SUBAGENT_ROLES` (`lib/i
 
 ---
 
-## DD-010: Cross-change memory is a bounded wiki file, not new machinery
+## DD-010 (SUPERSEDED): Cross-change memory is a bounded wiki file, not new machinery
 
 `.agent/wiki/LEARNINGS.md` carries one-line, evidence-cited project facts that execution paid to learn. `auto-execute` (plan corrections) and `auto-verify` (gap diagnosis) append; `auto-plan` and `auto-execute` read it when present. The format contract lives once in `ARTIFACT-LIFECYCLE.md` (Learned Truth).
 
 **Why:** The harness had no channel for execution-learned truth to survive a change: a gotcha discovered in slice 3 evaporated with the session unless it happened to land in slice evidence. A plain markdown file with the existing artifact disciplines (one line per fact, evidence cited, deletion when falsified) makes change N+1 smarter with zero orchestration spread and full human inspectability.
 
-**See:** `skills/_shared/references/ARTIFACT-LIFECYCLE.md` (Learned Truth), `tests/learnings.test.mjs`.
+**Superseded 2026-07-28.** Removed entirely. Across 12 changes in two projects the file was never written once, while the durable facts it was meant to hold landed in a ROADMAP deferred note instead. The harness should not run a second memory system alongside a project's own documentation, which is where large projects keep this material anyway. `ROADMAP.md` remains the single long-horizon surface. Absence is now guarded in `tests/artifact-lifecycle.test.mjs`.
 
 ---
 
@@ -164,3 +164,23 @@ Any `--canonical-plan` sync clears a standing `engineering_review` verdict in `a
 **Why:** The rejected alternative was prose declaring re-review mandatory after `needs_correction`. That turns an optional check sticky-mandatory, against DD-014's posture that model-run review runs only where invoked, and the mandatory human stop at execute entry already guards the safety property. Clearing on re-sync keeps the state machine honest: a verdict field always describes the currently synced plan. The preserved `## Review: Engineering` section keeps the prior rationale on the artifact as history, and the L2 verdict-integrity lint (DD-012) is unaffected because it only checks verdict-implies-section.
 
 **See:** `skills/_shared/scripts/sync-status.mjs` (`applyStatePatch`), `skills/_shared/references/ARTIFACT-LIFECYCLE.md` (Review Verdict Routing), `tests/lifecycle-walk.test.mjs`.
+
+## DD-016: Automaton keeps the running log of work, not a description of the project
+
+`.agent/` holds only artifacts that cannot be true without the harness: `current.json`, the change's `SPEC.md`, `DESIGN.md`, `PLAN.md`, its verification evidence, and `ROADMAP.md` as the forward queue. Everything that describes the project itself was removed. `auto-onboard` is deleted, `.agent/wiki/` is gone from the artifact layout, and `PROJECT.md` and `REQUIREMENTS.md` moved to `DEPRECATED_STEERING_FILES`, so an upgrade prunes a pristine placeholder and keeps a user-authored copy with a warning under the DD-011 asymmetry rule. Steering is one file.
+
+**Why:** The test is whether a file would still be true if Automaton were uninstalled. README, AGENTS.md, and `docs/` pass, so the project owns them. A harness copy of that same truth fails twice: nothing reads it, and it decays against the original. Field evidence was unambiguous. This workspace's `REQUIREMENTS.md` cited `AGENTS.md` eleven times, then drifted from it (stage enum missing `verified`, a test count of 176 against 312, a transient May blocker parked as durable truth). `REPO-MAP.md` claimed version 0.2.31 against an actual 0.3.10 and cited the file that disproved it. No skill instruction read any of the three, and a second project shipped six changes with an empty `.agent/wiki/`. The rejected alternative was refreshing them on a schedule, which buys accuracy with maintenance and still loses to reading the repo. `automaton-librarian` answers the same questions from live code and cannot go stale, which is what a cache becomes once reading is cheap. This is DD-010's supersession generalized: LEARNINGS.md fell for duplicating `docs/`, and these fell for duplicating the repo.
+
+**See:** `runtime/lib/steering.mjs`, `lib/scaffold.mjs` (`DEPRECATED_STEERING_FILES`), `runtime/lib/contracts-data.json` (`artifactLayout`), `skills/_shared/authoring/LEXICON.md` (steering), `tests/scaffold.test.mjs`.
+
+## DD-017: One framing skill that chooses its own conversational depth
+
+`auto-office-hours` folded into `auto-frame`. One skill reads the request, decides in a named `### Choose Depth` step whether the objective is already clear or needs a diagnostic, and says which path it took. The diagnostics, grill mode, and the alternatives contract moved to `references/diagnostic.md` behind that trigger. The SPEC skeleton is gone: one skill writes `SPEC.md` once.
+
+**Why:** The two skills already declared the same `stage: frame` and loaded each other inline, each carrying a full copy of the other's entry criteria. Office-hours' first substantive step considered routing the user to auto-frame; auto-frame had stopped sending users back ("Do not send the user back to office-hours solely because no skeleton exists") and had grown its own coverage-map fallback. The split forced a routing decision at the door, before anyone had read the request, which is exactly the judgment that needs the request and the repo in hand. Field evidence: 1 of 12 changes across two projects was office-hours-seeded. The merged entry point is 1375 words against 2607 for the pair, and the duplication it removed (librarian instruction, slug derivation, `sync-status` call, the four-way coverage vocabulary stated three times) existed only because of the seam. DD-014 still holds: dialogue and artifact are distinct moments, they just are not distinct skills. The skeleton went with the seam, since a two-pass write only bought crash durability across a skill boundary that no longer exists.
+
+**Cost accepted:** the shallow path pays +181 words over the old frame-only entry point for mode classification and the depth choice. Keeping the diagnostic machinery in the entry point would have cost +540, so it rides a trigger instead.
+
+**Risk it creates:** phase authorship used to be structurally banned in frame because another skill owned it. Now one skill owns both paths and only explicit user approval separates an approved decomposition from a laundered scope cut. `tests/roadmap-contract.test.mjs` pins that gate.
+
+**See:** `skills/auto-frame/SKILL.md` (Choose Depth), `skills/auto-frame/references/diagnostic.md`, `skills/_shared/references/ROADMAP-CONTRACT.md` (Update Rules), `tests/frame.test.mjs`, `tests/roadmap-contract.test.mjs`.

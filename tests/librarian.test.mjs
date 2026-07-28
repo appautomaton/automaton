@@ -45,7 +45,7 @@ test('lifecycle skills offer the librarian as an opt-in read-only lookup', () =>
   // LIBRARIAN.md grants dispatch to all four stages that risk wide reads.
   // Execute is included: tracing a flow before editing is exactly where
   // exploration would otherwise blow up the coordinator's context.
-  for (const skill of ['auto-office-hours', 'auto-frame', 'auto-plan', 'auto-execute']) {
+  for (const skill of ['auto-frame', 'auto-plan', 'auto-execute']) {
     const source = readFileSync(join(skillsRoot, skill, 'SKILL.md'), 'utf8')
     assert.match(source, /automaton-librarian/, `${skill} must mention the librarian`)
     assert.match(source, /references\/LIBRARIAN\.md/, `${skill} must point to LIBRARIAN.md`)

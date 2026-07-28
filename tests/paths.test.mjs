@@ -17,6 +17,5 @@ test('paths resolve .agent and nested .agent/.automaton roots', () => {
   assert.equal(paths.sharedReferencesRoot, join(root, '.agent', '.automaton', 'references'))
   assert.equal(paths.sharedScriptsRoot, join(root, '.agent', '.automaton', 'scripts'))
   assert.equal(paths.steeringRoot, join(root, '.agent', 'steering'))
-  assert.equal(paths.wikiRoot, join(root, '.agent', 'wiki'))
   assert.equal(paths.workRoot, join(root, '.agent', 'work'))
 })

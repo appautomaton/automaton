@@ -54,7 +54,7 @@ test('install writes a schema-1 receipt with hashed, owner-tagged entries', () =
   assert.ok(paths.has('.claude/skills/auto-frame/SKILL.md'))
   assert.ok(paths.has('.claude/agents/automaton-implementer.md'))
   assert.ok(paths.has('.claude/hooks/session-start.mjs'))
-  assert.ok(paths.has('.agent/steering/PROJECT.md'))
+  assert.ok(paths.has('.agent/steering/ROADMAP.md'))
 
   // Runtime machinery under .agent/.automaton is namespace-owned and removed
   // whole on uninstall; it is intentionally absent from file tracking.
@@ -143,20 +143,30 @@ test('uninstall keeps touched steering as project history and removes pristine p
   const root = tempRoot('history')
 
   installProject(root, { sourceRoot })
-  // The user (or onboarding) filled PROJECT.md in; work artifacts exist.
-  writeFileSync(join(root, '.agent', 'steering', 'PROJECT.md'), '# Project\n\nReal description.\n', 'utf8')
+  // The user recorded real roadmap phases; work artifacts exist.
+  writeFileSync(join(root, '.agent', 'steering', 'ROADMAP.md'), '# Roadmap\n\n## Phase 1: Ship it\n', 'utf8')
   mkdirSync(join(root, '.agent', 'work', '2026-06-12-change'), { recursive: true })
   writeFileSync(join(root, '.agent', 'work', '2026-06-12-change', 'SPEC.md'), '# SPEC\n', 'utf8')
 
   const result = uninstallProject(root)
 
-  assert.equal(existsSync(join(root, '.agent', 'steering', 'PROJECT.md')), true, 'modified steering is history and stays')
-  assert.equal(existsSync(join(root, '.agent', 'steering', 'REQUIREMENTS.md')), false, 'pristine placeholder carries no record and goes')
+  assert.equal(existsSync(join(root, '.agent', 'steering', 'ROADMAP.md')), true, 'modified steering is history and stays')
   assert.equal(existsSync(join(root, '.agent', 'work', '2026-06-12-change', 'SPEC.md')), true, 'work artifacts always stay')
   assert.equal(existsSync(join(root, '.agent', '.automaton')), false, 'machinery always goes')
   assert.ok(
-    result.warnings.some((warning) => warning.message.includes('.agent/steering/PROJECT.md')),
+    result.warnings.some((warning) => warning.message.includes('.agent/steering/ROADMAP.md')),
     'the kept file is reported, not silently skipped'
+  )
+
+  // The other half of the asymmetry: an untouched placeholder carries no record.
+  const pristine = tempRoot('history-pristine')
+  installProject(pristine, { sourceRoot })
+  uninstallProject(pristine)
+
+  assert.equal(
+    existsSync(join(pristine, '.agent', 'steering', 'ROADMAP.md')),
+    false,
+    'pristine placeholder carries no record and goes'
   )
 })
 
@@ -452,7 +462,7 @@ test('reinstall carries forward provenance: created dirs and pristine steering b
   assert.ok(created.has('.claude'), 'first-install dir provenance survives the reinstall')
   assert.ok(created.has('.agent'), 'scaffold dir provenance survives the reinstall')
   assert.ok(
-    receipt.files.some((entry) => entry.path === '.agent/steering/PROJECT.md'),
+    receipt.files.some((entry) => entry.path === '.agent/steering/ROADMAP.md'),
     'steering keeps its install-time hash entry even though the reinstall did not rewrite it'
   )
   assert.ok(
@@ -475,6 +485,6 @@ test('legacy installs without a receipt still uninstall through source recompute
   assert.equal(existsSync(join(root, '.agent', '.automaton')), false)
   // Pre-receipt behavior is intentionally conservative: steering and the
   // host folder stay because provenance is unknown.
-  assert.equal(existsSync(join(root, '.agent', 'steering', 'PROJECT.md')), true)
+  assert.equal(existsSync(join(root, '.agent', 'steering', 'ROADMAP.md')), true)
   assert.equal(existsSync(join(root, '.claude')), true)
 })

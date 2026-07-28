@@ -7,15 +7,6 @@ This table is the orientation load order for `auto-resume` and for cold re-entry
 ## Dependency Graph
 
 ```
-REPO-MAP.md (wiki)
-    │
-    ▼
-PROJECT.md (steering)
-    │
-    ▼
-REQUIREMENTS.md (steering)
-    │
-    ▼
 ROADMAP.md (steering)
     │
     ▼
@@ -44,5 +35,5 @@ current.json (state) ──┘
 ## Anti-Patterns
 
 - **Loading PLAN.md before SPEC.md.** The plan assumes the spec is understood.
-- **Reloading the full chain at verified stage.** Verification passed; report completion and surface optional future work only when useful.
-- **Loading the full wiki during execution.** Wiki pages are reference material, not active context.
+- **Reloading the full chain at verified stage.** Verification passed. Report completion and surface optional future work only when useful.
+- **Rebuilding project context by scanning the repo.** The artifacts hold the decisions. For a specific lookup, dispatch the read-only `automaton-librarian` instead of a broad read.

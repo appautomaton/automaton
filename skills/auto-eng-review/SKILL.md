@@ -39,7 +39,7 @@ If the plan is missing or unreadable, set verdict to `needs_correction` and stop
 
 ### Load State
 
-Read the canonical `PLAN.md`. Read `DESIGN.md` only when `canonical_design` is set and resolves to a file; otherwise continue without it and note that the plan intentionally has no design artifact.
+Read the canonical `PLAN.md`. Read `DESIGN.md` only when `canonical_design` is set and resolves to a file. Otherwise continue without it and note that the plan intentionally has no design artifact.
 
 ### Restate the Plan
 
@@ -47,7 +47,7 @@ In engineering terms: what is being built, what systems does it touch, and what 
 
 ### Evaluate Risks
 
-Use this matrix as an internal checklist. In chat, summarize only the verdict-driving dimensions unless the user asks for the full matrix. Apply standards from `references/prime-directives.md` while evaluating.
+Use this matrix as an internal checklist. Apply standards from `references/prime-directives.md` while evaluating.
 
 ### Risk Matrix
 
@@ -66,11 +66,9 @@ A score of 3 or lower in any dimension is a blocking concern: a score that low m
 
 ### Render Verdict
 
-Use exactly one of the three approved values. Read `references/implementation-alternatives.md` only when PLAN.md lacks an approach rationale, the user asks for alternatives, or the verdict depends on comparing safer execution paths.
+Read `references/implementation-alternatives.md` only when PLAN.md lacks an approach rationale, the user asks for alternatives, or the verdict depends on comparing safer execution paths.
 
-### Verdict Values
-
-Use strict vocabulary. No synonyms.
+Use strict vocabulary: exactly one of the three approved values, no synonyms.
 
 | Verdict | Meaning | Next Action |
 |---------|---------|-------------|
@@ -90,21 +88,18 @@ Add a `## Review: Engineering` section to `PLAN.md` using the exact template in 
 
 Run `node .agent/.automaton/scripts/sync-status.mjs --engineering-review "<verdict>"` from the project root.
 
-### Recommend
+### Hand Off
 
-State the next skill based on the verdict.
+The review always stops. It never runs the plan it just approved.
+
+Report the verdict, the riskiest slice, and the one concern execution should watch for. Then end the turn with `**Next:** auto-execute, <reason>` for `approved` or `approved_with_risks`, or `**Next:** auto-plan, <reason>` for `needs_correction`.
 
 ## Output
 
 - `PLAN.md` with appended `## Review: Engineering` section
 - `.agent/.automaton/state/current.json` updated through `sync-status.mjs` with `engineering_review`; `stage` is unchanged by this skill
-- Handoff (verdict-mapped, always stops): `approved`/`approved_with_risks` → `Next: auto-execute`; `needs_correction` → `Next: auto-plan`.
 
 ## Rules
 
-- Focus on execution safety, not product vision.
-- Prefer specific engineering objections over generic caution.
-- Do not broaden scope just to feel thorough.
-- Do not emit the full risk matrix when all dimensions are acceptable; keep the durable review to the review-template fields.
-- Verdict vocabulary is strict. Use only the three approved values.
+- Do not emit the full risk matrix when all dimensions are acceptable. Keep the durable review to the review-template fields.
 - Missing DESIGN.md is not a blocker when `canonical_design` is null, absent, or intentionally skipped by the plan.

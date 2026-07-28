@@ -10,7 +10,6 @@
     "agentRoot": ".agent",
     "runtimeRoot": ".agent/.automaton",
     "steeringDir": "steering",
-    "wikiDir": "wiki",
     "workDir": "work"
   },
   "stagePrerequisites": {

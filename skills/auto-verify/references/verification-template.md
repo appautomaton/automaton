@@ -1,8 +1,8 @@
 # Verification Report Template
 
-Plan-level format. Group results by slice; verdict applies to the entire plan. The full checklist is internal; the report expands only material gaps by default.
+Plan-level format. Group results by slice; verdict applies to the entire plan. The full checklist is internal. The report expands only material gaps by default.
 
-Two uses of one shape: the inline conversation report (always), and on PASS the same content written to `PLAN.md` as a terminal `## Verification` section (append-replace). The durable heading is exactly `## Verification`, no change-name suffix, so append-replace always has a stable target; the suffixed heading below is for the inline report only. The durable copy keeps the Summary block plus one rollup line per slice, drops the `Change status` and `New objective` routing lines with the rest of the conversational framing, and never stacks on a prior section.
+Two uses of one shape: the inline conversation report (always), and on PASS the same content written to `PLAN.md` as a terminal `## Verification` section (append-replace). The durable heading is exactly `## Verification`, no change-name suffix, so append-replace always has a stable target. The suffixed heading below is for the inline report only. The durable copy keeps the Summary block plus one rollup line per slice, drops the `Change status` and `New objective` routing lines with the rest of the conversational framing, and never stacks on a prior section.
 
 ```markdown
 ## Verification: [Change Name]
@@ -27,21 +27,21 @@ PASS summary:
 **Passed:** [M] of [M] criteria
 **Remaining gaps:** none
 **Change status:** complete
-**New objective:** use `auto-office-hours` to shape the next objective when you are ready.
+**New objective:** use `auto-frame` to shape the next objective when you are ready.
 
 FAIL summary:
 **Overall:** FAIL
 **Passed:** [N] of [M] criteria
 **Remaining gaps:** [list]
 **Change status:** incomplete
-**Next:** auto-execute, [reason in 8 words or fewer]
+**Next:** auto-execute, [reason]
 
 When the same criterion failed a prior verification, close with `**Next:** auto-plan, [repeated criterion]` instead.
 ```
 
 ## Rules
 
-- Verify each criterion internally; report passing criteria as grouped counts unless there are only 1-2 criteria or the user asks for full detail.
+- Verify each criterion internally. Report passing criteria as grouped counts unless there are only 1-2 criteria or the user asks for full detail.
 - Evidence must be a direct quote from command output or a specific observation.
 - PARTIAL means some sub-conditions pass and some fail. Still counts as FAIL for the plan.
 - If overall is FAIL, list every gap across all slices, not just the first found. Expand failures, skipped checks, and derived commands.

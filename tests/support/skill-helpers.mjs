@@ -7,13 +7,11 @@ export const skillsRoot = fileURLToPath(new URL('../../skills', import.meta.url)
 export const cliPath = fileURLToPath(new URL('../../bin/automaton.mjs', import.meta.url))
 
 export const authoredSkills = [
-  'auto-onboard',
   'auto-frame',
   'auto-plan',
   'auto-execute',
   'auto-verify',
   'auto-resume',
-  'auto-office-hours',
   'auto-eng-review'
 ]
 

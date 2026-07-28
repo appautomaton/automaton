@@ -1,6 +1,6 @@
 # Git Rhythm Mechanics
 
-Operational detail for the per-slice commit rhythm. The rule and commit shapes live in `SKILL.md` (Git Rhythm); the cross-skill invariants live in `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Git Rhythm). Read this once at execute entry.
+Operational detail for the per-slice commit rhythm. The rule and commit shapes live in `SKILL.md` (Git Rhythm). The cross-skill invariants live in `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Git Rhythm). Read this once at execute entry.
 
 ## Detect Once At Entry
 

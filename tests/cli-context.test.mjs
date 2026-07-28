@@ -20,7 +20,7 @@ test('context command prints the retrieval summary for the requested stage', () 
 
   assert.equal(result.status, 0)
   assert.equal(result.stderr, '')
-  assert.equal(result.stdout, 'request -> steering -> work -> wiki\n')
+  assert.equal(result.stdout, 'request -> steering -> work\n')
 })
 
 test('status command reports none when no current state exists', () => {
@@ -161,7 +161,7 @@ test('install command only provisions .agent when no host flags are passed', () 
   assert.equal(result.status, 0)
   assert.equal(result.stderr, NO_HOST_NOTE)
   assert.equal(result.stdout, 'agent\n')
-  assert.equal(existsSync(join(root, '.agent', 'steering', 'PROJECT.md')), true)
+  assert.equal(existsSync(join(root, '.agent', 'steering', 'ROADMAP.md')), true)
   assert.equal(existsSync(join(root, '.claude', 'skills', 'auto-frame', 'SKILL.md')), false)
   assert.equal(existsSync(join(root, '.codex', 'skills', 'auto-frame', 'SKILL.md')), false)
   assert.equal(existsSync(join(root, '.opencode', 'skills', 'auto-frame', 'SKILL.md')), false)
@@ -175,7 +175,7 @@ test('install command provisions the selected host surface and .agent scaffold',
   assert.equal(result.status, 0)
   assert.equal(result.stderr, '')
   assert.equal(result.stdout, 'agent\ncodex\n')
-  assert.equal(existsSync(join(root, '.agent', 'steering', 'PROJECT.md')), true)
+  assert.equal(existsSync(join(root, '.agent', 'steering', 'ROADMAP.md')), true)
   assert.equal(existsSync(join(root, '.codex', 'skills', 'auto-frame', 'SKILL.md')), true)
   assert.equal(existsSync(join(root, '.codex', 'hooks.json')), true)
 })
@@ -199,7 +199,7 @@ test('install --uninstall with a host flag removes the runtime too when it was t
   const installResult = spawnSync(process.execPath, [cliPath, 'install', root, '--codex'], { encoding: 'utf8' })
 
   assert.equal(installResult.status, 0)
-  assert.equal(existsSync(join(root, '.agent', 'steering', 'PROJECT.md')), true)
+  assert.equal(existsSync(join(root, '.agent', 'steering', 'ROADMAP.md')), true)
   assert.equal(existsSync(join(root, '.codex', 'skills', 'auto-frame', 'SKILL.md')), true)
 
   const uninstallResult = spawnSync(process.execPath, [cliPath, 'install', root, '--uninstall', '--codex'], { encoding: 'utf8' })

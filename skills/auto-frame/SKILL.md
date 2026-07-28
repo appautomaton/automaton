@@ -1,87 +1,95 @@
 ---
 name: auto-frame
-description: Bound and de-risk a request into SPEC.md. Use when the objective is clear but scope needs constraining.
+description: Turn a request into a bounded SPEC.md, with as much conversation as it needs. Use to start any change.
 metadata:
   stage: frame
 ---
 
 # auto-frame
 
-Framing controller. Bounds and de-risks a request into a single `SPEC.md`.
+Framing controller. Turns a request into one bounded `SPEC.md`, running as much conversation as the request needs and no more.
 
 First action: run `node .agent/.automaton/scripts/get-context.mjs` from the project root.
 
 ## Preamble
 
-auto-frame produces the canonical artifact: `SPEC.md` when the request is frameable. SPEC.md is mandatory for frame completion; no file means no completed frame. It does not write code, create PLAN.md, or proceed to planning without a written spec. If the request needs discovery rather than one blocking decision, continue into `auto-office-hours` rather than writing a weak SPEC.
+auto-frame produces the canonical artifact: `SPEC.md`. No file means no completed frame. It does not write code, create PLAN.md, or proceed to planning.
 
-Loading discipline: hold the skeleton when present, the objective, constraints, risks, and source evidence needed to keep the spec real. Avoid exhaustive tree walks. When a lookup would otherwise pull wide reads into context, dispatch the read-only `automaton-librarian` (see `.agent/.automaton/references/LIBRARIAN.md`): it returns evidence, you keep the decision.
+Depth is chosen after reading, never before. A request whose objective is already clear goes straight to the spec. A request hiding a real decision earns a diagnostic first. That call needs the repo and the request in hand, so it cannot be made at the door.
 
-Artifact discipline: `SPEC.md` is the reloadable contract, not the whole dossier. Keep it compact enough to re-read; for large coherent work, summarize the contract and link normative detail under `spec/*.md`. One coherent outcome remains one spec even when it needs progressive disclosure.
+Loading discipline: hold the objective, constraints, risks, and source evidence that keep the spec real. Avoid exhaustive tree walks. When a lookup would pull wide reads into context, dispatch the read-only `automaton-librarian` (see `.agent/.automaton/references/LIBRARIAN.md`): it returns evidence, you keep the decision. Never ask what the repo can answer.
+
+Artifact discipline: `SPEC.md` is the reloadable contract, not the whole dossier. Keep it compact enough to re-read. For large coherent work, summarize the contract and link normative detail under `spec/*.md`. One coherent outcome remains one spec even when it needs progressive disclosure.
+
+Interaction: keep chat plain and grounded in the user's words. Do not expose the internal labels below. Ask per the Asking The User convention in `.agent/.automaton/references/FRAMEWORK.md`.
 
 ## Quality Gate
 
-Before finalizing `SPEC.md`:
 - Make the objective observable.
-- Preserve the user's broader intent; do not silently narrow scope.
+- Preserve the user's broader intent. Do not silently narrow scope.
 - Move implementation detail out unless it constrains scope.
 - Mark uncertain claims as assumptions.
-- Read `references/quality.md` when the spec feels broad, padded, or hard to verify.
+- Read `references/quality.md` before presenting alternatives or finalizing `SPEC.md`.
 
 ## Do
 
-### Restate
+### Read The Request
 
-Read `.agent/work/<active_change>/SPEC.md` if office-hours seeded it. The skeleton is preferred context, not a prerequisite for framing. A legacy `INTAKE.md` from an earlier harness version is optional context when present. If neither exists, frame from the current request, conversation context, and repo evidence. Do not send the user back to office-hours solely because no skeleton exists.
+Read the request, the conversation, and enough repo evidence to know what is already true. If a `SPEC.md` exists for this change, read it and preserve every `## Review:` section.
 
-Adopt settled office-hours context: work scale, work shape, Broader intent, target user or stakeholder, scope coverage, rejected framings, and anti-goals. Do not re-ask settled context or reintroduce rejected directions.
+Classify three axes and hold them internally:
+- **Mode:** Startup mode for customers, revenue, market, competition, fundraising, or company-building. Builder mode for side project, hackathon, learning, open source, personal use, or just-for-fun. Content mode for writing, article, brief, deck, blog post, newsletter, documentation, or any prose where audience and voice matter.
+- **Work scale:** bug, feature, capability, or roadmap. Large is not roadmap. Capability-sized work stays one spec when it serves one coherent outcome. Roadmap-sized means multiple independently valuable outcomes that need decomposition.
+- **Work shape:** feature, refactor, parity, audit, migration, coverage, content, or mixed.
 
-Read `.agent/wiki/LEARNINGS.md` when it exists: facts earlier changes paid to learn often bound feasibility, constraints, and risks before new discovery does.
+Confirm the read in plain language grounded in the user's words. If the user corrects a dimension, adjust before continuing.
 
-State the goal in one sentence. If you cannot, ask one clarifying question. If the request still needs objective discovery or multiple material decisions before any useful SPEC can be written, continue into `auto-office-hours`'s diagnostic flow in the same session.
+Read `.agent/steering/ROADMAP.md` when it exists. If the objective matches a pending phase, say so and scope the work around that phase.
 
-If your SPEC would be narrower than the user's stated goal or office-hours broader intent, widen the SPEC, ask for confirmation, or record a `Deferred / Not in scope` note in this change's SPEC. The rule's home is `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Progressive Disclosure). Do not create `ROADMAP.md` phases from a narrowed SPEC; that decomposition belongs to `auto-office-hours` after the user approves it. Silent narrowing is a framing failure.
+### Choose Depth
 
-### Coverage Check
+State the goal in one sentence, then pick the path and say which you took in one line.
 
-If the skeleton or conversation context includes scope coverage, compare the intended SPEC against each item before writing:
-- Included items must appear in the bounded goal, required outcome, constraints, risks, or acceptance criteria.
-- Deferred items must stay deferred with a reason in a SPEC deferred-scope note.
-- Anti-goals must appear in SPEC anti-goals.
-- Needs-decision items require one focused question with concrete options and your recommended answer, per the Asking The User convention in `.agent/.automaton/references/FRAMEWORK.md`, unless the user explicitly accepts an assumption.
+Write the spec now when that sentence holds, the material asks are already on the table, and no unresolved decision would change scope, approach, or verification.
 
-If no formal scope coverage exists but the request has multiple material asks, perspectives, constraints, or worries, build the lightweight check from available context. Do not drop a material item silently.
+Run the diagnostic first when the request lacks a problem, a stakeholder, a desired outcome, a content audience and thesis, a first independent outcome, or a direction choice. Roadmap-sized work always earns it: decomposition is the user's decision, not a side effect of writing a smaller spec.
+
+Do not run a diagnostic to look thorough, and do not skip one to look fast.
+
+When the answer is deep, read `references/diagnostic.md` and follow it before returning here. It carries the mode diagnostics, grill mode, and the alternatives contract. Nothing is written to disk until the user approves an approach.
+
+### Cover The Request
+
+Build a compact map from the request and any answers: goal, context, perspectives or audiences, constraints, worries, explicit asks, implied asks. Classify each material item as **included** in this change, **deferred** to later work with a reason, an **anti-goal** for this change, or **needs decision** because the answer would change scope, approach, or verification.
+
+Every included item lands in the bounded goal, required outcome, constraints, risks, or acceptance criteria. Every deferred item keeps its reason in a `Deferred / Not in scope` note. Every anti-goal appears in SPEC anti-goals. Every needs-decision item gets one focused question with concrete options and your recommended answer, per the Asking The User convention, unless the user explicitly accepts an assumption. Do not drop a material item silently.
+
+If your SPEC would be narrower than the user's stated goal, widen it, ask for confirmation, or record the deferred scope. The rule's home is `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Progressive Disclosure). Silent narrowing is a framing failure. A narrowed SPEC never becomes a `ROADMAP.md` phase.
+
+Keep this a decision map, not a transcript.
+
+Roadmap phases come only from a decomposition the user has approved. When they approve one for roadmap-scale work, replace `.agent/steering/ROADMAP.md` per `.agent/.automaton/references/ROADMAP-CONTRACT.md`. Without that approval, leave `ROADMAP.md` untouched and keep the deferred scope in the SPEC. When the approved objective matches a pending phase, adopt it: set `status: active` and write the change slug into its `change:` field.
 
 ### Surface
 
-List only constraints, unknowns, and risks that change implementation or verification. Keep decision-critical material in `SPEC.md`; link larger coherent detail under `spec/constraints.md`, `spec/risks.md`, `spec/gap-matrix.md`, or similar. If constraints point to unrelated outcomes, ask which outcome to frame first.
+List only constraints, unknowns, and risks that change implementation or verification. Keep decision-critical material in `SPEC.md`. Link larger coherent detail under `spec/constraints.md`, `spec/risks.md`, `spec/gap-matrix.md`, or similar. If constraints point to unrelated outcomes, ask which outcome to frame first.
 
 ### Select Lenses
 
-Choose the minimum useful lenses from `product`, `engineering`, `design`, `security`, `runtime`, and `content`. Default to `product` + `engineering`: even pure-engineering changes carry product risk, and a minimal set keeps the spec focused. Add `security` from the start when the change touches auth, data, or trust.
-
-If the change involves content creation (writing, article, brief, deck, blog post, newsletter, documentation, or similar prose), add the content lens and read `references/content-framing.md`.
-
-### Continue To Office-Hours When Not Frameable
-
-Use this when the request needs discovery, not one blocking decision. Continue into `auto-office-hours` in the same session when the request lacks a problem, stakeholder, desired outcome, content audience/thesis, first independent outcome, or direction choice. Recommend `auto-office-hours` only when continuation is blocked by context pressure, host limits, or the user's choice to pause.
-
-When this happens, follow `auto-office-hours`'s contract and wait for the user to approve an approach before any artifact write. Do not complete SPEC.md until an approach is approved and frame-ready.
+Choose the minimum useful lenses from `product`, `engineering`, `design`, `security`, `runtime`, and `content`. Default to `product` + `engineering`: even pure-engineering changes carry product risk, and a minimal set keeps the spec focused. Add `security` from the start when the change touches auth, data, or trust. For content work, add the content lens and read `references/content-framing.md`.
 
 ### Write SPEC.md
 
-If a `SPEC.md` already exists for this change, read it and preserve all `## Review:` sections. When office-hours seeded the skeleton, complete it in place: keep the approved sections faithful and add what the spec shape requires.
-
 <GATE>
 
-Do NOT proceed past this step without writing `SPEC.md` to `.agent/work/<change>/SPEC.md`.
+Do NOT write `SPEC.md` while a decision that would change scope, approach, or verification is unresolved. Resolve it, or get the user's explicit acceptance of an assumption, first. When you presented alternatives, that means the user picked one: presenting options and then writing your own recommendation is not approval.
 
-Do NOT write `SPEC.md` while a needs-decision item would change scope, approach, or verification unless the user answers it or explicitly accepts an assumption.
+Do NOT finish framing without `SPEC.md` at `.agent/work/<change>/SPEC.md`.
 </GATE>
 
-Read `references/spec-shape.md` and write the SPEC with its **core** fields and **conditional** fields. Conditional fields appear only when their named trigger applies.
+Read `references/spec-shape.md` and write the SPEC with its **core** fields and **conditional** fields. Conditional fields appear only when their named trigger applies. Apply the Artifact Signal Discipline rules from `.agent/.automaton/references/FRAMEWORK.md` while writing. For large coherent work, follow the spec layout in `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Progressive Disclosure).
 
-Apply the Artifact Signal Discipline rules from `.agent/.automaton/references/FRAMEWORK.md` while writing. For large coherent work, follow the spec layout in `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Progressive Disclosure).
+The spec is a decision record, not a transcript. It records what the user approved, in the user's final refined wording, not your editorial rewrite.
 
 ### Update State
 
@@ -89,18 +97,28 @@ If `active_change` is `bootstrap` or does not match the current objective, deriv
 
 After writing SPEC.md, run `node .agent/.automaton/scripts/sync-status.mjs --active-change "<change>" --canonical-spec ".agent/work/<change>/SPEC.md" --stage frame` from the project root. auto-plan owns the `stage: plan` mutation and records it when it writes PLAN.md, including on inline continuation.
 
+### Hand Off
+
+Frame's exit is a mandatory stop. Do not plan in the same turn. The user reading SPEC.md is the product review.
+
+Report what the spec bounds, what it excludes, and any assumption worth rejecting now. Then end the turn with `**Next:** auto-plan, <reason>`.
+
+<STOP>
+
+Halt and report when the user wants a solution before describing the problem, or when the diagnostic still cannot identify a stakeholder, desired outcome, content audience and thesis, concrete evidence, or observable workaround. Do not guess.
+</STOP>
+
 ## Output
 
-- Frameable path: **SPEC.md** written to `.agent/work/<change>/SPEC.md`; `canonical_spec` and frame state recorded through `sync-status.mjs`.
-- Not-frameable path: continue into `auto-office-hours`'s contract and do not report framing complete until an approved skeleton exists and SPEC.md can be completed.
-- Handoff: after SPEC.md, stop and present the spec for the user's approval, closing with `**Next:** auto-plan, <reason>`. The user reading SPEC.md is the product review. If not frameable, continue inline into `auto-office-hours` with the concrete blocker.
+- **SPEC.md** written to `.agent/work/<change>/SPEC.md`, with `canonical_spec` and frame state recorded through `sync-status.mjs`.
+- Scope coverage recorded in the spec: included, deferred, anti-goals, needs-decision. Omit empty groups.
+- `.agent/steering/ROADMAP.md` is updated only when the user approves a phased decomposition.
+
+Halted without an approved approach, nothing is written: report the discussion, why no approach was selected, and any deferred scope worth preserving.
 
 ## Rules
 
-- **SPEC.md is mandatory for frame completion.**
-- **The office-hours skeleton is optional.** Complete it when present, but a clear current request can be framed without it.
+- If the user's language shifts from exploration to urgency, or from technical to business framing, reclassify and state the change in plain language.
+- If the user expresses impatience, ask the two most critical unresolved questions. If they push back again, present alternatives with explicit assumptions.
 - If the user tries to skip spec writing, write the smallest useful SPEC and ask them to confirm or edit it.
-- Ask a question only when a single unresolved decision blocks the SPEC write. Discovery questions belong in office-hours. Never ask what the repo can answer: explore or dispatch the librarian first.
-- Match SPEC shape to the work shape; do not force every SPEC into a feature template.
-- Preserve review sections on refresh.
-- Keep notes operational: the SPEC is a contract, not an essay.
+- Match SPEC shape to the work shape rather than one feature template.

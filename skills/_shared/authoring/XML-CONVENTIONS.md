@@ -22,7 +22,7 @@ Do NOT proceed to auto-plan until:
 - The user has approved the bounded goal
 - Blocking questions are resolved or explicitly accepted
 
-If the user asks to skip framing, reframe through auto-office-hours.
+If the user asks to skip framing, write the smallest useful SPEC and ask them to confirm it.
 </GATE>
 ```
 
@@ -32,8 +32,8 @@ Not every skill needs tags. Match tag density to the skill's decision surface.
 
 | Tier | Tags | Examples |
 |------|------|----------|
-| Heavy | `<GATE>` + `<STOP>` | auto-execute, auto-office-hours, auto-onboard |
-| Medium | One tag, typically `<GATE>` or `<STOP>` | auto-frame, auto-plan, auto-verify, auto-resume, auto-eng-review |
+| Heavy | `<GATE>` + `<STOP>` | auto-execute, auto-frame |
+| Medium | One tag, typically `<GATE>` or `<STOP>` | auto-plan, auto-verify, auto-resume, auto-eng-review |
 | Light | No tags. Blocking conditions live in Rules as "Do not guess." sentences. | (none currently) |
 
 ## Signal Scarcity
