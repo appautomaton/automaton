@@ -35,8 +35,11 @@ test('auto-plan gates the PLAN.md write before the write instructions', () => {
 test('auto-plan preserves review sections and never replaces them as producer', () => {
   const source = readFileSync(join(skillsRoot, 'auto-plan', 'SKILL.md'), 'utf8')
 
-  assert.match(source, /Preserve existing `## Review:` sections on re-run/)
-  assert.match(source, /Preserve review sections on refresh/)
+  // One home for the rule, at the write, carrying its consolidation carve-out.
+  // The old double-pin (here and in Rules) made the duplication load-bearing.
+  assert.equal(source.match(/Preserve existing `## Review:` sections on re-run/g)?.length, 1, 'review preservation must appear exactly once')
+  assert.match(source, /unless the user explicitly requests consolidation/)
+  assert.doesNotMatch(source, /Preserve review sections on refresh/)
   assert.doesNotMatch(source, /Replace prior `## Review:`/)
 })
 

@@ -39,7 +39,7 @@
 **Touches:** `src/middleware/auth.js`, `src/routes/api/users.js`, `src/routes/api/settings.js`, `src/utils/jwt.js`, `tests/auth.test.js`
 ```
 
-Why subagent recommended: touches 5 files across middleware, routes, and utilities; crosses subsystem boundaries with shared interface changes.
+Why subagent recommended: crosses middleware, routing, and shared-utility boundaries with an interface change; broad cross-subsystem work is what the route exists for.
 
 ## Topology Section
 
@@ -51,9 +51,9 @@ A PLAN.md topology section names the default route, then only the overrides:
 Default: direct, serial, continuation after verification.
 
 Overrides:
-- Slice 4: subagent recommended (5 files across auth and routing subsystems)
+- Slice 4: subagent recommended (crosses auth middleware and routing with a shared interface change)
 
-Parallel-safe groups:
+**Parallel-safe groups:**
 - Slices 2 and 3 (disjoint write sets: Slice 2 touches `src/db/migrations/`, Slice 3 touches `src/ui/components/`; no shared state)
 
 Checkpoints:

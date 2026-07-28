@@ -106,12 +106,12 @@ Write the plan to `.agent/work/<change>/PLAN.md`.
 - **Execution routing and topology**: default continuation path, explicit overrides/checkpoints, and a **Parallel-safe groups:** line set to `none` or the slice groups.
 - **Per-slice verification**: one verification command inline on every material slice.
 
-**Conditional** sections appear only when their trigger applies. Omit or mark "n/a" otherwise:
+**Conditional** sections appear only when their trigger applies. Omit when the trigger does not apply:
 - **Architecture approach:** introduces a new pattern, non-obvious decision, or cross-system integration. Name the contestable decisions and their tradeoffs plainly; a review can only bite what the plan states. Omit when the design is obvious from SPEC.
 - **Requirement traceability:** SPEC names gap IDs, invariant IDs, audit questions, migration checkpoints, or coverage targets. Omit when the SPEC has no traceable IDs.
 - **Aggregate verification commands table:** ≥ 3 slices or commands not captured per-slice. Per-slice inline suffices for smaller plans (index over transcript).
 
-Apply the Artifact Signal Discipline rules from `.agent/.automaton/references/FRAMEWORK.md` while writing. Preserve existing `## Review:` sections on re-run. Review skills replace their own sections.
+Apply the Artifact Signal Discipline rules from `.agent/.automaton/references/FRAMEWORK.md` while writing. Preserve existing `## Review:` sections on re-run unless the user explicitly requests consolidation. Review skills replace their own sections.
 
 ### Write DESIGN.md (if it earns existence)
 
@@ -135,4 +135,4 @@ Report the slice count, the execution topology, and any checkpoint. Then end the
 
 ## Rules
 
-- Preserve review sections on refresh unless the user explicitly requests consolidation.
+- Do not add slices the approved SPEC does not call for. Scope questions return to `auto-frame`; planning never expands scope.
