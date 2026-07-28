@@ -133,7 +133,7 @@
         </div>
         <div>
           <h3>Artifacts as contracts</h3>
-          <p>SPEC.md and PLAN.md are reloadable contracts, not meeting notes. A fresh session reads them and continues where the last one stopped, because every decision was written down when it was made.</p>
+          <p>SPEC.md and PLAN.md are reloadable contracts, not meeting notes. A fresh session reads them and continues where the last one stopped, because every decision was written down when it was made. Nothing else is written: the harness keeps the running log of the work, and the description of the project stays in the repository, where it is reviewed alongside the code it describes.</p>
         </div>
         <div>
           <h3>State as evidence</h3>
@@ -182,14 +182,15 @@
       <p class="eyebrow"><span class="num">04</span> The token economy</p>
       <h2>Instructions compete with your code for the same window.</h2>
       <p>Automaton&rsquo;s entry points are deliberately small, and depth loads only when a trigger fires. The prompt budget is enforced in CI: a skill that grows past its word ceiling fails the build until someone consciously raises it.</p>
+      <p>We hold the harness to the same scan. In July 2026 it deleted two of its own eight skills, 3,800 words of instruction that nothing was reading. The shipped corpus fell 14%. The bar above barely moved, because what was cut never loaded at runtime. Small is not the goal. Loaded is the goal.</p>
 
       <div class="chart-box">
-        <svg viewBox="0 0 640 248" role="img" aria-label="Bar chart: instruction tokens held to complete one unit of work. Automaton about 4 thousand, Superpowers 7, Trellis 9, GSD 25, gstack 28.">
+        <svg viewBox="0 0 640 248" role="img" aria-label="Bar chart: instruction tokens held to complete one unit of work. Automaton about 5 thousand, Superpowers 7, Trellis 9, GSD 25, gstack 28.">
           <g transform="translate(120,12)">
-            <g><title>Automaton: ~4k tokens</title>
+            <g><title>Automaton: ~5k tokens</title>
               <text class="bar-name hi" x="-10" y="15" text-anchor="end">Automaton</text>
-              <rect class="bar hi" x="0" y="2" width="69" height="20" rx="3"></rect>
-              <text class="bar-val" x="77" y="17">~4k</text>
+              <rect class="bar hi" x="0" y="2" width="86" height="20" rx="3"></rect>
+              <text class="bar-val" x="94" y="17">~5k</text>
             </g>
             <g transform="translate(0,44)"><title>Superpowers: ~7k tokens</title>
               <text class="bar-name" x="-10" y="15" text-anchor="end">Superpowers</text>
@@ -215,7 +216,7 @@
           </g>
         </svg>
       </div>
-      <p class="caption">In-house measurement across each harness&rsquo;s default workflow, July 2026. Midpoints shown. Method notes live in the repository, and the point survives the error bars.</p>
+      <p class="caption">In-house measurement across each harness&rsquo;s default workflow. Automaton&rsquo;s bar is the midpoint of its five stage working sets, recomputed 2026-07-28 (<a href="https://github.com/appautomaton/automaton/blob/main/docs/token-economy.md">method notes</a>). The other bars are July 2026 midpoints, not re-run since. The point survives the error bars.</p>
     </section>
 
     <section id="install">
