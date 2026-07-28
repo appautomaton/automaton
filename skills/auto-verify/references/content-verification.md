@@ -1,6 +1,6 @@
 # Content Verification
 
-Load this reference when verifying a slice that creates, rewrites, edits, outlines, or audits prose.
+Load this reference when verifying a slice that creates, rewrites, edits, outlines, or audits prose or deck content.
 
 ## Verification Contract
 
@@ -10,7 +10,7 @@ Evaluate each check as PASS, FAIL, or PARTIAL with evidence. Do not collapse con
 | --- | --- |
 | Audience | Name the intended reader and cite where the artifact addresses their knowledge, belief, or action need. |
 | Thesis | Quote or summarize the core claim and confirm each major section supports it. |
-| Voice | Compare the artifact to the voice sample or stated voice direction using sentence rhythm, formality, point of view, and vocabulary. |
+| Voice | Compare the artifact to the voice sample or stated voice using sentence rhythm, formality, point of view, and vocabulary. |
 | Content Anti-Goals | List the named anti-goals and show whether the artifact violates any of them. |
 | Channel | Confirm the artifact fits the publication surface, such as docs, blog, newsletter, deck, proposal, README, or internal brief. |
 | Source Policy | Verify every citation, link, quotation, and external fact is allowed by the plan. |

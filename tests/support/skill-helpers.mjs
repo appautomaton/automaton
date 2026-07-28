@@ -2,6 +2,7 @@
 // Resolves paths relative to this file (tests/support/), so callers in tests/ stay path-agnostic.
 import assert from 'node:assert/strict'
 import { fileURLToPath } from 'node:url'
+import { CONTENT_FIELDS } from '../../lib/contracts.mjs'
 
 export const skillsRoot = fileURLToPath(new URL('../../skills', import.meta.url))
 export const cliPath = fileURLToPath(new URL('../../bin/automaton.mjs', import.meta.url))
@@ -17,7 +18,9 @@ export const authoredSkills = [
 
 export const namePattern = /^[a-z0-9]+(-[a-z0-9]+)*$/
 export const perSkillScriptCommand = /`scripts\/(?:get-context|sync-status)\.mjs`/
-export const contentDimensions = ['Audience', 'Thesis', 'Voice', 'Content Anti-Goals', 'Channel', 'Source Policy', 'Factual Risk', 'Format']
+// The content-track field vocabulary is data (contracts-data.json), so a rename in
+// any stage reference is a failing test, not silent relay drift (pass 7).
+export const contentDimensions = [...CONTENT_FIELDS.requiredCore, ...CONTENT_FIELDS.deferred]
 export const antiSlopPatterns = [
   'Significance inflation',
   'Promotional language',

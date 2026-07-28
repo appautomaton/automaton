@@ -13,7 +13,7 @@ Carry these framing fields into every content slice:
 | Voice | Constrains tone, sentence rhythm, formality, and point of view. |
 | Content Anti-Goals | Defines what the artifact must not sound like or do. |
 
-If any field is missing, add a planning assumption or a blocking question. Do not let execution invent it.
+If a required-core field (Audience, Thesis, Voice, Content Anti-Goals) is missing from SPEC.md, that is a framing gap: stop and ask, or recommend `auto-frame`. Never fill it with a planning assumption. Assumptions are for the deferred dimensions below, and only when execution does not hinge on the answer.
 
 ## Deferred Dimensions
 
@@ -54,6 +54,6 @@ Prefer Markdown-first artifacts unless SPEC.md names a different format.
 ### Slice: Rewrite Documentation Page
 
 - **Artifact target:** `docs/foo.md`
-- **Inputs:** existing doc and SPEC.md voice direction
+- **Inputs:** existing doc and SPEC.md voice
 - **Constraints:** channel = docs site, source policy = existing repo only, format = reference doc
 - **Verification:** run markdown/lint tests when available and inspect for audience fit, preserved facts, and anti-goal violations

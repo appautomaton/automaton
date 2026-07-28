@@ -22,7 +22,7 @@ One falsifiable or debatable claim the piece makes. Not a topic, not a summary. 
 
 **Bad:** "An overview of feature flag best practices."
 
-### Voice Direction
+### Voice
 
 Either a pointer to a voice sample (file path or inline excerpt) or a 2–3 sentence description of the target voice: sentence rhythm, formality level, use of first person, punctuation habits.
 
@@ -51,11 +51,11 @@ Before finalizing a content-oriented SPEC.md, scan the spec itself against `.age
 
 ## Lens Interaction
 
-Content framing adds a content lens to the standard lens set. It does not replace `product` or `engineering`; it supplements them.
+The content lens rule lives here; skills and stage references point instead of restating it.
 
-- If the change is content-only (article, blog post, newsletter), lenses are `product` + `design` + content.
-- If the change produces content as part of a feature (onboarding copy, error messages, docs), lenses are `product` + `engineering` + content.
-- Content lens does not trigger `security` or `runtime` unless the content involves sensitive data or is generated at runtime.
+- Content-only change (article, blog post, newsletter): lenses are `product` + `content`. Add `design` when the deliverable has a visual surface (deck, styled docs page).
+- Content inside a feature (onboarding copy, error messages, docs): lenses are `product` + `engineering` + `content`.
+- The content lens never triggers `security` or `runtime` unless the content touches sensitive data or is generated at runtime.
 
 ## Deferred Dimensions
 

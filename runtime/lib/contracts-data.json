@@ -34,6 +34,10 @@
     "implementer": ["DONE", "DONE_WITH_CONCERNS", "NEEDS_CONTEXT", "BLOCKED"],
     "reviewer": ["APPROVED", "CHANGES_REQUESTED", "BLOCKED"]
   },
+  "contentFields": {
+    "requiredCore": ["Audience", "Thesis", "Voice", "Content Anti-Goals"],
+    "deferred": ["Channel", "Source Policy", "Factual Risk", "Format"]
+  },
   "artifactLabels": {
     "verifyGap": "VERIFY-GAP"
   },

@@ -9,6 +9,7 @@ import {
   ARTIFACT_LINT,
   CANONICAL_POINTER_CHECKS,
   CHECKPOINT_TYPES,
+  CONTENT_FIELDS,
   CONTRACTS_DATA,
   ENGINEERING_REVIEW_VERDICTS,
   EXECUTION_ROUTES,
@@ -43,6 +44,7 @@ test('kernel contracts are driven by the checked-in contract manifest', () => {
   assert.deepEqual(VERDICT_ROUTING, contractsManifest.verdictRouting)
   assert.deepEqual(ARTIFACT_LINT, contractsManifest.artifactLint)
   assert.deepEqual(SUBAGENT_STATUSES, contractsManifest.subagentStatuses)
+  assert.deepEqual(CONTENT_FIELDS, contractsManifest.contentFields)
   assert.deepEqual(ARTIFACT_LABELS, contractsManifest.artifactLabels)
 })
 

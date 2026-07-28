@@ -26,7 +26,7 @@ Include only when the trigger applies:
 - Scope preservation: whether this preserves the user's full stated intent or intentionally decomposes it - trigger: anything was deferred or narrowed.
 - Approved approach: the chosen approach, the evidence supporting it, and what that evidence does not prove - trigger: alternatives were presented.
 - Rejected or deferred framings, with reasons - trigger: a direction was ruled out. Do not carry the full alternatives analysis.
-- Mode context - trigger: the mode changes framing. Startup: demand, status quo or workaround, target user or wedge. Builder: core delight, novelty, the "whoa" factor. Content: reader, thesis, voice direction, content anti-goals.
+- Mode context - trigger: the mode changes framing. Startup: demand, status quo or workaround, target user or wedge. Builder: core delight, novelty, the "whoa" factor. Content: reader, thesis, voice, content anti-goals.
 - Blocking questions or assumptions - trigger: present and material.
 - `Supersedes:` in the header - trigger: a prior spec exists for this change.
 
@@ -39,6 +39,6 @@ Include the section that changes framing or verification. Omit for plain feature
 - Audit: what the audit must answer, evidence sources, finding schema, the decision that depends on findings.
 - Migration: source state, target state, compatibility constraints, rollout or rollback, verification.
 - Coverage: target risk areas, what is undertested, expected improvement, regression proof.
-- Content: audience, thesis, voice direction, content anti-goals; read `content-framing.md`.
+- Content: audience, thesis, voice, content anti-goals; read `content-framing.md`.
 
 Save to `.agent/work/<change>/SPEC.md`, never to a host-specific path. A `SPEC.md` without `canonical_spec` in `current.json` means framing is still in progress.

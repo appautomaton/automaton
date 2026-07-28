@@ -42,6 +42,8 @@ export const ARTIFACT_LINT = CONTRACTS_DATA.artifactLint
 
 export const SUBAGENT_STATUSES = CONTRACTS_DATA.subagentStatuses
 
+export const CONTENT_FIELDS = CONTRACTS_DATA.contentFields
+
 export const ARTIFACT_LABELS = CONTRACTS_DATA.artifactLabels
 
 export const PREREQUISITE_DIAGNOSTIC_CODES = CONTRACTS_DATA.prerequisiteDiagnosticCodes

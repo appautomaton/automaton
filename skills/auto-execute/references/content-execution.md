@@ -1,6 +1,6 @@
 # Content Execution
 
-Load this reference when the active slice drafts, rewrites, edits, outlines, audits, or verifies a prose artifact.
+Load this reference when the active slice drafts, rewrites, edits, outlines, audits, or verifies a prose or deck artifact.
 
 ## Execution Contract
 

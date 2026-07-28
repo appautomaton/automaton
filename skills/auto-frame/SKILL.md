@@ -80,7 +80,7 @@ List only constraints, unknowns, and risks that change implementation or verific
 
 ### Select Lenses
 
-Choose the minimum useful lenses from `product`, `engineering`, `design`, `security`, `runtime`, and `content`. Default to `product` + `engineering`: even pure-engineering changes carry product risk, and a minimal set keeps the spec focused. Add `security` from the start when the change touches auth, data, or trust. For content work, add the content lens and read `references/content-framing.md`.
+Choose the minimum useful lenses from `product`, `engineering`, `design`, `security`, `runtime`, and `content`. Default to `product` + `engineering`: even pure-engineering changes carry product risk, and a minimal set keeps the spec focused. Add `security` from the start when the change touches auth, data, or trust. For content work, add the content lens; the lens set lives in `references/content-framing.md` (Lens Interaction).
 
 ### Write SPEC.md
 

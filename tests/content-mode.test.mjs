@@ -1,6 +1,7 @@
 // Content-mode references and cross-skill content consistency.
 // Failure story: the content track spans five skills by design (consolidation-findings C5).
-// These pins keep the five stage references consistent and local without a shared catalog.
+// The field vocabulary drifted anyway (Voice vs Voice Direction), so the vocabulary is
+// now data (contracts-data.json contentFields, pass 7); these pins keep the relay consistent.
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync, mkdtempSync } from 'node:fs'
@@ -127,6 +128,38 @@ test('content references defer anti-slop taxonomy to the shared reference', () =
   const combinedLocalRefs = contentRefs.join('\n')
   assert.doesNotMatch(combinedLocalRefs, /Unsupported specificity/)
   assert.doesNotMatch(combinedLocalRefs, /Superficial `-ing` analysis/)
+})
+
+test('content field vocabulary has one home, one spelling, and full-pipeline deck coverage', () => {
+  // Failure story: five stage files each defined the content fields and the relay drifted
+  // (Voice vs Voice Direction). The vocabulary is now data (contracts-data.json
+  // contentFields); prose definitions with examples live only in content-framing.
+  const files = {
+    intake: readFileSync(join(skillsRoot, 'auto-frame', 'references', 'content-intake.md'), 'utf8'),
+    framing: readFileSync(join(skillsRoot, 'auto-frame', 'references', 'content-framing.md'), 'utf8'),
+    specShape: readFileSync(join(skillsRoot, 'auto-frame', 'references', 'spec-shape.md'), 'utf8'),
+    planning: readFileSync(join(skillsRoot, 'auto-plan', 'references', 'content-planning.md'), 'utf8'),
+    execution: readFileSync(join(skillsRoot, 'auto-execute', 'references', 'content-execution.md'), 'utf8'),
+    verification: readFileSync(join(skillsRoot, 'auto-verify', 'references', 'content-verification.md'), 'utf8')
+  }
+
+  for (const [name, source] of Object.entries(files)) {
+    assert.doesNotMatch(source, /Voice Direction/i, `${name} must use the canonical field name Voice`)
+  }
+  assert.match(files.framing, /### Voice\n/, 'content-framing owns the Voice definition')
+
+  for (const name of ['planning', 'execution', 'verification']) {
+    assert.doesNotMatch(files[name], /\*\*Good:\*\*/, `${name} must point to content-framing for definitions, not restate them`)
+  }
+
+  // Decks enter the track at intake and planning; execution and verification must not drop them.
+  assert.match(files.execution, /deck/)
+  assert.match(files.verification, /deck/)
+
+  // The lens rule has one home; the skill points at it.
+  assert.match(files.framing, /The content lens rule lives here/)
+  const skill = readFileSync(join(skillsRoot, 'auto-frame', 'SKILL.md'), 'utf8')
+  assert.match(skill, /the lens set lives in `references\/content-framing\.md`/)
 })
 
 test('pass 2 content references stay local and do not duplicate pass 1 references', () => {
