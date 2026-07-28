@@ -2,6 +2,10 @@
 
 An optional, non-blocking challenge from a different model, run after the engineering verdict is rendered. Two models agreeing is a stronger signal than one model's thorough pass. Two models disagreeing marks a genuinely hard decision that belongs to the user.
 
+## Consent
+
+Ask before the first dispatch: the plan content and the verdict leave this provider. Name what is sent (PLAN.md content and the rendered verdict, nothing else) and proceed only on a yes, per the Asking The User convention. One consent covers the loop's rounds. When the host has no second model configured, skip the loop instead of asking.
+
 ## Dispatch
 
 - Send only the plan content and the rendered verdict. Never the conversation, credentials, or harness internals.

@@ -94,6 +94,7 @@ test('the outside voice is optional, bounded, and never auto-applies (DD-013)', 
   const voice = readFileSync(join(skillsRoot, 'auto-eng-review', 'references', 'outside-voice.md'), 'utf8')
 
   assert.match(engReview, /references\/outside-voice\.md/, 'eng-review must trigger the outside voice behind a conditional read')
+  assert.match(voice, /## Consent/, 'plan content leaves the provider only after an explicit yes')
   assert.match(voice, /not permission to act: the user decides/, 'cross-model agreement must not become an auto-apply')
   assert.match(voice, /Never edit the verdict, the plan, or the review section verdict fields/, 'outside-voice findings need a user decision to land')
   assert.match(voice, /continue without it and say so in one line/, 'a missing second model must degrade gracefully')

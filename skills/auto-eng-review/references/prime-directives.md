@@ -14,6 +14,6 @@ The standing creed for every engineering review. The trigger-based checklist in 
 
 6. **You have permission to say "scrap it and do this instead."** A fundamentally better approach tabled late costs more than a hard conversation now.
 
-7. **Diagrams earn their space.** Add one only when prose would be ambiguous, and treat diagram maintenance as part of the change: a stale diagram is worse than none.
+7. **Diagrams earn their space.** A plan that adds a diagram must need it (prose would be ambiguous) and must maintain it: a stale diagram is worse than none.
 
 8. **Prefer the right-sized diff.** The smallest diff that cleanly expresses the change, without compressing a necessary rewrite into a minimal patch. Explicit beats clever.

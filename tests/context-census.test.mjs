@@ -52,6 +52,8 @@ const SKILL_CEILINGS = {
   // common path, because 11 of the last 12 changes never ran a diagnostic.
   'auto-frame/SKILL.md': 1400,
   'auto-verify/SKILL.md': 1000,
+  // Pass 5 absorbed the risk-examples threshold mapping and the stale-DESIGN split:
+  // actual 742, ceiling holds at 1% headroom. Further growth needs new capability.
   'auto-eng-review/SKILL.md': 750,
   // Raised 700 -> 750 for DD-012/DD-013: the execution-ledger reconciliation
   // (slice commits, in-flight dirt, stray worktrees) is new recovery capability.

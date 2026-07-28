@@ -13,7 +13,7 @@ First action: run `node .agent/.automaton/scripts/get-context.mjs` from the proj
 
 ## Preamble
 
-Execution safety review. Architecture, data flow, edge cases, test strategy, not product vision. It does not modify the plan or reopen product scope. Identifies risks that could cause failure, stalling, or rework.
+Execution safety review. Architecture, data flow, edge cases, test strategy, not product vision. It does not change the plan's content or reopen product scope; its only write is appending its own `## Review: Engineering` section. Identifies risks that could cause failure, stalling, or rework.
 
 A good review names the riskiest slice, the most likely failure mode, and whether the test strategy catches it. A bad review lists generic concerns.
 
@@ -39,7 +39,7 @@ If the plan is missing or unreadable, set verdict to `needs_correction` and stop
 
 ### Load State
 
-Read the canonical `PLAN.md`. Read `DESIGN.md` only when `canonical_design` is set and resolves to a file. Otherwise continue without it and note that the plan intentionally has no design artifact.
+Read the canonical `PLAN.md`. Read `DESIGN.md` only when `canonical_design` is set and resolves to a file. An unset pointer means the plan intentionally has no design artifact; continue without it. A set pointer with a missing file is stale: report it and continue (DESIGN.md is optional here).
 
 ### Restate the Plan
 
@@ -51,8 +51,6 @@ Use this matrix as an internal checklist. Apply standards from `references/prime
 
 ### Risk Matrix
 
-Read `references/risk-examples.md` for sample matrix scoring.
-
 | Dimension | Rating (0–10) | What a 10 looks like |
 |-----------|---------------|----------------------|
 | Architecture fit | | Clean integration, no hacks, follows existing patterns |
@@ -62,7 +60,7 @@ Read `references/risk-examples.md` for sample matrix scoring.
 | Rollback safety | | Can revert without data loss or downtime |
 | Dependency risk | | No new critical dependencies; existing ones are stable |
 
-A score of 3 or lower in any dimension is a blocking concern: a score that low means you can already name the failure mode, and naming it is the review's job. Surface it explicitly. Read `references/engineering-sections.md` only when the plan carries non-trivial engineering risk.
+A score of 3 or lower in any dimension is a blocking concern: a score that low means you can already name the failure mode, and naming it is the review's job. Surface it explicitly. Blocking concerns return `needs_correction`; scores above the threshold with named, slice-scoped risks return `approved_with_risks`. Read `references/engineering-sections.md` only when the plan carries non-trivial engineering risk.
 
 ### Render Verdict
 
