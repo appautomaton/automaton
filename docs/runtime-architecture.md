@@ -39,11 +39,11 @@ Self-contained. No runtime imports (see DD-007). Called by LLM via bash.
 
 ```
 installProject()                    installHost(claude)
-├─ scaffold .agent/ tree            ├─ replace the 9 skill dirs → .claude/skills/
+├─ scaffold .agent/ tree            ├─ replace the 6 skill dirs → .claude/skills/
 ├─ replace runtime/ → .agent/.automaton/ │  (skip _shared/ and per-skill scripts)
 ├─ replace shared refs → .agent/.automaton/references/
 ├─ replace shared scripts → .agent/.automaton/scripts/
-└─ seed current.json if missing     ├─ generate HOST-TOOLS.md in the 4 dispatching skills
+└─ seed current.json if missing     ├─ generate HOST-TOOLS.md in the 3 dispatching skills
                                     ├─ replace generated hook/plugin implementations
                                     └─ merge host config when needed
 ```
@@ -64,5 +64,5 @@ User invokes /auto-frame
   └─ LLM works (reads files, writes SPEC.md, etc.)
   └─ Last step: node .agent/.automaton/scripts/sync-status.mjs --canonical-spec ... --stage frame
        → validates/writes current.json
-  └─ Output: "Recommended next: auto-plan" once the user approves SPEC.md
+  └─ Output: "**Next:** auto-plan, <reason>" once the user approves SPEC.md
 ```

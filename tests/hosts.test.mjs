@@ -1135,9 +1135,10 @@ test('HOST-TOOLS.md reaches every dispatching skill and scopes the librarian to 
     const target = join(root, '.claude', 'skills', skill, 'references', 'HOST-TOOLS.md')
     assert.equal(existsSync(target), true, `${skill} must receive HOST-TOOLS.md`)
     const content = readFileSync(target, 'utf8')
-    // HOST-TOOLS.md is generated only into these four skills, so its scope statement
+    // HOST-TOOLS.md is generated only into these three skills, so its scope statement
     // must name exactly them instead of promising "any stage".
-    assert.match(content, /automaton-librarian.*office-hours, frame, plan, and execute/, 'HOST-TOOLS.md must scope the librarian to the dispatching skills')
+    assert.match(content, /automaton-librarian.*frame, plan, and execute/, 'HOST-TOOLS.md must scope the librarian to the dispatching skills')
+    assert.doesNotMatch(content, /office-hours/, 'HOST-TOOLS.md must not reference the retired office-hours skill')
     assert.match(content, /auto-frame, auto-plan, and auto-execute/, 'HOST-TOOLS.md must name the skills that carry the reference')
     assert.doesNotMatch(content, /dispatched from any stage/)
     assert.match(content, /automaton-implementer.*execute stage/, 'HOST-TOOLS.md must mark the implementer execute-stage')
