@@ -113,13 +113,18 @@ export function buildSessionContext(projectRoot, options = {}) {
   messages.push('<automaton_reminder>')
   messages.push('Automaton is installed for this project as a stage-gated workflow.')
 
-  if (state?.activeChange && state?.stage) {
-    messages.push(`Current state: ${STATE_PATH} (change=${state.activeChange}; stage=${state.stage}).`)
+  if (state?.disengaged) {
+    messages.push(`Change "${state.activeChange}" is verified and the harness is disengaged until your next objective.`)
   } else {
-    messages.push(`Current state: ${STATE_PATH} (no active change recorded).`)
+    if (state?.activeChange && state?.stage) {
+      messages.push(`Current state: ${STATE_PATH} (change=${state.activeChange}; stage=${state.stage}).`)
+    } else {
+      messages.push(`Current state: ${STATE_PATH} (no active change recorded).`)
+    }
+
+    messages.push('Read .agent/.automaton/references/FRAMEWORK.md once per session to refresh the operating model.')
   }
 
-  messages.push('Read .agent/.automaton/references/FRAMEWORK.md once per session to refresh the operating model.')
   messages.push("Treat this as orientation, not a mandate. The user's latest request stays in charge.")
 
   const findings = sessionHealthFindings(projectRoot, state)

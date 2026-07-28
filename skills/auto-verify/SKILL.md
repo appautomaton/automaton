@@ -61,7 +61,7 @@ Build the full criterion checklist internally. Use `references/verification-temp
 ### On Pass
 
 - Append a compact `## Verification` section to the canonical `PLAN.md` (append-replace, never stack): per-slice criterion rollup, commands run, derived or skipped checks named, and the PASS verdict. Use the durable-record shape in `references/verification-template.md`. This is the record a future change or auditor reads. The inline report evaporates with the conversation.
-- Run `node .agent/.automaton/scripts/sync-status.mjs --stage verified` from the project root.
+- Run `node .agent/.automaton/scripts/sync-status.mjs --stage verified` from the project root. The verified sync disengages the harness: later session hooks stay quiet until a new objective starts.
 - If `.agent/steering/ROADMAP.md` exists, mark the matching `change:` phase `status: done` per `.agent/.automaton/references/ROADMAP-CONTRACT.md`. Skip empty or non-matching phases. When no active or pending phase and no deferred item remains, reset to the contract's empty shape. The ROADMAP edit lands in the working tree as a markdown leftover. Do not commit it. The user closes it in their own rhythm.
 - End the report with `Change status: complete` and a separate `New objective` line pointing to `auto-frame` for future work. Do not print a `Next:` line on PASS. Use `auto-resume` only for later re-entry or recovery.
 

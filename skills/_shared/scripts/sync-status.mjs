@@ -311,6 +311,16 @@ function applyStatePatch(currentState, patch) {
     clearUnlessPatched(nextState, patch, ['engineeringReview'])
   }
 
+  // The harness disengages when a change verifies: the session hook quiets
+  // until new work starts. The flag is derived from syncs, never set by hand:
+  // the verified sync sets it, and any sync that starts or advances work
+  // clears it.
+  if (patch.stage === 'verified') {
+    nextState.disengaged = true
+  } else if (patch.stage !== undefined || patch.activeChange !== undefined) {
+    delete nextState.disengaged
+  }
+
   return nextState
 }
 

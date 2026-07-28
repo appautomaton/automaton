@@ -21,6 +21,9 @@ test('auto-verify treats pass as completed change, not resume handoff', () => {
   assert.match(skill, /End the report with `Change status: complete`/)
   assert.match(skill, /sync-status\.mjs --stage verify/)
   assert.match(skill, /sync-status\.mjs --stage verified/)
+  // The verified sync is also the disengage signal: the harness quiets itself
+  // instead of lecturing every later session about a finished change.
+  assert.match(skill, /verified sync disengages the harness/)
   assert.match(skill, /sync-status\.mjs --stage execute/)
   assert.match(template, /PASS summary:/)
   assert.match(template, /New objective.*`auto-frame`/)

@@ -204,3 +204,11 @@ Two structural moves deserve their own record. The content track's field vocabul
 **Risk it creates:** the bent Where rule concentrates the no-silent-turn guarantee in `skill-conventions.test.mjs`'s emission-location guard; a future skill could emit a stop before its artifact writes, mitigated by the rule's "after artifact writes and state mutations" clause. Content-fields-as-data sets a precedent; the discipline is that vocabulary earns promotion only when a rename silently breaks a consumer, which the content relay demonstrably did (Voice vs Voice Direction).
 
 **See:** `runtime/lib/contracts-data.json` (`contentFields`), `skills/_shared/references/FRAMEWORK.md` (Handoff Model, Where), `skills/_shared/references/SUBAGENT-PROTOCOL.md` (Dispatch Packet, Subagent Return Statuses), `tests/context-census.test.mjs` (pass-by-pass ratchet comments), `tests/content-mode.test.mjs` (single-home guard), `docs/token-economy.md`.
+
+## DD-019: The harness disengages on the verified sync
+
+`current.json` gains a `disengaged` flag when a sync sets `stage: verified`, and the session hook renders a one-line quiet message instead of the standard orientation block. Any sync that starts or advances work (a new `active_change`, or any `--stage` sync) clears it.
+
+**Why:** after a terminal pass the hook kept delivering the full orientation block for a finished change on every later session, teaching the reader to skip the one surface that also carries health findings. The flag is derived inside `applyStatePatch` rather than set by the model: derive what is derivable (DD-012's rule), so no skill has to remember a second write. Disengagement is quiet, not blind: error-level findings still surface in the quiet branch.
+
+**See:** `skills/_shared/scripts/sync-status.mjs` (`applyStatePatch`), `runtime/lib/context.mjs` (`buildSessionContext`), `tests/state.test.mjs`, `tests/session-health.test.mjs`.

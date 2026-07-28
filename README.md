@@ -51,7 +51,7 @@ frame -> plan -> engineering review (optional) -> execute -> verify -> verified
 
 The user approving `SPEC.md` at frame's exit is the product review; no model gate stands in for product judgment.
 
-Most changes start at `auto-frame`, move through `auto-plan`, then continue with `auto-execute` and `auto-verify`. A full verification pass closes the change as `verified` (terminal). Use `auto-resume` to re-enter existing work from a fresh session at any point.
+Most changes start at `auto-frame`, move through `auto-plan`, then continue with `auto-execute` and `auto-verify`. A full verification pass closes the change as `verified` (terminal), and the harness then disengages: later sessions open quiet until your next objective. Use `auto-resume` to re-enter existing work from a fresh session at any point.
 
 Automaton keeps the running log of work and nothing else. `.agent/` holds where the change is now (`current.json`), what it decided (`SPEC.md`, `PLAN.md`), what proved it, and what comes next (`ROADMAP.md`). It writes no description of the project: identity, architecture, and constraints stay in the repo's own README, AGENTS.md, and `docs/`, where they are reviewed alongside the code they describe.
 

@@ -128,3 +128,26 @@ test('unresolvable canonical pointers surface as state findings', () => {
 
   assert.ok(findings.some((finding) => /canonicalSpec points to .* but file does not exist/.test(finding)))
 })
+
+test('a disengaged harness opens quiet, and the health channel stays live', () => {
+  const root = healthyProject('disengaged')
+  writeFileSync(join(root, '.agent', 'work', 'a-change', 'PLAN.md'), HEALTHY_PLAN, 'utf8')
+  const statePath = join(root, '.agent', '.automaton', 'state', 'current.json')
+  const writeState = (spec) => writeFileSync(statePath, JSON.stringify({
+    active_change: 'a-change',
+    stage: 'verified',
+    canonical_spec: spec,
+    canonical_plan: '.agent/work/a-change/PLAN.md',
+    disengaged: true
+  }, null, 2), 'utf8')
+
+  writeState('.agent/work/a-change/SPEC.md')
+  const quiet = buildSessionContext(root)
+  assert.match(quiet, /verified and the harness is disengaged until your next objective/)
+  assert.doesNotMatch(quiet, /FRAMEWORK\.md once per session/)
+  assert.doesNotMatch(quiet, /Needs attention/)
+
+  // Disengagement is quiet, not blind: a stale pointer still surfaces.
+  writeState('.agent/work/a-change/GONE.md')
+  assert.match(buildSessionContext(root), /Needs attention/)
+})

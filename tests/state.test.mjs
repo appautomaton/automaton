@@ -341,6 +341,36 @@ test('shared sync-status script updates current state through validated flags', 
   })
 })
 
+test('shared sync-status script sets disengaged on verified and clears it on new work', () => {
+  // Failure story: after a terminal pass the session hook kept lecturing about a
+  // finished change. The flag is derived from syncs, never set by hand: verified
+  // sets it, and any sync that starts or advances work clears it.
+  const root = mkdtempSync(join(tmpdir(), 'automaton-shared-state-disengage-'))
+  const script = fileURLToPath(new URL('../skills/_shared/scripts/sync-status.mjs', import.meta.url))
+  const currentTarget = join(root, '.agent', '.automaton', 'state', 'current.json')
+  const specPath = '.agent/work/my-change/SPEC.md'
+  const planPath = '.agent/work/my-change/PLAN.md'
+
+  mkdirSync(join(root, '.agent', 'work', 'my-change'), { recursive: true })
+  writeFileSync(join(root, specPath), LINT_CLEAN_SPEC, 'utf8')
+  writeFileSync(join(root, planPath), LINT_CLEAN_PLAN, 'utf8')
+
+  execFileSync(process.execPath, [
+    script, root, '--active-change', 'my-change', '--canonical-spec', specPath, '--stage', 'frame'
+  ], { encoding: 'utf8' })
+  assert.equal(loadCurrentState(currentTarget).disengaged, undefined, 'no disengage flag before verified')
+
+  execFileSync(process.execPath, [
+    script, root, '--canonical-plan', planPath, '--stage', 'verified'
+  ], { encoding: 'utf8' })
+  assert.equal(loadCurrentState(currentTarget).disengaged, true, 'the verified sync must disengage the harness')
+
+  execFileSync(process.execPath, [
+    script, root, '--active-change', 'next-change', '--stage', 'frame'
+  ], { encoding: 'utf8' })
+  assert.equal(loadCurrentState(currentTarget).disengaged, undefined, 'starting new work must clear the flag')
+})
+
 test('shared sync-status script rejects invalid state updates without writing current state', () => {
   const root = mkdtempSync(join(tmpdir(), 'automaton-shared-state-reject-'))
   const script = fileURLToPath(new URL('../skills/_shared/scripts/sync-status.mjs', import.meta.url))
