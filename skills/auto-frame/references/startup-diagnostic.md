@@ -37,7 +37,7 @@ Push target: a specific claim about why the product becomes more valuable as the
 - Has paying customers → Q4, Q5, Q6
 - Pure engineering/infra → Q2, Q4 only
 
-## Smart Routing by Scope Classification
+## Smart Routing by Work Scale
 
 - Bug-sized → Q2 only (status quo / workaround cost), then move to alternatives
 - Feature-sized → standard routing by product stage

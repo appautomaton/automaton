@@ -1,6 +1,6 @@
 # Anti-Slop
 
-Prose patterns to flag in any Automaton artifact. Flag each hit unless it is quoted source text, matches the user's approved voice, or is intentionally justified.
+Prose patterns to flag in any Automaton artifact. Flag each pattern cluster unless it is quoted source text, matches the user's approved voice, or is intentionally justified.
 
 ## Patterns
 

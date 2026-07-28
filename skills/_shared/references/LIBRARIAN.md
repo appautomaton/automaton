@@ -1,6 +1,6 @@
 # Librarian (Read-Only Codebase Lookup)
 
-`automaton-librarian` is a read-only, cheap-model subagent for codebase exploration. Any stage (`auto-frame`, `auto-plan`, or `auto-execute`) may dispatch it to answer a bounded "where is X / how does Y connect / which files matter for Z" question without pulling wide reads into the caller's context window.
+`automaton-librarian` is a read-only codebase-exploration subagent on the light model tier where one is configured. The three dispatching skills (`auto-frame`, `auto-plan`, `auto-execute`) may dispatch it to answer a bounded "where is X / how does Y connect / which files matter for Z" question without pulling wide reads into the caller's context window.
 
 This is a one-shot lookup, not the per-slice subagent protocol. There is no review loop, and it does not make the caller an orchestrator: you ask one question, you get evidence back, and you keep every decision. The implementer and reviewer dispatch rules in `SUBAGENT-PROTOCOL.md` are separate and stay execute-only.
 

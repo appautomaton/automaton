@@ -46,7 +46,7 @@ test('LIBRARIAN.md defines a one-shot read-only lookup contract', () => {
 })
 
 test('lifecycle skills offer the librarian as an opt-in read-only lookup', () => {
-  // LIBRARIAN.md grants dispatch to all four stages that risk wide reads.
+  // LIBRARIAN.md grants dispatch to the three skills that risk wide reads.
   // Execute is included: tracing a flow before editing is exactly where
   // exploration would otherwise blow up the coordinator's context.
   for (const skill of ['auto-frame', 'auto-plan', 'auto-execute']) {

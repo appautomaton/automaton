@@ -10,7 +10,7 @@ Ask one at a time. The goal is to brainstorm and sharpen, not interrogate.
 - **Q4: What existing thing is closest to this, and how is yours different?**
 - **Q5: What would you add if you had unlimited time?** What's the 10x version?
 
-## Smart Routing by Scope Classification
+## Smart Routing by Work Scale
 
 - Bug-sized → Q3 (fastest path) + Q4 (how is yours different?), then move to alternatives
 - Feature-sized → standard (all five questions)

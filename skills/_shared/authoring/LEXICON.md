@@ -7,11 +7,12 @@ Canonical vocabulary for Automaton skills. Use these terms exactly. Do not subst
 | Canonical | Anti-patterns | Meaning |
 |-----------|---------------|---------|
 | change | ticket, issue, story, task | A unit of work tracked by Automaton. Has a name, stage, and artifacts. |
-| stage | phase, step | One of `frame`, `plan`, `execute`, `verify`, `verified`, `resume`. Immutable and validated. Roadmap phases (`ROADMAP-CONTRACT.md`) are a separate concept, not a stage synonym; "Phase N" is correct there and only there. Every skill's frontmatter stage is one of these values. |
+| stage | phase, step | One of `frame`, `plan`, `execute`, `verify`, `verified`, `resume`. Immutable and validated. Roadmap phases (`ROADMAP-CONTRACT.md`) are a separate concept, not a stage synonym; "Phase N" is correct there and only there. Every skill's frontmatter stage is one of these values. `resume` is a validated stage value (it serves `automaton context resume`), not a lifecycle stage a change advances through. |
+| bounded goal | aim, mission | The spec's one-sentence scope. Per-slice aims are objectives; delivered results are outcomes. |
 | slice | task, subtask, step | A testable, deliverable chunk of a plan. Ordered and verifiable. |
 | artifact | document, file | A markdown file produced by a skill: `SPEC.md`, `DESIGN.md`, `PLAN.md`. |
 | steering | project config | `.agent/steering/ROADMAP.md`, the forward queue. Automaton keeps no description of the project: identity, constraints, and architecture live in the repo's own README, AGENTS.md, and `docs/`. |
-| skill folder | skill file | A self-contained directory with `SKILL.md`, `references/`, and optionally `templates/`. |
+| skill folder | skill file | A self-contained directory with `SKILL.md` and `references/` (plus `role-sources/` in auto-execute). |
 | references | guides, docs, examples | Lazy-loaded deep content inside a skill folder. Loaded only when needed. |
 | scripts | helpers, tools | Shared self-contained `.mjs` files in `.agent/.automaton/scripts/`. Invoked via `bash` tool with `node`. |
 

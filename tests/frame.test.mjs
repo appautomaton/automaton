@@ -223,9 +223,9 @@ test('auto-frame ships startup and builder diagnostic references', () => {
   assert.match(diagnostic, /`builder-diagnostic\.md`/)
   assert.match(startup, /Demand Reality/)
   assert.match(startup, /Smart Routing by Product Stage/)
-  assert.match(startup, /Smart Routing by Scope Classification/)
+  assert.match(startup, /Smart Routing by Work Scale/)
   assert.match(builder, /coolest version/)
-  assert.match(builder, /Smart Routing by Scope Classification/)
+  assert.match(builder, /Smart Routing by Work Scale/)
 })
 
 // Landscape search must be reachable from every mode: its file carries Builder search
