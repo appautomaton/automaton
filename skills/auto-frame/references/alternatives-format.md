@@ -4,17 +4,17 @@ Present exactly 2–3 approaches using this format. For bug, feature, and capabi
 
 auto-eng-review keeps a sibling implementation-alternatives format for execution paths. The shared skeleton is deliberate and the rules differ on purpose: this file differentiates scoping choices before a spec exists, that one compares safer execution paths for an already-approved plan.
 
+State your recommendation and its one-sentence why first, then the approaches. Present the choice through the host question tool per `.agent/.automaton/references/FRAMEWORK.md` (Asking The User) when the tool exists; the tool renders the options, so keep each approach compact.
+
 ```
 ## Approach A: [Name]
 
 **Summary:** [1–2 sentences]
 **Effort:** [S/M/L/XL]
 **Risk:** [Low/Med/High]
-**Pros:**
-- [2–3 bullets]
-**Cons:**
-- [2–3 bullets]
-**Reuses:** [existing code/patterns leveraged, or "none"]
+**Pros:** [2 bullets]
+**Cons:** [2 bullets]
+**Reuses:** [existing code/patterns leveraged, or "none"; optional]
 
 ## Approach B: [Name]
 
@@ -33,5 +33,5 @@ auto-eng-review keeps a sibling implementation-alternatives format for execution
 - For other shapes, the differentiation axis in the header paragraph replaces the minimal-viable and ideal-architecture pair.
 - One can be **creative/lateral**: unexpected approach, different framing of the problem.
 - Alternatives must vary the approach to the user's goal, not vary the goal itself. A capability-sized goal should produce capability-sized alternatives, not three ways to shrink the goal to feature-size.
-- After presenting, state your recommendation and why in one sentence.
+- The recommendation leads: state it and its one-sentence why before the approaches, never after.
 - Do NOT proceed until the user explicitly approves an approach or chooses a different one.

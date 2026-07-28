@@ -258,6 +258,11 @@ test('auto-frame references route only to steps that exist in the skill', () => 
   // names, so shape-specific differentiation is not overridden by the format reference.
   assert.match(alternatives, /For bug, feature, and capability work, one must be minimal viable/)
   assert.match(alternatives, /blast radius, traceability, evidence depth, rollout risk, or verification strength/)
+
+  // The recommendation leads, and the choice renders through the host question tool:
+  // the biggest branch decision in the pipeline must not bury its verdict last.
+  assert.match(alternatives, /State your recommendation and its one-sentence why first/)
+  assert.match(alternatives, /host question tool/)
 })
 
 test('shape questions have one home both diagnostics point at', () => {

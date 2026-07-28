@@ -13,12 +13,6 @@ Avoid blocklist thinking. The issue is not a phrase. It is validation without ev
 
 ## Soft To Sharp
 
-### Vague Market
-
-Soft: "That's a big market. What kind of tool are you thinking about?"
-
-Sharp: "There are thousands of tools in that category. What specific task does a specific person waste time on today, and what changes if your version works?"
-
 ### Social Proof
 
 Soft: "That's encouraging. Who have you talked to?"
@@ -30,18 +24,6 @@ Sharp: "Liking an idea is free. Has anyone offered to pay, asked when it ships, 
 Soft: "What does seamless mean to you?"
 
 Sharp: "'Seamless' is not a feature. What exact step fails today, how often, and what would be measurably different after this work?"
-
-### Builder Riff
-
-Soft: "Consider adding sharing; it might improve retention."
-
-Sharp: "What if the result can be shared as a live URL, dropped into Slack, or replayed as it generates? Which one turns this from 'a tool I used' into 'a thing I showed someone'?"
-
-### Observation
-
-Soft: "Have you gotten feedback?"
-
-Sharp: "Have you watched someone use it without helping them? What did they do that surprised you?"
 
 ## Grill Depth
 
