@@ -2,7 +2,7 @@
 
 Plan-level format. Group results by slice; verdict applies to the entire plan. The full checklist is internal. The report expands only material gaps by default.
 
-Two uses of one shape: the inline conversation report (always), and on PASS the same content written to `PLAN.md` as a terminal `## Verification` section (append-replace). The durable heading is exactly `## Verification`, no change-name suffix, so append-replace always has a stable target. The suffixed heading below is for the inline report only. The durable copy keeps the Summary block plus one rollup line per slice, drops the `Change status` and `New objective` routing lines with the rest of the conversational framing, and never stacks on a prior section.
+Two uses of one shape: the inline conversation report (always), and on PASS the terminal `## Verification` section written to `PLAN.md` (append-replace). The durable heading is exactly `## Verification`, no change-name suffix, so append-replace always has a stable target. The suffixed heading below is for the inline report only. The inline report keeps passing criteria as grouped counts and expands gaps; it evaporates with the conversation. The durable copy is the record a future change or auditor reads: it keeps the Summary block and one rollup line per slice with the commands run and any derived or skipped checks named, drops the `Change status` and `New objective` routing lines with the rest of the conversational framing, and never stacks on a prior section.
 
 ```markdown
 ## Verification: [Change Name]

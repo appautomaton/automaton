@@ -41,7 +41,7 @@ Gather every acceptance criterion and verification command from every slice in P
 
 <GATE>
 
-Do NOT modify source code, tests, or project artifacts during verification. Verify reads and runs commands. It does not fix.
+Do NOT modify source code, tests, or project artifacts during verification. Verify reads and runs commands; its only writes are the markdown records this skill owns (`VERIFY-GAP` blocks, the `## Verification` section, the ROADMAP phase update). It does not fix.
 
 Do NOT run any `git` write command (`commit`, `amend`, `reset`, `rebase`, `branch`, `checkout`, `worktree`, `push`). The commit rhythm is owned by `auto-execute` (see `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md`, Git Rhythm). Markdown writes that verify produces (`VERIFY-GAP` blocks on FAIL, the `## Verification` section and ROADMAP phase update on PASS) sit in the working tree; `auto-execute` sweeps them up on re-entry, or the user closes them after a terminal pass.
 </GATE>
@@ -72,7 +72,7 @@ Before annotating, check each failing criterion for an existing `VERIFY-GAP` blo
 - First failure: annotate failed slices in `PLAN.md` with structured gap blocks, run `node .agent/.automaton/scripts/sync-status.mjs --stage execute` from the project root so re-entry resumes gap fixing, and hand off with `**Next:** auto-execute, <reason>`, which reads these annotations on re-entry.
 - Repeated failure of the same criterion: annotate, run `node .agent/.automaton/scripts/sync-status.mjs --stage plan` from the project root, and hand off with `**Next:** auto-plan, <reason naming the repeated criterion>`.
 
-Each gap block needs `VERIFY-GAP`, evidence, and a fix objective. Append-replace (`FRAMEWORK.md`, Artifact Signal Discipline): replace prior `VERIFY-GAP` blocks for the same slice rather than stacking.
+Each gap block needs `VERIFY-GAP`, evidence, and a fix objective. Append-replace (`.agent/.automaton/references/FRAMEWORK.md`, Artifact Signal Discipline): replace prior `VERIFY-GAP` blocks for the same slice rather than stacking.
 
 ## Output
 

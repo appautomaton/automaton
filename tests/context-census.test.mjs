@@ -62,7 +62,9 @@ const SKILL_CEILINGS = {
   // Pass 6's slug reorder holds 1400 at actual 1387 (1% headroom): the duplicate
   // write-ban deletion paid for the Name The Change step.
   'auto-frame/SKILL.md': 1400,
-  'auto-verify/SKILL.md': 1000,
+  // Down-ratchet 1000 -> 917 (pass 12): the gate boundary and template flip added
+  // precision, not bulk; actual 873, 873 x 1.05 = 917.
+  'auto-verify/SKILL.md': 917,
   // Pass 5 absorbed the risk-examples threshold mapping and the stale-DESIGN split:
   // actual 742, ceiling holds at 1% headroom. Further growth needs new capability.
   'auto-eng-review/SKILL.md': 750,
