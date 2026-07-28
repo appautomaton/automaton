@@ -5,7 +5,7 @@ Portable, stage-gated agentic-AI harness for Claude Code, Codex, and OpenCode.
 ## Architecture
 
 - **Copy-based install.** Skills and shared runtime files are inspectable after install. `_shared/` installs once under `.agent/.automaton/` where host skills can reference it (see `docs/design-decisions.md` DD-001). Install writes a receipt (`.agent/.automaton/state/install-manifest.json`) recording files, created directories, and merged config fragments per host, so uninstall and upgrade act on exactly what this project received (DD-011).
-- **Skills are pure markdown.** `SKILL.md` + `references/` + optional `templates/`. Shared helper scripts live in `skills/_shared/scripts/`.
+- **Skills are pure markdown.** `SKILL.md` + `references/`, plus `role-sources/` in auto-execute for the dispatch roles. Shared helper scripts live in `skills/_shared/scripts/`.
 - **Three hosts.** Claude, Codex, and OpenCode. Each wires startup context through host hooks/plugins and maps subagent tools.
 - **Five lifecycle stages plus resume.** Stages: `frame`, `plan`, `execute`, `verify`, `verified`. `resume` re-enters from durable state. Prerequisites are enforced in `runtime/lib/contracts-data.json`.
 - **No mandatory nested invocation.** Skills hand off through durable artifacts. Clean same-session continuation is allowed when the lifecycle contract says it is safe.
@@ -37,6 +37,8 @@ node bin/automaton.mjs context frame
 
 `cli-smoke.test.mjs` is slow (full tree copy). Prefer targeted tests.
 
+Releases are tags. Bump `package.json`, commit as `release: vX.Y.Z`, tag `vX.Y.Z`, and push both. `.github/workflows/publish.yml` reruns the suite and publishes to npm via trusted publishing. Do not run `npm publish` locally.
+
 ## Conventions
 
 - Edit skills in `skills/` only. Never edit installed copies.
@@ -44,6 +46,7 @@ node bin/automaton.mjs context frame
 - Skill entry points should stay clear, concise, high-signal, and platform-agnostic. Detail belongs in `references/` and is loaded via inline conditional triggers (`Read references/X.md when Y`) when progressive disclosure keeps the entry point easier to use.
 - `current.json` is the sole status cursor. Update it only through `sync-status.mjs`.
 - Runtime enforces L1 validation (stage enum, pointer resolution) as error diagnostics. The shared scripts also surface L2 artifact-shape lint as warning diagnostics that never block. L3 norms live in prompts and tests.
+- Automaton keeps the running log of work, not a description of the project (DD-016). Steering is one file, `ROADMAP.md`. Do not add artifacts that restate the repo.
 
 ## Design Documentation
 
