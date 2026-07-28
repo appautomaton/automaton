@@ -212,3 +212,13 @@ Two structural moves deserve their own record. The content track's field vocabul
 **Why:** after a terminal pass the hook kept delivering the full orientation block for a finished change on every later session, teaching the reader to skip the one surface that also carries health findings. The flag is derived inside `applyStatePatch` rather than set by the model: derive what is derivable (DD-012's rule), so no skill has to remember a second write. Disengagement is quiet, not blind: error-level findings still surface in the quiet branch.
 
 **See:** `skills/_shared/scripts/sync-status.mjs` (`applyStatePatch`), `runtime/lib/context.mjs` (`buildSessionContext`), `tests/state.test.mjs`, `tests/session-health.test.mjs`.
+
+---
+
+## DD-020: Retired skill names are append-only; install prunes them by name
+
+`RETIRED_SKILLS` (`lib/install.mjs`) names every skill directory Automaton has shipped and retired. Install removes those names from each host skill root on every run, reports each removal as `pruned_retired_skill`, and never deletes an `auto-*` directory that is not on the list. Names are append-only: retiring a skill adds one, and no name is ever removed. `status` reports the same list as `orphaned_skill` with an unconditional "reinstall to prune it" remedy.
+
+**Why:** removal used to be recomputed from the current source tree, which by construction cannot see a directory the source no longer ships, and the receipt only covers orphans a previous receipt recorded. Both miss the same case, so retired skills survived indefinitely. Field evidence: a project carried `auto-onboard`, `auto-office-hours`, and `auto-ceo-review` through an upgrade to 0.3.12, and two consecutive reinstalls left all three in place while `status` advised a reinstall that could not work. This is DD-008 generalized from role ids to skill directories: the append-only list is a superset of every earlier version's removals, so a newer installer cleans an older install with no bookkeeping to consult. Pruning by exact name is also what makes it safe, since a namespace sweep of `auto-*` would delete a user-authored skill. The rejected alternative was hash-guarding a namespace sweep, which needs historical hashes for every retired file in every prior version, to reach the same outcome the list gives for free.
+
+**See:** `lib/install.mjs` (`RETIRED_SKILLS`, `pruneRetiredSkills`), `lib/drift.mjs`, `tests/hosts.test.mjs` (append-only guard, prune regression), `tests/drift.test.mjs`.

@@ -111,6 +111,19 @@ test('a receipt without owner records falls back to the global version check', (
   rmSync(root, { recursive: true, force: true })
 })
 
+test('a user skill named auto-something is not drift and is never pruned', () => {
+  // Drift reports only names automaton is known to have retired (DD-020). An
+  // `auto-*` directory that is neither current nor retired belongs to the user,
+  // the installer will never touch it, so warning about it is noise.
+  const root = tempRoot('user-auto-skill')
+  installProject(root, { sourceRoot })
+  installHost(getHost('claude'), { root, sourceRoot })
+  mkdirSync(join(root, '.claude', 'skills', 'auto-my-own-thing'), { recursive: true })
+  writeFileSync(join(root, '.claude', 'skills', 'auto-my-own-thing', 'SKILL.md'), '# mine\n')
+  assert.deepEqual(driftReport(root, { sourceRoot }), [])
+  rmSync(root, { recursive: true, force: true })
+})
+
 test('an installed automaton skill absent from source reports orphaned_skill', () => {
   const root = tempRoot('orphan')
   installProject(root, { sourceRoot })

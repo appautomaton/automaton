@@ -7,7 +7,7 @@ import { tmpdir } from 'node:os'
 import { join, dirname } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
-import { installHost, uninstallHost, SUBAGENT_ROLES } from '../lib/install.mjs'
+import { installHost, uninstallHost, SUBAGENT_ROLES, RETIRED_SKILLS } from '../lib/install.mjs'
 import { HOSTS, detectHosts, getHost } from '../hosts/index.mjs'
 
 const sourceRoot = fileURLToPath(new URL('..', import.meta.url))
@@ -1004,6 +1004,57 @@ test('automaton agent role ids are append-only — shipped ids are never renamed
       `renaming or removing a shipped id breaks cross-version uninstall`
     )
   }
+})
+
+test('automaton retired skill names are append-only — a removed name strands the skill (DD-020)', () => {
+  // Same invariant as DD-008, applied to skill directories. Pruning is by exact name,
+  // so a name deleted from RETIRED_SKILLS can never be removed from any project still
+  // carrying it. When a skill is retired, append it here and to RETIRED_SKILLS.
+  const RETIRED_SKILL_NAMES = ['auto-onboard', 'auto-office-hours', 'auto-ceo-review']
+  for (const name of RETIRED_SKILL_NAMES) {
+    assert.ok(
+      RETIRED_SKILLS.includes(name),
+      `retired skill "${name}" must remain listed — names are append-only (DD-020); ` +
+      `removing one strands that skill in every project that still has it`
+    )
+  }
+})
+
+test('reinstall prunes a retired skill an older install left behind (DD-020)', () => {
+  // Failure story: mlx-speech carried auto-onboard, auto-office-hours, and
+  // auto-ceo-review across an upgrade to 0.3.12. Removal was recomputed from the
+  // current source, which cannot see a directory the source no longer ships, and
+  // the receipt had no record of them either. Two reinstalls left all three in
+  // place while `status` advised a reinstall that could not work.
+  const root = mkdtempSync(join(tmpdir(), 'automaton-prune-retired-'))
+  installHost(getHost('claude'), { root, sourceRoot })
+
+  const orphan = join(root, '.claude', 'skills', 'auto-onboard')
+  mkdirSync(orphan, { recursive: true })
+  writeFileSync(join(orphan, 'SKILL.md'), '# auto-onboard\n', 'utf8')
+
+  const result = installHost(getHost('claude'), { root, sourceRoot })
+
+  assert.equal(existsSync(orphan), false, 'the retired skill must be pruned by reinstall')
+  assert.ok(
+    result.warnings.some((item) => item.code === 'pruned_retired_skill' && /auto-onboard/.test(item.message)),
+    'the prune must be reported, never silent'
+  )
+})
+
+test('a user-authored auto- skill survives reinstall', () => {
+  // Pruning by exact name is what makes this safe: a namespace sweep of `auto-*`
+  // would delete this directory, which automaton never wrote.
+  const root = mkdtempSync(join(tmpdir(), 'automaton-prune-user-skill-'))
+  installHost(getHost('claude'), { root, sourceRoot })
+
+  const mine = join(root, '.claude', 'skills', 'auto-my-own-thing')
+  mkdirSync(mine, { recursive: true })
+  writeFileSync(join(mine, 'SKILL.md'), '# mine\n', 'utf8')
+
+  installHost(getHost('claude'), { root, sourceRoot })
+
+  assert.equal(existsSync(join(mine, 'SKILL.md')), true, 'a user skill must never be pruned')
 })
 
 test('Claude install generates host-native automaton subagent definitions for every role', () => {
