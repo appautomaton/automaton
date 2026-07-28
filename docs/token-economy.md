@@ -10,17 +10,17 @@ One stage working set: the files a model holds when it runs one stage of one cha
 
 Words are whitespace splits of the file, exactly as the census counts. Tokens are 1.3 per word, the ratio the census ceiling comments use for English prose mixed with markdown.
 
-## Current numbers (2026-07-28, v0.3.11)
+## Current numbers (2026-07-28, post-DD-018 main)
 
 | Working set | Words | Tokens |
 | --- | --- | --- |
-| frame common path | 2,254 | ~2.9k |
-| plan | 3,812 | ~5.0k |
-| execute direct route | 4,958 | ~6.4k |
-| execute subagent route | 6,259 | ~8.1k |
-| verify | 3,475 | ~4.5k |
+| frame common path | 2,268 | ~2.9k |
+| plan | 3,808 | ~4.9k |
+| execute direct route | 4,934 | ~6.4k |
+| execute subagent route | 6,235 | ~8.1k |
+| verify | 3,481 | ~4.5k |
 
-Mean 5.4k, median 5.0k, range midpoint 5.5k. The site shows ~5k.
+Mean 5.4k, median 4.9k, range midpoint 5.5k. The site shows ~5k. DD-018's within-file trims moved each set by under 2%: the pattern holds that deletion targets what never loads.
 
 ## Re-measuring
 

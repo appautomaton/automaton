@@ -8,8 +8,8 @@ import { fileURLToPath } from 'node:url'
 
 // Runtime behavior: one deterministic walk of the full lifecycle state machine through the
 // REAL shared scripts, edge by edge (DD-002, DD-004). This is the executable form of the
-// stage table in FRAMEWORK.md and the handoff rows in ARTIFACT-LIFECYCLE.md: office-hours
-// entry, frame with lint feedback, reviews, plan, execute, verify, the gap-fix re-entry,
+// stage table in FRAMEWORK.md and the handoff rows in ARTIFACT-LIFECYCLE.md: frame entry,
+// frame with lint feedback, reviews, plan, execute, verify, the gap-fix re-entry,
 // the repeated-criterion escalation to plan, and the verified terminal. cli-smoke proves
 // the package installs from anywhere; this proves the installed state machine walks. It
 // uses a cheap manifest-only scaffold, so keep slow full-tree scenarios out of it.
@@ -67,8 +67,8 @@ test('the full lifecycle walks edge by edge through the real scripts', () => {
   const specPath = `.agent/work/${change}/SPEC.md`
   const planPath = `.agent/work/${change}/PLAN.md`
 
-  // office-hours entry: active change recorded at stage frame.
-  expectClean('office-hours entry', sync(root, ['--active-change', change, '--stage', 'frame']))
+  // frame entry: active change recorded at stage frame.
+  expectClean('frame entry', sync(root, ['--active-change', change, '--stage', 'frame']))
   assert.equal(getContext(root).stage, 'frame')
 
   // frame writes a gappy SPEC: L2 lint warns at write time but never blocks (DD-009).

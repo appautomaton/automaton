@@ -97,23 +97,27 @@ const WORKING_SETS = {
     // Raised 2070 -> 2300 by DD-017. The set is 2251: one skill now covers a path that
     // used to cost 2377 for office-hours plus 1982 for frame when a change needed both.
     // The shallow path pays +181 over frame alone for the depth choice and the mode read.
+    // Pass 14: holds at actual 2268 (1.4% headroom); frame's ceiling is the constraint.
     files: ['_shared/references/FRAMEWORK.md', 'auto-frame/SKILL.md'],
     ceiling: 2300
   },
   'plan': {
+    // Down-ratchet 4030 -> 4000 (pass 14): actual 3808, 3808 x 1.05 = 3998.
     files: ['_shared/references/FRAMEWORK.md', 'auto-plan/SKILL.md', '_shared/references/ARTIFACT-LIFECYCLE.md'],
-    ceiling: 4030
+    ceiling: 4000
   },
   'execute direct route': {
+    // Down-ratchet 5250 -> 5181 (pass 14): actual 4934, 4934 x 1.05 = 5181.
     files: [
       '_shared/references/FRAMEWORK.md',
       'auto-execute/SKILL.md',
       '_shared/references/ARTIFACT-LIFECYCLE.md',
       '_shared/references/CONTEXT-BUDGET.md'
     ],
-    ceiling: 5250
+    ceiling: 5181
   },
   'execute subagent route': {
+    // Down-ratchet 6620 -> 6547 (pass 14): actual 6235, 6235 x 1.05 = 6547.
     files: [
       '_shared/references/FRAMEWORK.md',
       'auto-execute/SKILL.md',
@@ -121,11 +125,12 @@ const WORKING_SETS = {
       '_shared/references/CONTEXT-BUDGET.md',
       '_shared/references/SUBAGENT-PROTOCOL.md'
     ],
-    ceiling: 6620
+    ceiling: 6547
   },
   'verify': {
+    // Down-ratchet 3800 -> 3655 (pass 14): actual 3481, 3481 x 1.05 = 3655.
     files: ['_shared/references/FRAMEWORK.md', 'auto-verify/SKILL.md', '_shared/references/ARTIFACT-LIFECYCLE.md'],
-    ceiling: 3800
+    ceiling: 3655
   }
 }
 
