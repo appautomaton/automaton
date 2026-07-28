@@ -1,6 +1,6 @@
 {
   "name": "@appautomaton/automaton",
-  "version": "0.3.10",
+  "version": "0.3.11",
   "description": "Portable, stage-gated agentic-AI harness for Claude Code, Codex, and OpenCode.",
   "private": false,
   "license": "MIT",
