@@ -17,13 +17,17 @@ When the shape is not feature, shape questions take priority over mode questions
 
 Follow up when an answer changes scope, reveals a constraint, contradicts earlier context, or stays abstract. Ask for a concrete correction or choice, not a generic reaction. If the answer is polished but vague, push until it names concrete evidence, a specific stakeholder, or an observable workaround.
 
-Read `diagnostic-calibration.md` when the diagnostic feels soft or agreeable rather than evidence-backed, or when grill mode needs depth guidance.
+Read `diagnostic-calibration.md` when the diagnostic feels soft or agreeable rather than evidence-backed.
 
 ## Grill Mode
 
 Grill mode deepens the diagnostic from minimum to exhaustive: walk each branch of the decision tree, resolving dependent decisions one at a time, until shared understanding is reached or the user calls it done.
 
-It starts two ways only: the user asks, or you offer it when the work is high-stakes (auth, schema, concurrency, migration, payments) or when dependent unresolved decisions keep surfacing. The user accepts or declines. Never self-escalate into a grill.
+It starts two ways only: the user asks, or the SKILL's depth offer is accepted. That offer fires when the open questions reach three, when the work is high-stakes (auth, schema, concurrency, migration, payments), or when the work is roadmap-sized. The user accepts or declines. Never self-escalate into a grill.
+
+Read `diagnostic-calibration.md` on entry: it carries the depth mechanics this mode runs on.
+
+Ask exactly one question per call here, whatever the host tool permits. Each answer reshapes which branch comes next, so a batch spends questions the previous answer would have rewritten.
 
 ## Alternatives
 

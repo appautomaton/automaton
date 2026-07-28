@@ -15,13 +15,13 @@ First action: run `node .agent/.automaton/scripts/get-context.mjs` from the proj
 
 auto-frame produces the canonical artifact: `SPEC.md`. No file means no completed frame. It does not write code, create PLAN.md, or proceed to planning.
 
-Depth is chosen after reading, never before. A request whose objective is already clear goes straight to the spec. A request hiding a real decision earns a diagnostic first. That call needs the repo and the request in hand, so it cannot be made at the door.
+Depth is chosen after reading, never before: the call needs the repo and the request in hand, so it cannot be made at the door.
 
 Loading discipline: hold the objective, constraints, risks, and source evidence that keep the spec real. Avoid exhaustive tree walks. When a lookup would pull wide reads into context, dispatch the read-only `automaton-librarian` (see `.agent/.automaton/references/LIBRARIAN.md`): it returns evidence, you keep the decision. Never ask what the repo can answer.
 
-Artifact discipline: `SPEC.md` is the reloadable contract, not the whole dossier. Keep it compact enough to re-read. For large coherent work, summarize the contract and link normative detail under `spec/*.md`. One coherent outcome remains one spec even when it needs progressive disclosure.
+Artifact discipline: `SPEC.md` is the reloadable contract, not the whole dossier. Layout and linking rules live in `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Progressive Disclosure).
 
-Interaction: keep chat plain and grounded in the user's words. Do not expose the internal labels below. Ask per the Asking The User convention in `.agent/.automaton/references/FRAMEWORK.md`.
+Interaction: keep chat plain, in the user's words. Do not expose the internal labels below. Follow `.agent/.automaton/references/FRAMEWORK.md` (Asking The User).
 
 ## Quality Gate
 
@@ -50,13 +50,22 @@ Read `.agent/steering/ROADMAP.md` when it exists. If the objective matches a pen
 
 State the goal in one sentence, then pick the path and say which you took in one line.
 
-Write the spec now when that sentence holds, the material asks are already on the table, and no unresolved decision would change scope, approach, or verification.
+Name what the request leaves open: a problem, a stakeholder, a desired outcome, a content audience and thesis, a first independent outcome, or a direction choice. Route on how many questions would resolve it.
 
-Run the diagnostic first when the request lacks a problem, a stakeholder, a desired outcome, a content audience and thesis, a first independent outcome, or a direction choice. Roadmap-sized work always earns it: decomposition is the user's decision, not a side effect of writing a smaller spec.
+- None: write the spec now.
+- One or two: ask, then write. An offer costs more turns than the questions do.
+- Three or more, high-stakes (auth, schema, concurrency, migration, payments), or roadmap-sized: offer the depth choice. Roadmap-sized work always earns it: decomposition is the user's decision, not a side effect of writing a smaller spec.
+
+Name the quick pass's question count in the offer, so the choice is between known costs:
+
+- **Quick pass (Recommended):** only what would change scope, approach, or verification.
+- **Grill me:** every branch of the decision tree, in dependency order, until it resolves.
+
+A user who already asked for a grill gets one. Skip the offer.
 
 Do not run a diagnostic to look thorough, and do not skip one to look fast.
 
-When the answer is deep, read `references/diagnostic.md` and follow it before returning here. It carries the mode diagnostics, grill mode, and the alternatives contract.
+Before any questioning path, read `references/diagnostic.md`: it carries the mode diagnostics, grill mode, and the alternatives contract.
 
 ### Name The Change
 
@@ -76,7 +85,7 @@ Roadmap phases come only from a decomposition the user has approved. When they a
 
 ### Surface
 
-List only constraints, unknowns, and risks that change implementation or verification. Keep decision-critical material in `SPEC.md`. Link larger coherent detail under `spec/constraints.md`, `spec/risks.md`, `spec/gap-matrix.md`, or similar. If constraints point to unrelated outcomes, ask which outcome to frame first.
+List only constraints, unknowns, and risks that change implementation or verification. Keep decision-critical material in `SPEC.md`. Link larger coherent detail under `spec/*.md`. If constraints point to unrelated outcomes, ask which outcome to frame first.
 
 ### Select Lenses
 
@@ -91,7 +100,7 @@ Do NOT write `SPEC.md` while a decision that would change scope, approach, or ve
 Do NOT finish framing without `SPEC.md` at `.agent/work/<change>/SPEC.md`.
 </GATE>
 
-Read `references/spec-shape.md` and write the SPEC with its **core** fields and **conditional** fields. Conditional fields appear only when their named trigger applies. Apply the Artifact Signal Discipline rules from `.agent/.automaton/references/FRAMEWORK.md` while writing. For large coherent work, follow the spec layout in `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Progressive Disclosure).
+Read `references/spec-shape.md`. Write its **core** fields, and its **conditional** fields only when their named trigger applies. Apply Artifact Signal Discipline from `.agent/.automaton/references/FRAMEWORK.md` while writing. For large coherent work, follow `.agent/.automaton/references/ARTIFACT-LIFECYCLE.md` (Progressive Disclosure).
 
 The spec is a decision record, not a transcript. It records what the user approved, in the user's final refined wording, not your editorial rewrite.
 

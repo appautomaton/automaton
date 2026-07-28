@@ -89,6 +89,55 @@ test('auto-frame covers the request before narrowing scope', () => {
   assert.match(specShape, /Do not carry the full alternatives analysis/)
 })
 
+// Failure story: the offer rule existed but could never fire. diagnostic.md said grill
+// mode starts only when "the user accepts or declines", and that file loads only after
+// Choose Depth has already committed to the deep path. The model was several questions
+// into an interrogation before the sentence granting the user a choice was in context.
+// The offer must live in the SKILL, ahead of the questions it gates.
+test('auto-frame offers the depth choice before it starts asking', () => {
+  const source = skill()
+
+  const depth = source.indexOf('### Choose Depth')
+  const nameTheChange = source.indexOf('### Name The Change')
+  assert.ok(depth > -1 && nameTheChange > depth, 'Choose Depth must precede the write path')
+
+  const chooseDepth = source.slice(depth, nameTheChange)
+
+  // Three-way routing. A future edit must not collapse this back to write-or-diagnose:
+  // the middle branch is what keeps a one-question request from costing an extra turn,
+  // and the third is what keeps a deep one from starting uninvited.
+  assert.match(chooseDepth, /One or two: ask, then write/, 'a one or two question request is asked directly, never offered')
+  assert.match(chooseDepth, /Three or more.*offer the depth choice/s, 'three or more open questions must offer the choice')
+  assert.match(chooseDepth, /high-stakes \(auth, schema, concurrency, migration, payments\)/, 'high-stakes work always offers')
+  assert.match(chooseDepth, /roadmap-sized/, 'roadmap-sized work always offers')
+
+  // Both options are named in the skill so the model does not invent them per session,
+  // and the cheap one leads per the Asking The User convention.
+  assert.match(chooseDepth, /\*\*Quick pass \(Recommended\):\*\*/, 'the quick pass is named and recommended')
+  assert.match(chooseDepth, /\*\*Grill me:\*\*/, 'the grill option is named')
+  assert.ok(
+    chooseDepth.indexOf('Quick pass') < chooseDepth.indexOf('Grill me'),
+    'the recommended option must come first'
+  )
+
+  // An explicit request skips the ceremony.
+  assert.match(chooseDepth, /already asked for a grill gets one/, 'an explicit grill request must not be re-offered')
+})
+
+// The original grilling skill (mattpocock/skills) carried "asking multiple questions at
+// once is bewildering" as the reason for its one-at-a-time rule. Automaton kept the rule
+// and dropped the reason, and a reason-free rule is exactly what drifts: the v0.3.14 host
+// question mapping now advertises up to 4 questions per call. Grill mode overrides it.
+test('grill mode asks one question per call, and says why', () => {
+  const diagnostic = reference('diagnostic.md')
+
+  assert.match(diagnostic, /Ask exactly one question per call here, whatever the host tool permits/)
+  assert.match(diagnostic, /reshapes which branch comes next/, 'the rule must carry its reason, or it drifts again')
+  // The depth mechanics are the grill: loading them must not depend on the model first
+  // noticing its own softness.
+  assert.match(diagnostic, /Read `diagnostic-calibration\.md` on entry/)
+})
+
 // Grill mode is the salvage of the grill-me interaction contract: the model extracts
 // judgment from the human instead of pronouncing product verdicts. It must stay opt-in,
 // or framing turns every session into an interrogation.
