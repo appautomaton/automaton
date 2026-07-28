@@ -49,6 +49,7 @@ Every test file belongs to exactly one primary layer.
 | `install-receipt.test.mjs` | install-host | Receipt shape, directory provenance, zero-trace uninstall, history preservation, orphan cleanup, legacy fallback | DD-011 |
 | `cli-smoke.test.mjs` | install-host | Full-tree install in temp dirs, paths with spaces, symlinks | slow by design, see below |
 | `context-census.test.mjs` | budget | Word ceilings per shared reference, skill, and stage working set | CONTEXT-BUDGET.md |
+| `punctuation-census.test.mjs` | budget | Semicolon count ceiling: avoid unless no plainer separator works | file prose style convention |
 
 `cli-smoke.test.mjs` is slow because it copies the entire source tree into a temp dir to prove the package installs from an arbitrary location. Do not add scenarios to it that `lifecycle-walk.test.mjs` or `cli-context.test.mjs` can cover with a cheap scaffold.
 
