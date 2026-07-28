@@ -76,6 +76,17 @@ test('auto-execute role files declare static role contracts', () => {
   assert.match(implementer, /NEEDS_CONTEXT/)
   assert.match(implementer, /BLOCKED/)
 
+  // Role bodies ship verbatim as installed system prompts (readRoleBody in install.mjs).
+  // A maintainer comment about the render pipeline would ship too, and did until 2026-07-28.
+  for (const [name, source] of Object.entries(roles)) {
+    assert.doesNotMatch(source, /System prompt for the Automaton|The host install renders/, `${name} role must not carry maintainer comments into installed prompts`)
+  }
+
+  // BLOCKED is the reviewer's evidence-insufficiency exit. Its definition must live in the
+  // role body: the roles are forbidden from reading the protocol that would otherwise define it.
+  assert.match(specReviewer, /cannot evaluate with the available evidence, return `BLOCKED`/, 'spec reviewer must define when to return BLOCKED')
+  assert.match(qualityReviewer, /cannot evaluate with the available evidence, return `BLOCKED`/, 'quality reviewer must define when to return BLOCKED')
+
   assert.match(specReviewer, /Do not edit code, tests, or any project artifacts/, 'spec reviewer role must forbid edits as portable intent')
   assert.match(specReviewer, /Do not trust the implementer report/, 'spec reviewer must require evidence before approval')
   assert.match(specReviewer, /Inspect actual changed files/)

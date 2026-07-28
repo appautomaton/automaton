@@ -20,8 +20,12 @@ test('librarian is registered as a read-only explore role on the light model tie
 test('librarian role source is read-only, non-spawning, and returns a bounded envelope', () => {
   const body = readFileSync(join(skillsRoot, 'auto-execute', 'role-sources', 'librarian-role.md'), 'utf8')
 
+  // Role bodies ship verbatim as installed system prompts (readRoleBody in install.mjs).
+  // A maintainer comment about the render pipeline would ship too, and did until 2026-07-28.
+  assert.doesNotMatch(body, /System prompt for the Automaton|The host install renders/, 'role bodies must not carry maintainer comments into installed prompts')
   assert.match(body, /Read-only/)
   assert.match(body, /Never edit, create, or delete files/)
+  assert.match(body, /installed harness machinery/, 'librarian must carry the DD-013 machinery boundary its sibling roles carry')
   assert.match(body, /Do not spawn another Automaton subagent/, 'librarian must carry the recursion guard')
   assert.match(body, /Return evidence, not decisions/i, 'librarian must return evidence, not decisions')
   assert.match(body, /STATUS: FOUND \| PARTIAL \| NOT_FOUND/)
