@@ -50,7 +50,7 @@ Break work into ordered execution units, not topic buckets. Each slice must be:
 - Independent: it can be executed without loading slices that come after it.
 - Checkpointed only for human input: it marks a pause only when a human must act or choose before the next approved slice can start.
 
-Read `references/slice-examples.md` when uncertain whether a slice is well-designed.
+Read `references/slice-examples.md` when a slice may need the subagent route, or when rendering the topology section.
 
 For content slices, also name the artifact target, allowed sources, factual-risk gate, and format constraint so `auto-execute` does not invent missing context.
 

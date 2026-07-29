@@ -10,8 +10,6 @@ Failures that pass the test but still sink a plan:
 - Hidden dependencies: a slice needs context, files, or decisions the plan never names.
 - Overloaded slices: one slice touching unrelated systems, or too much to verify independently.
 
-Before: "This slice explores implementing a robust, comprehensive caching layer — ensuring consistency, enabling scalability, and enhancing performance."
-
-After: "Add a Redis read-through cache to the /users endpoint. Cache invalidates on write. TTL 5 minutes."
+Name the artifact each slice produces and the command that proves it.
 
 Prose patterns: `.agent/.automaton/references/ANTI-SLOP.md`.

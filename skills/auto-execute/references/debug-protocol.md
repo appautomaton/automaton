@@ -1,6 +1,6 @@
 # Debug Protocol
 
-Structure for a bounded diagnosis when the fix is not obvious. Shrink the search space with evidence instead of guessing harder: bisect the failing space, minimize the reproduction, contrast with a working sibling, and log at the boundaries you suspect.
+Bounds a diagnosis when the fix is not obvious, so investigation ends in a report rather than an open-ended search.
 
 ## Escalation
 

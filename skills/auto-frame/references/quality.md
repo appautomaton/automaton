@@ -22,8 +22,6 @@ Failures that pass both tests but still sink the frame:
 - Missing anti-goals: no statement of what the change must not do.
 - Scope amputation: shrinking a coherent capability to hit a length target, leaving part of the problem unframed.
 
-Before: "That's a really exciting idea with tremendous potential! This crucial change is a pivotal step in streamlining the authentication flow, enhancing security, improving UX, and reducing latency."
-
-After: "You named one paying customer (Sarah) and one workaround (the spreadsheet). That's thin demand evidence. Who else would pay, and how do you know? Bounded goal: add JWT validation to protected API routes. Users without a valid token get a 401."
+Name the evidence the user gave, say what it does and does not establish, and write the bounded goal in terms someone could verify.
 
 Prose patterns: `.agent/.automaton/references/ANTI-SLOP.md`.

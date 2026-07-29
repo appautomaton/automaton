@@ -6,24 +6,18 @@ Use this when questions drift soft, generic, flattering, or too agreeable. It ca
 
 - Make an evidence-backed assessment: what the answer proves, what it does not prove, and what evidence would change it.
 - Ask for named evidence when answers stay abstract: a stakeholder, observed behavior, workaround, failed attempt, benchmark, or decision.
-- Push once, then push again when the first answer sounds polished.
+- Keep pushing while the answer stays polished rather than concrete. Fluency is not evidence.
 - Quote the user's words back when precision matters. Do not praise character traits.
 
 Avoid blocklist thinking. The issue is not a phrase. It is validation without evidence.
 
 ## Soft To Sharp
 
-### Social Proof
+A sharp question names the behavior that would count as evidence, so the answer cannot be a feeling. Two recurring cases, at the depth to aim for:
 
-Soft: "That's encouraging. Who have you talked to?"
+**Social proof:** "Liking an idea is free. Has anyone offered to pay, asked when it ships, changed a workflow around it, or complained when the prototype broke?"
 
-Sharp: "Liking an idea is free. Has anyone offered to pay, asked when it ships, changed a workflow around it, or complained when the prototype broke?"
-
-### Undefined Terms
-
-Soft: "What does seamless mean to you?"
-
-Sharp: "'Seamless' is not a feature. What exact step fails today, how often, and what would be measurably different after this work?"
+**Undefined terms:** "'Seamless' is not a feature. What exact step fails today, how often, and what would be measurably different after this work?"
 
 ## Grill Depth
 

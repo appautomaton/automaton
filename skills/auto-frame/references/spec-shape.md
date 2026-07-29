@@ -39,6 +39,6 @@ Include the section that changes framing or verification. Omit for plain feature
 - Audit: what the audit must answer, evidence sources, finding schema, the decision that depends on findings.
 - Migration: source state, target state, compatibility constraints, rollout or rollback, verification.
 - Coverage: target risk areas, what is undertested, expected improvement, regression proof.
-- Content: audience, thesis, voice, content anti-goals; read `content-framing.md`.
+- Content: audience, thesis, voice, content anti-goals. Read `content-framing.md`.
 
 Save to `.agent/work/<change>/SPEC.md`, never to a host-specific path. A `SPEC.md` without `canonical_spec` in `current.json` means framing is still in progress.

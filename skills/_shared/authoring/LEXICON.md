@@ -72,7 +72,9 @@ Skill prose is read by a strong model under load. Write for that reader:
 - No em-dashes. Prefer commas, periods, or a colon; a semicolon only where a period would fragment one thought.
 - Complete sentences, plain words, one idea per sentence.
 - State every hard rule with its reason in the same breath. A rule that carries its why survives paraphrase and edge cases.
-- Principles over checklists. Cut anything a capable model already knows; keep what is project-specific or counter-intuitive.
+- Principles over checklists. Cut anything a capable model already knows. Keep what is project-specific, counter-intuitive, or a boundary the model would otherwise cross.
+- An example earns its place only when the reader must reproduce its shape (an output template, a parsed envelope, a field name) or calibrate a threshold prose cannot convey. Never stage a bad version to make a good one look better: the model already draws that distinction, and the staged text puts the pattern you are prohibiting into context as prose to be processed.
+- Never invent a ratio, count, or threshold to dramatize a rule. A number earns its place by carrying an inference (repeated identical failures mean the approach is wrong, not the run) or by fixing an output shape. Otherwise state the instruction and stop.
 - Flag slop in clusters, not single instances (`ANTI-SLOP.md`, What Not To Flag).
 
 ## Prohibited Phrases

@@ -22,13 +22,11 @@ Use these labels for findings:
 
 ## Check
 
-- Minimal correct change.
-- No avoidable complexity.
-- Clear names and structure.
-- Tests or verification are appropriate for the change.
-- No obvious race, state, path, or cleanup bug.
-- No unrelated edits.
-- No dependence on machine-local state: absolute paths, hardcoded environment values, or setup the project does not declare.
+Review the diff on its merits, and give these three the attention they are usually denied:
+
+- Edits outside the slice, including opportunistic cleanup that looks like an improvement.
+- Dependence on machine-local state: absolute paths, hardcoded environment values, or setup the project does not declare.
+- Verification that proves the changed behavior rather than proving the suite still runs.
 
 If you approve with no findings, say `ISSUES: none` and state the remaining residual risk, if any. If you cannot evaluate with the available evidence, return `BLOCKED` and name what is missing.
 

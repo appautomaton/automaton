@@ -13,8 +13,4 @@ Failures that pass the test but still sink a review:
 
 State what evidence would turn a risk into approval.
 
-Before: "The architecture is generally sound, though error handling should be carefully considered to ensure robust coverage of edge cases."
-
-After: "Architecture fit: 8/10. Risk: parseToken() in src/auth.js catches all exceptions and returns null, so a malformed JWT is indistinguishable from an expired one. Add typed catches for JsonWebTokenError vs TokenExpiredError."
-
 Prose patterns: `.agent/.automaton/references/ANTI-SLOP.md`.

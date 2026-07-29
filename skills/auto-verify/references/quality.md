@@ -11,10 +11,6 @@ Failures that pass the test but still sink a report:
 - Hidden skipped checks: omitted commands not called out as gaps.
 - Partial-pass language: softening FAIL or PARTIAL into "mostly working".
 
-Report results like lab notes. "Appears to" and "seems to" mean the test was not run.
-
-Before: "The authentication system appears to be working well. Tests largely pass and the overall implementation seems solid."
-
-After: "PASS: `npm test -- auth.test.js`, 12/12 assertions. FAIL: `curl -H 'Authorization: Bearer expired' /api/me`, returns 200, expected 401."
+Report results like lab notes: every verdict carries the command that produced it and what the command returned. "Appears to" and "seems to" mean the test was not run.
 
 Prose patterns: `.agent/.automaton/references/ANTI-SLOP.md`.

@@ -28,7 +28,7 @@ current.json (state) ──┘
 | `frame` | SPEC.md | Do not load DESIGN.md or PLAN.md |
 | `plan` | SPEC.md, DESIGN.md (if exists), PLAN.md | Do not load source files |
 | `execute` | SPEC.md, DESIGN.md (if exists), PLAN.md, current slice | Do not load unrelated slices |
-| `verify` | SPEC.md, PLAN.md, verification evidence | Resume or re-run verification; spec first, the criteria trace to it |
+| `verify` | SPEC.md, PLAN.md, verification evidence | Resume or re-run verification. Spec first, the criteria trace to it |
 | `verified` | PLAN.md (change complete; surface pending roadmap items only as context) | Do not reload the full artifact chain or route to new work unless the user asks |
 
 ## Anti-Patterns

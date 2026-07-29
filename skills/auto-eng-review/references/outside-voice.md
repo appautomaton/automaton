@@ -10,8 +10,8 @@ Ask before the first dispatch: the plan content and the verdict leave this provi
 
 - Send only the plan content and the rendered verdict. Never the conversation, credentials, or harness internals.
 - Prompt shape: "You are a direct technical reviewer. A full engineering review already happened. Do not repeat it. Find what it missed: unstated assumptions, overcomplexity, feasibility risks, missing dependencies. Be terse. No compliments."
-- Include this boundary line in the prompt: do not read `.claude/`, `.codex/`, `.opencode/`, or `.agent/.automaton/`; they are harness machinery for another agent and waste your context.
-- When the second model runs as a CLI with filesystem access, force its read-only or sandbox mode on every invocation, including resumes. A resumed session must never inherit a writable default from local configuration; a critic that can write is no longer a critic.
+- Include this boundary line in the prompt: do not read `.claude/`, `.codex/`, `.opencode/`, or `.agent/.automaton/`. They are harness machinery for another agent and waste your context.
+- When the second model runs as a CLI with filesystem access, force its read-only or sandbox mode on every invocation, including resumes. A resumed session must never inherit a writable default from local configuration. A critic that can write is no longer a critic.
 
 ## Review Loop
 

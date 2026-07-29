@@ -8,42 +8,30 @@ When framing a content-oriented change, add these fields to SPEC.md alongside th
 
 ### Audience
 
-One sentence: who reads this, what they already know, and what belief or behavior the content should change.
+One sentence: who reads this, what they already know, and what belief or behavior the content should change. Name the misconception, not the field. This is the level of specificity to hit:
 
-**Good:** "Senior engineers who know distributed systems but assume event sourcing is only for CQRS. This piece argues it's a general-purpose audit pattern."
-
-**Bad:** "Technical audience interested in event sourcing."
+"Senior engineers who know distributed systems but assume event sourcing is only for CQRS. This piece argues it's a general-purpose audit pattern."
 
 ### Thesis
 
-One falsifiable or debatable claim the piece makes. Not a topic, not a summary. A position.
+One falsifiable or debatable claim the piece makes. Not a topic, not a summary. A position someone could argue with:
 
-**Good:** "Feature flags cost more in maintenance debt than they save in deployment safety, and most teams should delete theirs."
-
-**Bad:** "An overview of feature flag best practices."
+"Feature flags cost more in maintenance debt than they save in deployment safety, and most teams should delete theirs."
 
 ### Voice
 
-Either a pointer to a voice sample (file path or inline excerpt) or a 2–3 sentence description of the target voice: sentence rhythm, formality level, use of first person, punctuation habits.
+Either a pointer to a voice sample (file path or inline excerpt) or a description of the target voice concrete enough to write from: sentence rhythm, formality level, use of first person, punctuation habits.
 
-**Good:** "Short sentences, contractions, first person. Reads like a senior engineer explaining to a peer, not lecturing. No hedging; state positions directly."
-
-**Bad:** "Professional but approachable."
+"Short sentences, contractions, first person. Reads like a senior engineer explaining to a peer, not lecturing. No hedging. State positions directly."
 
 ### Content Anti-Goals
 
-Concrete examples of what the content must not sound like. Name specific patterns, not abstract qualities.
+What the content must not sound like, as structural patterns rather than abstract qualities. "High quality" and "engaging" set no boundary. These do:
 
-**Good:**
-- No significance inflation ("pivotal moment," "stands as a testament")
-- No em-dash-heavy lists or rule-of-three conclusions
-- No sycophantic framing ("Great question!", "Let's dive in")
-- Not a press release, no promotional adjectives ("groundbreaking," "vibrant," "nestled")
-
-**Bad:**
-- "High quality"
-- "Engaging"
-- "Well-written"
+- No significance inflation: stakes the evidence does not support.
+- No em-dashes as connective tissue, and no three-part list whose third item is there for rhythm.
+- No sycophantic framing or signposting before the content starts.
+- No promotional adjectives. Describe the thing rather than praising it.
 
 ## Anti-Slop Checklist
 

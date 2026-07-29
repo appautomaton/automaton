@@ -36,12 +36,18 @@ const SHARED_CEILINGS = {
   // Down-ratchet 1940 -> 1817 (passes 8-9): skill restatements and phase authorship
   // became pointers; actual 1730, 1730 x 1.05 = 1817.
   '_shared/references/ARTIFACT-LIFECYCLE.md': 1817,
-  '_shared/references/CONTEXT-BUDGET.md': 585,
+  // Down-ratchet 585 -> 464 (DD-021): the four numbered principles explaining what a
+  // context window is, and the staged bad-phrasing table, left. The artifact boundary
+  // they surrounded stayed. Actual 442, 442 x 1.05 = 464.
+  '_shared/references/CONTEXT-BUDGET.md': 464,
   // Raised 1100 -> 1350 for DD-013: evidence-over-signal completion, BLOCKED
   // triage, and parallel worktree isolation are new coordination capability,
   // not restated prose.
   '_shared/references/SUBAGENT-PROTOCOL.md': 1350,
   '_shared/references/LIBRARIAN.md': 380,
+  // Held at 270 through the DD-021 rewrite from word lists to structural tells. Actual
+  // 269: describing a structure costs more words than listing the adjectives it produces,
+  // so the taxonomy paid for itself rather than shrinking. Not a down-ratchet candidate.
   '_shared/references/ANTI-SLOP.md': 270,
   // Down-ratchet 670 -> 585 (pass 9): the zero-consumer evidence field and the
   // empty-shape doctrine line removed; actual 557, 557 x 1.05 = 585.
@@ -107,17 +113,19 @@ const WORKING_SETS = {
     ceiling: 4000
   },
   'execute direct route': {
-    // Down-ratchet 5250 -> 5181 (pass 14): actual 4934, 4934 x 1.05 = 5181.
+    // Down-ratchet 5181 -> 5087 (DD-021): CONTEXT-BUDGET shed the common-knowledge
+    // principles. Actual 4845, 4845 x 1.05 = 5087.
     files: [
       '_shared/references/FRAMEWORK.md',
       'auto-execute/SKILL.md',
       '_shared/references/ARTIFACT-LIFECYCLE.md',
       '_shared/references/CONTEXT-BUDGET.md'
     ],
-    ceiling: 5181
+    ceiling: 5087
   },
   'execute subagent route': {
-    // Down-ratchet 6620 -> 6547 (pass 14): actual 6235, 6235 x 1.05 = 6547.
+    // Down-ratchet 6547 -> 6453 (DD-021): same CONTEXT-BUDGET trim carried through.
+    // Actual 6146, 6146 x 1.05 = 6453.
     files: [
       '_shared/references/FRAMEWORK.md',
       'auto-execute/SKILL.md',
@@ -125,7 +133,7 @@ const WORKING_SETS = {
       '_shared/references/CONTEXT-BUDGET.md',
       '_shared/references/SUBAGENT-PROTOCOL.md'
     ],
-    ceiling: 6547
+    ceiling: 6453
   },
   'verify': {
     // Down-ratchet 3800 -> 3655 (pass 14): actual 3481, 3481 x 1.05 = 3655.

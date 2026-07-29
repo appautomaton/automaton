@@ -47,7 +47,7 @@ Prefer Markdown-first artifacts unless SPEC.md names a different format.
 ### Slice: Draft Technical Blog Outline
 
 - **Artifact target:** `.agent/work/<change>/outline.md`
-- **Inputs:** SPEC.md audience, thesis, voice, anti-goals; source notes in `research.md`
+- **Inputs:** SPEC.md audience, thesis, voice, anti-goals. Source notes in `research.md`
 - **Constraints:** channel = blog, format = outline, factual risk = medium
 - **Verification:** check headings support the thesis, name the audience, and include source placeholders for factual claims
 

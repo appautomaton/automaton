@@ -2,13 +2,13 @@
 
 Internal guidelines for preserving reasoning headroom across multi-session agentic work.
 
-## Principles
+## Artifact Language Boundary
 
-1. **Context is finite.** Every token loaded reduces headroom for reasoning. Treat context like memory, not storage.
-2. **Load progressively.** Start with the smallest artifact that unlocks the next decision. Load more only when needed.
-3. **Recall over re-read.** Do not re-read a file you can still accurately recall. Re-read when the file changed, when a verification pass requires fresh evidence, or when your recall is uncertain.
-4. **Generate summaries, not transcripts.** When reporting findings, compress 500 lines of evidence into 5 lines of conclusion.
-5. **Keep artifacts concrete.** Do not write context-budget fields, token-allocation notes, or percentage estimates into SPEC.md, PLAN.md, slice detail files, or evidence blocks. Artifacts record objectives, acceptance criteria, verification, dependencies, status, evidence, risks, and links.
+Loading is a decision you make during the session. It is not a fact the artifacts record.
+
+**Keep artifacts concrete.** Do not write context-budget fields, token-allocation notes, or percentage estimates into SPEC.md, PLAN.md, slice detail files, or evidence blocks. Artifacts record objectives, acceptance criteria, verification, dependencies, status, evidence, risks, and links. Context-size estimates in PLAN.md are the common form of this mistake: when slice instructions outgrow the plan index, the answer is a `Detail: slices/slice-NNN.md` link, not a note about how large the slice is.
+
+Report findings as conclusions rather than transcripts. The evidence you read stays in the session. The artifact carries what it proved.
 
 ## Progressive Loading Order
 
@@ -52,13 +52,3 @@ Default: a file read this session stays usable from memory. Re-read it when any 
 
 **If you cannot remember what a file said, re-read the specific section.** Answering from a confident guess is worse than the second read.
 
-## Artifact Language Boundary
-
-Use this guide to decide what to load, link, summarize, or checkpoint. Do not turn the heuristic into durable artifact prose.
-
-| Instead of... | Use... |
-|---------------|--------|
-| Context-size estimates in PLAN.md | `Detail: slices/slice-NNN.md` when slice instructions are too large for the plan index |
-| "This is a big change" | "This requires three independently verifiable slices" |
-| "Read the whole codebase" | "Load files named by the active slice and scan wider only when correctness requires it" |
-| "Re-read the spec" | "Summarize the relevant section from memory unless a re-read trigger applies" |
