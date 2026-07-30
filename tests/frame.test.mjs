@@ -321,9 +321,18 @@ test('auto-frame references route only to steps that exist in the skill', () => 
   assert.match(contentFraming, /Content is a peer mode alongside Startup and Builder/)
   assert.doesNotMatch(contentFraming, /mode detection \(Startup or Builder\)/)
 
-  // The minimal-viable and ideal-architecture mandate is scoped to the shapes SKILL.md
-  // names, so shape-specific differentiation is not overridden by the format reference.
-  assert.match(alternatives, /For bug, feature, and capability work, one must be minimal viable/)
+  // The direct-path and ideal-architecture mandate is scoped to the shapes SKILL.md names,
+  // so shape-specific differentiation is not overridden by the format reference.
+  //
+  // The pair was named "minimal viable" until v0.4.3. Two problems. It contradicted the rule
+  // three bullets below it, which requires alternatives to vary the approach and not the
+  // goal, so scope is the one axis that must not differ. And it imported MVP connotation
+  // into a harness that writes code, reading as a licence to build the same thing to a lower
+  // standard. The axis is structural commitment. Craft is constant across every approach,
+  // which the file now states outright.
+  assert.match(alternatives, /one must be the direct path and one must be the ideal architecture/)
+  assert.doesNotMatch(alternatives, /minimal viable/i)
+  assert.match(alternatives, /never in correctness, thoroughness, or craft/)
   assert.match(alternatives, /blast radius, traceability, evidence depth, rollout risk, or verification strength/)
 
   // The recommendation leads, and the choice renders through the host question tool:
