@@ -28,10 +28,7 @@ State your recommendation and its one-sentence why first, then the approaches. P
 ## Rules
 
 - At least 2 approaches required. 3 preferred for non-trivial designs.
-- For bug, feature, and capability work, one must be the **minimal viable**: the smallest version of the user's stated goal that delivers the core value. This is the leanest path to the user's goal, not a different, smaller goal.
-- For the same shapes, one must be the **ideal architecture**: best long-term trajectory, most elegant.
-- For other shapes, the differentiation axis in the header paragraph replaces the minimal-viable and ideal-architecture pair.
-- One can be **creative/lateral**: unexpected approach, different framing of the problem.
+- **Minimal viable** means the leanest path to the user's stated goal, not a different, smaller goal. **Ideal architecture** means the best long-term trajectory. The two carry equal weight.
 - Alternatives must vary the approach to the user's goal, not vary the goal itself. A capability-sized goal should produce capability-sized alternatives, not three ways to shrink the goal to feature-size.
 - The recommendation leads: state it and its one-sentence why before the approaches, never after.
 - Do NOT proceed until the user explicitly approves an approach or chooses a different one.

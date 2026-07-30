@@ -76,9 +76,11 @@ const SKILL_CEILINGS = {
   // Down-ratchet 1000 -> 917 (pass 12): the gate boundary and template flip added
   // precision, not bulk; actual 873, 873 x 1.05 = 917.
   'auto-verify/SKILL.md': 917,
-  // Pass 5 absorbed the risk-examples threshold mapping and the stale-DESIGN split:
-  // actual 742, ceiling holds at 1% headroom. Further growth needs new capability.
-  'auto-eng-review/SKILL.md': 750,
+  // Down-ratchet 750 -> 686 (DD-022 pass 2): the risk matrix dropped its "What a 10 looks
+  // like" column. Those anchors described the top of a 0-10 scale while the only operational
+  // rule keys off the bottom, so they calibrated nothing the decision needed. The six
+  // dimensions and the blocking rule stay. Actual 653, 653 x 1.05 = 686.
+  'auto-eng-review/SKILL.md': 686,
   // Raised 700 -> 750 for DD-012/DD-013: the execution-ledger reconciliation
   // (slice commits, in-flight dirt, stray worktrees) is new recovery capability.
   // Down-ratchet 740 -> 696 (pass 2 recovery contract): actual 663 after the
@@ -184,13 +186,19 @@ const LAYER2_EXCEPTIONS = {
   'auto-eng-review/references/outside-voice.md': 547
 }
 
+// Down-ratcheted after DD-022 pass 2, which cut what a capable model supplies unprompted:
+// eleven trigger rows saying "check security when you touch auth", three prime directives
+// restating zero-silent-failures and observability-scales-with-scope, a dependency graph
+// mirroring the table beneath it, a worked slice whose calibrating sentence was one line of
+// twelve, and an alternatives header restated verbatim as its own rules. Each total is the
+// post-trim actual plus 5%.
 const LAYER2_SKILL_TOTALS = {
-  'auto-frame': 3209,
+  'auto-frame': 3150,
   'auto-execute': 2848,
-  'auto-eng-review': 1719,
+  'auto-eng-review': 1525,
   'auto-verify': 906,
-  'auto-plan': 866,
-  'auto-resume': 763
+  'auto-plan': 817,
+  'auto-resume': 711
 }
 
 const layer2Files = (skillName) =>

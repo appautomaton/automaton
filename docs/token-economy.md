@@ -24,7 +24,7 @@ Mean 5.4k, median 5.0k, range midpoint 5.5k. The site shows ~5k.
 
 DD-022 deleted 1,350 words and four files from the shipped corpus, and only frame's working set moved (2,293 to 2,239, down 2.4%). That split is the expected result and worth stating plainly: most of the deletion targeted conditional references, and conditional references are excluded from a working set by definition. Every trim round since DD-016 has produced this shape. A change that moves these numbers has to touch an entry point or a shared reference, which is why frame's is the one that moved: its `## Output` section and mode enumeration are in the entry point itself.
 
-The corpus total is the number that moved most: 23,275 words to 21,925.
+The corpus total is the number that moved most: 23,275 words to 21,500 across DD-022's two passes. Pass 2 also took `auto-eng-review/SKILL.md` from 740 words to 653, which does not appear in the table because the optional review is not a working set. It is still the cheapest kind of saving there is: an entry point, paid whenever the review runs.
 
 ## Re-measuring
 
