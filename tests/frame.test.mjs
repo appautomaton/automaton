@@ -262,36 +262,54 @@ test('auto-frame uses observable diagnostic checks instead of posture language',
   }
 })
 
-test('auto-frame ships startup and builder diagnostic references', () => {
+// The mode diagnostics folded into diagnostic.md (DD-022). What left was question text and
+// founder doctrine a capable model already carries. What stays is project-specific: which
+// topics fire at which product stage and work scale. The scope guard is the load-bearing
+// half of the fold. Without it a model narrows a capability-sized goal to the smallest
+// shippable answer it just elicited, which is the frame-stage failure class this file exists
+// to prevent.
+test('the merged diagnostic keeps mode and scale routing without the retired mode files', () => {
   const diagnostic = reference('diagnostic.md')
-  const startup = reference('startup-diagnostic.md')
-  const builder = reference('builder-diagnostic.md')
 
   assert.match(skill(), /references\/diagnostic\.md/)
-  assert.match(diagnostic, /`startup-diagnostic\.md`/)
-  assert.match(diagnostic, /`builder-diagnostic\.md`/)
-  assert.match(startup, /Demand Reality/)
-  assert.match(startup, /Smart Routing by Product Stage/)
-  assert.match(startup, /Smart Routing by Work Scale/)
-  assert.match(builder, /coolest version/)
-  assert.match(builder, /Smart Routing by Work Scale/)
+  assert.match(diagnostic, /## Mode Routing/)
+  assert.match(diagnostic, /## Scale Routing/)
+  assert.match(diagnostic, /\*\*Startup mode\*\*/)
+  assert.match(diagnostic, /\*\*Builder mode\*\*/)
+  for (const stage of ['Pre-product', 'Has users', 'Has paying customers']) {
+    assert.match(diagnostic, new RegExp(stage), `product-stage routing must survive the fold: ${stage}`)
+  }
+  for (const scale of ['bug', 'feature', 'capability', 'roadmap']) {
+    assert.match(diagnostic, new RegExp(`\\| ${scale} \\|`), `work-scale routing must survive the fold: ${scale}`)
+  }
+  assert.match(
+    diagnostic,
+    /They do not set scope/,
+    'the wedge and fastest-path topics must keep their scope guard'
+  )
+
+  for (const retired of ['startup-diagnostic.md', 'builder-diagnostic.md', 'operating-principles.md']) {
+    assert.equal(existsSync(join(frameRoot, 'references', retired)), false, `${retired} folded into diagnostic.md`)
+  }
 })
 
-// Landscape search must be reachable from every mode: its file carries Builder search
-// guidance and the consent gate that governs outbound queries. A Startup-scoped trigger
-// meant Builder sessions searched (or skipped searching) without ever loading either.
+// Landscape search must be reachable from every mode, and the consent gate must ride with it:
+// an outbound query carries the user's problem space to a third party. The per-mode search
+// strings left with the fold (they dated themselves with a {current year} placeholder). The
+// boundary they sat beside is the load-bearing part, so it is pinned mode-neutrally here.
 test('landscape awareness is reachable from every mode with its consent gate', () => {
   const landscape = reference('landscape-awareness.md')
 
-  assert.match(reference('diagnostic.md'), /Any mode: `landscape-awareness\.md`/)
-  assert.match(landscape, /## Privacy Gate/)
-  assert.match(landscape, /\*\*Builder mode:\*\* Search for/)
+  assert.match(reference('diagnostic.md'), /\*\*Any mode:\*\* read `landscape-awareness\.md`/)
+  assert.match(landscape, /Load this in any mode/)
+  assert.match(landscape, /## Consent Gate/)
+  assert.match(landscape, /never the user's product name/)
 })
 
 test('auto-frame references route only to steps that exist in the skill', () => {
   const source = skill()
   const landscape = reference('landscape-awareness.md')
-  const contentIntake = reference('content-intake.md')
+  const contentFraming = reference('content-framing.md')
   const alternatives = reference('alternatives-format.md')
 
   // Every step a reference routes into must be a real heading in the merged skill.
@@ -300,8 +318,8 @@ test('auto-frame references route only to steps that exist in the skill', () => 
   }
 
   // Content is a peer mode alongside Startup and Builder, not an overlay on them.
-  assert.match(contentIntake, /Content is a peer mode alongside Startup and Builder/)
-  assert.doesNotMatch(contentIntake, /mode detection \(Startup or Builder\)/)
+  assert.match(contentFraming, /Content is a peer mode alongside Startup and Builder/)
+  assert.doesNotMatch(contentFraming, /mode detection \(Startup or Builder\)/)
 
   // The minimal-viable and ideal-architecture mandate is scoped to the shapes SKILL.md
   // names, so shape-specific differentiation is not overridden by the format reference.
@@ -314,17 +332,22 @@ test('auto-frame references route only to steps that exist in the skill', () => 
   assert.match(alternatives, /host question tool/)
 })
 
-test('shape questions have one home both diagnostics point at', () => {
-  // One home per contract: the per-shape question sets lived near-verbatim in
-  // both mode diagnostics and could silently diverge. shape-questions.md is
-  // the single home; the diagnostics carry only the pointer.
+test('shape questions have one home the diagnostic points at', () => {
+  // One home per contract: the per-shape question sets lived near-verbatim in both mode
+  // diagnostics and could silently diverge. shape-questions.md is the single home; the
+  // merged diagnostic carries only the pointer.
+  //
+  // The pointer must be a bare sibling filename. Both retired diagnostics wrote
+  // `references/shape-questions.md` from inside references/, which resolves to
+  // references/references/ and could never load, while diagnostic.md alongside them used the
+  // correct sibling form. Three files, two conventions, and the old assertion pinned the
+  // broken one. The general guard is in skill-conventions.test.mjs.
   const home = reference('shape-questions.md')
+  const diagnostic = reference('diagnostic.md')
 
   for (const shape of ['Parity', 'Audit', 'Refactor', 'Migration', 'Coverage']) {
     assert.match(home, new RegExp(`\\*\\*${shape}:`), `${shape} questions must live in the home`)
   }
-  for (const diagnostic of [reference('startup-diagnostic.md'), reference('builder-diagnostic.md')]) {
-    assert.match(diagnostic, /references\/shape-questions\.md/)
-    assert.doesNotMatch(diagnostic, /What is the reference system/, 'shape questions must not be restated in a diagnostic')
-  }
+  assert.match(diagnostic, /read `shape-questions\.md`/)
+  assert.doesNotMatch(diagnostic, /What is the reference system/, 'shape questions must not be restated in the diagnostic')
 })

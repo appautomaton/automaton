@@ -54,7 +54,7 @@ All 9 are distinct files (9 distinct md5s) but share an identical four-section s
 
 ### C5: `content-*.md` cross-stage track · *Footprint hygiene · lowest priority*
 
-`content-framing / -planning / -execution / -verification / -intake` form a coherent "handle prose deliverables" concern spread across 5 skills. Genuinely per-stage; consolidation likely costs more clarity than it saves. **Note, don't act.**
+`content-framing / -planning / -execution / -verification / -intake` form a coherent "handle prose deliverables" concern spread across 5 skills. Genuinely per-stage; consolidation likely costs more clarity than it saves. **Note, don't act.** *(Partly acted, DD-022: the per-stage split stands, but `content-intake` folded into `content-framing`. Those two were the exception this finding missed, because both fire inside frame and so were the one pair in the track that actually co-loads, and they defined the same four fields twice.)*
 
 ## Not concerns (resolved by inspection)
 

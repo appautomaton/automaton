@@ -33,7 +33,7 @@ Every test file belongs to exactly one primary layer.
 | `drift.test.mjs` | runtime-behavior | Installed-copy drift detection against the CLI source | DD-011 |
 | `execution-contract.test.mjs` | cross-file contract | plan to execute routes, checkpoints, topology label, checkpoint semantics single home | consolidation-findings C1 |
 | `verdict-routing.test.mjs` | cross-file contract | review verdict to next-skill routing in three prose tables | DD-004 pattern |
-| `skill-conventions.test.mjs` | prose-norm | Cross-skill skeleton, frontmatter, state-write routing, tag vocabulary | FRAMEWORK.md, DD-003 |
+| `skill-conventions.test.mjs` | prose-norm | Cross-skill skeleton, frontmatter, state-write routing, tag vocabulary, reference-path resolution | FRAMEWORK.md, DD-003, DD-022 |
 | `artifact-lifecycle.test.mjs` | prose-norm | Stage handoffs, signal-discipline single home, retired-channel absence | ARTIFACT-LIFECYCLE.md, DD-016 |
 | `subagent-protocol.test.mjs` | prose-norm | Dispatch packet, named-agent dispatch, anti-slop taxonomy | SUBAGENT-PROTOCOL.md |
 | `librarian.test.mjs` | prose-norm | Read-only explore role, opt-in librarian roster | LIBRARIAN.md, DD-008 |
@@ -48,8 +48,8 @@ Every test file belongs to exactly one primary layer.
 | `hosts.test.mjs` | install-host | Host adapters, agent definitions, append-only role ids, uninstall | DD-001, DD-006, DD-008 |
 | `install-receipt.test.mjs` | install-host | Receipt shape, directory provenance, zero-trace uninstall, history preservation, orphan cleanup, legacy fallback | DD-011 |
 | `cli-smoke.test.mjs` | install-host | Full-tree install in temp dirs, paths with spaces, symlinks | slow by design, see below |
-| `context-census.test.mjs` | budget | Word ceilings per shared reference, skill, and stage working set | CONTEXT-BUDGET.md |
-| `punctuation-census.test.mjs` | budget | Semicolon count ceiling: avoid unless no plainer separator works | file prose style convention |
+| `context-census.test.mjs` | budget | Word ceilings per shared reference, skill, stage working set, and conditional reference (per file and per skill) | CONTEXT-BUDGET.md, DD-021, DD-022 |
+| `punctuation-census.test.mjs` | budget | Three prose censuses: semicolon ratchet, em-dash ban at zero, numeric-prescription ratchet | DD-021, LEXICON.md (Prose Standard) |
 
 `cli-smoke.test.mjs` is slow because it copies the entire source tree into a temp dir to prove the package installs from an arbitrary location. Do not add scenarios to it that `lifecycle-walk.test.mjs` or `cli-context.test.mjs` can cover with a cheap scaffold.
 

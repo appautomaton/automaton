@@ -1,8 +1,8 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
+import { readFileSync, readdirSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
-import { skillsRoot } from './support/skill-helpers.mjs'
+import { skillsRoot, authoredSkills } from './support/skill-helpers.mjs'
 
 // Context census: per-stage prompt weight is a regression-guarded number, not a vibe.
 // Ceilings are words (roughly 1.3 tokens per word) with ~10% headroom over the current
@@ -45,10 +45,15 @@ const SHARED_CEILINGS = {
   // not restated prose.
   '_shared/references/SUBAGENT-PROTOCOL.md': 1350,
   '_shared/references/LIBRARIAN.md': 380,
-  // Held at 270 through the DD-021 rewrite from word lists to structural tells. Actual
-  // 269: describing a structure costs more words than listing the adjectives it produces,
-  // so the taxonomy paid for itself rather than shrinking. Not a down-ratchet candidate.
-  '_shared/references/ANTI-SLOP.md': 270,
+  // Down-ratchet 270 -> 213 (DD-022). DD-021 held this at 270 on the reasoning that
+  // describing a structure costs more than listing the adjectives it produces, which was
+  // the right comparison against a word list and the wrong one against a bare name. Seven
+  // of the eleven glosses restated a pattern any capable model already holds, so they
+  // diluted the four that carry a real test (delete-the-third-item, would-it-sit-unchanged,
+  // the copula substitution, the invented-ratio extension). Names are the retrieval key;
+  // a line earns its place only by settling a marginal case the name leaves open.
+  // Actual 203, 203 x 1.05 = 213.
+  '_shared/references/ANTI-SLOP.md': 213,
   // Down-ratchet 670 -> 585 (pass 9): the zero-consumer evidence field and the
   // empty-shape doctrine line removed; actual 557, 557 x 1.05 = 585.
   '_shared/references/ROADMAP-CONTRACT.md': 585
@@ -147,4 +152,87 @@ test('stage working sets stay under their word ceilings', () => {
     const actual = files.reduce((sum, file) => sum + words(file), 0)
     assert.ok(actual <= ceiling, `${stage} working set is ${actual} words, ceiling ${ceiling}: trim a member or consciously raise the ceiling`)
   }
+})
+
+// Layer 2 census (DD-022). The ceilings above cover entry points and shared references:
+// 53% of the shipped corpus. The other 47% is per-skill references and role sources, which
+// had no ceiling of any kind. That is where the dated content survived two trim rounds:
+// auto-frame carried 2,564 words of founder-coaching diagnostics behind a trigger DD-017
+// measured firing in 1 of 12 changes, and nothing measured it because working sets exclude
+// conditional pulls by design. Excluding them from the common-path number is correct.
+// Excluding them from measurement entirely is what let them grow.
+//
+// Two tiers, mirroring the structure above. A per-file default with named escapes (the
+// LEXICON posture: a default with a named escape beats a bare cap), and a per-skill total
+// that catches accumulation the per-file cap cannot see, since ten small files pass it
+// individually. The walk is directory-driven, so a new reference is covered the moment it
+// lands: a file nobody listed still has to justify its weight.
+const LAYER2_DEFAULT_CEILING = 500
+
+// Escapes carry their arithmetic, same discipline as the ceilings above.
+const LAYER2_EXCEPTIONS = {
+  // Absorbed startup-diagnostic, builder-diagnostic, and operating-principles in the DD-022
+  // fold: 1,361 words became 637 by keeping the routing and dropping the question texts.
+  // 637 x 1.05 = 669.
+  'auto-frame/references/diagnostic.md': 669,
+  // Absorbed content-intake: the two files defined the same four fields twice, once as an
+  // elicitation bar and once as a SPEC field, and were the only pair in the content track
+  // that co-loads. 948 words became 617. 617 x 1.05 = 648.
+  'auto-frame/references/content-framing.md': 648,
+  // Consent gate, dispatch boundary, round-capped loop, and result handling for a review that
+  // sends plan content to another provider. Four contracts, none separable. 521 x 1.05 = 547.
+  'auto-eng-review/references/outside-voice.md': 547
+}
+
+const LAYER2_SKILL_TOTALS = {
+  'auto-frame': 3209,
+  'auto-execute': 2848,
+  'auto-eng-review': 1719,
+  'auto-verify': 906,
+  'auto-plan': 866,
+  'auto-resume': 763
+}
+
+const layer2Files = (skillName) =>
+  ['references', 'role-sources']
+    .map((sub) => join(skillsRoot, skillName, sub))
+    .filter(existsSync)
+    .flatMap((dir) =>
+      readdirSync(dir)
+        .filter((name) => name.endsWith('.md'))
+        .map((name) => join(dir, name))
+    )
+
+test('conditional references stay under the layer 2 per-file ceiling', () => {
+  for (const skillName of authoredSkills) {
+    for (const file of layer2Files(skillName)) {
+      const relative = file.slice(skillsRoot.length + 1).replaceAll('\\', '/')
+      const ceiling = LAYER2_EXCEPTIONS[relative] ?? LAYER2_DEFAULT_CEILING
+      const actual = readFileSync(file, 'utf8').split(/\s+/).filter(Boolean).length
+
+      assert.ok(
+        actual <= ceiling,
+        `${relative} is ${actual} words, ceiling ${ceiling}: trim it, split it, or add a named escape ` +
+          'to LAYER2_EXCEPTIONS with the arithmetic in the comment'
+      )
+    }
+  }
+})
+
+test('per-skill conditional reference totals stay under their ceilings', () => {
+  for (const [skillName, ceiling] of Object.entries(LAYER2_SKILL_TOTALS)) {
+    const actual = layer2Files(skillName).reduce(
+      (sum, file) => sum + readFileSync(file, 'utf8').split(/\s+/).filter(Boolean).length,
+      0
+    )
+
+    assert.ok(
+      actual <= ceiling,
+      `${skillName} carries ${actual} words of conditional references, ceiling ${ceiling}: ` +
+        'a new reference must earn its weight against the ones already there'
+    )
+  }
+
+  const uncapped = authoredSkills.filter((skillName) => !(skillName in LAYER2_SKILL_TOTALS))
+  assert.deepEqual(uncapped, [], 'every authored skill needs a layer 2 total ceiling')
 })

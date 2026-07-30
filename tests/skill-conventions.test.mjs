@@ -6,7 +6,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { existsSync, readFileSync, readdirSync } from 'node:fs'
-import { join } from 'node:path'
+import { join, sep } from 'node:path'
 import { skillsRoot, authoredSkills, namePattern, perSkillScriptCommand, parseFrontmatter } from './support/skill-helpers.mjs'
 
 test('authored skills use valid portable frontmatter and concise bodies', () => {
@@ -482,6 +482,20 @@ test('every reference pointer in skills and role sources resolves to a real file
   for (const skillName of skillDirs) {
     for (const file of sourcesFor(skillName)) {
       const source = readFileSync(file, 'utf8')
+      // A `references/X.md` pointer resolves from the skill root, so only SKILL.md may write
+      // it. A sibling inside references/ that keeps the prefix resolves to
+      // references/references/ and silently never loads. The existence check below cannot
+      // catch that: it resolves every pointer from the skill root, so the broken form and the
+      // working form look identical to it. Two retired mode diagnostics shipped this for
+      // months while a third file beside them used the correct bare form.
+      if (file.includes(`${sep}references${sep}`) || file.includes(`${sep}role-sources${sep}`)) {
+        const prefixed = source.match(/(?<!\.automaton\/)\breferences\/[a-z0-9-]+\.md/)
+        assert.equal(
+          prefixed,
+          null,
+          `${file} points at ${prefixed?.[0]} from inside a subdirectory: use the bare sibling filename`
+        )
+      }
       for (const match of source.matchAll(/(?<!\.automaton\/)references\/([a-z0-9-]+\.md)/g)) {
         assert.ok(
           existsSync(join(skillsRoot, skillName, 'references', match[1])),

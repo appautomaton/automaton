@@ -4,44 +4,47 @@
 // now data (contracts-data.json contentFields, pass 7); these pins keep the relay consistent.
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { readFileSync, mkdtempSync } from 'node:fs'
+import { readFileSync, mkdtempSync, existsSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { skillsRoot, cliPath, contentDimensions, escapeRegExp } from './support/skill-helpers.mjs'
 
-test('auto-frame ships content-intake reference with diagnostic questions', () => {
-  const contentIntake = readFileSync(join(skillsRoot, 'auto-frame', 'references', 'content-intake.md'), 'utf8')
-  const skill = readFileSync(join(skillsRoot, 'auto-frame', 'SKILL.md'), 'utf8')
-
-  assert.ok(contentIntake.split('\n').length <= 120, 'content-intake reference must stay under 120 lines')
-  assert.match(contentIntake, /Audience/)
-  assert.match(contentIntake, /Thesis/)
-  assert.match(contentIntake, /Anti-Goals/)
-  assert.match(contentIntake, /Voice/)
-  assert.match(skill, /Content mode/)
-  assert.match(skill, /references\/diagnostic\.md/)
-  assert.match(readFileSync(join(skillsRoot, 'auto-frame', 'references', 'diagnostic.md'), 'utf8'), /`content-intake\.md`/)
-})
-
-test('auto-frame ships content-framing reference with anti-slop checklist', () => {
+// content-intake folded into content-framing (DD-022). They were the only pair in the track
+// that co-loads (both fire inside frame), and they defined the same four fields twice: intake
+// as "push until you hear", framing as the SPEC field. Same three components, two wordings,
+// the one place in the track where duplication cost live context. One home now carries the
+// elicitation bar and the definition, because they were always the same statement.
+test('auto-frame ships one content reference carrying both the diagnostic and the SPEC fields', () => {
   const contentFraming = readFileSync(join(skillsRoot, 'auto-frame', 'references', 'content-framing.md'), 'utf8')
+  const diagnostic = readFileSync(join(skillsRoot, 'auto-frame', 'references', 'diagnostic.md'), 'utf8')
   const skill = readFileSync(join(skillsRoot, 'auto-frame', 'SKILL.md'), 'utf8')
 
   assert.ok(contentFraming.split('\n').length <= 150, 'content-framing reference must stay under 150 lines')
-  assert.match(contentFraming, /Audience/)
-  assert.match(contentFraming, /Thesis/)
+  assert.match(contentFraming, /Content-Mode Diagnostic/)
   assert.match(contentFraming, /Anti-Slop Checklist/)
   assert.match(contentFraming, /\.agent\/\.automaton\/references\/ANTI-SLOP\.md/)
+  for (const field of contentDimensions) {
+    assert.match(contentFraming, new RegExp(escapeRegExp(field)), `merged content reference must carry ${field}`)
+  }
+
+  assert.match(skill, /Content mode/)
   assert.match(skill, /content lens/)
+  assert.match(skill, /references\/diagnostic\.md/)
   assert.match(skill, /references\/content-framing\.md/)
+  assert.match(diagnostic, /\*\*Content mode\*\* when the deliverable is prose: read `content-framing\.md`/)
+
+  assert.equal(
+    existsSync(join(skillsRoot, 'auto-frame', 'references', 'content-intake.md')),
+    false,
+    'content-intake folded into content-framing'
+  )
 })
 
 test('content references do not duplicate existing skill references', () => {
-  const contentIntake = readFileSync(join(skillsRoot, 'auto-frame', 'references', 'content-intake.md'), 'utf8')
   const contentFraming = readFileSync(join(skillsRoot, 'auto-frame', 'references', 'content-framing.md'), 'utf8')
 
-  assert.doesNotMatch(contentIntake, /Startup mode|Builder mode|Six Forcing Questions/, 'content-intake must not duplicate the mode diagnostics')
+  assert.doesNotMatch(contentFraming, /Six Forcing Questions/, 'content-framing must not absorb the retired mode diagnostics')
   assert.doesNotMatch(contentFraming, /lens-selection\.md|LEXICON\.md/, 'content-framing must not duplicate existing auto-frame references')
 })
 
@@ -115,7 +118,6 @@ test('auto-verify ships content-verification reference with evidence checks', ()
 
 test('content references defer anti-slop taxonomy to the shared reference', () => {
   const contentRefs = [
-    readFileSync(join(skillsRoot, 'auto-frame', 'references', 'content-intake.md'), 'utf8'),
     readFileSync(join(skillsRoot, 'auto-frame', 'references', 'content-framing.md'), 'utf8'),
     readFileSync(join(skillsRoot, 'auto-execute', 'references', 'content-execution.md'), 'utf8'),
     readFileSync(join(skillsRoot, 'auto-verify', 'references', 'content-verification.md'), 'utf8')
@@ -135,7 +137,6 @@ test('content field vocabulary has one home, one spelling, and full-pipeline dec
   // (Voice vs Voice Direction). The vocabulary is now data (contracts-data.json
   // contentFields); prose definitions with examples live only in content-framing.
   const files = {
-    intake: readFileSync(join(skillsRoot, 'auto-frame', 'references', 'content-intake.md'), 'utf8'),
     framing: readFileSync(join(skillsRoot, 'auto-frame', 'references', 'content-framing.md'), 'utf8'),
     specShape: readFileSync(join(skillsRoot, 'auto-frame', 'references', 'spec-shape.md'), 'utf8'),
     planning: readFileSync(join(skillsRoot, 'auto-plan', 'references', 'content-planning.md'), 'utf8'),

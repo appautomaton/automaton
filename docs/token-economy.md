@@ -10,17 +10,21 @@ One stage working set: the files a model holds when it runs one stage of one cha
 
 Words are whitespace splits of the file, exactly as the census counts. Tokens are 1.3 per word, the ratio the census ceiling comments use for English prose mixed with markdown.
 
-## Current numbers (2026-07-28, post-DD-018 main)
+## Current numbers (2026-07-30, post-DD-022 main)
 
 | Working set | Words | Tokens |
 | --- | --- | --- |
-| frame common path | 2,268 | ~2.9k |
-| plan | 3,808 | ~4.9k |
-| execute direct route | 4,934 | ~6.4k |
-| execute subagent route | 6,235 | ~8.1k |
-| verify | 3,481 | ~4.5k |
+| frame common path | 2,239 | ~2.9k |
+| plan | 3,839 | ~5.0k |
+| execute direct route | 4,842 | ~6.3k |
+| execute subagent route | 6,143 | ~8.0k |
+| verify | 3,521 | ~4.6k |
 
-Mean 5.4k, median 4.9k, range midpoint 5.5k. The site shows ~5k. DD-018's within-file trims moved each set by under 2%: the pattern holds that deletion targets what never loads.
+Mean 5.4k, median 5.0k, range midpoint 5.5k. The site shows ~5k.
+
+DD-022 deleted 1,350 words and four files from the shipped corpus, and only frame's working set moved (2,293 to 2,239, down 2.4%). That split is the expected result and worth stating plainly: most of the deletion targeted conditional references, and conditional references are excluded from a working set by definition. Every trim round since DD-016 has produced this shape. A change that moves these numbers has to touch an entry point or a shared reference, which is why frame's is the one that moved: its `## Output` section and mode enumeration are in the entry point itself.
+
+The corpus total is the number that moved most: 23,275 words to 21,925.
 
 ## Re-measuring
 

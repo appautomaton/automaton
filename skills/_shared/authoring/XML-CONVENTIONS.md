@@ -30,11 +30,12 @@ If the user asks to skip framing, write the smallest useful SPEC and ask them to
 
 Not every skill needs tags. Match tag density to the skill's decision surface.
 
-| Tier | Tags | Examples |
-|------|------|----------|
+| Tier | Tags | Skills |
+|------|------|--------|
 | Heavy | `<GATE>` + `<STOP>` | auto-execute, auto-frame |
-| Medium | One tag, typically `<GATE>` or `<STOP>` | auto-plan, auto-verify, auto-resume, auto-eng-review |
-| Light | No tags. Blocking conditions live in Rules as "Do not guess." sentences. | (none currently) |
+| Medium | One tag, `<GATE>` or `<STOP>` | auto-plan, auto-verify, auto-resume, auto-eng-review |
+
+A skill needing no tag at all is allowed. Its blocking conditions live in Rules as "Do not guess." sentences.
 
 ## Signal Scarcity
 
@@ -48,18 +49,13 @@ Rules:
 5. **Standard headers for structure.** `### Slice Template`, not `<SLICE-DESIGN>`.
 6. **Canonical names only.** Use `<STOP>` for halt conditions; put the reason in the body, not the tag name.
 
-## Gate Taxonomy
+## Gate Placement
 
-Every gate in a skill maps to one of these four types.
+What each tag means, and where it belongs, is defined once in `_shared/references/FRAMEWORK.md` (GATE and STOP Tags). Do not restate the definitions here.
 
-| Type | Purpose | Behavior | Recovery |
-|------|---------|----------|----------|
-| **Pre-flight** | Validate preconditions before starting | Block entry if unmet. No partial work created. | Fix precondition, retry. |
-| **Revision** | Evaluate output quality after production | Loop back to producer with specific feedback. Bounded by iteration cap. | Producer addresses feedback; checker re-evaluates. |
-| **Escalation** | Surface unresolvable issues | Pause workflow, present options, wait for human input. | Developer chooses action; workflow resumes. |
-| **Abort** | Prevent damage or waste | Stop immediately, preserve state, report reason. | Investigate root cause, restart from checkpoint. |
+The authoring rule that follows from them: a `<GATE>` sits immediately before the artifact write or state mutation it protects, so the conditions are read at the moment they apply. A `<STOP>` sits at the end of the procedure, listing every halt condition together, because a halt can fire from anywhere inside it.
 
-**Selection heuristic:** Start with pre-flight. After work is produced → revision. Revision loop exhausted → escalate. Continuing is dangerous → abort.
+Review loops are not gates. A bounded revision loop belongs to `SUBAGENT-PROTOCOL.md`, which owns the reviewer statuses and the loop limits.
 
 ## Checkpoint Types
 
