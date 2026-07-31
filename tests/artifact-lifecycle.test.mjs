@@ -80,11 +80,16 @@ test('artifact lifecycle reference defines handoff contract and validation tiers
   const lifecycle = readFileSync(join(skillsRoot, '_shared', 'references', 'ARTIFACT-LIFECYCLE.md'), 'utf8')
 
   assert.match(lifecycle, /^## Handoff Contract$/m)
-  assert.match(lifecycle, /[Ee]xit gate/)
-  assert.match(lifecycle, /[Aa]rtifacts? produced/)
-  assert.match(lifecycle, /[Ss]tate mutation/)
+  // The five-element enumeration retired (DD-024). Four of its items restated columns of
+  // the Stage Handoffs table three lines above it, which is the mirror-section failure
+  // FRAMEWORK.md's own first signal rule names. Diagnostic handling was the one item the
+  // table has no column for, so it is the one that stays, and this guard pins that split:
+  // the table must carry the per-stage detail, the prose must carry only the remainder.
   assert.match(lifecycle, /[Dd]iagnostic handling/)
-  assert.match(lifecycle, /[Nn]ext-stage recommendation/)
+  assert.match(lifecycle, /`error` diagnostics block advancement/)
+  assert.match(lifecycle, /`warning` diagnostics surface to the next stage/)
+  assert.match(lifecycle, /^## Stage Handoffs$/m)
+  assert.match(lifecycle, /Required inputs \| Produces \| State pointer expectations \| Next handoff/)
   assert.match(lifecycle, /\*\*Continue inline\*\*/)
   assert.match(lifecycle, /\*\*Stop and hand off\*\*/)
   assert.match(lifecycle, /not nested skill invocation/)

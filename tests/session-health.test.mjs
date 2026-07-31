@@ -7,7 +7,7 @@
 // or the block becomes noise the reader learns to skip.
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -144,10 +144,63 @@ test('a disengaged harness opens quiet, and the health channel stays live', () =
   writeState('.agent/work/a-change/SPEC.md')
   const quiet = buildSessionContext(root)
   assert.match(quiet, /verified and the harness is disengaged until your next objective/)
-  assert.doesNotMatch(quiet, /FRAMEWORK\.md once per session/)
+  assert.doesNotMatch(quiet, /read all of .*FRAMEWORK\.md/)
   assert.doesNotMatch(quiet, /Needs attention/)
 
   // Disengagement is quiet, not blind: a stale pointer still surfaces.
   writeState('.agent/work/a-change/GONE.md')
   assert.match(buildSessionContext(root), /Needs attention/)
+})
+
+// The engagement criterion is the harness's entry gate, and the hook is the only
+// surface a model reads before deciding to load a skill. A gate written inside a
+// SKILL.md costs the load it exists to avoid, so this guard pins it to the hook.
+// It is asserted in both states on purpose: disengaged is precisely the moment a
+// new objective arrives and the gate has to answer.
+test('the engagement criterion reaches the model in both engaged and disengaged states', () => {
+  const root = healthyProject('criterion')
+  writeFileSync(join(root, '.agent', 'work', 'a-change', 'PLAN.md'), HEALTHY_PLAN, 'utf8')
+  const statePath = join(root, '.agent', '.automaton', 'state', 'current.json')
+
+  const criterion = /survive a context boundary or when the outcome needs agreement before it is built/
+  const offRamp = /one session can finish and verify does not need it: do that work directly/
+
+  assert.match(buildSessionContext(root), criterion)
+  assert.match(buildSessionContext(root), offRamp)
+
+  writeFileSync(statePath, JSON.stringify({
+    active_change: 'a-change',
+    stage: 'verified',
+    canonical_spec: '.agent/work/a-change/SPEC.md',
+    canonical_plan: '.agent/work/a-change/PLAN.md',
+    disengaged: true
+  }, null, 2), 'utf8')
+
+  assert.match(buildSessionContext(root), criterion)
+  assert.match(buildSessionContext(root), offRamp)
+})
+
+// Failure story this prevents: deferring the FRAMEWORK.md read from session start
+// to first stage action is safe, but only as a whole-file read. No SKILL.md ever
+// instructs reading that file. Every reference in the skill tree names a section
+// and assumes the whole file is loaded, while Stages and Handoff Model carry no
+// inline pointer at all. Frame's working set is FRAMEWORK.md plus
+// SKILL.md and nothing else, so a section-wise reminder would strip the
+// `**Next:**` handoff format out of frame with no test failing.
+test('the reminder asks for FRAMEWORK.md whole, never by section', () => {
+  const root = healthyProject('wholefile')
+  const reminder = buildSessionContext(root)
+
+  assert.match(reminder, /read all of \.agent\/\.automaton\/references\/FRAMEWORK\.md once/)
+
+  const framework = readFileSync(join(root, '.agent', '.automaton', 'references', 'FRAMEWORK.md'), 'utf8')
+  const sections = [...framework.matchAll(/^## (.+)$/gm)].map((match) => match[1].trim())
+
+  assert.ok(sections.length >= 5, 'FRAMEWORK.md should expose the sections this guard scans')
+  for (const section of sections) {
+    assert.ok(
+      !reminder.includes(section),
+      `the reminder names the FRAMEWORK.md section "${section}": a section-wise read drops the sections no SKILL.md points at`
+    )
+  }
 })

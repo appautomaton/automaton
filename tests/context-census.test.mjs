@@ -32,10 +32,20 @@ const SHARED_CEILINGS = {
   // structural capability; the four-edge enumeration moved home to ARTIFACT-LIFECYCLE.
   // Down-ratchet 945 -> 922 (pass 9): Loading Discipline collapsed to two pointer
   // lines; actual 878, 878 x 1.05 = 922.
-  '_shared/references/FRAMEWORK.md': 922,
+  // Down-ratchet 922 -> 877 (DD-024): Skill Structure moved to the uninstalled authoring
+  // guide. It described the section order of the file the reader is about to open, and its
+  // two behavioral clauses were already stated better elsewhere in this same file (where a
+  // stop is issued, in Handoff Model; the quality.md requirement, in Quality Gate). This is
+  // the highest-leverage file in the corpus: it is the only one in all five working sets,
+  // so 67 words here is 335 word-equivalents. Actual 835, 835 x 1.05 = 877.
+  '_shared/references/FRAMEWORK.md': 877,
   // Down-ratchet 1940 -> 1817 (passes 8-9): skill restatements and phase authorship
   // became pointers; actual 1730, 1730 x 1.05 = 1817.
-  '_shared/references/ARTIFACT-LIFECYCLE.md': 1817,
+  // Down-ratchet 1817 -> 1772 (DD-024): the five-element handoff enumeration restated four
+  // columns of the Stage Handoffs table three lines above it, which FRAMEWORK's own first
+  // signal rule calls a mirror section. Diagnostic handling had no column and stayed.
+  // Actual 1688, 1688 x 1.05 = 1772.
+  '_shared/references/ARTIFACT-LIFECYCLE.md': 1772,
   // Down-ratchet 585 -> 464 (DD-021): the four numbered principles explaining what a
   // context window is, and the staged bad-phrasing table, left. The artifact boundary
   // they surrounded stayed. Actual 442, 442 x 1.05 = 464.
@@ -72,7 +82,13 @@ const SKILL_CEILINGS = {
   // common path, because 11 of the last 12 changes never ran a diagnostic.
   // Pass 6's slug reorder holds 1400 at actual 1387 (1% headroom): the duplicate
   // write-ban deletion paid for the Name The Change step.
-  'auto-frame/SKILL.md': 1400,
+  // Raised 1400 -> 1506 (DD-023): Check Engagement is new capability, the first step
+  // that lets frame decline. Before it the skill could only narrow work, never turn it
+  // away, so a typo fix paid the whole lifecycle. It costs 62 words in the step plus 14
+  // qualifying the skip rule it would otherwise contradict, and it saves this entire
+  // 1434-word entry point on every request that does not need a spec. Actual 1434,
+  // 1434 x 1.05 = 1506.
+  'auto-frame/SKILL.md': 1506,
   // Down-ratchet 1000 -> 917 (pass 12): the gate boundary and template flip added
   // precision, not bulk; actual 873, 873 x 1.05 = 917.
   'auto-verify/SKILL.md': 917,
@@ -102,7 +118,7 @@ test('skill entry points stay under their word ceilings', () => {
   }
 })
 
-// Stage working sets: FRAMEWORK (read once per session) plus the SKILL.md plus the shared
+// Stage working sets: FRAMEWORK (read once per session, at the first stage action) plus the SKILL.md plus the shared
 // references the skill's own prose pulls on its common path. Conditional pulls (quality
 // cards, content tracks, recovery tables) are excluded: they load only when triggered.
 const WORKING_SETS = {
@@ -111,28 +127,42 @@ const WORKING_SETS = {
     // used to cost 2377 for office-hours plus 1982 for frame when a change needed both.
     // The shallow path pays +181 over frame alone for the depth choice and the mode read.
     // Pass 14: holds at actual 2268 (1.4% headroom); frame's ceiling is the constraint.
+    // Raised 2300 -> 2453 (DD-023) tracking frame's own ratchet for Check Engagement.
+    // The set's membership is unchanged: DD-023 moved the FRAMEWORK.md read from session
+    // start to first stage action, which is when this set is paid anyway, so the working
+    // set is what it always was and a session that never enters a stage now pays none of
+    // it. Actual 2336, 2336 x 1.05 = 2453.
+    // Down-ratchet 2453 -> 2382 (DD-024): FRAMEWORK shed Skill Structure.
+    // Actual 2269, 2269 x 1.05 = 2382.
     files: ['_shared/references/FRAMEWORK.md', 'auto-frame/SKILL.md'],
-    ceiling: 2300
+    ceiling: 2382
   },
   'plan': {
     // Down-ratchet 4030 -> 4000 (pass 14): actual 3808, 3808 x 1.05 = 3998.
+    // Down-ratchet 4000 -> 3917 (DD-024): FRAMEWORK -67, ARTIFACT-LIFECYCLE -42.
+    // Actual 3730, 3730 x 1.05 = 3917.
     files: ['_shared/references/FRAMEWORK.md', 'auto-plan/SKILL.md', '_shared/references/ARTIFACT-LIFECYCLE.md'],
-    ceiling: 4000
+    ceiling: 3917
   },
   'execute direct route': {
     // Down-ratchet 5181 -> 5087 (DD-021): CONTEXT-BUDGET shed the common-knowledge
     // principles. Actual 4845, 4845 x 1.05 = 5087.
+    // Down-ratchet 5087 -> 5015 (DD-024): same two shared-reference trims.
+    // Actual 4776, 4776 x 1.05 = 5015.
     files: [
       '_shared/references/FRAMEWORK.md',
       'auto-execute/SKILL.md',
       '_shared/references/ARTIFACT-LIFECYCLE.md',
       '_shared/references/CONTEXT-BUDGET.md'
     ],
-    ceiling: 5087
+    ceiling: 5015
   },
   'execute subagent route': {
     // Down-ratchet 6547 -> 6453 (DD-021): same CONTEXT-BUDGET trim carried through.
     // Actual 6146, 6146 x 1.05 = 6453.
+    // Down-ratchet 6453 -> 6382 (DD-024): the shared trims, less one word SUBAGENT-PROTOCOL
+    // gained pointing at auto-execute instead of restating its parallel condition.
+    // Actual 6078, 6078 x 1.05 = 6382.
     files: [
       '_shared/references/FRAMEWORK.md',
       'auto-execute/SKILL.md',
@@ -140,12 +170,14 @@ const WORKING_SETS = {
       '_shared/references/CONTEXT-BUDGET.md',
       '_shared/references/SUBAGENT-PROTOCOL.md'
     ],
-    ceiling: 6453
+    ceiling: 6382
   },
   'verify': {
     // Down-ratchet 3800 -> 3655 (pass 14): actual 3481, 3481 x 1.05 = 3655.
+    // Down-ratchet 3655 -> 3583 (DD-024): FRAMEWORK -67, ARTIFACT-LIFECYCLE -42.
+    // Actual 3412, 3412 x 1.05 = 3583.
     files: ['_shared/references/FRAMEWORK.md', 'auto-verify/SKILL.md', '_shared/references/ARTIFACT-LIFECYCLE.md'],
-    ceiling: 3655
+    ceiling: 3583
   }
 }
 

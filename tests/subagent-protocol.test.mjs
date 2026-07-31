@@ -34,8 +34,19 @@ test('subagent protocol defines dispatch packets and bounded review loops', () =
   assert.match(protocol, /## Dispatch Packet/)
   assert.match(protocol, /Subagents receive curated slice context/)
   assert.match(protocol, /`auto-execute` owns execute-stage orchestration across slices/)
-  assert.match(protocol, /Cross-slice parallel dispatch is allowed only when `PLAN\.md` explicitly marks slices parallel-safe/)
-  assert.match(protocol, /write sets are disjoint/)
+  // DD-024: the protocol used to restate the condition that permits parallel dispatch, in
+  // vaguer words than auto-execute's own ("explicitly marks slices parallel-safe" against
+  // the `Parallel-safe groups:` label that contracts-data.json pins). Both files sit in the
+  // subagent working set, so the reader paid for the weaker copy too. auto-execute owns the
+  // condition; the protocol owns what happens after it holds. This guard pins the split.
+  assert.match(protocol, /`auto-execute` owns the condition that permits cross-slice parallel dispatch/)
+  assert.ok(
+    !protocol.includes('explicitly marks slices parallel-safe'),
+    'SUBAGENT-PROTOCOL.md must not restate the parallel-safe condition auto-execute owns'
+  )
+  // The condition's home, asserted where it now lives so the contract stays guarded.
+  const execute = readFileSync(join(skillsRoot, 'auto-execute', 'SKILL.md'), 'utf8')
+  assert.match(execute, /\*\*Parallel-safe groups:\*\* line names the slices and write sets are disjoint/)
   assert.match(protocol, /Use orchestration artifacts only for subagent routes or complex review loops/)
   assert.match(protocol, /Write the summary first/)
   assert.match(protocol, /Future coordinators should read `slice-NNN-summary\.md`/)

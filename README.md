@@ -12,8 +12,10 @@ An AI coding agent framework that gives LLM-powered development tools structured
 ## Why Use It
 
 - Keep project truth, current work, and handoff state outside the chat window.
-- Move larger changes through explicit frame, plan, execute, and verify stages.
+- Move work that spans sessions, or needs its outcome agreed first, through explicit frame, plan, execute, and verify stages.
 - Use the same workflow across Claude Code, Codex, and OpenCode.
+
+The stages are for work that outlives one context window. Anything a single session can finish and verify is done directly, and the harness says so at session start rather than leaving you to guess.
 
 ## Install
 

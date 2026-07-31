@@ -1,4 +1,4 @@
-// Cross-skill structural conventions every authored skill must satisfy (FRAMEWORK.md skeleton).
+// Cross-skill structural conventions every authored skill must satisfy (XML-CONVENTIONS.md skeleton).
 // Failure story: a skill that drifts from the shared skeleton, or routes state writes around
 // sync-status.mjs, breaks every downstream consumer that assumes the contract (DD-002, DD-003).
 // A failing pin here is a decision point: fix the edit, or change the contract, its rationale,
@@ -20,11 +20,29 @@ test('authored skills use valid portable frontmatter and concise bodies', () => 
     assert.ok(fields.description.length <= 1024)
     assert.ok(fields.description.length > 10, `${skillName} description too short`)
     assert.ok(source.includes('metadata:\n  stage:'), `${skillName} frontmatter must declare metadata.stage: a lifecycle stage or utility (a reader-facing label; runtime stages live in contracts-data.json)`)
-    assert.match(body, /## Do\n/, `${skillName} must keep the shared skeleton section ## Do (FRAMEWORK.md, Skill Structure)`)
-    assert.match(body, /## Output\n/, `${skillName} must keep the shared skeleton section ## Output (FRAMEWORK.md, Skill Structure)`)
-    assert.match(body, /## Rules\n/, `${skillName} must keep the shared skeleton section ## Rules (FRAMEWORK.md, Skill Structure)`)
+    assert.match(body, /## Do\n/, `${skillName} must keep the shared skeleton section ## Do (_shared/authoring/XML-CONVENTIONS.md, Skill Skeleton)`)
+    assert.match(body, /## Output\n/, `${skillName} must keep the shared skeleton section ## Output (_shared/authoring/XML-CONVENTIONS.md, Skill Skeleton)`)
+    assert.match(body, /## Rules\n/, `${skillName} must keep the shared skeleton section ## Rules (_shared/authoring/XML-CONVENTIONS.md, Skill Skeleton)`)
     assert.ok(body.trim().split('\n').length >= 12, `${skillName} body is too thin to be a real contract`)
     assert.ok(source.split('\n').length <= 500, `${skillName} exceeds 500 lines: entry points stay lean, move detail to references/ behind a trigger (word ceilings: context-census.test.mjs)`)
+  }
+})
+
+// Frontmatter descriptions are the pull trigger: they sit in context before any skill
+// loads, so they are the one place a contradiction of the engagement criterion costs
+// the entire lifecycle. auto-frame shipped "Use to start any change" while README told
+// humans to move larger changes through the stages, and the model reads only the former.
+// The criterion's home is the session reminder (runtime/lib/context.mjs, DD-023); this
+// guard does not restate it, it keeps the descriptions from arguing with it.
+test('no skill description invites work the engagement criterion turns away', () => {
+  for (const skillName of authoredSkills) {
+    const { fields } = parseFrontmatter(readFileSync(join(skillsRoot, skillName, 'SKILL.md'), 'utf8'))
+
+    assert.doesNotMatch(
+      fields.description,
+      /\bany change\b/i,
+      `${skillName} description claims "any change": the lifecycle is for work that spans sessions or needs agreed scope`
+    )
   }
 })
 

@@ -22,9 +22,25 @@ Do NOT proceed to auto-plan until:
 - The user has approved the bounded goal
 - Blocking questions are resolved or explicitly accepted
 
-If the user asks to skip framing, write the smallest useful SPEC and ask them to confirm it.
+If the user asks to skip framing on work that spans sessions, write the smallest useful SPEC and ask them to confirm it.
 </GATE>
 ```
+
+## Skill Skeleton
+
+Every skill follows this section order:
+
+```
+Preamble        -> identity, "does not" boundary, loading discipline
+Quality Gate    -> checks before finalizing
+Do              -> skill-specific procedure
+Output          -> artifacts produced and state changes
+Rules           -> guardrails
+```
+
+Conditional reference reads (`Read references/X.md when Y`) appear inline at their procedural trigger points, not gathered in a list.
+
+This is authoring guidance, so it lives here rather than in the installed `FRAMEWORK.md`, on the same reasoning that moved the validation tiers to `docs/testing.md`: a model about to read a `SKILL.md` does not need that file's table of contents described to it. The two rules the skeleton used to carry that do bind runtime behavior have better homes in `FRAMEWORK.md` already. Where a stop is issued from is pinned in Handoff Model, and the `quality.md` requirement is pinned in Quality Gate.
 
 ## Skill Tiers
 

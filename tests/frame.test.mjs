@@ -49,6 +49,29 @@ test('auto-frame chooses conversational depth after reading, and says which it c
   assert.equal(existsSync(join(frameRoot, 'references', 'spec-skeleton.md')), false)
 })
 
+// Failure story: auto-frame had no way to decline. Its description invited "any change",
+// the work-scale enum bottomed out at bug with no category beneath it, and Rules told the
+// model that a user trying to skip the spec still gets one written. A typo fix paid the
+// whole lifecycle. The off-ramp has to sit after the request is read, because the call
+// needs the request in hand, and before Choose Depth, because depth is already spending.
+test('auto-frame can decline work the engagement criterion turns away', () => {
+  const source = skill()
+
+  assert.match(source, /### Check Engagement/)
+  assert.match(source, /say so in one line and do it directly/)
+  assert.match(source, /The user naming a stage, or asking for a spec, settles this/)
+
+  const engagement = source.indexOf('### Check Engagement')
+  const request = source.indexOf('### Read The Request')
+  const depth = source.indexOf('### Choose Depth')
+  assert.ok(request < engagement, 'the engagement call needs the request read first')
+  assert.ok(engagement < depth, 'declining must come before Choose Depth starts spending turns')
+
+  // The trap that outlived its purpose: the skip rule now applies only above the criterion.
+  assert.match(source, /tries to skip spec writing on work that spans sessions/)
+  assert.doesNotMatch(source, /^- If the user tries to skip spec writing, write the smallest useful SPEC/m)
+})
+
 test('auto-frame separates work scale from work shape', () => {
   const source = skill()
 

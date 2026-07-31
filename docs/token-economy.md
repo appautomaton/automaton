@@ -10,17 +10,23 @@ One stage working set: the files a model holds when it runs one stage of one cha
 
 Words are whitespace splits of the file, exactly as the census counts. Tokens are 1.3 per word, the ratio the census ceiling comments use for English prose mixed with markdown.
 
-## Current numbers (2026-07-30, post-DD-022 main)
+## Current numbers (2026-07-31, post-DD-024 main)
 
 | Working set | Words | Tokens |
 | --- | --- | --- |
-| frame common path | 2,239 | ~2.9k |
-| plan | 3,839 | ~5.0k |
-| execute direct route | 4,842 | ~6.3k |
-| execute subagent route | 6,143 | ~8.0k |
-| verify | 3,521 | ~4.6k |
+| frame common path | 2,269 | ~2.9k |
+| plan | 3,730 | ~4.8k |
+| execute direct route | 4,776 | ~6.2k |
+| execute subagent route | 6,078 | ~7.9k |
+| verify | 3,412 | ~4.4k |
 
-Mean 5.4k, median 5.0k, range midpoint 5.5k. The site shows ~5k.
+Mean 5.3k, median 4.8k, range midpoint 5.4k. The site shows ~5k.
+
+DD-024 is the first pass that moved every working set at once, because it is the first that sorted candidates by leverage instead of by file size. A word in `FRAMEWORK.md` is paid in all five sets and a word in `ARTIFACT-LIFECYCLE.md` in four, so the 109 words those two files shed are worth 416 across the table. The lesson generalizes: a 400-word cut in a conditional reference moves nothing here, and a 40-word cut in `FRAMEWORK.md` moves everything.
+
+DD-023 moved frame from 2,239 to 2,336 for the Check Engagement step (2,269 after DD-024's shared-reference trims), and changed what a working set means for the first time since the definition was written. A working set is now a conditional cost. Before DD-023 the session hook told every session to read `FRAMEWORK.md` at startup, so its 902 words were paid whether or not a stage ran. The hook now defers that read to the first stage action, which is exactly when the rest of the working set is paid anyway. The numbers above are unchanged in what they measure and now describe a session that actually enters a stage. A session that does not enters nothing and pays nothing.
+
+The session reminder itself is the new fixed cost: 41 words to 97. That is the whole toll for a gate that can decline frame's 1,434 words plus everything after them.
 
 DD-022 deleted 1,350 words and four files from the shipped corpus, and only frame's working set moved (2,293 to 2,239, down 2.4%). That split is the expected result and worth stating plainly: most of the deletion targeted conditional references, and conditional references are excluded from a working set by definition. Every trim round since DD-016 has produced this shape. A change that moves these numbers has to touch an entry point or a shared reference, which is why frame's is the one that moved: its `## Output` section and mode enumeration are in the entry point itself.
 
